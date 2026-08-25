@@ -621,13 +621,13 @@ N32 panga_chanzo() {
             kama (neno_la_kabla_ni_aina(i) != 0) {
                 towe_ondo_nafasi();
                 towe_herufi(42);
-            } sivyo kama (ni_baina(i) != 0) {
-                towe_kiendeshi_baina(42, 0);
-            } sivyo {
-                towe_nafasi_kabla();
-                towe_herufi(42);
-                ambatisha = 1;
-            }
+            } sivyo { kama (ni_baina(i) != 0) {
+                    towe_kiendeshi_baina(42, 0);
+                } sivyo {
+                    towe_nafasi_kabla();
+                    towe_herufi(42);
+                    ambatisha = 1;
+                } }
             i = i + 1;
             endelea;
         }

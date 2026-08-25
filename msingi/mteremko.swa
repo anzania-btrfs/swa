@@ -24,66 +24,66 @@ husisha { msambazaji.swa }
 // Familia: 1=N, 2=A, 3=D, 4=B, 5=W, 6=Muundo (jina)
 // -------------------------------------------------------
 
-N32 IR_AINA_TUPU         = 0;   // void
-N32 IR_AINA_KIELEKEZI    = -1;  // pointer (encoded specially)
+N32 IR_AINA_TUPU = 0;  // void
+N32 IR_AINA_KIELEKEZI = -1;  // pointer (encoded specially)
 N32 IR_AINA_KAZI_ELEKEZI = -2;  // function pointer
 
 // -------------------------------------------------------
 // Aina za Amri za IR
 // -------------------------------------------------------
-N32 IR_JUMLISHA      = 1;
-N32 IR_TOFAUTI       = 2;
-N32 IR_ZIDISHA       = 3;
-N32 IR_GAWANYA       = 4;
-N32 IR_SAWA          = 5;
-N32 IR_TOFAUTI_SI    = 6;
-N32 IR_CHINI         = 7;
-N32 IR_JUU           = 8;
-N32 IR_CHINI_SAWA    = 9;
-N32 IR_JUU_SAWA      = 10;
-N32 IR_NA            = 11;
-N32 IR_AU            = 12;
-N32 IR_SI            = 13;
-N32 IR_HAMISHA_K     = 14;  // <<
+N32 IR_JUMLISHA = 1;
+N32 IR_TOFAUTI = 2;
+N32 IR_ZIDISHA = 3;
+N32 IR_GAWANYA = 4;
+N32 IR_SAWA = 5;
+N32 IR_TOFAUTI_SI = 6;
+N32 IR_CHINI = 7;
+N32 IR_JUU = 8;
+N32 IR_CHINI_SAWA = 9;
+N32 IR_JUU_SAWA = 10;
+N32 IR_NA = 11;
+N32 IR_AU = 12;
+N32 IR_SI = 13;
+N32 IR_HAMISHA_K = 14;  // <<
 N32 IR_HAMISHA_KULIA = 15;  // >>
-N32 IR_BIT_NA        = 16;  // &
-N32 IR_BIT_AU        = 17;  // |
-N32 IR_ASIMILIA      = 18;  // =
-N32 IR_MODULO        = 19;  // asilimia (%)
+N32 IR_BIT_NA = 16;  // &
+N32 IR_BIT_AU = 17;  // |
+N32 IR_ASIMILIA = 18;  // =
+N32 IR_MODULO = 19;  // asilimia (%)
 
 // Vipengele vya juu
-N32 IR_WITO          = 20;  // function call
-N32 IR_RUDISHA       = 21;  // return value
-N32 IR_RUDISHA_TUPU  = 22;  // return void
-N32 IR_TAJA          = 23;  // load (dereference)
-N32 IR_KUMBUKA       = 24;  // store (assign to pointer)
-N32 IR_ANWANI_YA     = 25;  // address-of
-N32 IR_TENGA         = 26;  // heap allocate
-N32 IR_ACHILIA       = 27;  // heap free
-N32 IR_SEHEMU_DOT    = 28;  // struct field access (.)
+N32 IR_WITO = 20;  // function call
+N32 IR_RUDISHA = 21;  // return value
+N32 IR_RUDISHA_TUPU = 22;  // return void
+N32 IR_TAJA = 23;  // load (dereference)
+N32 IR_KUMBUKA = 24;  // store (assign to pointer)
+N32 IR_ANWANI_YA = 25;  // address-of
+N32 IR_TENGA = 26;  // heap allocate
+N32 IR_ACHILIA = 27;  // heap free
+N32 IR_SEHEMU_DOT = 28;  // struct field access (.)
 N32 IR_SEHEMU_MSHALE = 29;  // struct field via pointer (->)
-N32 IR_SAFU_ELEM     = 30;  // array element access
+N32 IR_SAFU_ELEM = 30;  // array element access
 
 // Mtiririko
-N32 IR_RUKA          = 40;  // unconditional branch
-N32 IR_RUKA_KAMA     = 41;  // conditional branch
-N32 IR_RUKA_SIVYO    = 42;  // conditional branch (negated)
-N32 IR_VUNJA         = 43;
-N32 IR_ENDELEA       = 44;
-N32 IR_CHAGUA        = 45;  // switch
+N32 IR_RUKA = 40;  // unconditional branch
+N32 IR_RUKA_KAMA = 41;  // conditional branch
+N32 IR_RUKA_SIVYO = 42;  // conditional branch (negated)
+N32 IR_VUNJA = 43;
+N32 IR_ENDELEA = 44;
+N32 IR_CHAGUA = 45;  // switch
 
 // Vihalisi
-N32 IR_NAMBARI       = 50;
-N32 IR_HALISI_D      = 51;  // float literal
-N32 IR_MFUATANO      = 52;
-N32 IR_KWELI         = 53;
-N32 IR_UONGO         = 54;
-N32 IR_TUPU          = 55;
+N32 IR_NAMBARI = 50;
+N32 IR_HALISI_D = 51;  // float literal
+N32 IR_MFUATANO = 52;
+N32 IR_KWELI = 53;
+N32 IR_UONGO = 54;
+N32 IR_TUPU = 55;
 
 // Aina za AST/IR zinazotumiwa na mteremko lakini hazitolewi na
 // msambazaji (nodi za IR hushiriki nafasi ya majina ya AST)
-N32 AST_KIPINDI     = 56;  // kitanzi cha kwa (IR)
-N32 IR_TERNARY      = 60;  // IR ya ternary
+N32 AST_KIPINDI = 56;  // kitanzi cha kwa (IR)
+N32 IR_TERNARY = 60;  // IR ya ternary
 
 // -------------------------------------------------------
 // Safu za IR (bapa, kama AST)
@@ -92,15 +92,15 @@ N32 IR_TERNARY      = 60;  // IR ya ternary
 // thamani (int literal), kushoto, kulia, tiga (extra child).
 // -------------------------------------------------------
 N32 ir_aina[65536];
-N32 ir_aina_data[65536];   // type encoding kwa kila nodi
-N32 ir_thamani[65536];     // nambari halisi / offset
+N32 ir_aina_data[65536];  // type encoding kwa kila nodi
+N32 ir_thamani[65536];  // nambari halisi / offset
 N32 ir_kushoto[65536];
 N32 ir_kulia[65536];
 N32 ir_tiga[65536];
-N32 ir_nne[65536];         // mnyororo wa taarifa
+N32 ir_nne[65536];  // mnyororo wa taarifa
 N32 ir_idadi = 0;
 
-N8  ir_pool[524288];       // dimbwi la majina/mifuatano
+N8 ir_pool[524288];  // dimbwi la majina/mifuatano
 N32 ir_pool_wapi = 0;
 N32 ir_jina_off[65536];
 
@@ -108,13 +108,13 @@ N32 ir_jina_off[65536];
 // Mazingira ya kuteremsha
 // -------------------------------------------------------
 muundo Mteremshi {
-    N32 kazi_node;          // nodi ya kazi inayoteremshwa sasa
-    N32 kazi_ret_enc;       // encoding ya aina ya kurudi
-    N32 ndani_ya_kitanzi;   // kina cha kitanzi (kwa vunja/endelea)
-    N32 lebo_vunja;         // IR nodi ya kuvunjia kitanzi
-    N32 lebo_endelea;       // IR nodi ya kuendelea kitanzi
-    N32 bloku_sasa;         // bloku inayojengwa sasa
-    N32 makosa;             // idadi ya makosa wakati wa kuteremsha
+    N32 kazi_node;  // nodi ya kazi inayoteremshwa sasa
+    N32 kazi_ret_enc;  // encoding ya aina ya kurudi
+    N32 ndani_ya_kitanzi;  // kina cha kitanzi (kwa vunja/endelea)
+    N32 lebo_vunja;  // IR nodi ya kuvunjia kitanzi
+    N32 lebo_endelea;  // IR nodi ya kuendelea kitanzi
+    N32 bloku_sasa;  // bloku inayojengwa sasa
+    N32 makosa;  // idadi ya makosa wakati wa kuteremsha
 };
 
 // -------------------------------------------------------
@@ -185,14 +185,14 @@ N32 teremsha(Mteremshi* t, N32 mzizi) {
 
         kama (aina == AST_KAZI) {
             ir_node = teremsha_kazi(t, node);
-        } sivyo kama (aina == AST_MUUNDO) {
-            // Miundo haihitaji kuteremshwa — inatumika kwa aina tu
-            ir_node = ir_node_mpya(AST_MUUNDO, 0, 0, -1, -1);
-            ir_kushoto[ir_node] = ast_kushoto[node];  // jina
-            ir_kulia[ir_node] = ast_kulia[node];      // sehemu
-        } sivyo kama (aina == AST_TANGAZO_ULIMWENGU) {
-            ir_node = teremsha_tangazo_ulimwengu(t, node);
-        }
+        } sivyo { kama (aina == AST_MUUNDO) {
+                // Miundo haihitaji kuteremshwa — inatumika kwa aina tu
+                ir_node = ir_node_mpya(AST_MUUNDO, 0, 0, -1, -1);
+                ir_kushoto[ir_node] = ast_kushoto[node];  // jina
+                ir_kulia[ir_node] = ast_kulia[node];  // sehemu
+            } sivyo { kama (aina == AST_TANGAZO_ULIMWENGU) {
+                    ir_node = teremsha_tangazo_ulimwengu(t, node);
+                } } }
 
         kama (ir_node != -1) {
             kama (prev_ir == -1) { kwanza_ir = ir_node; }
@@ -363,7 +363,7 @@ N32 teremsha_usemi(Mteremshi* t, N32 node) {
     kama (aina == AST_MFUATANO) {
         N32 ir = ir_node_mpya(IR_MFUATANO, 0, 0, -1, -1);
         ir_hifadhi_jina(ir, ast_pool + ast_jina_off[node],
-            urefu_wa_mfuatano(ast_pool + ast_jina_off[node]));
+        urefu_wa_mfuatano(ast_pool + ast_jina_off[node]));
         rudisha ir;
     }
 
@@ -371,7 +371,7 @@ N32 teremsha_usemi(Mteremshi* t, N32 node) {
     kama (aina == AST_KITAMBULISHO) {
         N32 ir = ir_node_mpya(AST_KITAMBULISHO, 0, 0, -1, -1);
         ir_hifadhi_jina(ir, ast_pool + ast_jina_off[node],
-            urefu_wa_mfuatano(ast_pool + ast_jina_off[node]));
+        urefu_wa_mfuatano(ast_pool + ast_jina_off[node]));
         rudisha ir;
     }
 
@@ -539,7 +539,7 @@ N32 teremsha_usemi(Mteremshi* t, N32 node) {
         N32 field = kulia;
         N32 ir_sehemu = ir_node_mpya(IR_SEHEMU_DOT, 0, 0, base, field);
         ir_hifadhi_jina(ir_sehemu, ast_pool + ast_jina_off[field],
-            urefu_wa_mfuatano(ast_pool + ast_jina_off[field]));
+        urefu_wa_mfuatano(ast_pool + ast_jina_off[field]));
         rudisha ir_sehemu;
     }
 
@@ -548,7 +548,7 @@ N32 teremsha_usemi(Mteremshi* t, N32 node) {
         N32 field = kulia;
         N32 ir_sehemu = ir_node_mpya(IR_SEHEMU_MSHALE, 0, 0, base, field);
         ir_hifadhi_jina(ir_sehemu, ast_pool + ast_jina_off[field],
-            urefu_wa_mfuatano(ast_pool + ast_jina_off[field]));
+        urefu_wa_mfuatano(ast_pool + ast_jina_off[field]));
         rudisha ir_sehemu;
     }
 
