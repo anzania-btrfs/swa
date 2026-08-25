@@ -43,23 +43,22 @@ Sasa: lexer inalia `Hitilafu: chanzo kina tokeni nyingi mno` + exit 1
 
 ## 4. Mipaka ya majedwali — KOSA LAUTI, si uharibifu wa kimya [UKALI: CHINI]
 
-Kila mpaka wa jedwali ndani ya mbegu sasa unaangalia na KULIA kwa
-sauti (`Hitilafu: ... limejaa` + exit 1) badala ya kuendelea kimya:
+Kila mpaka wa jedwali ndani ya mbegu unaangalia na KULIA kwa
+sauti (`Hitilafu: ... limejaa` + exit 1) badala ya kuendelea kimya.
+Vikomo viliinuliwa Agosti 2026 (4x) ili kupunguza mzunguko:
 
-- jedwali la nje (MAX_EXTERNS 16,384) — kila wito wa mbele unachukua
-  ingizo jipya bila dedup (sahihi kiutendaji, imejaribiwa hadi wito
-  7,000; kikomo hakifikiwi kwa sasa kwa sababu kikomo cha tokeni
-  kinapiga kwanza)
-- jedwali la RELA (MAX_RELOCS 16,384) — maeneo yote: mizigo ya
+- jedwali la nje (MAX_EXTERNS 65,536) — kila wito wa mbele unachukua
+  ingizo jipya bila dedup
+- jedwali la RELA (MAX_RELOCS 65,536) — maeneo yote: mizigo ya
   ulimwengu, uhifadhi wa ulimwengu, tungo, nafasi za sret, na wito
-- jedwali la fixup, la ulimwengu (MAX_GLOBALS 512), la lebo
-  (MAX_LABELS 16,384), na la AST (MAX_AST_NODES 65,536)
-- chanzo kikubwa kuliko baiti 1,048,576 (MAX_SOURCE) — mbegu inalia
+- jedwali la fixup, la ulimwengu (MAX_GLOBALS 4096), la lebo
+  (MAX_LABELS 65,536), na la AST (MAX_AST_NODES 262,144)
+- chanzo kikubwa kuliko baiti 4,194,304 (MAX_SOURCE) — mbegu inalia
   kwa sauti badala ya kusoma sehemu tu
+- tokeni (MAX_TOKENS 262,144), msimbo (TEXT_BUF_SIZE 1,048,576),
+  na bwawa la herufi (STR_POOL_SIZE 1,048,576)
 
-Uthibitisho: toleo la jaribio lenye MAX_TOKENS/MAX_AST_NODES
-lililoinuliwa hufikia kikomo cha nje kwa wito 16,500 na inalia
-`Hitilafu: jedwali la nje limejaa` — si uharibifu tena.
+Uthibitisho: vikomo hufikiwa kwa KOSA LAUTI, si uharibifu wa kimya.
 
 ## 4b. `endelea` ndani ya `kwa` [IMEREKEBISHWA]
 
