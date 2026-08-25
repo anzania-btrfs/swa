@@ -2119,17 +2119,21 @@ N32 main() {
     run_msingi_test(chanzo, 3);
 }
 
-/// #134: kamasivyo lilichanganuliwa kama WITO WA KAZI (undefined
-/// reference wakati wa kuunganisha). Sasa ni neno muhimu na mnyororo
-/// wa matawi unachanganuliwa kwa kujirudia.
+/// #134: mnyororo wa matawi (kama ... sivyo ... sivyo) huchanganuliwa
+/// kwa kujirudia kwa kuingiza kama ndani ya sivyo. Hakuna "sivyo kama"
+/// wala "kamasivyo" — kama na sivyo pekee, vikiwekwa kwa fujo.
 #[test]
 fn jaribio_mende_134_kamasivyo_mnyororo() {
     let chanzo = "\
 N32 kadiria(N32 x) {
     kama (x == 1) { rudisha 10; }
-    kamasivyo (x == 2) { rudisha 20; }
-    kamasivyo (x == 3) { rudisha 30; }
-    sivyo { rudisha 40; }
+    sivyo {
+        kama (x == 2) { rudisha 20; }
+        sivyo {
+            kama (x == 3) { rudisha 30; }
+            sivyo { rudisha 40; }
+        }
+    }
 }
 N32 main() {
     kama (kadiria(1) != 10) rudisha 1;
@@ -2138,8 +2142,10 @@ N32 main() {
     kama (kadiria(4) != 40) rudisha 4;
     N32 x = 5;
     kama (x == 9) { x = 1; }
-    sivyo kama (x == 5) { x = 2; }
-    sivyo { x = 3; }
+    sivyo {
+        kama (x == 5) { x = 2; }
+        sivyo { x = 3; }
+    }
     kama (x != 2) rudisha 5;
     rudisha 0;
 }

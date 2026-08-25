@@ -62,7 +62,7 @@ impl TokenKind {
             "W0" | "W8" | "W16" | "W32" | "W64" => TokenKind::NenoMuhimu(s.to_string()),
 
             // Mtiririko wa udhibiti
-            "kama" | "sivyo" | "kamasivyo" | "chagua" | "hali" => {
+            "kama" | "sivyo" | "chagua" | "hali" => {
                 TokenKind::NenoMuhimu(s.to_string())
             }
             "vunja" | "endelea" | "rudisha" | "nenda" => TokenKind::NenoMuhimu(s.to_string()),

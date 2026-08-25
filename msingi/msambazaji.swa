@@ -10,54 +10,54 @@ husisha { mfuatano.swa }
 // -------------------------------------------------------
 // Viunga vya aina za nodi za AST
 // -------------------------------------------------------
-N32 AST_PROGRAMU     = 1;
-N32 AST_KAZI         = 2;
-N32 AST_RUDISHA      = 3;
-N32 AST_NAMBARI      = 4;
+N32 AST_PROGRAMU = 1;
+N32 AST_KAZI = 2;
+N32 AST_RUDISHA = 3;
+N32 AST_NAMBARI = 4;
 N32 AST_KITAMBULISHO = 5;
-N32 AST_JUMLISHA     = 6;
-N32 AST_TOFAUTI      = 7;
-N32 AST_WITO         = 8;
-N32 AST_KAMA         = 9;
-N32 AST_WAKATI       = 10;
-N32 AST_TANGAZO      = 11;
-N32 AST_MUUNDO       = 12;
-N32 AST_SEHEMU       = 13;
-N32 AST_CHAGUA       = 14;
-N32 AST_HALI         = 15;
-N32 AST_VUNJA        = 16;
-N32 AST_ENDELEA      = 17;
-N32 AST_TENGA        = 18;
-N32 AST_ACHILIA      = 19;
-N32 AST_SAWA         = 20;
-N32 AST_TOFAUTI_SI   = 21;
-N32 AST_CHINI        = 22;
-N32 AST_JUU          = 23;
-N32 AST_CHINI_SAWA   = 24;
-N32 AST_JUU_SAWA     = 25;
-N32 AST_NA           = 26;
-N32 AST_AU           = 27;
-N32 AST_SI           = 28;
-N32 AST_TAJA         = 29;
-N32 AST_KUMBUKA      = 30;
-N32 AST_ZIDISHA      = 31;
-N32 AST_GAWANYA      = 32;
-N32 AST_SEHEMU_DOT   = 33;
+N32 AST_JUMLISHA = 6;
+N32 AST_TOFAUTI = 7;
+N32 AST_WITO = 8;
+N32 AST_KAMA = 9;
+N32 AST_WAKATI = 10;
+N32 AST_TANGAZO = 11;
+N32 AST_MUUNDO = 12;
+N32 AST_SEHEMU = 13;
+N32 AST_CHAGUA = 14;
+N32 AST_HALI = 15;
+N32 AST_VUNJA = 16;
+N32 AST_ENDELEA = 17;
+N32 AST_TENGA = 18;
+N32 AST_ACHILIA = 19;
+N32 AST_SAWA = 20;
+N32 AST_TOFAUTI_SI = 21;
+N32 AST_CHINI = 22;
+N32 AST_JUU = 23;
+N32 AST_CHINI_SAWA = 24;
+N32 AST_JUU_SAWA = 25;
+N32 AST_NA = 26;
+N32 AST_AU = 27;
+N32 AST_SI = 28;
+N32 AST_TAJA = 29;
+N32 AST_KUMBUKA = 30;
+N32 AST_ZIDISHA = 31;
+N32 AST_GAWANYA = 32;
+N32 AST_SEHEMU_DOT = 33;
 N32 AST_SEHEMU_MSHALE = 34;
 N32 AST_TANGAZO_ULIMWENGU = 35;
-N32 AST_SIVYO        = 36;
-N32 AST_ASIMILIA     = 37;
-N32 AST_SAFU         = 38;
-N32 AST_MFUATANO     = 40;
+N32 AST_SIVYO = 36;
+N32 AST_ASIMILIA = 37;
+N32 AST_SAFU = 38;
+N32 AST_MFUATANO = 40;
 N32 AST_HAMISHA_KUSHOTO = 39;  // <<
-N32 AST_HAMISHA_KULIA   = 41;  // >>
-N32 AST_BIT_AU          = 42;  // |
-N32 AST_BIT_NA          = 43;  // &
-N32 AST_TERNARY         = 44;  // ? :
-N32 AST_HALISI_D        = 45;  // desimali halisi (D64)
-N32 AST_BADILI          = 48;  // badili(ptr, size) -> realloc
-N32 AST_MODULO          = 49;  // asilimia (%)
-N32 AST_BLOCK          = 50;  // kifungio cha ndani (hatua ya kwa)
+N32 AST_HAMISHA_KULIA = 41;  // >>
+N32 AST_BIT_AU = 42;  // |
+N32 AST_BIT_NA = 43;  // &
+N32 AST_TERNARY = 44;  // ? :
+N32 AST_HALISI_D = 45;  // desimali halisi (D64)
+N32 AST_BADILI = 48;  // badili(ptr, size) -> realloc
+N32 AST_MODULO = 49;  // asilimia (%)
+N32 AST_BLOCK = 50;  // kifungio cha ndani (hatua ya kwa)
 
 // -------------------------------------------------------
 // Safu bapa za AST
@@ -74,7 +74,7 @@ N32 ast_idadi = 0;
 N32 vigezo_kwanza_global = -1;
 N32 vigezo_prev_global = -1;
 
-N8  ast_pool[4194304];
+N8 ast_pool[4194304];
 N32 ast_pool_wapi = 0;
 N32 ast_jina_off[65536];
 
@@ -196,7 +196,7 @@ N32 ruka_hadi_kifikisha(Msambazaji* p) {
         kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, ";")) { rudisha 1; }
         sogeza(p);
     }
-    rudisha 0; // EOF
+    rudisha 0;  // EOF
 }
 
 // -------------------------------------------------------
@@ -214,7 +214,7 @@ N32 tarajia(Msambazaji* p, N32 aina_tokeni) {
 // wanaolinganisha dhidi ya waendeshaji wa herufi-nyingi LAZIMA
 // pia waangalie kwamba urefu wa tokeni unalingana.
 // -------------------------------------------------------
-N32 neno_ni(Tokeni* t, N8* neno) {
+N32 neno_ni(Tokeni * t, N8* neno) {
     kama (t->urefu == 0) { rudisha 0; }
     N64 i = 0;
     wakati (i < t->urefu) {
@@ -246,7 +246,7 @@ N32 tokeni_kwa_nambari(N8* mwanzo, N64 urefu) {
 // Uainishaji wa majina ya aina
 // -------------------------------------------------------
 
-N32 ni_aina_tokeni(Tokeni* t) {
+N32 ni_aina_tokeni(Tokeni * t) {
     kama (t->urefu < 1) { rudisha 0; }
     N8 c0 = t->mwanzo[0];
     kama (c0 >= 65) {
@@ -282,11 +282,11 @@ N32 changanua_aina_tokeni(Msambazaji* p) {
     N32 mshale = 0;
     kama (ni_aina_msingi(txt, n)) {
         N8 c0 = txt[0];
-        kama (c0 == 78)  { familia = 1; }  // N
-        kama (c0 == 65)  { familia = 2; }  // A
-        kama (c0 == 68)  { familia = 3; }  // D
-        kama (c0 == 66)  { familia = 4; }  // B
-        kama (c0 == 87)  { familia = 5; }  // W
+        kama (c0 == 78) { familia = 1; }  // N
+        kama (c0 == 65) { familia = 2; }  // A
+        kama (c0 == 68) { familia = 3; }  // D
+        kama (c0 == 66) { familia = 4; }  // B
+        kama (c0 == 87) { familia = 5; }  // W
     }
     kama (familia == 0) { familia = 6; }  // muundo wa mtumiaji
     kama (familia != 6) {
@@ -393,16 +393,14 @@ N32 changanua_taarifa_kama(Msambazaji* p) {
                 then_body = changanua_taarifa(p);
             }
 
-            // Kifungu cha sivyo cha hiari (else)
+            // Kifungu cha sivyo cha hiari (else) — lazima iwe bloku { }.
+            // Tawi-jingine huandikwa kwa kuingiza kama ndani ya sivyo
+            // (hakuna "sivyo kama").
             N32 else_body = -1;
             kama (p->sasa.urefu >= 2 && p->sasa.mwanzo[0] >= 97) {
                 kama (neno_ni(&p->sasa, "sivyo")) {
                     sogeza(p);
-                    kama (p->sasa.mwanzo[0] == 123) {
-                        else_body = changanua_bloku(p);
-                    } sivyo {
-                        else_body = changanua_taarifa(p);
-                    }
+                    else_body = changanua_bloku(p);
                 }
             }
 
@@ -456,7 +454,7 @@ N32 changanua_taarifa_chagua(Msambazaji* p) {
                 kama (neno_ni(&p->sasa, ")")) { sogeza(p); }
             }
 
-            tarajia(p, TOKENI_ISHARA); // {
+            tarajia(p, TOKENI_ISHARA);  // {
 
             N32 first_case = -1;
             N32 prev_case = -1;
@@ -620,10 +618,10 @@ N32 changanua_taarifa_tangazo(Msambazaji* p) {
                 kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
                     kama (neno_ni(&p->sasa, "[")) {
                         sogeza(p);
-                    kama (p->sasa.urefu > 0) {
-                        safu_ukubwa = neno_kwa_nambari(p->sasa.mwanzo, p->sasa.urefu);
-                        sogeza(p);
-                    }
+                        kama (p->sasa.urefu > 0) {
+                            safu_ukubwa = neno_kwa_nambari(p->sasa.mwanzo, p->sasa.urefu);
+                            sogeza(p);
+                        }
                         kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
                             kama (neno_ni(&p->sasa, "]")) { sogeza(p); }
                         }
@@ -817,8 +815,8 @@ N32 changanua_kazi_mwili(Msambazaji* p) {
             p->kosa = 1;
             N32 fika = ruka_hadi_kifikisha(p);
             kama (fika == 1) { sogeza(p); endelea; }  // tumia ';', endelea
-            kama (fika == 2) { vunja; }               // '}' — loop itaiona
-            vunja;                                      // EOF
+            kama (fika == 2) { vunja; }  // '}' — loop itaiona
+            vunja;  // EOF
         }
         kama (prev == -1) { body = stmt; }
         sivyo { ast_nne[prev] = stmt; }
@@ -1024,8 +1022,8 @@ N32 changanua_usemi_upande(Msambazaji* p) {
         // Tumia utazamaji ili kuzichanganya kuwa kiendeshi kimoja cha mshale.
         kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "-")) {
             kama (p->inayofuata.urefu == 1 && neno_ni(&p->inayofuata, ">")) {
-                sogeza(p); // tumia '-'
-                sogeza(p); // tumia '>'
+                sogeza(p);  // tumia '-'
+                sogeza(p);  // tumia '>'
                 kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) { p->kosa = 1; rudisha -1; }
                 N32 field = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
                 hifadhi_jina(field, p->sasa.mwanzo, p->sasa.urefu);
@@ -1033,7 +1031,7 @@ N32 changanua_usemi_upande(Msambazaji* p) {
                 kushoto = node_mpya(AST_SEHEMU_MSHALE, 0, kushoto, field);
                 endelea;
             }
-            vunja; // '-' pekee -- si kiendeshi cha postfix; acha mchanganuzi wa jumlisha autumie
+            vunja;  // '-' pekee -- si kiendeshi cha postfix; acha mchanganuzi wa jumlisha autumie
         }
 
         // Uandikishaji wa safu  usemi [ faharasa ]
@@ -1127,8 +1125,8 @@ N32 changanua_usemi_linganisha(Msambazaji* p) {
         N32 op = -1;
         kama (p->sasa.urefu == 2 && neno_ni(&p->sasa, "<=")) { op = AST_CHINI_SAWA; }
         kama (p->sasa.urefu == 2 && neno_ni(&p->sasa, ">=")) { op = AST_JUU_SAWA; }
-        kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "<"))  { op = AST_CHINI; }
-        kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, ">"))  { op = AST_JUU; }
+        kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "<")) { op = AST_CHINI; }
+        kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, ">")) { op = AST_JUU; }
         kama (op == -1) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_jumlisha(p);
@@ -1274,10 +1272,10 @@ N32 changanua_usemi_asimilia(Msambazaji* p) {
         // Ugawa wa kiwanja: +=  -=  *=  /=
         kama (op == -1 && p->sasa.urefu == 2) {
             kama (neno_ni(&p->sasa, "+=")) { op = AST_JUMLISHA; ni_kiunganishi = 1; }
-            kama (neno_ni(&p->sasa, "-=")) { op = AST_TOFAUTI;  ni_kiunganishi = 1; }
-            kama (neno_ni(&p->sasa, "*=")) { op = AST_ZIDISHA;  ni_kiunganishi = 1; }
-            kama (neno_ni(&p->sasa, "/=")) { op = AST_GAWANYA;  ni_kiunganishi = 1; }
-            kama (neno_ni(&p->sasa, "%=")) { op = AST_MODULO;   ni_kiunganishi = 1; }
+            kama (neno_ni(&p->sasa, "-=")) { op = AST_TOFAUTI; ni_kiunganishi = 1; }
+            kama (neno_ni(&p->sasa, "*=")) { op = AST_ZIDISHA; ni_kiunganishi = 1; }
+            kama (neno_ni(&p->sasa, "/=")) { op = AST_GAWANYA; ni_kiunganishi = 1; }
+            kama (neno_ni(&p->sasa, "%=")) { op = AST_MODULO; ni_kiunganishi = 1; }
         }
         kama (op == -1) { vunja; }
 
@@ -1334,8 +1332,8 @@ N32 changanua_bloku(Msambazaji* p) {
             p->kosa = 1;
             N32 fika = ruka_hadi_kifikisha(p);
             kama (fika == 1) { sogeza(p); endelea; }  // tumia ';', endelea
-            kama (fika == 2) { vunja; }               // '}' — bloku loop itaiona
-            vunja;                                      // EOF
+            kama (fika == 2) { vunja; }  // '}' — bloku loop itaiona
+            vunja;  // EOF
         }
         kama (prev == -1) { kwanza = stmt; }
         sivyo { ast_nne[prev] = stmt; }
@@ -1396,7 +1394,7 @@ N32 changanua_kazi(Msambazaji* p) {
 
     N32 name_node = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
     hifadhi_jina(name_node, p->sasa.mwanzo, p->sasa.urefu);
-    sogeza(p); // tumia jina
+    sogeza(p);  // tumia jina
     // Hifadhi usimbaji wa aina kwenye nodi ya jina (sawa na matamko ya ndani)
     ast_thamani[name_node] = ret_aina;
 
@@ -1410,7 +1408,7 @@ N32 changanua_kazi(Msambazaji* p) {
     kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
         N32 ni_paren = neno_ni(&p->sasa, "(");
         kama (ni_paren) {
-            sogeza(p); // tumia '(' -- anguka katika uchanganuzi wa vigezo
+            sogeza(p);  // tumia '(' -- anguka katika uchanganuzi wa vigezo
         }
         kama (ni_paren == 0) {
             // Kigezo cha kimataifa:  N32 jina [= usemi];
@@ -1419,12 +1417,12 @@ N32 changanua_kazi(Msambazaji* p) {
             N32 safu_ukubwa = 0;
             kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
                 kama (neno_ni(&p->sasa, "[")) {
-                    sogeza(p); // ruka '['
+                    sogeza(p);  // ruka '['
                     kama (p->sasa.urefu > 0) {
                         safu_ukubwa = neno_kwa_nambari(p->sasa.mwanzo, p->sasa.urefu);
-                        sogeza(p); // ruka ukubwa
+                        sogeza(p);  // ruka ukubwa
                     }
-                    kama (neno_ni(&p->sasa, "]")) { sogeza(p); } // ruka ']'
+                    kama (neno_ni(&p->sasa, "]")) { sogeza(p); }  // ruka ']'
                 }
             }
             kama (p->sasa.urefu == 1) {
@@ -1509,7 +1507,7 @@ N32 ukubwa_wa_muundo_msambazaji(N8* jina) {
 }
 
 N32 changanua_muundo(Msambazaji* p) {
-    sogeza(p); // tumia neno kuu 'muundo'
+    sogeza(p);  // tumia neno kuu 'muundo'
 
     kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
         p->kosa = 1;
@@ -1520,9 +1518,9 @@ N32 changanua_muundo(Msambazaji* p) {
 
     N32 name = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
     hifadhi_jina(name, p->sasa.mwanzo, p->sasa.urefu);
-    sogeza(p); // tumia jina la muundo
+    sogeza(p);  // tumia jina la muundo
 
-    tarajia(p, TOKENI_ISHARA); // tarajia '{'
+    tarajia(p, TOKENI_ISHARA);  // tarajia '{'
 
     N32 kwanza_sehemu = -1;
     N32 prev = -1;
@@ -1544,8 +1542,8 @@ N32 changanua_muundo(Msambazaji* p) {
             p->kosa = 1;
             N32 fika = ruka_hadi_kifikisha(p);
             kama (fika == 1) { sogeza(p); endelea; }  // tumia ';', jaribu shamba linalofuata
-            kama (fika == 2) { vunja; }               // '}' — kitanzi kitaiona juu
-            vunja;                                      // EOF
+            kama (fika == 2) { vunja; }  // '}' — kitanzi kitaiona juu
+            vunja;  // EOF
         }
 
         N32 fname = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
@@ -1558,18 +1556,18 @@ N32 changanua_muundo(Msambazaji* p) {
             // Sehemu ya aina ya muundo: tafuta ukubwa wa muundo huo
             N32 name_off2 = ((-field_aina) / 2) - 1;
             running_offset = running_offset + ukubwa_wa_muundo_msambazaji(ast_pool + name_off2);
-        } sivyo kama (field_aina != 0) {
-            N32 mshale_f = field_aina % 2;
-            kama (mshale_f == 1) { running_offset = running_offset + 8; }
-            sivyo {
-                N32 familia_f = (field_aina / 256) % 256;
-                // Upana halisi: toa familia*256 kwanza
-                N32 upana_f = field_aina - (field_aina % 2) - (familia_f * 256);
-                kama (familia_f >= 1) { running_offset = running_offset + (upana_f / 8); }
-                sivyo { running_offset = running_offset + 4; }
-            }
-        } sivyo { running_offset = running_offset + 4; }
-        sogeza(p); // tumia jina la shamba
+        } sivyo { kama (field_aina != 0) {
+                N32 mshale_f = field_aina % 2;
+                kama (mshale_f == 1) { running_offset = running_offset + 8; }
+                sivyo {
+                    N32 familia_f = (field_aina / 256) % 256;
+                    // Upana halisi: toa familia*256 kwanza
+                    N32 upana_f = field_aina - (field_aina % 2) - (familia_f * 256);
+                    kama (familia_f >= 1) { running_offset = running_offset + (upana_f / 8); }
+                    sivyo { running_offset = running_offset + 4; }
+                }
+            } sivyo { running_offset = running_offset + 4; } }
+        sogeza(p);  // tumia jina la shamba
 
         // Semicolon ya hiari inayofuata
         kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
@@ -1582,7 +1580,7 @@ N32 changanua_muundo(Msambazaji* p) {
         prev = f;
     }
 
-    sogeza(p); // tumia '}'
+    sogeza(p);  // tumia '}'
 
     // Semicolon ya hiari inayofuata baada ya ufafanuzi wa muundo
     kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
@@ -1614,7 +1612,7 @@ N32 changanua(Msambazaji* p) {
         kama (p->sasa.urefu >= 2 && p->sasa.mwanzo[0] >= 97) {
             kama (neno_ni(&p->sasa, "husisha")) {
                 N32 mstari_husisha = p->sasa.mstari;
-                sogeza(p); // tumia neno kuu "husisha"
+                sogeza(p);  // tumia neno kuu "husisha"
                 // Ruka tokeni zote kwenye mstari huo huo
                 wakati (p->sasa.urefu != 0 && p->sasa.mstari == mstari_husisha) {
                     sogeza(p);
@@ -1640,8 +1638,8 @@ N32 changanua(Msambazaji* p) {
         kama (node == -1) {
             kama (p->sasa.urefu != 0) {
                 p->kosa = 1;  // alama kwamba mchanganuo ulishindwa
-                sogeza(p);    // ruka tokeni lisilotambulika
-                endelea;      // endelea kutafuta makosa zaidi
+                sogeza(p);  // ruka tokeni lisilotambulika
+                endelea;  // endelea kutafuta makosa zaidi
             }
             vunja;  // EOF
         }
