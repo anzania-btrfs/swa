@@ -49,6 +49,6 @@ mnyororo wa uzalishaji ni mbegu/exe pekee).
 
 ## Uthibitisho wa jumla
 
-Majaribio 219/219 (146 maktaba + 72 ujumuishaji + 1 nyaraka).
+Majaribio 227/227 (146 maktaba + 80 ujumuishaji + 1 nyaraka).
 Fixpoint: stage2-exe == stage3-exe sawa kwa baiti baada ya kila
 mchanganyiko. Alama za nje za exe: SIFURI.
