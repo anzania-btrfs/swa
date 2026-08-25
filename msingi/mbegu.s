@@ -22,17 +22,17 @@
 ; Sehemu ya 0: Vifafanuzi vya ukubwa
 ; =============================================================================
 
-%define MAX_SOURCE        1048576    ; 1 MB ya chanzo
-%define MAX_TOKENS        65536      ; upeo wa tokeni
-%define MAX_AST_NODES     65536      ; upeo wa nodi za AST
-%define TEXT_BUF_SIZE     262144     ; 256 KB ya msimbo wa .text
-%define DATA_BUF_SIZE     4096       ; 4 KB ya data ya ulimwengu
-%define MAX_LABELS        16384      ; upeo wa lebo
-%define MAX_EXTERNS       16384      ; upeo wa alama za nje
-%define MAX_RELOCS        16384      ; upeo wa marekebisho
-%define MAX_GLOBALS       512        ; upeo wa vigezo vya ulimwengu
-%define STR_POOL_SIZE     262144     ; bwawa la herufi (256 KB kwa faili kubwa)
-%define MAX_LOCALS        512        ; upeo wa vigezo vya ndani kwa kazi
+%define MAX_SOURCE        4194304    ; 4 MB ya chanzo
+%define MAX_TOKENS        262144     ; upeo wa tokeni
+%define MAX_AST_NODES     262144     ; upeo wa nodi za AST
+%define TEXT_BUF_SIZE     1048576    ; 1 MB ya msimbo wa .text
+%define DATA_BUF_SIZE     16384      ; 16 KB ya data ya ulimwengu
+%define MAX_LABELS        65536      ; upeo wa lebo
+%define MAX_EXTERNS       65536      ; upeo wa alama za nje
+%define MAX_RELOCS        65536      ; upeo wa marekebisho
+%define MAX_GLOBALS       4096       ; upeo wa vigezo vya ulimwengu
+%define STR_POOL_SIZE     1048576    ; bwawa la herufi (1 MB kwa faili kubwa)
+%define MAX_LOCALS        1024       ; upeo wa vigezo vya ndani kwa kazi
 
 ; Aina za tokeni
 %define TOK_NENO          1          ; jina au neno muhimu
