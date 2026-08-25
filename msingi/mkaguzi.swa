@@ -466,7 +466,11 @@ N32 mkaguzi_kagua_usemi(N32 node) {
     // kwenye ast_nne kwa ukusanyaji wa hoja za wito (uzalishaji_wito
     // unasoma enc hapo — si ast_thamani, ambayo ni thamani ya namba).
     kama (aina == 4) {
-        ast_nne[node] = 288;  // N32: familia 1, upana 32
+        kama (ast_tiga[node] == 1) {
+            ast_nne[node] = 320;  // N64: familia 1, upana 64
+        } sivyo {
+            ast_nne[node] = 288;  // N32: familia 1, upana 32
+        }
         rudisha 0;  // "aina yoyote" — haisababishi makosa ya utangamano
     }
 

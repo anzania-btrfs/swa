@@ -2559,6 +2559,19 @@ W0 uzalishaji_taarifa(N32 node, N32 kazi_node) {
 
 // AST_NAMBARI (4) -- namba halisi
 W0 uzalishaji_nambari(N32 node, N32 kazi_node) {
+    kama (ast_tiga[node] == 1) {
+        // N64 halisi: baiti 8 zimehifadhiwa kwenye dimbwi la AST
+        // (ast_thamani = ofseti). Toa mov rax, imm64 (48 B8 + baiti 8).
+        N32 off = ast_thamani[node];
+        andika_baiti(72);   // 0x48 — REX.W
+        andika_baiti(184);  // 0xB8 — mov rax, imm64
+        N32 bi = 0;
+        wakati (bi < 8) {
+            andika_baiti(ast_pool[off + bi]);
+            bi = bi + 1;
+        }
+        rudisha;
+    }
     N32 val = ast_thamani[node];
     andika_mov_eax(val);
 }
@@ -4074,14 +4087,28 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
                 // Tathmini kianzio kisichobadilika
                 data_ulimwengu_bss[data_ulimwengu_idadi] = 0;
                 data_ulimwengu_off[data_ulimwengu_idadi] = bafa_data_wapi;
-                N32 val = thamani_isiyobadilika(ast_kulia[gn]);
-                N32 k = 0;
-                wakati (k < sz) {
-                    kama (bafa_data_wapi < 262144) {
-                        bafa_data[bafa_data_wapi] = (val >> (k * 8)) & 255;
-                        bafa_data_wapi = bafa_data_wapi + 1;
+                N32 init_node = ast_kulia[gn];
+                kama (init_node != -1 && ast_aina[init_node] == 4 && ast_tiga[init_node] == 1) {
+                    // N64 halisi: ast_thamani ni ofseti ya dimbwi, si thamani.
+                    N32 off8 = ast_thamani[init_node];
+                    N32 k = 0;
+                    wakati (k < 8) {
+                        kama (bafa_data_wapi < 262144) {
+                            bafa_data[bafa_data_wapi] = ast_pool[off8 + k];
+                            bafa_data_wapi = bafa_data_wapi + 1;
+                        }
+                        k = k + 1;
                     }
-                    k = k + 1;
+                } sivyo {
+                    N32 val = thamani_isiyobadilika(init_node);
+                    N32 k = 0;
+                    wakati (k < sz) {
+                        kama (bafa_data_wapi < 262144) {
+                            bafa_data[bafa_data_wapi] = (val >> (k * 8)) & 255;
+                            bafa_data_wapi = bafa_data_wapi + 1;
+                        }
+                        k = k + 1;
+                    }
                 }
             }
             data_ulimwengu_idadi = data_ulimwengu_idadi + 1;
