@@ -36,7 +36,7 @@ hesabu_na_onyesha(15, 7);
 N32 umri = 25;
 N64 idadi_ya_watu = 8000000000;
 D32 wastani = 3.14;
-B1 imewashwa = kweli;
+B1 imewashwa = 1;
 N8 herufi = 'A';
 ```
 
@@ -47,10 +47,12 @@ N8 herufi = 'A';
 N32 kadirifu(N32 x) {
     kama (x > 0) {
         rudisha 1;
-    } sivyo kama (x < 0) {
-        rudisha -1;
     } sivyo {
-        rudisha 0;
+        kama (x < 0) {
+            rudisha -1;
+        } sivyo {
+            rudisha 0;
+        }
     }
 }
 
@@ -131,15 +133,18 @@ N32 kitanzi(N32 n) {
 
 ## Vipengele
 
-- **Maneno muhimu 42** ya Kiswahili -- hakuna Kiingereza katika sintaksia
+- **Maneno muhimu 13** ya Kiswahili -- hakuna Kiingereza katika sintaksia.
+  Aina za nambari hutambuliwa kisintaksia kwa herufi kubwa (familia za
+  N/A/D/B/W), si kama maneno muhimu.
 - **Kujitegemea (100%)** -- mnyororo wa kujikusanya umefungwa kabisa:
   baiti za mkono → mbegu → stage1-exe → stage2-exe == stage3-exe
   (mnyororo wa uzalishaji; uthabiti wa makosa ni mhimili tofauti —
   angalia hati/mipaka.md)
 - **Vizalishe viwili**: LLVM (majukwaa yote) + asilia (x86-64 ELF moja kwa moja)
-- **Aina 25 za nambari** — N8–N128, A8–A128, D16–D80, B1–B64, W0–W64 zote zinashughulikiwa
+- **Familia 5 za nambari** — N, A, D, B, W (upana wowote: N8–N128,
+  D16–D80, B1–B64, W0–W64, n.k.)
 - **Kumbukumbu ya moja kwa moja** -- tenga, achilia, hakuna ukusanyaji taka
-- **Majaribio**: 217 yanapita (146 maktaba + 70 ujumuishaji + 1 nyaraka). K6 bootstrap inafanya kazi.
+- **Majaribio**: 227 yanapita (146 maktaba + 80 ujumuishaji + 1 nyaraka). K6 bootstrap inafanya kazi.
 
 ## Muundo wa Mradi
 
@@ -150,7 +155,7 @@ N32 kitanzi(N32 n) {
 | `msingi/msomaji.swa` | Msomaji (lexer) — kamili |
 | `msingi/msambazaji.swa` | Mchanganuzi (parser) — kamili, nodi 47 za AST |
 | `msingi/mkaguzi.swa` | Mkaguzi wa kisemantiki — kamili (aina, hoja, ugawaji) |
-| `msingi/mteremko.swa` | Kiteremshi cha AST→IR — kamili |
+| `msingi/mteremko.swa` | Kiteremshi cha AST→IR — huitwa kwa uthibitishaji wa muundo; codegen asilia hutumia AST moja kwa moja |
 | `msingi/uzalishaji.swa` | Kizalishe asilia cha x86-64 — kamili (aina zote, sret, alloca) |
 | `msingi/ramani.swa` | Jedwali la hashi |
 | `msingi/orodha.swa` | Safu inayobadilika |
@@ -171,7 +176,7 @@ N32 kitanzi(N32 n) {
 
 ```sh
 cargo build --release
-cargo test          # Majaribio 217: 146 ya maktaba + 70 ya ujumuishaji + 1 wa nyaraka
+cargo test          # Majaribio 227: 146 ya maktaba + 80 ya ujumuishaji + 1 wa nyaraka
 ```
 
 ## Matumizi
@@ -198,13 +203,13 @@ za mkono hadi mkusanyaji kamili wa Swa, bila lugha nyingine popote.
 
 | Kipimo | Thamani |
 |--------|---------|
-| **Majaribio** | 217/217 [PASS] |
+| **Majaribio** | 227/227 [PASS] |
 | **Kujikusanya (K6)** | Inapita [PASS] |
 | **Mchanganuzi wa Swa** | Kamili [DONE] |
 | **Mkaguzi wa Swa** | Kamili [DONE] |
 | **Kiteremshi cha Swa** | Kamili [DONE] |
 | **Kizalishe asilia cha x86-64** | Kamili [DONE] |
-| **Usambazaji wa aina** | Aina zote 25 [DONE] |
+| **Usambazaji wa aina** | Familia 5 (N/A/D/B/W) [DONE] |
 | **Urejeshaji wa makosa** | Kamili [DONE] |
 | **Alloca-in-loop** | Imerekebishwa [DONE] |
 | **Sret (struct return)** | Imetekelezwa [DONE] |

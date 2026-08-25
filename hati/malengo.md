@@ -15,7 +15,7 @@ Hakuna assembly. Hakuna GNU as.
 - [x] ELF header + machine code (opcodes za x86-64)
 - [x] Inachukua nafasi ya mteremko.swa (LLVM) KABISA katika mnyororo wa kujikusanya
 - [x] `N32 main() { rudisha 42; }` -> ELF binary inayofanya kazi
-- [x] Mnyororo mzima unajithibitisha: stage2.o == stage3.o == stage4.o (sawa kwa baiti)
+- [x] Mnyororo mzima unajithibitisha: stage2-exe == stage3-exe (sawa kwa baiti)
 
 ### Hatua ya 2: JIT halisi (kama HolyC) [IMEFANYIKA]
 Swa inatoa maelekezo moja kwa moja kwenye kumbukumbu na kuyatekeleza.
@@ -40,7 +40,7 @@ Andika baiti za mkono (opcodes za x86-64) zinazounda mkusanyaji wa kwanza.
       (sawa kwa baiti) bila ld, gcc, wala libc.
 - [x] Runtime ya syscalls: mkusanyaji hautekelezi kupitia libc tena —
       sys_open/sys_read/sys_write/sys_mmap kupitia wito_wa_mfumo;
-      undefined za nje za stage2.o ni mbili tu (daraja za JIT).
+      undefined za nje za stage2-exe ni mbili tu (daraja za JIT).
 - [x] 0% bootstrap gap — mbegu inatoa ET_EXEC tuli moja kwa moja
       (`--exe`): kichwa + phdr + stub ya `_start` + urekebishaji wa
       RELA wa ndani. Hakuna gcc, ld, clang, muda.c, wala libc popote
@@ -57,7 +57,8 @@ Andika baiti za mkono (opcodes za x86-64) zinazounda mkusanyaji wa kwanza.
 3. **Hakuna assembly/GNU as.** Machine code moja kwa moja.
 4. **Kiswahili pekee.** Maoni yote, majina ya faili, maneno muhimu.
 5. **Hakuna bloat.** Kila neno linafanya jambo moja.
-6. **Maneno 42.** Hayabadiliki bila sababu.
+6. **Maneno muhimu 13.** Seti ndogo isiyobadilika; aina za nambari
+   hutambuliwa kisintaksia (herufi kubwa), si kama maneno muhimu.
 7. **Hakuna emoji.**
 8. **Bootstrap ya mwisho kwa baiti za mkono.**
 
@@ -68,9 +69,10 @@ Andika baiti za mkono (opcodes za x86-64) zinazounda mkusanyaji wa kwanza.
 - `hati/malengo.md` — huu hapa (lengo letu halisi)
 - `hati/mipaka.md` — mipaka inayojulikana (kwa ukali)
 - `msingi/uzalishaji.swa` — codegen asilia (inajikusanya)
-- `msingi/mteremko.swa` — LLVM backend ya dereva wa Rust (msimbo mfu kwa kujikusanya)
+- `msingi/mteremko.swa` — kiteremshi cha AST→IR (huitwa kwa uthibitishaji wa muundo; codegen asilia hutumia AST moja kwa moja)
 - `msingi/stage1.swa` — kiendeshi cha bootstrap
-- `msingi/mbegu.s` — mbegu ya NASM (itatoweka kwenye Hatua ya 3)
+- `msingi/mbegu.s` — mbegu ya NASM (rejea ya kihistoria; NASM imeondolewa
+  kwenye mnyororo wa uzalishaji — kwanza inachukua nafasi yake)
 
 ## Kile Tunachofanya Sasa (Agosti 2026)
 

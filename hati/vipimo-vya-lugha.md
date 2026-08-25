@@ -32,10 +32,15 @@ Kiswahili kwa mkongwe.
 
 ### 2.2 Maneno Muhimu
 
-`muundo`, `rudisha`, `kama`, `sivyo`, `kamasivyo`, `wakati`, `kwa`,
-`vunja`, `endelea`, `chagua`, `hali`, `husisha`, `ukubwa`, `tengeneza`.
+`muundo`, `rudisha`, `kama`, `sivyo`, `wakati`, `kwa`, `vunja`,
+`endelea`, `chagua`, `hali`, `husisha`, `tenga`, `achilia`.
 
 Maneno muhimu hayawezi kutumika kama majina ya vitambulisho.
+Aina za nambari haziko kwenye orodha hii — hutambuliwa kisintaksia
+kwa herufi kubwa: `[N|A|D|B|W]` ikifuatiwa na tarakimu (mf. `N32`,
+`D64`, `W0`). Dereva wa Rust (majaribio) una maneno muhimu ya ziada
+(`fanya`, `muungano`, `kutoka`, `badili`, `nakili`, `ukubwa`, `nenda`)
+ambayo hayako kwenye mkusanyaji wa uzalishaji.
 
 ### 2.3 Halisi
 
@@ -65,17 +70,22 @@ kijiuzi hayaruhusiwi.
 
 | Aina | Maelezo |
 |---|---|
-| `N8` | Nambari kamili isiyo na ishara, baiti 1 |
-| `N16` | Nambari kamili isiyo na ishara, baiti 2 |
+| `N8` | Nambari kamili yenye ishara, baiti 1 |
+| `N16` | Nambari kamili yenye ishara, baiti 2 |
 | `N32` | Nambari kamili yenye ishara, baiti 4 |
 | `N64` | Nambari kamili yenye ishara, baiti 8 |
 | `W0` | Bila thamani (void) — kwa kazi tu |
-| `tupu` | Kisawe cha `W0` (dereva wa Rust) |
 | `D64` | Desimali, baiti 8 — **kikomo, angalia 2.3** |
 | `B1` | Boolean — ya ndani; matokeo ya ulinganisho na mantiki |
 | `T*` | Kielekezi kwa aina T |
 | `T[n]` | Safu ya vitu n vya aina T |
 | `muundo` | Muundo uliotangazwa na mtumiaji |
+
+Familia za nambari ni N (kamili yenye ishara), A (asili/bila ishara),
+D (desimali), B (boolean/biti), na W (upana wa mashine; W0 = void) —
+kila moja ikifuatiwa na upana wowote wa tarakimu. Hakuna neno muhimu
+la "tupu" au halisi za "kweli"/"uongo" — W0 hutumika kwa bila-thamani
+na 1/0 kwa ukweli.
 
 Matokeo ya `==`, `!=`, `<`, `>`, `<=`, `>=`, `&&`, `||`, `!` ni
 thamani ya 1 (kweli) au 0 (si kweli).
@@ -144,12 +154,18 @@ kuigawa.
 
 `x = usemi;` — ugawi ni usemi (matokeo yake ni thamani iliyogawiwa).
 
-### 6.3 Kama/sivyo/kamasivyo
+### 6.3 Kama/sivyo
 
 ```
 kama (sharti) { ... }
 sivyo { ... }              // hiari
-kamasivyo (sharti) { ... } // hiari, mnyororo wa sivyo-kama
+
+// Tawi-jingine (else-if) huandikwa kwa kuingiza kama ndani ya sivyo:
+kama (sharti1) { ... }
+sivyo {
+    kama (sharti2) { ... }
+    sivyo { ... }
+}
 ```
 
 ### 6.4 Wakati
@@ -224,7 +240,7 @@ muundo Nukta {
 
 | Faili | Kazi muhimu |
 |---|---|
-| `kumbukumbu.swa` | nakili, weka_sifuri, linganisha_kumbukumbu, tengeneza/achilia (arena), sys_soma/sys_andika/sys_fungua/sys_funga, andika, soma_mstari |
+| `kumbukumbu.swa` | nakili, weka_sifuri, linganisha_kumbukumbu, tenga/achilia (arena), sys_soma/sys_andika/sys_fungua/sys_funga, andika, soma_mstari |
 | `mfuatano.swa` | urefu_wa_mfuatano, linganisha_mfuatano, nakili_mfuatano, unganisha_mfuatano, tafuta_herufi, tafuta_mfuatano, kata_nafasi, nambari_kwa_mfuatano, mfuatano_hadi_n32/n64 |
 | `hesabu.swa` | hesabu_kamili/kubwa, hesabu_ndogo/dogo, neneo_n32/n64, gcd_hesabu, pow_kamili, isqrt_hesabu, fibonacci_hesabu |
 | `orodha.swa` | Orodha (safu inayokua): orodha_mpya, orodha_ongeza, orodha_pata, orodha_futa_mwisho, orodha_urefu, orodha_huru |
@@ -237,15 +253,14 @@ Kila kazi imejitosheleza; maktaba inaweza kuunganishwa kwa mkono
 ## 11. Mipaka ya 1.0
 
 Tazama `hati/mipaka.md` kwa orodha kamili yenye viwango vya ukali.
-Muhtasari: desimali (JUU — bomba limevunjika kwenye minyororo yote),
-mwisho wa LLVM wa dereva wa Rust (JUU — ulioshushwa hadhi kuwa wa
-MAJARIBIO; mnyororo wa uzalishaji ni mbegu/exe pekee), upeo wa tokeni
-65,536 (JUU — unalia kwa sauti), na semantiki ya zamani ya `endelea`
-kwenye mkusanyaji wa .swa (inajulikana, inafuatiliwa).
+Muhtasari: ABI ya desimali kwenye wito wa kazi wa mbegu (CHINI — inalia
+kwa sauti; mnyororo wa .swa una ABI kamili), mwisho wa LLVM wa dereva
+wa Rust (ulioshushwa hadhi kuwa wa MAJARIBIO; mnyororo wa uzalishaji ni
+mbegu/exe pekee), na upeo wa tokeni 65,536 (unalia kwa sauti).
 
 ## 12. Uthibitisho
 
 Kila kanuni katika hati hii ina mwenzake kwenye majaribio ya
 ujumuishaji (`majaribio/integration.rs`) au kwenye mnyororo wa
 kujikusanya (fixpoint: stage2-exe == stage3-exe sawa kwa baiti).
-Majaribio yote: 146 ya maktaba + 72 ya ujumuishaji + 1 ya nyaraka.
+Majaribio yote: 146 ya maktaba + 80 ya ujumuishaji + 1 ya nyaraka.

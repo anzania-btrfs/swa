@@ -2,11 +2,11 @@
 
 ## Muhtasari
 
-- **Keywords:** 42 za Kiswahili (hakuna Kiingereza katika sintaksia)
-- **Aina:** 25 za nambari (N8-N128, A8-A128, D16-D80, B1-B64, W0-W64)
-- **Majaribio:** 67/67 ya ujumuishaji + 146 za kitengo (Rust), vipimo 5/5 vya mbegu, JIT 5/5
+- **Keywords:** 13 za Kiswahili (aina za nambari hutambuliwa kisintaksia kwa herufi kubwa)
+- **Aina:** familia 5 za nambari (N, A, D, B, W — upana wowote)
+- **Majaribio:** 80/80 ya ujumuishaji + 146 za kitengo (Rust) + 1 ya nyaraka
 - **Backend:** uzalishaji.swa (native x86-64, inajikusanya); LLVM inabaki kwenye dereva wa Rust kwa vipimo pekee
-- **Bootstrap:** mbegu (NASM) → stage1 → stage2 → stage3 → stage4 — sawa kwa baiti
+- **Bootstrap:** kwanza (baiti za mkono) → mbegu → stage1-exe → stage2-exe == stage3-exe — sawa kwa baiti
 
 ## Hatua ya 0: Mkusanyaji wa Bootstrap wa Rust [PASS] IMEFANIKIWA
 
@@ -14,7 +14,7 @@
 - [x] IR lowering (AST -> Swa IR)
 - [x] LLVM codegen (x86-64 native binaries)
 - [x] ABI classification (sret, struct returns)
-- [x] Majaribio 67/67 ya ujumuishaji + 146 za kitengo
+- [x] Majaribio 80/80 ya ujumuishaji + 146 za kitengo
 
 ## Hatua ya 1: Kujikusanya kwa Msingi [PASS] IMEFANIKIWA
 
@@ -30,14 +30,15 @@
 
 ### Mnyororo wa Kujikusanya wa Sasa
 
-1. `mbegu.bin` (NASM, syscalls pekee) husoma `msingi/*.swa` na kutoa `stage1.o`
-2. `stage1.bin` (codegen ya mbegu) inajikusanya maktaba → `stage2.o`
-3. `stage2.bin` (codegen ya Swa) inajikusanya maktaba → `stage3.o`
-4. `stage3.bin` inajikusanya → `stage4.o`
+1. `kwanza.bin` (baiti za mkono, hex → binary) hutoa `mbegu.bin` kutoka `mbegu.hex`
+2. `mbegu --exe` (syscalls pekee, hakuna kiunganishi) hukusanya `msingi/*.swa` → `stage1-exe`
+3. `stage1-exe --exe` inajikusanya maktaba → `stage2-exe`
+4. `stage2-exe --exe` inajikusanya → `stage3-exe`
 
-**Uthibitisho:** stage2.o == stage3.o == stage4.o sawa kwa baiti (209KB),
-s3.err na s4.err tupu, vipimo 5/5 (ts_tupu→0, ts_le_uongo→0,
-ts_le_kweli→7, ts_lt_kweli→5, ts_argc→2).
+**Uthibitisho:** stage2-exe == stage3-exe sawa kwa baiti, bila gcc/ld/clang/libc
+popote kwenye mnyororo. Kumbuka: hili linahusu mnyororo wa uzalishaji pekee —
+uthabiti wa mchanganuzi dhidi ya ingizo baya ni mhimili tofauti
+(angalia hati/mipaka.md).
 
 **JIT inafanya kazi (PR #143):** mmap → opcodes → rukia, na thamani ya
 kurudi inarudi kwa usahihi. Stub ya `jmp main`, tungo mwishoni mwa bafa,
@@ -75,7 +76,7 @@ kwenye njia ya Rust → LLVM.
 
 - [x] Mkusanyaji wa Swa unajikusanya **bila kutumia kande**
 - [x] Bootstrap inafungwa: mbegu -> Swa -> Swa -> binary
-- [x] Uthibitisho: stage2.o == stage3.o == stage4.o sawa kwa baiti
+- [x] Uthibitisho: stage2-exe == stage3-exe sawa kwa baiti
 - [!] Rust `kande` inabaki kama chombo cha vipimo na ukuzaji (CI) tu —
       si sehemu ya mnyororo wa uzalishaji
 
