@@ -242,6 +242,21 @@ N32 tokeni_kwa_nambari(N8* mwanzo, N64 urefu) {
     rudisha n;
 }
 
+// Kama tokeni_kwa_nambari, lakini inarudisha N64 kamili — inaweza
+// kubeba thamani zaidi ya 2147483647 (vipimo vya baiti 8).
+N64 tokeni_kwa_nambari_n64(N8* mwanzo, N64 urefu) {
+    N64 n = 0;
+    N32 i = 0;
+    wakati (i < urefu) {
+        N8 c = mwanzo[i];
+        kama (c >= 48) {
+            kama (c <= 57) { n = n * 10 + c - 48; }
+        }
+        i = i + 1;
+    }
+    rudisha n;
+}
+
 // -------------------------------------------------------
 // Uainishaji wa majina ya aina
 // -------------------------------------------------------
@@ -870,9 +885,25 @@ N32 changanua_primary(Msambazaji* p) {
             k2 = k2 + 1;
         }
         kama (ni_d == 0) {
-            N32 val = tokeni_kwa_nambari(p->sasa.mwanzo, p->sasa.urefu);
+            N64 v = tokeni_kwa_nambari_n64(p->sasa.mwanzo, p->sasa.urefu);
             sogeza(p);
-            rudisha node_mpya(AST_NAMBARI, val, -1, -1);
+            kama (v > 2147483647) {
+                // N64 halisi: ast_thamani (N32) haiwezi kubeba thamani
+                // kubwa — hifadhi baiti 8 kwenye dimbwi la AST na uweke
+                // ast_tiga=1 kama alama ya N64.
+                N32 off_n = ast_pool_wapi;
+                N8* bv = &v;
+                N32 bvi = 0;
+                wakati (bvi < 8) {
+                    ast_pool[off_n + bvi] = bv[bvi];
+                    bvi = bvi + 1;
+                }
+                ast_pool_wapi = off_n + 8;
+                N32 nn = node_mpya(AST_NAMBARI, off_n, -1, -1);
+                ast_tiga[nn] = 1;
+                rudisha nn;
+            }
+            rudisha node_mpya(AST_NAMBARI, v, -1, -1);
         }
         // Desimali halisi (D64): baiti kutoka daraja la C (strtod),
         // zimehifadhiwa kwenye dimbwi la AST (baiti 8) — ast_thamani

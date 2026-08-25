@@ -96,12 +96,28 @@ wito wa kazi haisaidiwi bado na mbegu`). Mnyororo wa .swa unashughulikia
 hali hiyo kikamilifu — tumia mkusanyaji wa .swa kwa program zenye
 kazi za D64.
 
-## 5. Maneno halisi ni 32-bit signed [UKALI: CHINI]
+## 5. Maneno halisi ni 32-bit signed [IMEREKEBISHWA kwa mnyororo wa .swa]
 
-Neno halisi `2147483648` linatafsiriwa kama `-2147483648` (biti
-zinahifadhiwa, ishara inaenea) — na mkusanyaji wa mbegu NA dereva wa
-Rust KWA USAWA (uthabiti, si mgawanyiko). Thamani kubwa zaidi ya
-32-bit lazima zijengwe wakati wa utekelezaji.
+Ilikuwa: neno halisi `2147483648` linatafsiriwa kama `-2147483648`
+(biti zinahifadhiwa, ishara inaenea) — thamani kubwa zaidi ya 32-bit
+lazima zijengwe wakati wa utekelezaji.
+
+Sasa (mnyororo wa .swa, uliothibitishwa 2026-08-25): mkusanyaji wa
+kujikusanya unachanganua maneno halisi hadi N64 kamili. `tokeni_kwa_nambari_n64`
+inakusanya thamani kama N64; `changanua_primary` huhifadhi baiti 8
+kwenye dimbwi la AST kwa thamani > 2147483647 (alama `ast_tiga=1`);
+mkaguzi huweka usimbaji wa N64 (upana 64); `uzalishaji_nambari` hutoa
+`mov rax, imm64`; na kianzio cha ulimwengu kinakili baiti 8 kutoka
+dimbwi. Uthibitisho: `N64 x = 4294967296; rudisha x / 4294967296` → 1
+(juu) na `x % 4294967296` → 0 (chini), kwa kigeu cha ndani NA cha
+ulimwengu.
+
+Kikomo kilichobaki (CHINI): mbegu (bootstrap pekee) na dereva wa Rust
+bado zinachanganua maneno halisi kama 32-bit. Mbegu haihitaji maneno
+ya N64 kwa kujikusanya (chanzo cha .swa kinatumia thamani chini ya
+2^31 pekee) — lakini kama mkusanyaji wa kujitegemea, mbegu bado hukata
+thamani kubwa (k.m. `4294967296` → 0, na kusababisha FPE katika
+ugawanyo).
 
 ## 6. Dereva wa Rust/LLVM: njia ya MAJARIBIO yenye ulinzi wa sauti [IMEREKEBISHWA — JUU imefungwa 2026-08-20]
 
