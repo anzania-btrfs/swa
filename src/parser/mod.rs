@@ -246,10 +246,11 @@ impl<'a> Parser<'a> {
 
     fn ni_aina(&self) -> bool {
         match &self.sasa().kind {
-            // "tupu" ni neno muhimu la aina ya bila-thamani (sawa na W0)
-            // lakini huanza na herufi ndogo — kikubali kwa uwazi.
-            TokenKind::NenoMuhimu(s) => s == "tupu"
-                || s.as_bytes().first().map_or(false, |c| c.is_ascii_uppercase()),
+            // Aina hutambuliwa kisintaksia kwa herufi kubwa (sawa na
+            // mkusanyaji wa kujikusanya) — si kama maneno muhimu.
+            TokenKind::NenoMuhimu(s) => {
+                s.as_bytes().first().map_or(false, |c| c.is_ascii_uppercase())
+            }
             TokenKind::Kitambulisho(s) => s.as_bytes().first().map_or(false, |c| c.is_ascii_uppercase()),
             _ => false,
         }
@@ -260,9 +261,7 @@ impl<'a> Parser<'a> {
         if !self.ni_aina() { return 0; }
         let txt = self.sasa().lexeme.clone();
         let n = txt.len();
-        let (familia, upana): (u32, u32) = if txt == "tupu" {
-            (5, 0) // tupu == W0 (bila thamani)
-        } else if n >= 2 && txt[1..].chars().all(|c| c.is_ascii_digit()) {
+        let (familia, upana): (u32, u32) = if n >= 2 && txt[1..].chars().all(|c| c.is_ascii_digit()) {
             let c0 = txt.as_bytes()[0];
             let fam = match c0 { b'N' => 1, b'A' => 2, b'D' => 3, b'B' => 4, b'W' => 5, _ => 6 };
             let w = txt[1..].parse().unwrap_or(32);
@@ -321,18 +320,6 @@ impl<'a> Parser<'a> {
                 self.ast.hifadhi_jina(n, &s);
                 self.sogeza();
                 n
-            }
-            TokenKind::NenoMuhimu(k) if k == "kweli" => {
-                self.sogeza();
-                self.ast.node_mpya(AST_KWELI, 1, NO_NODE, NO_NODE)
-            }
-            TokenKind::NenoMuhimu(k) if k == "uongo" => {
-                self.sogeza();
-                self.ast.node_mpya(AST_UONGO, 0, NO_NODE, NO_NODE)
-            }
-            TokenKind::NenoMuhimu(k) if k == "tupu" => {
-                self.sogeza();
-                self.ast.node_mpya(AST_TUPU, 0, NO_NODE, NO_NODE)
             }
             TokenKind::Kitambulisho(_) | TokenKind::NenoMuhimu(_) => {
                 let name = self.sasa().lexeme.clone();

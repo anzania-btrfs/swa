@@ -1511,7 +1511,7 @@ N32 main() {
     // Fungua na uandike kwa mkono
     N8 hali[] = \"w\";
     N8* f = faili_fungua(njia, hali);
-    kama (f == tupu) rudisha 5;
+    kama (f == 0) rudisha 5;
     N8 andiko[] = \"Jaribio\";
     N64 n = faili_andika(andiko, 1, 7, f);
     faili_funga(f);
@@ -1528,7 +1528,7 @@ N32 main() {
     N8 mistari[] = \"mstari1\\nmstari2\\n\";
     faili_andika_yote(f2, mistari, 16);
     N8* fh = faili_fungua(f2, \"r\");
-    kama (fh == tupu) rudisha 9;
+    kama (fh == 0) rudisha 9;
     N8 mst_buf[32];
     weka_sifuri(mst_buf, 32);
     N32 len = faili_soma_mstari(fh, mst_buf, 32);
@@ -2178,13 +2178,12 @@ N32 main() {
 
 /// #138: "Tupu salamu()" ilileta hitilafu ya sret ya LLVM. Uchunguzi
 /// wa 2026-08: kuvunjika huko tayari kumebadilishwa kuwa diagnostiki
-/// ya sauti; kilichobaki ni kwamba neno muhimu "tupu" (aina ya
-/// bila-thamani) halikuweza kuchanganuliwa kama aina. Sasa W0 NA
-/// tupu zote zinafanya kazi.
+/// ya sauti. Aina ya bila-thamani ni W0 (neno "tupu" liliondolewa
+/// kama neno muhimu la bloat — PR #140).
 #[test]
 fn jaribio_mende_138_tupu_aina() {
     let chanzo = "\
-tupu salamu() { rudisha; }
+W0 salamu() { rudisha; }
 N32 main() { salamu(); rudisha 0; }
 ";
     run_msingi_test(chanzo, 0);
