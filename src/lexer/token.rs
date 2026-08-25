@@ -70,9 +70,6 @@ impl TokenKind {
             // Mizunguko
             "kwa" | "wakati" | "fanya" => TokenKind::NenoMuhimu(s.to_string()),
 
-            // Aina ya bila-thamani (sawa na W0) na halisi za buliani
-            "tupu" | "kweli" | "uongo" => TokenKind::NenoMuhimu(s.to_string()),
-
             // Aina za mchanganyiko
             "muundo" | "muungano" => TokenKind::NenoMuhimu(s.to_string()),
 
