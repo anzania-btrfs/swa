@@ -257,3 +257,121 @@ N32 kata_nafasi(N8* s, N64* mwisho) {
     *mwisho = j;
     rudisha i;
 }
+
+// geuza_mfuatano — geuza mfuatano mahali pake (sio kwa nakala).
+W0 geuza_mfuatano(N8* s) {
+    N32 i = 0;
+    N32 j = 0;
+    wakati (s[j] != 0) { j = j + 1; }
+    j = j - 1;
+    wakati (i < j) {
+        N8 t = s[i];
+        s[i] = s[j];
+        s[j] = t;
+        i = i + 1;
+        j = j - 1;
+    }
+}
+
+// herufi_ya_juu — badilisha herufi ndogo hadi kubwa (ASCII).
+N8 herufi_ya_juu(N8 c) {
+    kama (c >= 97 && c <= 122) { rudisha c - 32; }
+    rudisha c;
+}
+
+// herufi_ya_chini — badilisha herufi kubwa hadi ndogo (ASCII).
+N8 herufi_ya_chini(N8 c) {
+    kama (c >= 65 && c <= 90) { rudisha c + 32; }
+    rudisha c;
+}
+
+// kompyuta_linganisha — linganisha mifuatano miwili bila kujali
+// ukubwa wa herufi. Rudisha -1, 0, au 1.
+N32 kompyuta_linganisha(N8* a, N8* b) {
+    N32 i = 0;
+    wakati (1 == 1) {
+        N8 ca = herufi_ya_juu(a[i]);
+        N8 cb = herufi_ya_juu(b[i]);
+        kama (ca != cb) {
+            kama (ca < cb) { rudisha -1; }
+            rudisha 1;
+        }
+        kama (ca == 0) { rudisha 0; }
+        i = i + 1;
+    }
+}
+
+// anza_kwa_mfuatano — angalia kama s inaanza kwa kiambishi.
+N32 anza_kwa_mfuatano(N8* s, N8* kiambishi) {
+    N32 i = 0;
+    wakati (kiambishi[i] != 0) {
+        kama (s[i] != kiambishi[i]) { rudisha 0; }
+        i = i + 1;
+    }
+    rudisha 1;
+}
+
+// isha_kwa_mfuatano — angalia kama s inaisha kwa kiambishi.
+N32 isha_kwa_mfuatano(N8* s, N8* kiambishi) {
+    N64 ns = urefu_wa_mfuatano(s);
+    N64 nk = urefu_wa_mfuatano(kiambishi);
+    kama (nk > ns) { rudisha 0; }
+    N64 i = 0;
+    wakati (i < nk) {
+        kama (s[ns - nk + i] != kiambishi[i]) { rudisha 0; }
+        i = i + 1;
+    }
+    rudisha 1;
+}
+
+// idadi_ya_herufi — hesabu idadi ya matukio ya herufi c kwenye s.
+N32 idadi_ya_herufi(N8* s, N8 c) {
+    N32 n = 0;
+    N32 i = 0;
+    wakati (s[i] != 0) {
+        kama (s[i] == c) { n = n + 1; }
+        i = i + 1;
+    }
+    rudisha n;
+}
+
+// nambari_kwa_mfuatano_heksa — badilisha N32 hadi mfuatano wa heksadesimali
+// (herufi ndogo). Hurudisha urefu ulioandikwa.
+N32 nambari_kwa_mfuatano_heksa(N32 n, N8* buf) {
+    N8 tarakimu[16];
+    N32 i = 0;
+    N32 i2 = 0;
+    wakati (i2 < 16) { tarakimu[i2] = 0; i2 = i2 + 1; }
+    N32 val = n;
+    kama (val == 0) {
+        buf[0] = 48;
+        buf[1] = 0;
+        rudisha 1;
+    }
+    wakati (val != 0) {
+        N32 d = val % 16;
+        kama (d < 10) { tarakimu[i] = 48 + d; }
+        sivyo { tarakimu[i] = 87 + d; }
+        val = val / 16;
+        i = i + 1;
+    }
+    N32 j = 0;
+    wakati (i > 0) {
+        i = i - 1;
+        buf[j] = tarakimu[i];
+        j = j + 1;
+    }
+    buf[j] = 0;
+    rudisha j;
+}
+
+// heshi_mfuatano — heshi ya djb2 ya mfuatano (kwa jedwali la hashi).
+N32 heshi_mfuatano(N8* s) {
+    N32 h = 5381;
+    N32 i = 0;
+    wakati (s[i] != 0) {
+        h = h * 33 + s[i];
+        i = i + 1;
+    }
+    rudisha h;
+}
