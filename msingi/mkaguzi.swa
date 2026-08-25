@@ -461,8 +461,12 @@ N32 mkaguzi_kagua_usemi(N32 node) {
 
     N32 aina = ast_aina[node];
 
-    // Halisi ya nambari kamili — inafaa kwa aina yoyote (bila upana maalum)
+    // Halisi ya nambari kamili — inafaa kwa aina yoyote (bila upana maalum).
+    // Thamani iko ast_thamani; weka usimbaji wa chaguo-msingi (N32)
+    // kwenye ast_nne kwa ukusanyaji wa hoja za wito (uzalishaji_wito
+    // unasoma enc hapo — si ast_thamani, ambayo ni thamani ya namba).
     kama (aina == 4) {
+        ast_nne[node] = 288;  // N32: familia 1, upana 32
         rudisha 0;  // "aina yoyote" — haisababishi makosa ya utangamano
     }
 

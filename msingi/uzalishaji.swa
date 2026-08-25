@@ -1015,7 +1015,6 @@ W0 andika_mov_ax_rip_rel(N32 enc, N32 urekebishaji_idx) {
 N32 ni_desimali_enc(N32 enc) {
     kama (enc == 0) { rudisha 0; }
     N32 familia = (enc / 256) % 256;
-    kama (familia == 2) { rudisha 1; }
     kama (familia == 3) { rudisha 1; }
     rudisha 0;
 }
@@ -2169,6 +2168,7 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
             hoja_nodes[hoja_idadi] = a;
             hoja_enc[hoja_idadi] = ast_thamani[a];
             kama (ast_aina[a] == 45) { hoja_enc[hoja_idadi] = ast_nne[a]; }  // HALISI_D: enc iko ast_nne
+            kama (ast_aina[a] == 4) { hoja_enc[hoja_idadi] = ast_nne[a]; }  // AST_NAMBARI: enc iko ast_nne (thamani iko ast_thamani)
             hoja_idadi = hoja_idadi + 1;
         }
         a = ast_tiga[a];  // hoja inayofuata kupitia ast_tiga
