@@ -58,7 +58,9 @@ fi
 # kwa hiyo mnyororo wa mbegu huachwa (mbegu kukataa ni halali).
 # Safu ya kwanza "KATA" = chanzo lazima KIKATALIWE na mkusanyaji:
 # toka isiyo 0 pamoja na ujumbe wa kosa, hakuna faili la tokeo.
-while IFS=$'\t' read -r code jina faili mnyororo; do
+# Safu ya tano (hiari) ni kipande cha ujumbe unaotarajiwa kwenye
+# KATA; kilichopo kinabaki kwa kigezo (jina la aina).
+while IFS=$'\t' read -r code jina faili mnyororo ujumbe; do
     [ -z "$code" ] && continue
     [ "$code" = "FAIL" ] && continue  # kukataliwa kunashughulikiwa tofauti
     if [ "$code" = "KATA" ]; then
@@ -67,7 +69,8 @@ while IFS=$'\t' read -r code jina faili mnyororo; do
         else
             "$MBEGU" --exe "$faili" > "$TMP/p" 2> "$TMP/p.err"; rc=$?
         fi
-        grep -q "jina la aina" "$TMP/p" "$TMP/p.err"
+        kipande="${ujumbe:-jina la aina}"
+        grep -qF "$kipande" "$TMP/p" "$TMP/p.err"
         ni_ujumbe=$?
         [ -s "$TMP/p" ]; ni_faili=$?
         kagua "$rc|$ni_ujumbe|$ni_faili" "1|0|1" "kukataa $faili ($mnyororo)"
