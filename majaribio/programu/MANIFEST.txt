@@ -39,6 +39,7 @@ FAIL	# mende_138 aina tupu: FAIL KWA MUDA — FPE ya stage1 inachunguzwa na mtu 
 0	jaribio_chagua_ndani_ya_kazi (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_ndani_ya_kazi.swa	stage1
 0	jaribio_chagua_sivyo (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_sivyo.swa	stage1
 KATA	jaribio_tenga_jina_la_aina (stage1 pekee: mbegu bado inakubali fomu ya tenga N32 — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_tenga_jina_la_aina.swa	stage1
+KATA	jaribio_kazi_marudio (stage1 pekee: mbegu bado inakubali kazi mbili zenye jina moja — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_kazi_marudio.swa	stage1	imeshafafanuliwa
 0	jaribio_kigezo_cha_ulimwengu	majaribio/programu/jaribio_kigezo_cha_ulimwengu.swa
 0	jaribio_safu_ya_ulimwengu	majaribio/programu/jaribio_safu_ya_ulimwengu.swa
 0	jaribio_muundo_na_sehemu	majaribio/programu/jaribio_muundo_na_sehemu.swa
