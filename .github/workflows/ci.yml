@@ -10,8 +10,26 @@ on:
 
 # Kazi za kufanya
 jobs:
-  jaribu:
-    name: Jenga na Jaribu
+  # Mnyororo wa Swa pekee — hauhitaji Rust, LLVM, wala clang.
+  # Hii ndiyo lango kuu: hukagua mzizi wa uaminifu, fixpoint, na
+  # programu zote za MANIFEST kwenye minyororo yote miwili.
+  mnyororo:
+    name: Mnyororo wa Swa
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pakua msimbo
+        uses: actions/checkout@v4
+
+      - name: Mnyororo wa kwanza (baiti za mkono)
+        run: bash gharama/jenga-kwanza.sh
+
+      - name: Mnyororo kamili wa majaribio
+        run: bash gharama/jaribu-mnyororo.sh
+
+  # Dereva wa Rust/LLVM — wa majaribio, si njia ya uzalishaji.
+  dereva:
+    name: Dereva wa Rust
     runs-on: ubuntu-latest
 
     steps:
@@ -26,9 +44,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang llvm-18-dev
           echo "LLVM_CONFIG=llvm-config-18" >> $GITHUB_ENV
-
-      - name: Mnyororo wa kwanza (baiti za mkono)
-        run: bash gharama/jenga-kwanza.sh
 
       - name: Jenga
         run: cargo build --release
