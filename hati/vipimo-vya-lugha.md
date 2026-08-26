@@ -33,9 +33,11 @@ Kiswahili kwa mkongwe.
 ### 2.2 Maneno Muhimu
 
 `muundo`, `rudisha`, `kama`, `sivyo`, `wakati`, `kwa`, `vunja`,
-`endelea`, `chagua`, `hali`, `husisha`, `tenga`, `achilia`.
+`endelea`, `chagua`, `hali`, `husisha`, `achilia`.
 
 Maneno muhimu hayawezi kutumika kama majina ya vitambulisho.
+`tenga` si neno muhimu — ni kazi ya kawaida ya maktaba (sehemu 10):
+`tenga(ukubwa(N32))` huweka kipande cha baiti `ukubwa(N32)`.
 Aina za nambari haziko kwenye orodha hii — hutambuliwa kisintaksia
 kwa herufi kubwa: `[N|A|D|B|W]` ikifuatiwa na tarakimu (mf. `N32`,
 `D64`, `W0`). Dereva wa Rust (majaribio) una maneno muhimu ya ziada
