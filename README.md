@@ -2,9 +2,10 @@
 
 **Swa** ni lugha ya kupanga yenye sintaksia kamili ya Kiswahili. Hakuna neno
 la Kiingereza linatumika katika sintaksia yake. Inakusanya moja kwa moja hadi
-msimbo wa mashine — kwanza kwa njia asilia (`uzalishaji.swa`) inayotoa ELF
-binary moja kwa moja bila LLVM wala mkusanyaji msaidizi, na pia kwa njia ya
-LLVM kwa majukwaa zaidi.
+msimbo wa mashine — kwa njia asilia (`uzalishaji.swa`) inayotoa ELF binary
+moja kwa moja bila LLVM wala mkusanyaji msaidizi (x86-64 Linux). Njia ya
+LLVM (dereva wa Rust) ni ya majaribio pekee; mnyororo wa uzalishaji ni
+asilia (angalia `hati/mipaka.md` 6).
 
 Makao rasmi: **[lugha-swa](https://github.com/lugha-swa)**
 
@@ -140,7 +141,7 @@ N32 kitanzi(N32 n) {
   baiti za mkono → mbegu → stage1-exe → stage2-exe == stage3-exe
   (mnyororo wa uzalishaji; uthabiti wa makosa ni mhimili tofauti —
   angalia hati/mipaka.md)
-- **Vizalishe viwili**: LLVM (majukwaa yote) + asilia (x86-64 ELF moja kwa moja)
+- **Vizalishe viwili**: asilia (x86-64 ELF moja kwa moja — mnyororo wa uzalishaji) + LLVM (ya majaribio pekee)
 - **Familia 5 za nambari** — N, A, D, B, W (upana wowote: N8–N128,
   D16–D80, B1–B64, W0–W64, n.k.)
 - **Kumbukumbu ya moja kwa moja** -- tenga, achilia, hakuna ukusanyaji taka
@@ -153,7 +154,7 @@ N32 kitanzi(N32 n) {
 | `src/` | Mkusanyaji wa Rust (msomaji, mchanganuzi, IR, LLVM backend) |
 | `msingi/` | Maktaba ya msingi ya kujitegemea kwa Swa — bomba zima |
 | `msingi/msomaji.swa` | Msomaji (lexer) — kamili |
-| `msingi/msambazaji.swa` | Mchanganuzi (parser) — kamili, nodi 47 za AST |
+| `msingi/msambazaji.swa` | Mchanganuzi (parser) — kamili, nodi 48 za AST |
 | `msingi/mkaguzi.swa` | Mkaguzi wa kisemantiki — kamili (aina, hoja, ugawaji) |
 | `msingi/mteremko.swa` | Kiteremshi cha AST→IR — huitwa kwa uthibitishaji wa muundo; codegen asilia hutumia AST moja kwa moja |
 | `msingi/uzalishaji.swa` | Kizalishe asilia cha x86-64 — kamili (aina zote, sret, alloca) |
@@ -166,7 +167,7 @@ N32 kitanzi(N32 n) {
 ## Kujenga
 
 **Mahitaji:**
-- LLVM 18+ (C API) -- imejaribiwa kwenye LLVM 22.1 (Arch Linux) na LLVM 18 (Windows)
+- LLVM 18+ (C API) -- kwa njia ya majaribio pekee; imejaribiwa kwenye LLVM 22.1 (Arch Linux)
 - Rust (toleo jipya zaidi)
 - Clang (kwa majaribio ya ujumuishaji ya wakati wa utekelezaji)
 - Hakuna kiunganishi kinachohitajika kwa mnyororo wa kujikusanya (0%
@@ -225,8 +226,8 @@ Angalia **[hati/ramani.md](hati/ramani.md)** kwa mpango kamili.
 | 0 | Mkusanyaji wa bootstrap wa Rust | Imekamilika |
 | 1 | Kujikusanya kwa msingi | Imekamilika |
 | 2 | Mkusanyaji kamili wa kujikusanya | Imekamilika |
-| 3 | Ondoa utegemezi wa Rust | Lengo |
-| 4 | Ondoa utegemezi wa LLVM | Lengo |
+| 3 | Ondoa utegemezi wa Rust | Imekamilika |
+| 4 | Ondoa utegemezi wa LLVM | Imekamilika (mnyororo wa uzalishaji; LLVM imebaki majaribio) |
 | 5 | Lugha kamili ya mifumo | Baadaye |
 
 ## Jumuiya
