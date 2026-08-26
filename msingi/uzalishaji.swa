@@ -2646,9 +2646,15 @@ W0 uzalishaji_kitambulisho(N32 node, N32 kazi_node) {
         gi = gi + 1;
     }
 
-    // Kigeu kisichojulikana
-    andika_stderr("[KITAMB] haijulikani: '%s'\n", jina);
-    andika_xor_eax_eax();
+    // Kitambulisho kisichojulikana — zamani kilikuwa onyo na 0 kimya,
+    // likitoa msimbo unaoanguka (SEGV). Sasa ni kosa la kufa, kama
+    // wito wa kazi isiyofafanuliwa (utatuzi wa RELA).
+    kama (kazi_nafasi_kwa_jina(jina) >= 0) {
+        andika_stderr("Hitilafu: jina la kazi halitumiki kama usemi: %s\n", jina);
+        wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+    }
+    andika_stderr("Hitilafu: kitambulisho kisichojulikani: %s\n", jina);
+    wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
 }
 
 // AST_JUMLISHA (6) -- ongeza
@@ -2723,20 +2729,6 @@ W0 uzalishaji_tofauti(N32 node, N32 kazi_node) {
             sivyo { andika_sub_eax_ecx(); }
         }
     }
-}
-
-// AST_TENGA (18) -- tenga kumbukumbu (malloc)
-W0 uzalishaji_tenga(N32 node, N32 kazi_node) {
-    uzalishaji_usemi(ast_kushoto[node], kazi_node);
-    N32 nje_id = pata_au_unda_nje("malloc");
-    andika_push_rax();
-    andika_baiti(232);
-    kama (rela_idadi < 65536) {
-        rela_text_off[rela_idadi] = bafa_text_wapi;
-        rela_nje_id[rela_idadi] = nje_id;
-        rela_idadi = rela_idadi + 1;
-    }
-    andika_neno4(0);
 }
 
 // AST_ACHILIA (19) -- achilia kumbukumbu (free)
@@ -3295,11 +3287,10 @@ W0 uzalishaji_usemi_chini(N32 node, N32 kazi_node, N32 aina) {
 
 // Vishikizi vya aina 18-21: kumbukumbu, ulinganishi (==, !=)
 W0 uzalishaji_usemi_kati_a1(N32 node, N32 kazi_node, N32 aina) {
-    kama (aina == 18) { uzalishaji_tenga(node, kazi_node); rudisha; }
-    sivyo { kama (aina == 19) { uzalishaji_achilia(node, kazi_node); rudisha; }
-        sivyo { kama (aina == 20) { uzalishaji_sawa(node, kazi_node); rudisha; }
-            sivyo { kama (aina == 21) { uzalishaji_tofauti_si(node, kazi_node); rudisha; }
-                sivyo { kama (aina == 48) { uzalishaji_badili(node, kazi_node); rudisha; } } } } }
+    kama (aina == 19) { uzalishaji_achilia(node, kazi_node); rudisha; }
+    sivyo { kama (aina == 20) { uzalishaji_sawa(node, kazi_node); rudisha; }
+        sivyo { kama (aina == 21) { uzalishaji_tofauti_si(node, kazi_node); rudisha; }
+            sivyo { kama (aina == 48) { uzalishaji_badili(node, kazi_node); rudisha; } } } }
 }
 
 // Vishikizi vya aina 22-25: ulinganishi wa ukubwa (<, >, <=, >=)

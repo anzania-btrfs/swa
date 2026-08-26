@@ -386,11 +386,6 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
         mkaguzi_kagua_taarifa(ast_nne[node]);
         rudisha;
     }
-    kama (aina == 18) {  // TENGA
-        mkaguzi_kagua_usemi(ast_kushoto[node]);
-        mkaguzi_kagua_taarifa(ast_nne[node]);
-        rudisha;
-    }
     kama (aina == 19) {  // ACHILIA
         mkaguzi_kagua_usemi(ast_kushoto[node]);
         mkaguzi_kagua_taarifa(ast_nne[node]);
