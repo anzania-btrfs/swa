@@ -103,6 +103,11 @@ W0 andika_push_rax() {
     andika_baiti(80);
 }
 
+// push rcx (51)
+W0 andika_push_rcx() {
+    andika_baiti(81);
+}
+
 // pop rcx (59)
 W0 andika_pop_rcx() {
     andika_baiti(89);
@@ -1963,6 +1968,7 @@ W0 uzalishaji_wakati(N32 node, N32 kazi_node) {
 W0 uzalishaji_chagua(N32 node, N32 kazi_node) {
     N32 tested_node = ast_kushoto[node];
     N32 hali_list = ast_kulia[node];
+    N32 default_body = ast_tiga[node];  // mwili wa sivyo (chaguo-msingi)
 
     // Tathmini thamani ya skrutini
     uzalishaji_usemi(tested_node, kazi_node);
@@ -1973,9 +1979,6 @@ W0 uzalishaji_chagua(N32 node, N32 kazi_node) {
     // Tengeneza lebo za mwisho na chaguo-msingi
     N32 lebo_mwisho = lebo_buf_mpya();
     N32 lebo_default = lebo_buf_mpya();
-
-    // Chagua-msingi: rudisha thamani kutoka rafu
-    // Rudisha-skutini: andika_pop_rcx();
 
     // Tembea kila hali
     N32 chk = hali_list;
@@ -1989,12 +1992,17 @@ W0 uzalishaji_chagua(N32 node, N32 kazi_node) {
             case_val = ast_thamani[label_node];
         }
 
-        // Linganisha thamani ya skrutini na thamani ya hali
-        // Skrutini iko kwenye rafu ([rsp]), hali iko kwenye lebo
-        andika_pop_rcx();  // chukua thamani kutoka rafu
+        // Linganisha thamani ya skrutini na thamani ya hali.
+        // Skrutini iko kwenye rafu ([rsp]); inatolewa kwenye rcx,
+        // ikilinganishwa na thamani ya hali, kisha inarudishwa kwenye
+        // rafu kwa rcx. KUMBUKA: mov eax imeharibu rax (thamani ya
+        // hali imechukua nafasi), kwa hiyo kurudisha kwa rax kungekuweka thamani ya
+        // HALI kwenye rafu — hali inayofuata ingelinganishwa na hali
+        // iliyotangulia badala ya skrutini (mende wa kimya-kimya).
+        andika_pop_rcx();  // chukua thamani ya skrutini kutoka rafu
         andika_mov_eax(case_val);  // weka thamani ya hali
         andika_cmp_eax_ecx();  // linganisha
-        andika_push_rax();  // rudisha thamani ya skrutini kwenye rafu
+        andika_push_rcx();  // rudisha thamani ya skrutini kwenye rafu
 
         N32 lebo_kesi = lebo_buf_mpya();
         toa_jne_lebo(lebo_kesi);  // ruka ikiwa hailingani
@@ -2010,8 +2018,13 @@ W0 uzalishaji_chagua(N32 node, N32 kazi_node) {
         chk = ast_nne[chk];
     }
 
-    // Chaguo-msingi (hakuna vitendo maalum; ruka hadi mwisho)
+    // Chaguo-msingi: mwili wa sivyo (kama upo). Hapa hufikiwa tu
+    // wakati hali ZOTE hazikulingana.
     weka_lebo(lebo_default);
+
+    kama (default_body != -1) {
+        uzalishaji_taarifa(default_body, kazi_node);
+    }
 
     // Safisha rafu (ondoa thamani ya skrutini iliyobaki)
     andika_pop_rcx();

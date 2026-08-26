@@ -628,7 +628,10 @@ N32 teremsha_usemi(Mteremshi* t, N32 node) {
     kama (aina == AST_CHAGUA) {
         N32 tested = teremsha_usemi(t, kushoto);
         N32 cases = teremsha_taarifa(t, kulia);
-        rudisha ir_node_mpya(IR_CHAGUA, 0, 0, tested, cases);
+        N32 ir_chagua = ir_node_mpya(IR_CHAGUA, 0, 0, tested, cases);
+        // Mwili wa sivyo (chaguo-msingi) uko ast_tiga ya nodi ya chagua
+        ir_tiga[ir_chagua] = teremsha_taarifa(t, tiga);
+        rudisha ir_chagua;
     }
 
     // Sivyo (else clause — inaunganishwa kwenye ir_tiga ya kama)

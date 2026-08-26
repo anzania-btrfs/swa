@@ -457,7 +457,7 @@ N32 changanua_taarifa_wakati(Msambazaji* p) {
 }
 
 N32 changanua_taarifa_chagua(Msambazaji* p) {
-    // ---- chagua ( usemi ) { hali X : ... [hali Y : ...] } ----
+    // ---- chagua ( usemi ) { hali X : ... [hali Y : ...] [sivyo : ...] } ----
     kama (p->sasa.urefu >= 2 && p->sasa.mwanzo[0] >= 97) {
         kama (neno_ni(&p->sasa, "chagua")) {
             sogeza(p);
@@ -473,6 +473,7 @@ N32 changanua_taarifa_chagua(Msambazaji* p) {
 
             N32 first_case = -1;
             N32 prev_case = -1;
+            N32 default_body = -1;  // mwili wa sivyo (chaguo-msingi)
 
             wakati (1 == 1) {
                 kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
@@ -489,7 +490,7 @@ N32 changanua_taarifa_chagua(Msambazaji* p) {
                             kama (neno_ni(&p->sasa, ":")) { sogeza(p); }
                         }
 
-                        // Kusanya taarifa mpaka hali inayofuata au }
+                        // Kusanya taarifa mpaka hali/sivyo inayofuata au }
                         N32 case_kwanza = -1;
                         N32 case_prev = -1;
                         wakati (1 == 1) {
@@ -497,7 +498,7 @@ N32 changanua_taarifa_chagua(Msambazaji* p) {
                                 kama (neno_ni(&p->sasa, "}")) { vunja; }
                             }
                             kama (p->sasa.urefu >= 2 && p->sasa.mwanzo[0] >= 97) {
-                                kama (neno_ni(&p->sasa, "hali")) { vunja; }
+                                kama (neno_ni(&p->sasa, "hali") || neno_ni(&p->sasa, "sivyo")) { vunja; }
                             }
                             kama (p->sasa.urefu == 0) { p->kosa = 1; vunja; }
                             N32 stmt = changanua_taarifa(p);
@@ -513,11 +514,41 @@ N32 changanua_taarifa_chagua(Msambazaji* p) {
                         prev_case = hali_node;
                         endelea;
                     }
+                    kama (neno_ni(&p->sasa, "sivyo")) {
+                        sogeza(p);
+                        // Tarajia :
+                        kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
+                            kama (neno_ni(&p->sasa, ":")) { sogeza(p); }
+                        }
+
+                        // Kusanya taarifa mpaka hali/sivyo inayofuata au }
+                        N32 def_kwanza = -1;
+                        N32 def_prev = -1;
+                        wakati (1 == 1) {
+                            kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
+                                kama (neno_ni(&p->sasa, "}")) { vunja; }
+                            }
+                            kama (p->sasa.urefu >= 2 && p->sasa.mwanzo[0] >= 97) {
+                                kama (neno_ni(&p->sasa, "hali") || neno_ni(&p->sasa, "sivyo")) { vunja; }
+                            }
+                            kama (p->sasa.urefu == 0) { p->kosa = 1; vunja; }
+                            N32 stmt = changanua_taarifa(p);
+                            kama (stmt == -1) { p->kosa = 1; vunja; }
+                            kama (def_prev == -1) { def_kwanza = stmt; }
+                            sivyo { ast_nne[def_prev] = stmt; }
+                            def_prev = stmt;
+                        }
+
+                        default_body = def_kwanza;
+                        endelea;
+                    }
                 }
                 vunja;
             }
 
-            rudisha node_mpya(AST_CHAGUA, 0, tested, first_case);
+            N32 chagua_node = node_mpya(AST_CHAGUA, 0, tested, first_case);
+            ast_tiga[chagua_node] = default_body;  // mwili wa sivyo (chaguo-msingi)
+            rudisha chagua_node;
         }
     }
     rudisha -1;
