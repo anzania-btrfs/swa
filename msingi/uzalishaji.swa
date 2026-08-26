@@ -4022,6 +4022,49 @@ W0 uzalishaji_exe(N32 text_size, N32 data_size, N32 bss_size, N32 main_off) {
     // .bss: hakuna baiti — p_memsz huifunika.
 }
 
+// ==========================================================
+// Marudio ya majina ya ngazi ya juu ni kosa la kufa
+// ==========================================================
+// Swa haina maeneo ya majina: kila jina la ngazi ya juu (kazi
+// yenye mwili, kigezo cha ulimwengu, au muundo) ni la ulimwengu.
+// Zamani ufafanuzi wa pili ulipita kimya — utafutaji ulirudisha wa
+// kwanza tu (kazi_nafasi_kwa_jina, data_ulimwengu, na
+// ukubwa_wa_muundo_kwa_jina vyote vinarudisha linganisho la kwanza)
+// na wa pili ukawa takataka. Kwa maktaba zilizounganishwa kwa cat
+// hii ndiyo hatari kubwa zaidi. Sasa marudio yanalia kwa sauti,
+// kama kazi isiyofafanuliwa (utatuzi wa RELA).
+W0 hakiki_marudio_ya_ngazi_ya_juu(N32 mzizi) {
+    N32 a = ast_kushoto[mzizi];
+    wakati (a != -1) {
+        N32 aina_a = ast_aina[a];
+        // 2 = AST_KAZI, 35 = AST_TANGAZO_ULIMWENGU, 12 = AST_MUUNDO
+        kama (aina_a == 2 || aina_a == 35 || aina_a == 12) {
+            // Tangazo la mbele la kazi (mwili -1) si ufafanuzi — si marudio
+            kama (aina_a == 2 && ast_tiga[a] == -1) { a = ast_nne[a]; endelea; }
+            N8* jina_a = ast_pool + ast_jina_off[ast_kushoto[a]];
+            N32 b = ast_kushoto[mzizi];
+            wakati (b != a) {
+                kama (ast_aina[b] == aina_a) {
+                    kama (ast_aina[b] == 2 && ast_tiga[b] == -1) { b = ast_nne[b]; endelea; }
+                    N8* jina_b = ast_pool + ast_jina_off[ast_kushoto[b]];
+                    kama (jina_linganisha(jina_a, jina_b)) {
+                        kama (aina_a == 2) {
+                            andika_stderr("Hitilafu: kazi '%s' imeshafafanuliwa\n", jina_a);
+                        } sivyo { kama (aina_a == 35) {
+                                andika_stderr("Hitilafu: kigezo cha ulimwengu '%s' kimeshafafanuliwa\n", jina_a);
+                            } sivyo {
+                                andika_stderr("Hitilafu: muundo '%s' umeshafafanuliwa\n", jina_a);
+                            } }
+                        wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+                    }
+                }
+                b = ast_nne[b];
+            }
+        }
+        a = ast_nne[a];
+    }
+}
+
 // -------------------------------------------------------
 // Kiingilio kikuu — toa ELF .o kwa AST nzima
 // -------------------------------------------------------
@@ -4050,6 +4093,10 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
     sehemu_buf_wapi = 1;
     N32 sj = 0;
     wakati (sj < 1024) { str_lebo_id[sj] = -1; sj = sj + 1; }
+
+    // Marudio ya majina ya ngazi ya juu (kazi, vigezo vya ulimwengu,
+    // miundo) ni kosa la kufa — kabla ya kutoa msimbo wowote.
+    hakiki_marudio_ya_ngazi_ya_juu(mzizi);
 
     // Katika hali ya exe: _start mwanzoni mwa .text — mov rdi,[rsp]
     // (argc); lea rsi,[rsp+8] (argv); mov al,0; call main (disp32
@@ -4406,6 +4453,9 @@ W0 uzalishaji_jit(N32 mzizi, N32 argc_jit, N8** argv_jit, N32 ofseti_jit) {
     N32 sj = 0;
     wakati (sj < 1024) { str_lebo_id[sj] = -1; sj = sj + 1; }
 
+    // Marudio ya majina ya ngazi ya juu ni kosa la kufa pia hapa.
+    hakiki_marudio_ya_ngazi_ya_juu(mzizi);
+
     // Stub ya kuingia: jmp main — inatengenezwa baada ya kukusanya
     // kwani lebo_nafasi ya main inajulikana mwishoni.
     andika_baiti(233);  // jmp rel32
@@ -4413,7 +4463,12 @@ W0 uzalishaji_jit(N32 mzizi, N32 argc_jit, N8** argv_jit, N32 ofseti_jit) {
 
     N32 node = ast_kushoto[mzizi];
     wakati (node != -1) {
-        kama (ast_aina[node] == 2) { uzalishaji_kazi(node); }
+        kama (ast_aina[node] == 2) {
+            // Ruka matamko ya mbele (hayana mwili) — sawa na mnyororo
+            // wa exe. Zamani tangazo lilipata lebo yake ya tupu na
+            // wito ukaelekea hiyo badala ya ufafanuzi halisi.
+            kama (ast_tiga[node] != -1) { uzalishaji_kazi(node); }
+        }
         node = ast_nne[node];
     }
 
