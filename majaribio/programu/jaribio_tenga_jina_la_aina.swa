@@ -1,0 +1,13 @@
+// tenga inaitwa kama kazi — jina la aina halitumiki kama usemi.
+// Fomu hii (tenga N32) ilikubaliwa kimya na mnyororo wa .swa na
+// kutoa faili linaloanguka (SEGV) wakati wa utekelezaji. Sasa
+// inapaswa kukataliwa kwa sauti: kosa la kichanganuzi, toka 1,
+// hakuna faili la tokeo. (Jaribio la mnyororo wa .swa pekee —
+// mbegu bado inakubali fomu hiyo; kugandisha upya ni uamuzi wa
+// msimamizi.)
+N32 main() {
+    N32* p = tenga N32;
+    *p = 42;
+    achilia(p);
+    rudisha 42;
+}
