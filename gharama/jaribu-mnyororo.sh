@@ -1,0 +1,199 @@
+#!/bin/bash
+# jaribu-mnyororo.sh — Majaribio ya mnyororo wa uzalishaji (Swa pekee)
+#
+# Huendesha program za majaribio (majaribio/programu/*.swa) kupitia
+# minyororo YOTE MIWILI — mbegu na stage1 (mnyororo wa .swa) — na
+# kuthibitisha msimbo wa kutoka unaotarajiwa (MANIFEST.txt).
+# Pia: fixpoint (stage2 == stage3), mkazo wa RELA, kwa-endelea,
+# desimali, mzunguko mfupi, kazi kukosa, bomba kubwa, na umbizaji
+# kujijenga. Hakuna Rust, hakuna LLVM, hakuna clang.
+set -u
+
+cd "$(dirname "$0")/.." || exit 1
+TMP="$(mktemp -d /tmp/swa-mnyororo-XXXXXX)"
+trap 'rm -rf "$TMP"' EXIT
+
+PASS=0; FAIL=0
+
+kagua() { # kagua <msimbo-halisi> <msimbo-tarajiwa> <maelezo>
+    if [ "$1" = "$2" ]; then
+        PASS=$((PASS+1))
+    else
+        echo "SHINDWA: $3 (ilitarajiwa $2, ilipata $1)"
+        FAIL=$((FAIL+1))
+    fi
+}
+
+# ============ 1. Mnyororo wa kwanza ============
+bash gharama/jenga-kwanza.sh > /dev/null || { echo "SHINDWA: jenga-kwanza"; exit 1; }
+MBEGU="/tmp/mbegu2.bin"
+
+# ============ 2. Jenga mkusanyaji wa .swa (stage1) ============
+ZIMA="$TMP/zima.swa"
+for f in msingi/kumbukumbu.swa msingi/mfuatano.swa msingi/msomaji.swa \
+         msingi/msambazaji.swa msingi/mteremko.swa msingi/mkaguzi.swa \
+         msingi/uzalishaji.swa msingi/orodha.swa msingi/ramani.swa \
+         msingi/stage1.swa; do
+    cat "$f" >> "$ZIMA"
+done
+"$MBEGU" --exe "$ZIMA" > "$TMP/stage1" 2> "$TMP/stage1.err" || {
+    echo "SHINDWA: mbegu --exe zima.swa"; cat "$TMP/stage1.err"; exit 1; }
+chmod +x "$TMP/stage1"
+PASS=$((PASS+1))  # ujenzi wa stage1
+
+# ============ 3. Fixpoint: stage2 == stage3 (sawa kwa baiti) ============
+"$TMP/stage1" --exe "$ZIMA" > "$TMP/stage2" 2> /dev/null || { echo "SHINDWA: stage1 --exe"; exit 1; }
+chmod +x "$TMP/stage2"
+"$TMP/stage2" --exe "$ZIMA" > "$TMP/stage3" 2> /dev/null || { echo "SHINDWA: stage2 --exe"; exit 1; }
+if cmp -s "$TMP/stage2" "$TMP/stage3"; then
+    PASS=$((PASS+1))
+else
+    echo "SHINDWA: fixpoint (stage2 != stage3)"
+    FAIL=$((FAIL+1))
+fi
+
+# ============ 4. Program za majaribio (minyororo yote miwili) ============
+while IFS=$'\t' read -r code jina faili; do
+    [ -z "$code" ] && continue
+    [ "$code" = "FAIL" ] && continue  # kukataliwa kunashughulikiwa tofauti
+    for mk in "mbegu" "stage1"; do
+        if [ "$mk" = "mbegu" ]; then
+            "$MBEGU" --exe "$faili" > "$TMP/p" 2> /dev/null
+        else
+            "$TMP/stage1" --exe "$faili" > "$TMP/p" 2> /dev/null
+        fi
+        if [ $? -ne 0 ]; then
+            echo "SHINDWA: kukusanya $faili kwa $mk"
+            FAIL=$((FAIL+1)); continue
+        fi
+        chmod +x "$TMP/p"
+        timeout 5 "$TMP/p"; rc=$?
+        kagua "$rc" "$code" "$faili kwa $mk"
+    done
+done < majaribio/programu/MANIFEST.txt
+
+# ============ 5. Mkazo wa RELA (wito 1,000 wa mbele) ============
+MK="$TMP/mkazo.swa"
+{
+    echo "N32 main() { N32 s = 0;"
+    i=0; while [ $i -lt 1000 ]; do echo "s = s + lengo(1);"; i=$((i+1)); done
+    echo "kama (s != 1000) rudisha 1; rudisha 0; }"
+    echo "N32 lengo(N32 x) { rudisha x; }"
+} > "$MK"
+"$MBEGU" --exe "$MK" > "$TMP/mkazo-exe" 2> /dev/null && chmod +x "$TMP/mkazo-exe" \
+    && "$TMP/mkazo-exe"; kagua "$?" "0" "mkazo wa RELA (mbegu)"
+
+# ============ 6. Semantiki ya C ya endelea-kwenye-kwa ============
+KWC="$TMP/kwa_c.swa"
+cat > "$KWC" <<'EOF'
+N32 main() {
+    N32 i = 0;
+    N32 s = 0;
+    kwa (; i < 6; i = i + 1) {
+        kama (i == 2) { endelea; }
+        s = s + 1;
+    }
+    rudisha s;
+}
+EOF
+for mk in "mbegu" "stage1"; do
+    if [ "$mk" = "mbegu" ]; then
+        "$MBEGU" --exe "$KWC" > "$TMP/kwc" 2> /dev/null
+    else
+        "$TMP/stage1" --exe "$KWC" > "$TMP/kwc" 2> /dev/null
+    fi
+    chmod +x "$TMP/kwc"; timeout 5 "$TMP/kwc"; rc=$?
+    kagua "$rc" "5" "endelea-kwenye-kwa ($mk) — C-semantiki"
+done
+
+# ============ 7. Desimali (D64) ============
+DES="$TMP/des.swa"
+cat > "$DES" <<'EOF'
+N32 main() {
+    D64 pi = 3.14;
+    D64 r = 2.0;
+    D64 eneo = pi * r * r;
+    kama (eneo > 12.55 && eneo < 12.57) { } sivyo { rudisha 1; }
+    D64 a = 1.5 + 0.5;
+    kama (a > 1.99 && a < 2.01) { } sivyo { rudisha 2; }
+    D64 b = 6.0 / 2.0;
+    kama (b > 2.99 && b < 3.01) { } sivyo { rudisha 3; }
+    D64 c = -2.5;
+    kama (c > -2.51 && c < -2.49) { } sivyo { rudisha 4; }
+    D64 d = 10.0 - 3.25;
+    kama (d > 6.74 && d < 6.76) { } sivyo { rudisha 5; }
+    rudisha 0;
+}
+EOF
+for mk in "mbegu" "stage1"; do
+    if [ "$mk" = "mbegu" ]; then
+        "$MBEGU" --exe "$DES" > "$TMP/des" 2> /dev/null
+    else
+        "$TMP/stage1" --exe "$DES" > "$TMP/des" 2> /dev/null
+    fi
+    chmod +x "$TMP/des"; timeout 5 "$TMP/des"; rc=$?
+    kagua "$rc" "0" "desimali ($mk)"
+done
+
+# ============ 8. Mzunguko mfupi wa && / || ============
+MZ="$TMP/mz.swa"
+cat > "$MZ" <<'EOF'
+N32 main() {
+    N32 bwete = 0;
+    N32 a[4];
+    kama (bwete && a[99999999] == 1) rudisha 1;
+    N32 x = 2 && 4;
+    kama (x != 1) rudisha 2;
+    rudisha 0;
+}
+EOF
+"$MBEGU" --exe "$MZ" > "$TMP/mz" 2> /dev/null && chmod +x "$TMP/mz" \
+    && timeout 5 "$TMP/mz"; kagua "$?" "0" "mzunguko mfupi (mbegu)"
+
+# ============ 9. Kazi isiyofafanuliwa inalia kwa sauti ============
+echo 'N32 main() { rudisha kazi_haipo(); }' > "$TMP/kk.swa"
+"$MBEGU" --exe "$TMP/kk.swa" > "$TMP/kk" 2> /dev/null; rc=$?
+grep -q "haijafafanuliwa" "$TMP/kk"
+kagua "$rc|$?" "1|0" "kazi kukosa inalia kwa sauti (mbegu)"
+
+# ============ 10. Bomba la stdin (chanzo kubwa hadi EOF) ============
+BOM="$TMP/bomba.swa"
+{
+    i=0; while [ $i -lt 3000 ]; do echo "// mstari wa kujaza bafa $i"; i=$((i+1)); done
+    echo "N32 main() { rudisha kazi_ya_mwisho(); }"
+    echo "N32 kazi_ya_mwisho() { rudisha 7; }"
+} > "$BOM"
+cat "$BOM" | "$MBEGU" --exe > "$TMP/bomba-exe" 2> /dev/null
+chmod +x "$TMP/bomba-exe"; timeout 5 "$TMP/bomba-exe"; rc=$?
+kagua "$rc" "7" "bomba la stdin (mbegu)"
+
+# ============ 11. D64 kwenye wito wa mbegu inalia kwa sauti ============
+D64F="$TMP/d64w.swa"
+cat > "$D64F" <<'EOF'
+D64 mara_mbili(D64 x) { rudisha x * 2.0; }
+N32 main() { rudisha 0; }
+EOF
+"$MBEGU" --exe "$D64F" > "$TMP/d64w" 2> /dev/null; rc=$?
+grep -q "D64 kwenye wito" "$TMP/d64w"
+kagua "$rc|$?" "1|0" "D64-wito inalia kwa sauti (mbegu)"
+
+# ============ 12. Formatter inajijenga (fixpoint) ============
+UMB="$TMP/umbizaji-zima.swa"
+cat msingi/kumbukumbu.swa msingi/mfuatano.swa zana/umbizaji.swa > "$UMB"
+"$MBEGU" --exe "$UMB" > "$TMP/umbizaji-exe" 2> /dev/null || { echo "SHINDWA: umbizaji --exe"; FAIL=$((FAIL+1)); }
+chmod +x "$TMP/umbizaji-exe"
+"$TMP/umbizaji-exe" zana/umbizaji.swa > "$TMP/umbizaji-towe" 2> /dev/null
+cmp -s zana/umbizaji.swa "$TMP/umbizaji-towe"
+kagua "$?" "0" "umbizaji kujijenga (fixpoint)"
+
+# ============ 13. Uhakika wa bomba la stdin ============
+H1=$(cat msingi/hesabu.swa msingi/mfuatano.swa | "$MBEGU" --exe 2>/dev/null | md5sum | cut -c1-16)
+H2=$(cat msingi/hesabu.swa msingi/mfuatano.swa | "$MBEGU" --exe 2>/dev/null | md5sum | cut -c1-16)
+H3=$(cat msingi/hesabu.swa msingi/mfuatano.swa | "$MBEGU" --exe 2>/dev/null | md5sum | cut -c1-16)
+kagua "$H1$H2$H3" "$H1$H1$H1" "uhakika wa bomba (mara 3)"
+
+# ============ Matokeo ============
+echo ""
+echo "===== Matokeo ya mnyororo: $PASS yamefaulu, $FAIL yameshindwa ====="
+[ "$FAIL" -eq 0 ] || exit 1
+exit 0
