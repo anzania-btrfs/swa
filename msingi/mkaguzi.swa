@@ -313,6 +313,11 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
             wigo_toa();
             h = ast_nne[h];
         }
+        kama (ast_tiga[node] != -1) {  // mwili wa sivyo (chaguo-msingi)
+            wigo_sukuma();
+            mkaguzi_kagua_taarifa(ast_tiga[node]);
+            wigo_toa();
+        }
         mkaguzi_kagua_taarifa(ast_nne[node]);
         rudisha;
     }
