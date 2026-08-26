@@ -34,9 +34,10 @@ FAIL	# mende_138 aina tupu: FAIL KWA MUDA — FPE ya stage1 inachunguzwa na mtu 
 0	jaribio_kama_sivyo	majaribio/programu/jaribio_kama_sivyo.swa
 0	jaribio_wakati	majaribio/programu/jaribio_wakati.swa
 0	jaribio_kama_ndani_ya_wakati	majaribio/programu/jaribio_kama_ndani_ya_wakati.swa
-FAIL	# chagua rahisi: mbegu haijui neno la chagua (mchanganuzi wa mbegu unalia kwa sauti) — jaribio la mnyororo wa Rust pekee	majaribio/programu/jaribio_chagua_rahisi.swa
-FAIL	# chagua hali nyingi: mbegu haijui neno la chagua — jaribio la mnyororo wa Rust pekee	majaribio/programu/jaribio_chagua_hali_nyingi.swa
-FAIL	# chagua ndani ya kazi: mbegu haijui neno la chagua — jaribio la mnyororo wa Rust pekee	majaribio/programu/jaribio_chagua_ndani_ya_kazi.swa
+0	jaribio_chagua_rahisi (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_rahisi.swa	stage1
+0	jaribio_chagua_hali_nyingi (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_hali_nyingi.swa	stage1
+0	jaribio_chagua_ndani_ya_kazi (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_ndani_ya_kazi.swa	stage1
+0	jaribio_chagua_sivyo (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_sivyo.swa	stage1
 0	jaribio_kigezo_cha_ulimwengu	majaribio/programu/jaribio_kigezo_cha_ulimwengu.swa
 0	jaribio_safu_ya_ulimwengu	majaribio/programu/jaribio_safu_ya_ulimwengu.swa
 0	jaribio_muundo_na_sehemu	majaribio/programu/jaribio_muundo_na_sehemu.swa
