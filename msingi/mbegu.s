@@ -165,6 +165,18 @@ nguvu_za_kumi:
 
 msg_extern_full: db "Hitilafu: jedwali la nje limejaa", 10, 0
 msg_kazi_kukosa: db "Hitilafu: kazi haijafafanuliwa: ", 0
+; Marudio ya majina ya ngazi ya juu — maneno yanafanana na yale ya
+; mnyororo wa .swa (hakiki_marudio_ya_ngazi_ya_juu): kazi, kigezo
+; cha ulimwengu, na muundo ni majina ya ulimwengu, na marudio au
+; mgongano kati ya aina mbili ni kosa la kufa.
+msg_kazi_marudio_1:   db "Hitilafu: kazi '", 0
+msg_kazi_marudio_2:   db "' imeshafafanuliwa", 10, 0
+msg_global_marudio_1: db "Hitilafu: kigezo cha ulimwengu '", 0
+msg_global_marudio_2: db "' kimeshafafanuliwa", 10, 0
+msg_muundo_marudio_1: db "Hitilafu: muundo '", 0
+msg_muundo_marudio_2: db "' umeshafafanuliwa", 10, 0
+msg_jina_aina_mbili_1: db "Hitilafu: jina '", 0
+msg_jina_aina_mbili_2: db "' limeshafafanuliwa kama aina nyingine ya ngazi ya juu", 10, 0
 msg_d64_wito:    db "Hitilafu: hoja za D64 zilizochanganywa na hoja 7-9 hazisaidiwi bado na mbegu — tumia mkusanyaji wa .swa", 10, 0
 msg_mstari_mpya: db 10, 0
 msg_fixup_full:  db "Hitilafu: jedwali la fixup limejaa", 10, 0
@@ -3396,12 +3408,78 @@ changanua_muundo:
         mov     rax, [muundo_count]
         cmp     rax, 64
         jae     .muundo_jaa
+
+        ; Kagua marudio ya jina. Marudio ya muundo na mgongano na
+        ; kigezo cha ulimwengu ni kosa la kufa, sawa na mnyororo wa
+        ; .swa (linganisha kwa herufi — hifadhi_jina hairudishi
+        ; nakala rudufu). Kazi zinakaguliwa wakati wa uzalishaji,
+        ; kwani jedwali la lebo halijajazwa bado.
+        push    rax                     ; hifadhi faharisi ya muundo mpya
+        push    rbx
+        lea     rsi, [str_pool + r12]   ; jina la muundo mpya
+        xor     ebx, ebx
+.kagua_muundo_miundo:
+        cmp     rbx, [muundo_count]
+        jae     .kagua_muundo_ulimwengu
+        push    rcx
+        mov     edi, [muundo_jina_off + rbx*4]
+        lea     rdi, [str_pool + rdi]
+        call    linganisha_mfuatano
+        pop     rcx
+        cmp     eax, 0
+        je      .kosa_muundo_marudio
+        inc     rbx
+        jmp     .kagua_muundo_miundo
+.kagua_muundo_ulimwengu:
+        xor     ebx, ebx
+.kagua_muundo_ulimwengu_loop:
+        cmp     rbx, [global_count]
+        jae     .kagua_muundo_sawa
+        push    rcx
+        mov     rdi, [global_name + rbx*8]
+        call    linganisha_mfuatano
+        pop     rcx
+        cmp     eax, 0
+        je      .kosa_jina_aina_mbili_muundo
+        inc     rbx
+        jmp     .kagua_muundo_ulimwengu_loop
+.kagua_muundo_sawa:
+        pop     rbx
+        pop     rax
         mov     [muundo_jina_off + rax*4], r12d
         mov     dword [muundo_ukubwa + rax*4], 0
         mov     dword [muundo_pangilio + rax*4], 0
         mov     ecx, [nyuga_count]
         mov     [muundo_nyuga_anza + rax*4], ecx
         inc     qword [muundo_count]
+        jmp     .muundo_imewekwa
+.kosa_muundo_marudio:
+        pop     rbx
+        pop     rax
+        push    r12                     ; ofseti ya jina la muundo
+        lea     rdi, [msg_muundo_marudio_1]
+        call    andika_mfuatano
+        pop     rdi
+        lea     rdi, [str_pool + rdi]
+        call    andika_mfuatano
+        lea     rdi, [msg_muundo_marudio_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.kosa_jina_aina_mbili_muundo:
+        pop     rbx
+        pop     rax
+        push    r12                     ; ofseti ya jina lenye mgongano
+        lea     rdi, [msg_jina_aina_mbili_1]
+        call    andika_mfuatano
+        pop     rdi
+        lea     rdi, [str_pool + rdi]
+        call    andika_mfuatano
+        lea     rdi, [msg_jina_aina_mbili_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.muundo_imewekwa:
 
         ; Tarajia mabano ya mbele {
         mov     edi, TOK_FUNGO
@@ -3890,14 +3968,77 @@ changanua_programu:
 
 .global_common:
         ; Rekodi kigeu cha ulimwengu kwenye jedwali
-        lea     rax, [str_pool + r14]
-        mov     [global_name + rcx*8], rax
+        lea     rsi, [str_pool + r14]
+
+        ; Kagua marudio ya jina. Marudio ya kigezo cha ulimwengu na
+        ; mgongano na muundo ni kosa la kufa, sawa na mnyororo wa
+        ; .swa (linganisha kwa herufi — hifadhi_jina hairudishi
+        ; nakala rudufu). Kazi zinakaguliwa wakati wa uzalishaji,
+        ; kwani jedwali la lebo halijajazwa bado.
+        push    rbx
+        push    rcx
+        xor     ebx, ebx
+.kagua_ulimwengu:
+        cmp     rbx, [global_count]
+        jae     .kagua_miundo
+        push    rcx
+        mov     rdi, [global_name + rbx*8]
+        call    linganisha_mfuatano
+        pop     rcx
+        cmp     eax, 0
+        je      .kosa_global_marudio
+        inc     rbx
+        jmp     .kagua_ulimwengu
+.kagua_miundo:
+        xor     ebx, ebx
+.kagua_miundo_loop:
+        cmp     rbx, [muundo_count]
+        jae     .kagua_ulimwengu_sawa
+        push    rcx
+        mov     edi, [muundo_jina_off + rbx*4]
+        lea     rdi, [str_pool + rdi]
+        call    linganisha_mfuatano
+        pop     rcx
+        cmp     eax, 0
+        je      .kosa_jina_aina_mbili_ulimwengu
+        inc     rbx
+        jmp     .kagua_miundo_loop
+.kagua_ulimwengu_sawa:
+        pop     rcx
+        pop     rbx
+        mov     [global_name + rcx*8], rsi
         mov     [global_size + rcx*4], r15d
         mov     eax, [rsp]
         mov     [global_base_type + rcx*4], eax
         mov     eax, [rsp+8]
         mov     [global_star_count + rcx*4], eax
         inc     qword [global_count]
+        jmp     .global_imewekwa
+.kosa_global_marudio:
+        pop     rcx
+        pop     rbx
+        push    rsi                     ; jina la kigezo (hupotea kwa andika)
+        lea     rdi, [msg_global_marudio_1]
+        call    andika_mfuatano
+        pop     rdi
+        call    andika_mfuatano
+        lea     rdi, [msg_global_marudio_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.kosa_jina_aina_mbili_ulimwengu:
+        pop     rcx
+        pop     rbx
+        push    rsi                     ; jina lenye mgongano
+        lea     rdi, [msg_jina_aina_mbili_1]
+        call    andika_mfuatano
+        pop     rdi
+        call    andika_mfuatano
+        lea     rdi, [msg_jina_aina_mbili_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.global_imewekwa:
 
         ; Tengeneza nodi ya AST_TANGAZO_ULIM
         mov     r8d, AST_TANGAZO_ULIM
@@ -8766,6 +8907,57 @@ uzalishaji_kazi:
         cmp     rdi, MAX_LABELS - 1
         jae     .skip_label
         lea     rsi, [str_pool + r15]
+
+        ; Kagua marudio ya jina la kazi. Swa haina maeneo ya majina:
+        ; jina la ngazi ya juu (kazi yenye mwili, kigezo cha ulimwengu,
+        ; au muundo) ni la ulimwengu. Zamani ufafanuzi wa pili ulipita
+        ; kimya na wa kwanza ukashinda — hatari kwa maktaba zilizo-
+        ; unganishwa kwa cat. Sasa ni kosa la kufa, sawa na mnyororo
+        ; wa .swa. Matamko ya mbele hayasajili lebo, kwa hiyo haya-
+        ; gongani. linganisha_mfuatano huhifadhi rdi na rsi.
+        xor     ecx, ecx
+.kagua_kazi_lebo:
+        cmp     rcx, [label_count]
+        jae     .kagua_kazi_ulimwengu
+        push    rcx
+        mov     rdi, [label_name + rcx*8]
+        call    linganisha_mfuatano
+        pop     rcx
+        cmp     eax, 0
+        je      .kosa_kazi_marudio
+        inc     rcx
+        jmp     .kagua_kazi_lebo
+.kagua_kazi_ulimwengu:
+        xor     ecx, ecx
+.kagua_kazi_ulimwengu_loop:
+        cmp     rcx, [global_count]
+        jae     .kagua_kazi_miundo
+        push    rcx
+        mov     rdi, [global_name + rcx*8]
+        call    linganisha_mfuatano
+        pop     rcx
+        cmp     eax, 0
+        je      .kosa_jina_aina_mbili
+        inc     rcx
+        jmp     .kagua_kazi_ulimwengu_loop
+.kagua_kazi_miundo:
+        xor     ecx, ecx
+.kagua_kazi_miundo_loop:
+        cmp     rcx, [muundo_count]
+        jae     .kagua_kazi_sawa
+        push    rcx
+        mov     edi, [muundo_jina_off + rcx*4]
+        lea     rdi, [str_pool + rdi]
+        call    linganisha_mfuatano
+        pop     rcx
+        cmp     eax, 0
+        je      .kosa_jina_aina_mbili
+        inc     rcx
+        jmp     .kagua_kazi_miundo_loop
+.kagua_kazi_sawa:
+        ; Soma upya hesabu ya lebo: linganisha_mfuatano huhifadhi rdi,
+        ; lakini rdi ilibadilishwa na skan kuwa kielekezi cha jina.
+        mov     rdi, [label_count]
         mov     [label_name + rdi*8], rsi
         mov     eax, [text_buf_pos]
         mov     [label_offset + rdi*4], eax
@@ -8774,6 +8966,26 @@ uzalishaji_kazi:
         ; Hifadhi faharisi ya lebo
         mov     r13, rdi
         jmp     .gen_code
+.kosa_kazi_marudio:
+        push    rsi                     ; jina la kazi (hupotea kwa andika)
+        lea     rdi, [msg_kazi_marudio_1]
+        call    andika_mfuatano
+        pop     rdi
+        call    andika_mfuatano
+        lea     rdi, [msg_kazi_marudio_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.kosa_jina_aina_mbili:
+        push    rsi                     ; jina lenye mgongano
+        lea     rdi, [msg_jina_aina_mbili_1]
+        call    andika_mfuatano
+        pop     rdi
+        call    andika_mfuatano
+        lea     rdi, [msg_jina_aina_mbili_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
 .skip_label:
         ; Kosa LAUTI — kurejea faharisi 0 kimya ni uharibifu
         lea     rdi, [msg_label_full]
