@@ -107,7 +107,7 @@ W0 andika_bafa() {
 
 // Kumbukumbu ya moja kwa moja
 W0 mfano_kumbukumbu() {
-    N32* p = tenga N32;     // tenga kumbukumbu
+    N32* p = tenga(4);      // tenga kumbukumbu (idadi ya baiti)
     *p = 42;                // andika thamani
     achilia(p);             // achilia kumbukumbu
 }
@@ -134,7 +134,7 @@ N32 kitanzi(N32 n) {
 
 ## Vipengele
 
-- **Maneno muhimu 13** ya Kiswahili -- hakuna Kiingereza katika sintaksia.
+- **Maneno muhimu 12** ya Kiswahili -- hakuna Kiingereza katika sintaksia.
   Aina za nambari hutambuliwa kisintaksia kwa herufi kubwa (familia za
   N/A/D/B/W), si kama maneno muhimu.
 - **Kujitegemea (100%)** -- mnyororo wa kujikusanya umefungwa kabisa:

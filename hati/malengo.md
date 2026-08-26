@@ -57,7 +57,7 @@ Andika baiti za mkono (opcodes za x86-64) zinazounda mkusanyaji wa kwanza.
 3. **Hakuna assembly/GNU as.** Machine code moja kwa moja.
 4. **Kiswahili pekee.** Maoni yote, majina ya faili, maneno muhimu.
 5. **Hakuna bloat.** Kila neno linafanya jambo moja.
-6. **Maneno muhimu 13.** Seti ndogo isiyobadilika; aina za nambari
+6. **Maneno muhimu 12.** Seti ndogo isiyobadilika; aina za nambari
    hutambuliwa kisintaksia (herufi kubwa), si kama maneno muhimu.
 7. **Hakuna emoji.**
 8. **Bootstrap ya mwisho kwa baiti za mkono.**
