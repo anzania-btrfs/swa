@@ -56,9 +56,23 @@ fi
 # Safu ya nne (hiari) inachagua mnyororo: "stage1" = stage1 pekee.
 # Hii inatumiwa na jaribio_chagua_* — mbegu haijui neno la chagua,
 # kwa hiyo mnyororo wa mbegu huachwa (mbegu kukataa ni halali).
+# Safu ya kwanza "KATA" = chanzo lazima KIKATALIWE na mkusanyaji:
+# toka isiyo 0 pamoja na ujumbe wa kosa, hakuna faili la tokeo.
 while IFS=$'\t' read -r code jina faili mnyororo; do
     [ -z "$code" ] && continue
     [ "$code" = "FAIL" ] && continue  # kukataliwa kunashughulikiwa tofauti
+    if [ "$code" = "KATA" ]; then
+        if [ "$mnyororo" = "stage1" ]; then
+            "$TMP/stage1" --exe "$faili" > "$TMP/p" 2> "$TMP/p.err"; rc=$?
+        else
+            "$MBEGU" --exe "$faili" > "$TMP/p" 2> "$TMP/p.err"; rc=$?
+        fi
+        grep -q "jina la aina" "$TMP/p" "$TMP/p.err"
+        ni_ujumbe=$?
+        [ -s "$TMP/p" ]; ni_faili=$?
+        kagua "$rc|$ni_ujumbe|$ni_faili" "1|0|1" "kukataa $faili ($mnyororo)"
+        continue
+    fi
     if [ "$mnyororo" = "stage1" ]; then
         "$TMP/stage1" --exe "$faili" > "$TMP/p" 2> /dev/null
         if [ $? -ne 0 ]; then
