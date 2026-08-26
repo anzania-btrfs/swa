@@ -53,9 +53,23 @@ else
 fi
 
 # ============ 4. Program za majaribio (minyororo yote miwili) ============
-while IFS=$'\t' read -r code jina faili; do
+# Safu ya nne (hiari) inachagua mnyororo: "stage1" = stage1 pekee.
+# Hii inatumiwa na jaribio_chagua_* — mbegu haijui neno la chagua,
+# kwa hiyo mnyororo wa mbegu huachwa (mbegu kukataa ni halali).
+while IFS=$'\t' read -r code jina faili mnyororo; do
     [ -z "$code" ] && continue
     [ "$code" = "FAIL" ] && continue  # kukataliwa kunashughulikiwa tofauti
+    if [ "$mnyororo" = "stage1" ]; then
+        "$TMP/stage1" --exe "$faili" > "$TMP/p" 2> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "SHINDWA: kukusanya $faili kwa stage1"
+            FAIL=$((FAIL+1)); continue
+        fi
+        chmod +x "$TMP/p"
+        timeout 5 "$TMP/p"; rc=$?
+        kagua "$rc" "$code" "$faili kwa stage1"
+        continue
+    fi
     for mk in "mbegu" "stage1"; do
         if [ "$mk" = "mbegu" ]; then
             "$MBEGU" --exe "$faili" > "$TMP/p" 2> /dev/null
