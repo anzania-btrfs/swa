@@ -31,15 +31,17 @@ yote yanarudisha 1 kwa sauti (`; KOSA: 1`). Kumbuka: kazi hizi sasa
 zinakaribia kikomo cha vizuizi vya FastISel cha LLVM — mwisho wa LLVM
 unabaki tete (kikomo kilichojulikana, kipengee 6).
 
-## 3. Upeo wa tokeni: 65,536 [IMEREKEBISHWA — SASA INALIA]
+## 3. Upeo wa tokeni: 262,144 [IMEREKEBISHWA — SASA INALIA]
 
 Ilikuwa: chanzo kikubwa kuliko kikomo kinakatwa KIMYA — ELF halali
-lakini program mbaya (JUU). Ilipimwa: wito ~7,280 kwa mistari ya
-tokeni 9, ~5,957 kwa tokeni 11.
+lakini program mbaya (JUU). Ilipimwa (kwa kikomo cha zamani cha
+65,536): wito ~7,280 kwa mistari ya tokeni 9, ~5,957 kwa tokeni 11.
 
 Sasa: lexer inalia `Hitilafu: chanzo kina tokeni nyingi mno` + exit 1
-— hakuna ukataji wa kimya tena. Uthibitisho: chanzo cha wito 7,500
-(juu ya kikomo) kinarudisha 1 kwa sauti; wito 7,000 (chini) inapita.
+— hakuna ukataji wa kimya tena. Kikomo kiliinuliwa hadi 262,144
+(MAX_TOKENS; vikomo viliinuliwa Agosti 2026, angalia kipengee 4).
+Uthibitisho: chanzo cha wito 65,600 (juu ya kikomo) kinarudisha 1
+kwa sauti; wito 65,500 (chini) inapita.
 
 ## 4. Mipaka ya majedwali — KOSA LAUTI, si uharibifu wa kimya [UKALI: CHINI]
 

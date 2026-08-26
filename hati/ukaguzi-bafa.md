@@ -22,17 +22,17 @@ mpaka unaolia, au sababu ya uthibitisho iliyoandikwa.**
 
 | Mgawanyo | Ukubwa | Ulinzi | Uamuzi |
 |---|---|---|---|
-| source_buf | 1 MB | sys_read(mpaka) + kosa la sauti | SALAMA KWA SAUTI |
-| token_* | 65,536 | kikomo cha kitanzi; **ukataji kimya** | PENGO (Juu, hati/mipaka.md #3 — uamuzi wa makusudi) |
-| ast_* | 65,536 | node_mpya → kosa la sauti | SALAMA KWA SAUTI |
-| str_pool | 256 KB | .str_overflow → kosa la sauti (ilikuwa kimya) | SALAMA KWA SAUTI (ilirekebishwa) |
-| text_buf | 256 KB | .overflow za waandishi → kosa la sauti (zilikuwa kimya) | SALAMA KWA SAUTI (ilirekebishwa) |
-| data_buf | 4 KB | .cr_nafasi + .global_register → sauti | SALAMA KWA SAUTI |
-| label_* | 16,384 | .skip_label → sauti | SALAMA KWA SAUTI |
-| extern_name | 16,384 | .extern_full → sauti | SALAMA KWA SAUTI |
-| rela_* | 16,384 | maeneo yote → sauti | SALAMA KWA SAUTI |
-| global_* | 512 | .global_fail_pops → sauti | SALAMA KWA SAUTI |
-| local_* | 512 | ukaguzi mpya → sauti (haukuwepo) | SALAMA KWA SAUTI (ilirekebishwa) |
+| source_buf | 4 MB | sys_read(mpaka) + kosa la sauti | SALAMA KWA SAUTI |
+| token_* | 262,144 | kikomo cha kitanzi + kosa la sauti (`Hitilafu: chanzo kina tokeni nyingi mno`) | SALAMA KWA SAUTI (ilirekebishwa — ukataji wa kimya umefungwa; hati/mipaka.md #3) |
+| ast_* | 262,144 | node_mpya → kosa la sauti | SALAMA KWA SAUTI |
+| str_pool | 1 MB | .str_overflow → kosa la sauti (ilikuwa kimya) | SALAMA KWA SAUTI (ilirekebishwa) |
+| text_buf | 1 MB | .overflow za waandishi → kosa la sauti (zilikuwa kimya) | SALAMA KWA SAUTI (ilirekebishwa) |
+| data_buf | 16 KB | .cr_nafasi + .global_register → sauti | SALAMA KWA SAUTI |
+| label_* | 65,536 | .skip_label → sauti | SALAMA KWA SAUTI |
+| extern_name | 65,536 | .extern_full → sauti | SALAMA KWA SAUTI |
+| rela_* | 65,536 | maeneo yote → sauti | SALAMA KWA SAUTI |
+| global_* | 4,096 | .global_fail_pops → sauti | SALAMA KWA SAUTI |
+| local_* | 1,024 | ukaguzi mpya → sauti (haukuwepo) | SALAMA KWA SAUTI (ilirekebishwa) |
 | loop_break_label[16] | 16 | haijatumika kamwe (mabaki) | SALAMA KWA UTHIBITISHO (haijaandikwa) |
 | break_fixup_pos | 65,536 | ulikuwa 256 kimya → sasa sauti | SALAMA KWA SAUTI (ilirekebishwa) |
 | continue_fixup_pos | 65,536 | kama hapo juu | SALAMA KWA SAUTI (ilirekebishwa) |
@@ -40,7 +40,7 @@ mpaka unaolia, au sababu ya uthibitisho iliyoandikwa.**
 | nyuga_* | 512 | ilikuwa .fail_pop kimya → sasa sauti | SALAMA KWA SAUTI (ilirekebishwa) |
 | kazi_ret_* | 256 | ukaguzi mpya → sauti (haukuwepo) | SALAMA KWA SAUTI (ilirekebishwa) |
 | gen_label_pos | 1024 | ukaguzi mpya → sauti (haukuwepo; kikomo kilikuwa 128) | SALAMA KWA SAUTI (ilirekebishwa) |
-| gen_fixup_* | 16,384 | .overflow → sauti | SALAMA KWA SAUTI |
+| gen_fixup_* | 65,536 | .overflow → sauti | SALAMA KWA SAUTI |
 | tmp_buf | 4096 | maandishi ≤ baiti 8 | SALAMA KWA UTHIBITISHO (ukubwa wa maandishi umepangwa) |
 
 ## msingi/*.swa (maktaba) — IMEKAGULIWA KAMILI
@@ -53,7 +53,7 @@ mpaka unaolia, au sababu ya uthibitisho iliyoandikwa.**
 | kazi_param_enc[4096] (mkaguzi) | 4096 | kama < 4096 tu | SALAMA KWA UTHIBITISHO (vigezo vya kazi ≤ 8) |
 | ast_*[65536] (msambazaji) | 65,536 | inachapisha + rudisha -1 | SALAMA KWA SAUTI (inachapisha) |
 | ast_pool (msambazaji) | 4 MB | inachapisha + rudisha | SALAMA KWA SAUTI (inachapisha) |
-| bafa_text (uzalishaji) | 256 KB | andika_baiti → KOSA kwa sauti + flag | SALAMA KWA SAUTI |
+| bafa_text (uzalishaji) | 512 KB | andika_baiti → KOSA kwa sauti + flag | SALAMA KWA SAUTI |
 | bafa_data (uzalishaji) | 256 KB | kama hapo juu | SALAMA KWA SAUTI |
 | lebo_*[2048] (uzalishaji) | 2048 | lebo_idadi < 2048 | SALAMA KWA UTHIBITISHO (kazi ~350) |
 | fixup_*[65536] (uzalishaji) | 65,536 | fixup_idadi < 65536 | SALAMA KWA UTHIBITISHO (fixups ≤ lebo ~2048) |
@@ -63,7 +63,7 @@ mpaka unaolia, au sababu ya uthibitisho iliyoandikwa.**
 | hoja_*[32], hoja_bk[256] | 32/256 | idadi < 32 | SALAMA KWA UTHIBITISHO (hoja za wito ≤ 9) |
 | param_*[16] | 16 | — | SALAMA KWA UTHIBITISHO (vigezo ≤ 8) |
 | mzunguko_lebo_*[16] | 16 | ulinzi mpya → KOSA kwa sauti | SALAMA KWA SAUTI (ilirekebishwa) |
-| var_pool[64] | 64 | ulinzi mpya → KOSA kwa sauti | SALAMA KWA SAUTI (ilirekebishwa) |
+| var_pool[1024] | 1,024 | ulinzi mpya → KOSA kwa sauti | SALAMA KWA SAUTI (ilirekebishwa) |
 | nje_pool/str_buf (uzalishaji) | 32 KB/16 KB | nje_idadi < 2048; str kwa lebo | SALAMA KWA UTHIBITISHO (nje ~50) |
 | Orodha/Ramani (orodha/ramani.swa) | dinamiki | kukua kunakagua idadi >= uwezo | SALAMA KWA UTHIBITISHO (uwezo unakua ×2; OOM ni kikomo cha jumla) |
 

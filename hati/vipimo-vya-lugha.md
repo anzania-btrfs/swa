@@ -256,7 +256,7 @@ Tazama `hati/mipaka.md` kwa orodha kamili yenye viwango vya ukali.
 Muhtasari: ABI ya desimali kwenye wito wa kazi wa mbegu (CHINI — inalia
 kwa sauti; mnyororo wa .swa una ABI kamili), mwisho wa LLVM wa dereva
 wa Rust (ulioshushwa hadhi kuwa wa MAJARIBIO; mnyororo wa uzalishaji ni
-mbegu/exe pekee), na upeo wa tokeni 65,536 (unalia kwa sauti).
+mbegu/exe pekee), na upeo wa tokeni 262,144 (unalia kwa sauti).
 
 ## 12. Uthibitisho
 
