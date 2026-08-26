@@ -151,10 +151,29 @@ EOF
     && timeout 5 "$TMP/mz"; kagua "$?" "0" "mzunguko mfupi (mbegu)"
 
 # ============ 9. Kazi isiyofafanuliwa inalia kwa sauti ============
+# Kesi ya kwanza: jina la kazi halipo kabisa. Kesi ya pili: chanzo
+# kinatangaza husisha { mfuatano.swa } lakini kinakusanywa peke yake —
+# kazi za maktaba hazipo, na mnyororo lazima ulie kwa sauti (mbegu
+# haiwii viungo vya ndani; stage1 pia).
 echo 'N32 main() { rudisha kazi_haipo(); }' > "$TMP/kk.swa"
-"$MBEGU" --exe "$TMP/kk.swa" > "$TMP/kk" 2> /dev/null; rc=$?
-grep -q "haijafafanuliwa" "$TMP/kk"
-kagua "$rc|$?" "1|0" "kazi kukosa inalia kwa sauti (mbegu)"
+echo 'husisha { mfuatano.swa }' > "$TMP/khus.swa"
+echo 'N32 main() { rudisha urefu_wa_mfuatano("habari"); }' >> "$TMP/khus.swa"
+for mk in "mbegu" "stage1"; do
+    if [ "$mk" = "mbegu" ]; then
+        "$MBEGU" --exe "$TMP/kk.swa" > "$TMP/kk" 2> "$TMP/kk.err"; rc=$?
+    else
+        "$TMP/stage1" --exe "$TMP/kk.swa" > "$TMP/kk" 2> "$TMP/kk.err"; rc=$?
+    fi
+    grep -q "haijafafanuliwa" "$TMP/kk" "$TMP/kk.err"
+    kagua "$rc|$?" "1|0" "kazi kukosa inalia kwa sauti ($mk)"
+    if [ "$mk" = "mbegu" ]; then
+        "$MBEGU" --exe "$TMP/khus.swa" > "$TMP/kh" 2> "$TMP/kh.err"; rc=$?
+    else
+        "$TMP/stage1" --exe "$TMP/khus.swa" > "$TMP/kh" 2> "$TMP/kh.err"; rc=$?
+    fi
+    grep -q "haijafafanuliwa" "$TMP/kh" "$TMP/kh.err"
+    kagua "$rc|$?" "1|0" "husisha-kazi kukosa inalia kwa sauti ($mk)"
+done
 
 # ============ 10. Bomba la stdin (chanzo kubwa hadi EOF) ============
 BOM="$TMP/bomba.swa"
