@@ -44,7 +44,7 @@ Tumia kiolezo cha **Ombi la Kipengele**. Kumbuka:
 ## Mazingira ya Ujenzi
 
 ### Mahitaji
-- LLVM 18+ (inapendekezwa 22)
+- LLVM 18+ (inapendekezwa 22) — kwa njia ya majaribio pekee; mnyororo wa uzalishaji (mbegu/exe) hauhitaji LLVM
 - Rust (latest stable)
 - clang (kwa kuunganisha)
 - Optional: Nix (`nix-shell`)
@@ -54,7 +54,7 @@ Tumia kiolezo cha **Ombi la Kipengele**. Kumbuka:
 git clone https://github.com/lugha-swa/swa.git
 cd swa
 cargo build --release
-cargo test  # Majaribio 174 yanapaswa kupita
+cargo test  # Majaribio 227 yanapaswa kupita (146 maktaba + 80 ujumuishaji + 1 nyaraka)
 ```
 
 ### Kujaribu Mkusanyaji

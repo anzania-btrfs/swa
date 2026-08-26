@@ -93,4 +93,6 @@ Hali ya Agosti 2026 (kuelekea 1.0):
 3. **Vipimo rasmi vya lugha — IMEKAMILIKA** — hati/vipimo-vya-lugha.md.
 4. **Uamuzi wa mteremko.swa/LLVM — IMEFANYIKA** — mwisho wa LLVM ni
    wa MAJARIBIO; mnyororo wa uzalishaji ni mbegu/exe pekee (mipaka.md 6).
-5. **ABI ya desimali** — bado wazi (mipaka.md 4c, JUU).
+5. **ABI ya desimali** — IMEFANYIKA kwenye mnyororo wa .swa: xmm0-xmm7
+   (hoja na kurejesha) — mipaka.md 4c. Kilichobaki: mbegu pekee bado
+   haina ABI ya xmm kwenye wito wa kazi (CHINI, inalia kwa sauti).
