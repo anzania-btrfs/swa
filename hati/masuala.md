@@ -12,12 +12,14 @@ zenye kazi za D64 (hoja au kurejesha kwa desimali) zinalia kwa sauti
 (`Hitilafu: D64 kwenye wito`). Mnyororo wa .swa (stage1+) una ABI kamili.
 Angalia `hati/mipaka.md` 4c.
 
-### 2. Maneno halisi ni 32-bit
+### 2. Maneno halisi 64-bit (mbegu na dereva wa Rust)
 
-Literal `2147483648` inatafsiriwa kama `-2147483648` (biti zinahifadhiwa,
-ishara inaenea). Thamani kubwa zaidi ya 32-bit lazima zijengwe wakati wa
-utekelezaji. Inatokea kwa usawa kwenye mbegu na dereva wa Rust.
-Angalia `hati/mipaka.md` 5.
+Mnyororo wa .swa umerekebishwa 2026-08-25 — maneno halisi hadi N64
+kamili (mipaka.md 5). Kilichobaki: mbegu (bootstrap pekee) na dereva
+wa Rust bado zinachanganua maneno halisi kama 32-bit — `2147483648`
+inatafsiriwa kama `-2147483648` (biti zinahifadhiwa, ishara inaenea),
+kwa hiyo thamani kubwa zaidi ya 32-bit lazima zijengwe wakati wa
+utekelezaji kwenye minyororo hiyo miwili. Angalia `hati/mipaka.md` 5.
 
 ### 3. Mbegu haiwi `husisha { faili.swa }`
 
@@ -40,7 +42,7 @@ O1. Mnyororo wa uzalishaji ni mbegu/exe pekee. Angalia `hati/mipaka.md` 6.
 | Kipaumbele | Kazi | Ukubwa | Hali |
 |-----------|------|--------|------|
 | 1 | ABI ya xmm0-xmm7 kwa wito wa D64 kwenye mbegu | kubwa | wazi |
-| 2 | Maneno halisi 64-bit | wastani | wazi |
+| 2 | Maneno halisi 64-bit (mbegu na dereva wa Rust; mnyororo wa .swa umeshafanyika) | wastani | wazi |
 | 3 | Viungo vya ndani (`husisha`) kwenye mbegu | wastani | wazi |
 | 4 | Mwisho wa LLVM kuwa wa kuaminika (si majaribio) | kubwa | wazi |
 | 5 | Malengo zaidi (ARM64, RISC-V) | kubwa | wazi |
