@@ -1,0 +1,11 @@
+// Muundo kupitia kielekezi — kazi inaandika sehemu ya muundo.
+muundo Nukta { N32 x; N32 y; };
+
+W0 weka_x(Nukta* p, N32 v) { p->x = v; }
+
+N32 main() {
+    Nukta n;
+    weka_x(&n, 42);
+    kama (n.x != 42) rudisha 1;
+    rudisha 0;
+}

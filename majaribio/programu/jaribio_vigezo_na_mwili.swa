@@ -1,0 +1,8 @@
+// Kazi yenye vigezo viwili na mwili wa hesabu.
+N32 jumlisha(N32 a, N32 b) { rudisha a + b; }
+
+N32 main() {
+    kama (jumlisha(2, 3) != 5) rudisha 1;
+    kama (jumlisha(10, -4) != 6) rudisha 2;
+    rudisha 0;
+}

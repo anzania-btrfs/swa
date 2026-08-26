@@ -1,0 +1,9 @@
+// Ternary: usemi wa masharti ? :.
+N32 chagua(N32 x) { rudisha x > 0 ? 1 : 0; }
+
+N32 main() {
+    kama (chagua(5) != 1) rudisha 1;
+    kama (chagua(-3) != 0) rudisha 2;
+    kama (chagua(0) != 0) rudisha 3;
+    rudisha 0;
+}
