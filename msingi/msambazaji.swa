@@ -27,7 +27,6 @@ N32 AST_CHAGUA = 14;
 N32 AST_HALI = 15;
 N32 AST_VUNJA = 16;
 N32 AST_ENDELEA = 17;
-N32 AST_TENGA = 18;
 N32 AST_ACHILIA = 19;
 N32 AST_SAWA = 20;
 N32 AST_TOFAUTI_SI = 21;
@@ -286,6 +285,33 @@ N32 ni_aina_msingi(N8* txt, N64 n) {
 N32 encode_aina(N32 familia, N32 upana, N32 mshale) {
     // Hesabu ya / na % (mbegu ina hitilafu katika & na |)
     rudisha ((familia % 256) * 256) + (upana % 256) + (mshale % 4);
+}
+
+// Alama ya muktadha: tuko ndani ya hoja za ukubwa(...) — mahali
+// pekee jina la aina linapokubalika kama usemi (kipimo cha aina).
+N32 ukubwa_hoja = 0;
+
+// Jina la aina? Aina za nambari hufuata muundo [N|A|D|B|W]+tarakimu
+// (mf. N32, D64, W0), na miundo ya mtumiaji inajulikana kupitia
+// akiba ya miundo iliyokamilika. Jina la aina HALITUMIKI kama usemi —
+// kukubali kunatoa msimbo unaoanguka kimya.
+N32 ni_jina_la_aina(Tokeni* t) {
+    kama (ni_aina_msingi(t->mwanzo, t->urefu)) { rudisha 1; }
+    N32 mi = 0;
+    wakati (mi < muundo_ukubwa_idadi) {
+        N8* mj = muundo_ukubwa_jina[mi];
+        N32 j = 0;
+        N32 lingana = 1;
+        wakati (j < t->urefu) {
+            kama (mj[j] != t->mwanzo[j]) { lingana = 0; vunja; }
+            j = j + 1;
+        }
+        kama (lingana) {
+            kama (mj[j] == 0) { rudisha 1; }
+        }
+        mi = mi + 1;
+    }
+    rudisha 0;
 }
 
 N32 changanua_aina_tokeni(Msambazaji* p) {
@@ -703,6 +729,15 @@ N32 changanua_taarifa_tangazo(Msambazaji* p) {
             }
         }
 
+        // Aina ilisomwa lakini hakuna jina la kigeu lililofuata — fomu
+        // isiyo halali (mf. `N32;` au `N32* p = tenga N32;`). Zamani
+        // ilimezwa kimya na kuacha tokeni ya aina ikiwa imepotea.
+        kama (kwanza == -1) {
+            p->kosa = 1;
+            andika_stderr("kosa: jina la aina halifuatwi na jina la kigeu\n");
+            rudisha -1;
+        }
+
         // Tumia semicolon ya hiari (baada ya matamko yote)
         kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
             kama (neno_ni(&p->sasa, ";")) { sogeza(p); }
@@ -748,19 +783,6 @@ N32 changanua_taarifa_ndani(Msambazaji* p) {
             }
             kama (expr == -1) { rudisha node_mpya(AST_ACHILIA, 0, -1, -1); }
             rudisha node_mpya(AST_ACHILIA, 0, expr, -1);
-        }
-    }
-
-    // ---- tenga usemi ; ----
-    kama (p->sasa.urefu >= 2 && p->sasa.mwanzo[0] >= 97) {
-        kama (neno_ni(&p->sasa, "tenga")) {
-            sogeza(p);
-            N32 expr = changanua_usemi(p);
-            kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
-                kama (neno_ni(&p->sasa, ";")) { sogeza(p); }
-            }
-            kama (expr == -1) { rudisha -1; }
-            rudisha node_mpya(AST_TENGA, 0, expr, -1);
         }
     }
 
@@ -962,6 +984,23 @@ N32 changanua_primary(Msambazaji* p) {
 
     // Kitambulisho
     kama ((p->sasa.mwanzo[0] >= 65 && p->sasa.mwanzo[0] != 91 && p->sasa.mwanzo[0] != 93 && p->sasa.mwanzo[0] != 123 && p->sasa.mwanzo[0] != 125)) {
+        // Jina la aina HALITUMIKI kama usemi — kukubali kunaleta
+        // msimbo unaoanguka kimya (mf. `N32* p = tenga N32;`).
+        // Hoja ya ukubwa(...) ndiyo pekee inayoruhusiwa.
+        kama (ukubwa_hoja == 0) {
+            kama (ni_jina_la_aina(&p->sasa)) {
+                N8 bafa_jina[64];
+                N32 bi = 0;
+                wakati (bi < p->sasa.urefu && bi < 63) {
+                    bafa_jina[bi] = p->sasa.mwanzo[bi];
+                    bi = bi + 1;
+                }
+                bafa_jina[bi] = 0;
+                andika_stderr("kosa: jina la aina halitumiki kama usemi: %s\n", bafa_jina);
+                p->kosa = 1;
+                rudisha -1;
+            }
+        }
         N32 id_node = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
         hifadhi_jina(id_node, p->sasa.mwanzo, p->sasa.urefu);
         sogeza(p);
@@ -1040,6 +1079,15 @@ N32 changanua_usemi_upande(Msambazaji* p) {
         // Wito wa kazi  usemi ( hoja )
         kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
             kama (neno_ni(&p->sasa, "(")) {
+                // ukubwa(aina) huchukua jina la aina kama hoja (kipimo
+                // cha aina) — weka alama ili changanua_primary iruhusu
+                // aina hapo.
+                N32 ni_ukubwa = 0;
+                kama (ast_aina[kushoto] == AST_KITAMBULISHO) {
+                    kama (jina_linganisha(ast_pool + ast_jina_off[kushoto], "ukubwa")) { ni_ukubwa = 1; }
+                }
+                N32 ukubwa_hoja_zamani = ukubwa_hoja;
+                kama (ni_ukubwa) { ukubwa_hoja = 1; }
                 sogeza(p);
                 N32 args = -1;
                 N32 prev = -1;
@@ -1060,6 +1108,7 @@ N32 changanua_usemi_upande(Msambazaji* p) {
                         }
                     }
                 }
+                ukubwa_hoja = ukubwa_hoja_zamani;
                 N32 wito = node_mpya(AST_WITO, 0, kushoto, args);
                 kushoto = wito;
                 endelea;

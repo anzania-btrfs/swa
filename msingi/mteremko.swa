@@ -58,7 +58,6 @@ N32 IR_RUDISHA_TUPU = 22;  // return void
 N32 IR_TAJA = 23;  // load (dereference)
 N32 IR_KUMBUKA = 24;  // store (assign to pointer)
 N32 IR_ANWANI_YA = 25;  // address-of
-N32 IR_TENGA = 26;  // heap allocate
 N32 IR_ACHILIA = 27;  // heap free
 N32 IR_SEHEMU_DOT = 28;  // struct field access (.)
 N32 IR_SEHEMU_MSHALE = 29;  // struct field via pointer (->)
@@ -521,11 +520,6 @@ N32 teremsha_usemi(Mteremshi* t, N32 node) {
     kama (aina == AST_KUMBUKA) {
         N32 ptr = teremsha_usemi(t, kushoto);
         rudisha ir_node_mpya(IR_ANWANI_YA, 0, 0, ptr, -1);
-    }
-
-    kama (aina == AST_TENGA) {
-        N32 size_expr = teremsha_usemi(t, kushoto);
-        rudisha ir_node_mpya(IR_TENGA, 0, 0, size_expr, -1);
     }
 
     kama (aina == AST_ACHILIA) {
