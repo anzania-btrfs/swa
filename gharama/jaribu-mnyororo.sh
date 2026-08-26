@@ -214,15 +214,40 @@ cat "$BOM" | "$MBEGU" --exe > "$TMP/bomba-exe" 2> /dev/null
 chmod +x "$TMP/bomba-exe"; timeout 5 "$TMP/bomba-exe"; rc=$?
 kagua "$rc" "7" "bomba la stdin (mbegu)"
 
-# ============ 11. D64 kwenye wito wa mbegu inalia kwa sauti ============
+# ============ 11. ABI ya xmm: D64 kwenye wito wa mbegu ============
+# Mbegu sasa ina ABI ya xmm (hoja na kurudi kwa D64). Hoja za D64
+# zilizochanganywa na nafasi 7-9 bado hazisaidiwi — zinalia kwa sauti.
 D64F="$TMP/d64w.swa"
 cat > "$D64F" <<'EOF'
 D64 mara_mbili(D64 x) { rudisha x * 2.0; }
-N32 main() { rudisha 0; }
+D64 jumla3(D64 a, D64 b, D64 c) { rudisha a + b + c; }
+N32 main() {
+    D64 r = mara_mbili(3.5);
+    kama (r < 6.99 || r > 7.01) rudisha 1;
+    D64 s = jumla3(1.5, 2.5, 3.0);
+    kama (s < 6.99 || s > 7.01) rudisha 2;
+    rudisha 0;
+}
 EOF
-"$MBEGU" --exe "$D64F" > "$TMP/d64w" 2> /dev/null; rc=$?
-grep -q "D64 kwenye wito" "$TMP/d64w"
-kagua "$rc|$?" "1|0" "D64-wito inalia kwa sauti (mbegu)"
+for mk in "mbegu" "stage1"; do
+    if [ "$mk" = "mbegu" ]; then
+        "$MBEGU" --exe "$D64F" > "$TMP/d64w" 2> /dev/null
+    else
+        "$TMP/stage1" --exe "$D64F" > "$TMP/d64w" 2> /dev/null
+    fi
+    chmod +x "$TMP/d64w"; timeout 5 "$TMP/d64w"; rc=$?
+    kagua "$rc" "0" "hoja na kurudi kwa D64 ($mk)"
+done
+
+# Kikomo: D64 iliyochanganywa na hoja 7-9 inakataliwa kwa sauti
+D64M="$TMP/d64m.swa"
+cat > "$D64M" <<'EOF'
+D64 nyingi(N32 a, N32 b, N32 c, N32 d, N32 e, N32 f, N32 g, D64 h) { rudisha h; }
+N32 main() { D64 r = nyingi(1, 2, 3, 4, 5, 6, 7, 8.5); rudisha 0; }
+EOF
+"$MBEGU" --exe "$D64M" > "$TMP/d64m" 2> /dev/null; rc=$?
+grep -q "hoja 7-9" "$TMP/d64m"
+kagua "$rc|$?" "1|0" "D64 na hoja 7-9 inalia kwa sauti (mbegu)"
 
 # ============ 12. Formatter inajijenga (fixpoint) ============
 UMB="$TMP/umbizaji-zima.swa"
