@@ -1,0 +1,2 @@
+N32 g_safu[3];
+N32 main() { rudisha 3; }

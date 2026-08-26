@@ -1,0 +1,9 @@
+// Wito wa kazi inayofafanuliwa BAADA ya mtumiaji (mwito wa mbele).
+W0 mkuu() { msaidizi(42); }
+
+W0 msaidizi(N32 x) { rudisha; }
+
+N32 main() {
+    mkuu();
+    rudisha 0;
+}

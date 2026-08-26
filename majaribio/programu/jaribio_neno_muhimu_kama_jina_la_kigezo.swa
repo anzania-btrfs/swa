@@ -1,0 +1,10 @@
+// Maneno muhimu kama majina ya vigezo (hali, wakati).
+W0 fanya() {
+    N32 hali = 42;
+    N32 wakati = hali + 1;
+}
+
+N32 main() {
+    fanya();
+    rudisha 0;
+}
