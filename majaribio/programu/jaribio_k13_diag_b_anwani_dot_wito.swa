@@ -1,0 +1,13 @@
+muundo Nukta { N32 x; N32 y; }
+
+W0 andika_y_kupitia_anwani(N32* addr, N32 v) {
+    *addr = v;
+}
+
+N32 main() {
+    Nukta n;
+    n.x = 10;
+    n.y = 20;
+    andika_y_kupitia_anwani(&n.y, 42);  // &n.y kwenye WITO
+    rudisha n.x + n.y;  // 10 + 42 = 52
+}

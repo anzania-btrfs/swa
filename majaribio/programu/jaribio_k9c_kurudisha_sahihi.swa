@@ -1,0 +1,7 @@
+// Kazi ya N32 yenye rudisha sahihi — inarudisha 42.
+N32 fanya() { rudisha 42; }
+
+N32 main() {
+    kama (fanya() != 42) rudisha 1;
+    rudisha 0;
+}

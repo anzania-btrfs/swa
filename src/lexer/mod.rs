@@ -733,12 +733,12 @@ mod tests {
 
     #[test]
     fn test_keywords() {
-        let src = "kama sivyo kwa wakati rudisha kweli uongo tupu";
+        let src = "kama sivyo kwa wakati rudisha husisha endelea";
         let kinds: Vec<String> = token_strings(src);
         assert_eq!(
             kinds,
             vec![
-                "kama", "sivyo", "kwa", "wakati", "rudisha", "kweli", "uongo", "tupu"
+                "kama", "sivyo", "kwa", "wakati", "rudisha", "husisha", "endelea"
             ]
         );
     }

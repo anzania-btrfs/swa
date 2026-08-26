@@ -1,0 +1,59 @@
+0	jaribio_k10a_kumbukumbu	majaribio/programu/jaribio_k10a_kumbukumbu.swa
+0	jaribio_k10b_mfuatano	majaribio/programu/jaribio_k10b_mfuatano.swa
+FAIL	# k10c orodha: maktaba imeunganishwa moja kwa moja lakini tenga/badili hutumia hesabu ya anwani ambayo mbegu haijui (SEGV) — stage1 inaifanya sawa; rejesha baada ya mbegu kuipata	majaribio/programu/jaribio_k10c_orodha.swa
+FAIL	# k10d ramani: maktaba imeunganishwa moja kwa moja lakini tenga hutumia hesabu ya anwani ambayo mbegu haijui (SEGV) — stage1 inaifanya sawa; rejesha baada ya mbegu kuipata	majaribio/programu/jaribio_k10d_ramani.swa
+0	jaribio_k10e_mpangilio	majaribio/programu/jaribio_k10e_mpangilio.swa
+0	jaribio_k10f_hesabu	majaribio/programu/jaribio_k10f_hesabu.swa
+FAIL	# k10g faili: faili.swa inaitia C::stdio (fopen/fread...) — mbegu na stage1 hawana maktaba ya C	majaribio/programu/jaribio_k10g_faili.swa
+FAIL	# k11a maoni ya kijiuzi: upachikaji wa maoni /* /* */ */ haukubaliki na mbegu (msomaji wa mnyororo wa .swa unajua)	majaribio/programu/jaribio_k11a_maoni_ya_kijiuzi.swa
+0	jaribio_k11b_nambari_za_radiksi	majaribio/programu/jaribio_k11b_nambari_za_radiksi.swa
+FAIL	# k11c utorokaji wa herufi: \n \t \\xNN havikubaliki na mbegu	majaribio/programu/jaribio_k11c_mfuatano_wa_utorokaji.swa
+FAIL	# k12 opereta ya asilimia: %= haisaidiwi na minyororo yote miwili (mbegu na stage1) — % pekee ndiyo inafanya kazi (tazama k12b)	majaribio/programu/jaribio_k12_opereta_ya_asilimia.swa
+2	jaribio_k12b_modulo_pekee	majaribio/programu/jaribio_k12b_modulo_pekee.swa
+52	jaribio_k13_anwani_sehemu_kupitia_kielekezi_kama_hoja	majaribio/programu/jaribio_k13_anwani_sehemu_kupitia_kielekezi_kama_hoja.swa
+42	jaribio_k13_diag_a_anwani_kigeu_wito	majaribio/programu/jaribio_k13_diag_a_anwani_kigeu_wito.swa
+52	jaribio_k13_diag_b_anwani_dot_wito	majaribio/programu/jaribio_k13_diag_b_anwani_dot_wito.swa
+52	jaribio_k13_diag_c_anwani_mshale_muundo_wito	majaribio/programu/jaribio_k13_diag_c_anwani_mshale_muundo_wito.swa
+52	jaribio_k13b_anwani_sehemu_kupitia_kielekezi	majaribio/programu/jaribio_k13b_anwani_sehemu_kupitia_kielekezi.swa
+42	jaribio_k13c_anwani_kigeu_simple	majaribio/programu/jaribio_k13c_anwani_kigeu_simple.swa
+52	jaribio_k13d_anwani_sehemu_dot	majaribio/programu/jaribio_k13d_anwani_sehemu_dot.swa
+42	jaribio_k13e_kigeu_bila_anwani	majaribio/programu/jaribio_k13e_kigeu_bila_anwani.swa
+42	jaribio_k13f_anwani_bila_kunyoosha	majaribio/programu/jaribio_k13f_anwani_bila_kunyoosha.swa
+42	jaribio_k13g_kunyoosha_kigeu	majaribio/programu/jaribio_k13g_kunyoosha_kigeu.swa
+3	jaribio_k6_safu	majaribio/programu/jaribio_k6_safu.swa
+4	jaribio_k6_sret_sehemu	majaribio/programu/jaribio_k6_sret_sehemu.swa
+30	jaribio_k6_sret_simple	majaribio/programu/jaribio_k6_sret_simple.swa
+0	jaribio_kazi_tupu	majaribio/programu/jaribio_kazi_tupu.swa
+0	jaribio_mbegu_mzunguko_mfupi	majaribio/programu/jaribio_mbegu_mzunguko_mfupi.swa
+0	jaribio_mende_134_kamasivyo_mnyororo	majaribio/programu/jaribio_mende_134_kamasivyo_mnyororo.swa
+FAIL	# mende_135 desimali: FAIL KWA MUDA — FPE ya stage1 inachunguzwa na mtu mwingine; inawajibika kurejeshwa baada ya kurekebishwa	majaribio/programu/jaribio_mende_135_desimali.swa
+FAIL	# mende_138 aina tupu: FAIL KWA MUDA — FPE ya stage1 inachunguzwa na mtu mwingine; inawajibika kurejeshwa baada ya kurekebishwa	majaribio/programu/jaribio_mende_138_tupu_aina.swa
+
+0	jaribio_rudisha_nambari	majaribio/programu/jaribio_rudisha_nambari.swa
+0	jaribio_vigezo_na_mwili	majaribio/programu/jaribio_vigezo_na_mwili.swa
+0	jaribio_kama_sivyo	majaribio/programu/jaribio_kama_sivyo.swa
+0	jaribio_wakati	majaribio/programu/jaribio_wakati.swa
+0	jaribio_kama_ndani_ya_wakati	majaribio/programu/jaribio_kama_ndani_ya_wakati.swa
+0	jaribio_chagua_rahisi (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_rahisi.swa	stage1
+0	jaribio_chagua_hali_nyingi (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_hali_nyingi.swa	stage1
+0	jaribio_chagua_ndani_ya_kazi (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_ndani_ya_kazi.swa	stage1
+0	jaribio_chagua_sivyo (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_sivyo.swa	stage1
+KATA	jaribio_tenga_jina_la_aina (stage1 pekee: mbegu bado inakubali fomu ya tenga N32 — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_tenga_jina_la_aina.swa	stage1
+KATA	jaribio_kazi_marudio (stage1 pekee: mbegu bado inakubali kazi mbili zenye jina moja — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_kazi_marudio.swa	stage1	imeshafafanuliwa
+0	jaribio_kigezo_cha_ulimwengu	majaribio/programu/jaribio_kigezo_cha_ulimwengu.swa
+0	jaribio_safu_ya_ulimwengu	majaribio/programu/jaribio_safu_ya_ulimwengu.swa
+0	jaribio_muundo_na_sehemu	majaribio/programu/jaribio_muundo_na_sehemu.swa
+0	jaribio_muundo_kielekezi	majaribio/programu/jaribio_muundo_kielekezi.swa
+0	jaribio_muundo_wa_vitu_vingi	majaribio/programu/jaribio_muundo_wa_vitu_vingi.swa
+0	jaribio_mwito_wa_mbele	majaribio/programu/jaribio_mwito_wa_mbele.swa
+0	jaribio_mwito_wa_kujirudia	majaribio/programu/jaribio_mwito_wa_kujirudia.swa
+0	jaribio_kazi_nyingi	majaribio/programu/jaribio_kazi_nyingi.swa
+0	jaribio_vihisabati	majaribio/programu/jaribio_vihisabati.swa
+0	jaribio_ulinganisho	majaribio/programu/jaribio_ulinganisho.swa
+0	jaribio_vihamishaji_biti	majaribio/programu/jaribio_vihamishaji_biti.swa
+0	jaribio_ternary	majaribio/programu/jaribio_ternary.swa
+0	jaribio_bloku_tupu	majaribio/programu/jaribio_bloku_tupu.swa
+0	jaribio_neno_muhimu_kama_jina_la_kigezo	majaribio/programu/jaribio_neno_muhimu_kama_jina_la_kigezo.swa
+0	jaribio_kazi_isiyo_na_mwili	majaribio/programu/jaribio_kazi_isiyo_na_mwili.swa
+0	jaribio_k9c_kurudisha_sahihi	majaribio/programu/jaribio_k9c_kurudisha_sahihi.swa
+0	jaribio_k14_maktaba_zaidi	majaribio/programu/jaribio_k14_maktaba_zaidi.swa

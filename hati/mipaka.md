@@ -31,35 +31,36 @@ yote yanarudisha 1 kwa sauti (`; KOSA: 1`). Kumbuka: kazi hizi sasa
 zinakaribia kikomo cha vizuizi vya FastISel cha LLVM — mwisho wa LLVM
 unabaki tete (kikomo kilichojulikana, kipengee 6).
 
-## 3. Upeo wa tokeni: 65,536 [IMEREKEBISHWA — SASA INALIA]
+## 3. Upeo wa tokeni: 262,144 [IMEREKEBISHWA — SASA INALIA]
 
 Ilikuwa: chanzo kikubwa kuliko kikomo kinakatwa KIMYA — ELF halali
-lakini program mbaya (JUU). Ilipimwa: wito ~7,280 kwa mistari ya
-tokeni 9, ~5,957 kwa tokeni 11.
+lakini program mbaya (JUU). Ilipimwa (kwa kikomo cha zamani cha
+65,536): wito ~7,280 kwa mistari ya tokeni 9, ~5,957 kwa tokeni 11.
 
 Sasa: lexer inalia `Hitilafu: chanzo kina tokeni nyingi mno` + exit 1
-— hakuna ukataji wa kimya tena. Uthibitisho: chanzo cha wito 7,500
-(juu ya kikomo) kinarudisha 1 kwa sauti; wito 7,000 (chini) inapita.
+— hakuna ukataji wa kimya tena. Kikomo kiliinuliwa hadi 262,144
+(MAX_TOKENS; vikomo viliinuliwa Agosti 2026, angalia kipengee 4).
+Uthibitisho: chanzo cha wito 65,600 (juu ya kikomo) kinarudisha 1
+kwa sauti; wito 65,500 (chini) inapita.
 
 ## 4. Mipaka ya majedwali — KOSA LAUTI, si uharibifu wa kimya [UKALI: CHINI]
 
-Kila mpaka wa jedwali ndani ya mbegu sasa unaangalia na KULIA kwa
-sauti (`Hitilafu: ... limejaa` + exit 1) badala ya kuendelea kimya:
+Kila mpaka wa jedwali ndani ya mbegu unaangalia na KULIA kwa
+sauti (`Hitilafu: ... limejaa` + exit 1) badala ya kuendelea kimya.
+Vikomo viliinuliwa Agosti 2026 (4x) ili kupunguza mzunguko:
 
-- jedwali la nje (MAX_EXTERNS 16,384) — kila wito wa mbele unachukua
-  ingizo jipya bila dedup (sahihi kiutendaji, imejaribiwa hadi wito
-  7,000; kikomo hakifikiwi kwa sasa kwa sababu kikomo cha tokeni
-  kinapiga kwanza)
-- jedwali la RELA (MAX_RELOCS 16,384) — maeneo yote: mizigo ya
+- jedwali la nje (MAX_EXTERNS 65,536) — kila wito wa mbele unachukua
+  ingizo jipya bila dedup
+- jedwali la RELA (MAX_RELOCS 65,536) — maeneo yote: mizigo ya
   ulimwengu, uhifadhi wa ulimwengu, tungo, nafasi za sret, na wito
-- jedwali la fixup, la ulimwengu (MAX_GLOBALS 512), la lebo
-  (MAX_LABELS 16,384), na la AST (MAX_AST_NODES 65,536)
-- chanzo kikubwa kuliko baiti 1,048,576 (MAX_SOURCE) — mbegu inalia
+- jedwali la fixup, la ulimwengu (MAX_GLOBALS 4096), la lebo
+  (MAX_LABELS 65,536), na la AST (MAX_AST_NODES 262,144)
+- chanzo kikubwa kuliko baiti 4,194,304 (MAX_SOURCE) — mbegu inalia
   kwa sauti badala ya kusoma sehemu tu
+- tokeni (MAX_TOKENS 262,144), msimbo (TEXT_BUF_SIZE 1,048,576),
+  na bwawa la herufi (STR_POOL_SIZE 1,048,576)
 
-Uthibitisho: toleo la jaribio lenye MAX_TOKENS/MAX_AST_NODES
-lililoinuliwa hufikia kikomo cha nje kwa wito 16,500 na inalia
-`Hitilafu: jedwali la nje limejaa` — si uharibifu tena.
+Uthibitisho: vikomo hufikiwa kwa KOSA LAUTI, si uharibifu wa kimya.
 
 ## 4b. `endelea` ndani ya `kwa` [IMEREKEBISHWA]
 
@@ -97,12 +98,28 @@ wito wa kazi haisaidiwi bado na mbegu`). Mnyororo wa .swa unashughulikia
 hali hiyo kikamilifu — tumia mkusanyaji wa .swa kwa program zenye
 kazi za D64.
 
-## 5. Maneno halisi ni 32-bit signed [UKALI: CHINI]
+## 5. Maneno halisi ni 32-bit signed [IMEREKEBISHWA kwa mnyororo wa .swa]
 
-Neno halisi `2147483648` linatafsiriwa kama `-2147483648` (biti
-zinahifadhiwa, ishara inaenea) — na mkusanyaji wa mbegu NA dereva wa
-Rust KWA USAWA (uthabiti, si mgawanyiko). Thamani kubwa zaidi ya
-32-bit lazima zijengwe wakati wa utekelezaji.
+Ilikuwa: neno halisi `2147483648` linatafsiriwa kama `-2147483648`
+(biti zinahifadhiwa, ishara inaenea) — thamani kubwa zaidi ya 32-bit
+lazima zijengwe wakati wa utekelezaji.
+
+Sasa (mnyororo wa .swa, uliothibitishwa 2026-08-25): mkusanyaji wa
+kujikusanya unachanganua maneno halisi hadi N64 kamili. `tokeni_kwa_nambari_n64`
+inakusanya thamani kama N64; `changanua_primary` huhifadhi baiti 8
+kwenye dimbwi la AST kwa thamani > 2147483647 (alama `ast_tiga=1`);
+mkaguzi huweka usimbaji wa N64 (upana 64); `uzalishaji_nambari` hutoa
+`mov rax, imm64`; na kianzio cha ulimwengu kinakili baiti 8 kutoka
+dimbwi. Uthibitisho: `N64 x = 4294967296; rudisha x / 4294967296` → 1
+(juu) na `x % 4294967296` → 0 (chini), kwa kigeu cha ndani NA cha
+ulimwengu.
+
+Kikomo kilichobaki (CHINI): mbegu (bootstrap pekee) na dereva wa Rust
+bado zinachanganua maneno halisi kama 32-bit. Mbegu haihitaji maneno
+ya N64 kwa kujikusanya (chanzo cha .swa kinatumia thamani chini ya
+2^31 pekee) — lakini kama mkusanyaji wa kujitegemea, mbegu bado hukata
+thamani kubwa (k.m. `4294967296` → 0, na kusababisha FPE katika
+ugawanyo).
 
 ## 6. Dereva wa Rust/LLVM: njia ya MAJARIBIO yenye ulinzi wa sauti [IMEREKEBISHWA — JUU imefungwa 2026-08-20]
 
