@@ -1,0 +1,13 @@
+// Muundo na ufikiaji wa sehemu. (Hoja ya muundo kwa thamani haijatulia
+// kwenye mbegu — kielekezi kinafanya kazi minyororo yote miwili.)
+muundo Nukta { N32 x; N32 y; };
+
+N32 pata_x(Nukta* p) { rudisha p->x; }
+
+N32 main() {
+    Nukta n;
+    n.x = 42;
+    n.y = 7;
+    kama (pata_x(&n) != 42) rudisha 1;
+    rudisha 0;
+}

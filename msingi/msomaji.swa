@@ -7,12 +7,12 @@ husisha { mfuatano.swa }
 // ==========================================================
 
 // Vipimo vya aina za Tokeni.
-N32 TOKENI_NAMBARI     = 1;
-N32 TOKENI_MFUATANO    = 2;
+N32 TOKENI_NAMBARI = 1;
+N32 TOKENI_MFUATANO = 2;
 N32 TOKENI_KITAMBULISHO = 3;
-N32 TOKENI_MANENO      = 4;
-N32 TOKENI_ISHARA      = 5;
-N32 TOKENI_MWISHO      = 6;
+N32 TOKENI_MANENO = 4;
+N32 TOKENI_ISHARA = 5;
+N32 TOKENI_MWISHO = 6;
 
 muundo Tokeni {
     N32 aina;
@@ -551,11 +551,11 @@ W0 tokeni_soma_nambari(Tokeni* t, Msomaji* m, N64 mwanzo_nafasi) {
         kama (m->nafasi + 1 < m->urefu) {
             N8 c1 = m->chanzo[m->nafasi + 1];
             kama (c1 == 120) { ni_radiksi = 1; }
-            kama (c1 == 88)  { ni_radiksi = 1; }
+            kama (c1 == 88) { ni_radiksi = 1; }
             kama (c1 == 111) { ni_radiksi = 2; }
-            kama (c1 == 79)  { ni_radiksi = 2; }
-            kama (c1 == 98)  { ni_radiksi = 3; }
-            kama (c1 == 66)  { ni_radiksi = 3; }
+            kama (c1 == 79) { ni_radiksi = 2; }
+            kama (c1 == 98) { ni_radiksi = 3; }
+            kama (c1 == 66) { ni_radiksi = 3; }
         }
     }
 
@@ -569,52 +569,52 @@ W0 tokeni_soma_nambari(Tokeni* t, Msomaji* m, N64 mwanzo_nafasi) {
             m->nafasi = m->nafasi + 1;
             m->safu = m->safu + 1;
         }
-    } sivyo kama (ni_radiksi == 2) {
-        // Oktali: 0o ...
-        m->nafasi = m->nafasi + 2;
-        m->safu = m->safu + 2;
-        wakati (msomaji_imeisha(m) == 0) {
-            N8 ch2 = m->chanzo[m->nafasi];
-            kama (ni_oktali_dijiti(ch2) == 0) { vunja; }
-            m->nafasi = m->nafasi + 1;
-            m->safu = m->safu + 1;
-        }
-    } sivyo kama (ni_radiksi == 3) {
-        // Binary: 0b ...
-        m->nafasi = m->nafasi + 2;
-        m->safu = m->safu + 2;
-        wakati (msomaji_imeisha(m) == 0) {
-            N8 ch2 = m->chanzo[m->nafasi];
-            kama (ni_binary_dijiti(ch2) == 0) { vunja; }
-            m->nafasi = m->nafasi + 1;
-            m->safu = m->safu + 1;
-        }
-    } sivyo {
-        // Desimali (pasipo kiambishi) au '0' pekee
-        wakati (msomaji_imeisha(m) == 0) {
-            N8 ch2 = m->chanzo[m->nafasi];
-            kama (ni_tarakimu(ch2) == 0) { vunja; }
-            m->nafasi = m->nafasi + 1;
-            m->safu = m->safu + 1;
-        }
-        // Sehemu ya hisia hiari: . ikifuatiwa na tarakimu
-        kama (msomaji_imeisha(m) == 0) {
-            kama (m->chanzo[m->nafasi] == 46) {
-                kama (m->nafasi + 1 < m->urefu) {
-                    kama (ni_tarakimu(m->chanzo[m->nafasi + 1]) != 0) {
-                        m->nafasi = m->nafasi + 1;
-                        m->safu = m->safu + 1;
-                        wakati (msomaji_imeisha(m) == 0) {
-                            N8 ch2 = m->chanzo[m->nafasi];
-                            kama (ni_tarakimu(ch2) == 0) { vunja; }
-                            m->nafasi = m->nafasi + 1;
-                            m->safu = m->safu + 1;
+    } sivyo { kama (ni_radiksi == 2) {
+            // Oktali: 0o ...
+            m->nafasi = m->nafasi + 2;
+            m->safu = m->safu + 2;
+            wakati (msomaji_imeisha(m) == 0) {
+                N8 ch2 = m->chanzo[m->nafasi];
+                kama (ni_oktali_dijiti(ch2) == 0) { vunja; }
+                m->nafasi = m->nafasi + 1;
+                m->safu = m->safu + 1;
+            }
+        } sivyo { kama (ni_radiksi == 3) {
+                // Binary: 0b ...
+                m->nafasi = m->nafasi + 2;
+                m->safu = m->safu + 2;
+                wakati (msomaji_imeisha(m) == 0) {
+                    N8 ch2 = m->chanzo[m->nafasi];
+                    kama (ni_binary_dijiti(ch2) == 0) { vunja; }
+                    m->nafasi = m->nafasi + 1;
+                    m->safu = m->safu + 1;
+                }
+            } sivyo {
+                // Desimali (pasipo kiambishi) au '0' pekee
+                wakati (msomaji_imeisha(m) == 0) {
+                    N8 ch2 = m->chanzo[m->nafasi];
+                    kama (ni_tarakimu(ch2) == 0) { vunja; }
+                    m->nafasi = m->nafasi + 1;
+                    m->safu = m->safu + 1;
+                }
+                // Sehemu ya hisia hiari: . ikifuatiwa na tarakimu
+                kama (msomaji_imeisha(m) == 0) {
+                    kama (m->chanzo[m->nafasi] == 46) {
+                        kama (m->nafasi + 1 < m->urefu) {
+                            kama (ni_tarakimu(m->chanzo[m->nafasi + 1]) != 0) {
+                                m->nafasi = m->nafasi + 1;
+                                m->safu = m->safu + 1;
+                                wakati (msomaji_imeisha(m) == 0) {
+                                    N8 ch2 = m->chanzo[m->nafasi];
+                                    kama (ni_tarakimu(ch2) == 0) { vunja; }
+                                    m->nafasi = m->nafasi + 1;
+                                    m->safu = m->safu + 1;
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
-    }
+            } } }
 
     t->aina = TOKENI_NAMBARI;
     t->urefu = m->nafasi - anza;

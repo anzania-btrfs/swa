@@ -1,0 +1,2 @@
+tupu salamu() { rudisha; }
+N32 main() { salamu(); rudisha 0; }

@@ -88,3 +88,50 @@ N32 fibonacci_hesabu(N32 n) {
     kama (n <= 1) { rudisha n; }
     rudisha fibonacci_hesabu(n - 1) + fibonacci_hesabu(n - 2);
 }
+
+// kipengele_hesabu — n! (kipengele). Rudisha 0 kwa n < 0 au n > 12
+// (N32 inazidi kuanzia 13!).
+N32 kipengele_hesabu(N32 n) {
+    kama (n < 0 || n > 12) { rudisha 0; }
+    N32 r = 1;
+    N32 i = 2;
+    wakati (i <= n) { r = r * i; i = i + 1; }
+    rudisha r;
+}
+
+// ni_kuu_hesabu — angalia kama n ni namba kuu (1 = kuu, 0 = sivyo).
+// Inajaribu vigawanyo visivyo hata hadi kipeuo cha pili cha n.
+N32 ni_kuu_hesabu(N32 n) {
+    kama (n < 2) { rudisha 0; }
+    kama (n == 2 || n == 3) { rudisha 1; }
+    kama (n % 2 == 0) { rudisha 0; }
+    N32 i = 3;
+    wakati (i * i <= n) {
+        kama (n % i == 0) { rudisha 0; }
+        i = i + 2;
+    }
+    rudisha 1;
+}
+
+// lcm_hesabu — kigawo kidogo cha pamoja (LCM) cha a na b.
+N32 lcm_hesabu(N32 a, N32 b) {
+    kama (a == 0 || b == 0) { rudisha 0; }
+    N32 g = gcd_hesabu(a, b);
+    rudisha neneo_n32((a / g) * b);
+}
+
+// pow_mod_hesabu — (msingi^kipeo) % mod kwa njia ya kurudia mara mbili.
+// Kikomo: mod lazima iwe chini ya 32768 (ili (r*ms) isizidi N32).
+N32 pow_mod_hesabu(N32 msingi, N32 kipeo, N32 mod) {
+    kama (mod <= 1) { rudisha 0; }
+    N32 r = 1;
+    N32 ms = msingi % mod;
+    kama (ms < 0) { ms = ms + mod; }
+    N32 kp = kipeo;
+    wakati (kp > 0) {
+        kama (kp % 2 == 1) { r = (r * ms) % mod; }
+        ms = (ms * ms) % mod;
+        kp = kp / 2;
+    }
+    rudisha r;
+}

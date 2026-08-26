@@ -2,9 +2,10 @@
 
 **Swa** ni lugha ya kupanga yenye sintaksia kamili ya Kiswahili. Hakuna neno
 la Kiingereza linatumika katika sintaksia yake. Inakusanya moja kwa moja hadi
-msimbo wa mashine — kwanza kwa njia asilia (`uzalishaji.swa`) inayotoa ELF
-binary moja kwa moja bila LLVM wala mkusanyaji msaidizi, na pia kwa njia ya
-LLVM kwa majukwaa zaidi.
+msimbo wa mashine — kwa njia asilia (`uzalishaji.swa`) inayotoa ELF binary
+moja kwa moja bila LLVM wala mkusanyaji msaidizi (x86-64 Linux). Njia ya
+LLVM (dereva wa Rust) ni ya majaribio pekee; mnyororo wa uzalishaji ni
+asilia (angalia `hati/mipaka.md` 6).
 
 Makao rasmi: **[lugha-swa](https://github.com/lugha-swa)**
 
@@ -36,7 +37,7 @@ hesabu_na_onyesha(15, 7);
 N32 umri = 25;
 N64 idadi_ya_watu = 8000000000;
 D32 wastani = 3.14;
-B1 imewashwa = kweli;
+B1 imewashwa = 1;
 N8 herufi = 'A';
 ```
 
@@ -47,10 +48,12 @@ N8 herufi = 'A';
 N32 kadirifu(N32 x) {
     kama (x > 0) {
         rudisha 1;
-    } sivyo kama (x < 0) {
-        rudisha -1;
     } sivyo {
-        rudisha 0;
+        kama (x < 0) {
+            rudisha -1;
+        } sivyo {
+            rudisha 0;
+        }
     }
 }
 
@@ -104,7 +107,7 @@ W0 andika_bafa() {
 
 // Kumbukumbu ya moja kwa moja
 W0 mfano_kumbukumbu() {
-    N32* p = tenga N32;     // tenga kumbukumbu
+    N32* p = tenga(4);      // tenga kumbukumbu (idadi ya baiti)
     *p = 42;                // andika thamani
     achilia(p);             // achilia kumbukumbu
 }
@@ -131,15 +134,18 @@ N32 kitanzi(N32 n) {
 
 ## Vipengele
 
-- **Maneno muhimu 42** ya Kiswahili -- hakuna Kiingereza katika sintaksia
+- **Maneno muhimu 12** ya Kiswahili -- hakuna Kiingereza katika sintaksia.
+  Aina za nambari hutambuliwa kisintaksia kwa herufi kubwa (familia za
+  N/A/D/B/W), si kama maneno muhimu.
 - **Kujitegemea (100%)** -- mnyororo wa kujikusanya umefungwa kabisa:
   baiti za mkono → mbegu → stage1-exe → stage2-exe == stage3-exe
   (mnyororo wa uzalishaji; uthabiti wa makosa ni mhimili tofauti —
   angalia hati/mipaka.md)
-- **Vizalishe viwili**: LLVM (majukwaa yote) + asilia (x86-64 ELF moja kwa moja)
-- **Aina 25 za nambari** — N8–N128, A8–A128, D16–D80, B1–B64, W0–W64 zote zinashughulikiwa
+- **Vizalishe viwili**: asilia (x86-64 ELF moja kwa moja — mnyororo wa uzalishaji) + LLVM (ya majaribio pekee)
+- **Familia 5 za nambari** — N, A, D, B, W (upana wowote: N8–N128,
+  D16–D80, B1–B64, W0–W64, n.k.)
 - **Kumbukumbu ya moja kwa moja** -- tenga, achilia, hakuna ukusanyaji taka
-- **Majaribio**: 217 yanapita (146 maktaba + 70 ujumuishaji + 1 nyaraka). K6 bootstrap inafanya kazi.
+- **Majaribio**: 227 yanapita (146 maktaba + 80 ujumuishaji + 1 nyaraka). K6 bootstrap inafanya kazi.
 
 ## Muundo wa Mradi
 
@@ -148,9 +154,9 @@ N32 kitanzi(N32 n) {
 | `src/` | Mkusanyaji wa Rust (msomaji, mchanganuzi, IR, LLVM backend) |
 | `msingi/` | Maktaba ya msingi ya kujitegemea kwa Swa — bomba zima |
 | `msingi/msomaji.swa` | Msomaji (lexer) — kamili |
-| `msingi/msambazaji.swa` | Mchanganuzi (parser) — kamili, nodi 47 za AST |
+| `msingi/msambazaji.swa` | Mchanganuzi (parser) — kamili, nodi 48 za AST |
 | `msingi/mkaguzi.swa` | Mkaguzi wa kisemantiki — kamili (aina, hoja, ugawaji) |
-| `msingi/mteremko.swa` | Kiteremshi cha AST→IR — kamili |
+| `msingi/mteremko.swa` | Kiteremshi cha AST→IR — huitwa kwa uthibitishaji wa muundo; codegen asilia hutumia AST moja kwa moja |
 | `msingi/uzalishaji.swa` | Kizalishe asilia cha x86-64 — kamili (aina zote, sret, alloca) |
 | `msingi/ramani.swa` | Jedwali la hashi |
 | `msingi/orodha.swa` | Safu inayobadilika |
@@ -161,7 +167,7 @@ N32 kitanzi(N32 n) {
 ## Kujenga
 
 **Mahitaji:**
-- LLVM 18+ (C API) -- imejaribiwa kwenye LLVM 22.1 (Arch Linux) na LLVM 18 (Windows)
+- LLVM 18+ (C API) -- kwa njia ya majaribio pekee; imejaribiwa kwenye LLVM 22.1 (Arch Linux)
 - Rust (toleo jipya zaidi)
 - Clang (kwa majaribio ya ujumuishaji ya wakati wa utekelezaji)
 - Hakuna kiunganishi kinachohitajika kwa mnyororo wa kujikusanya (0%
@@ -171,7 +177,7 @@ N32 kitanzi(N32 n) {
 
 ```sh
 cargo build --release
-cargo test          # Majaribio 217: 146 ya maktaba + 70 ya ujumuishaji + 1 wa nyaraka
+cargo test          # Majaribio 227: 146 ya maktaba + 80 ya ujumuishaji + 1 wa nyaraka
 ```
 
 ## Matumizi
@@ -198,13 +204,13 @@ za mkono hadi mkusanyaji kamili wa Swa, bila lugha nyingine popote.
 
 | Kipimo | Thamani |
 |--------|---------|
-| **Majaribio** | 217/217 [PASS] |
+| **Majaribio** | 227/227 [PASS] |
 | **Kujikusanya (K6)** | Inapita [PASS] |
 | **Mchanganuzi wa Swa** | Kamili [DONE] |
 | **Mkaguzi wa Swa** | Kamili [DONE] |
 | **Kiteremshi cha Swa** | Kamili [DONE] |
 | **Kizalishe asilia cha x86-64** | Kamili [DONE] |
-| **Usambazaji wa aina** | Aina zote 25 [DONE] |
+| **Usambazaji wa aina** | Familia 5 (N/A/D/B/W) [DONE] |
 | **Urejeshaji wa makosa** | Kamili [DONE] |
 | **Alloca-in-loop** | Imerekebishwa [DONE] |
 | **Sret (struct return)** | Imetekelezwa [DONE] |
@@ -220,8 +226,8 @@ Angalia **[hati/ramani.md](hati/ramani.md)** kwa mpango kamili.
 | 0 | Mkusanyaji wa bootstrap wa Rust | Imekamilika |
 | 1 | Kujikusanya kwa msingi | Imekamilika |
 | 2 | Mkusanyaji kamili wa kujikusanya | Imekamilika |
-| 3 | Ondoa utegemezi wa Rust | Lengo |
-| 4 | Ondoa utegemezi wa LLVM | Lengo |
+| 3 | Ondoa utegemezi wa Rust | Imekamilika |
+| 4 | Ondoa utegemezi wa LLVM | Imekamilika (mnyororo wa uzalishaji; LLVM imebaki majaribio) |
 | 5 | Lugha kamili ya mifumo | Baadaye |
 
 ## Jumuiya

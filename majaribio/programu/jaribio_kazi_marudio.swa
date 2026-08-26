@@ -1,0 +1,10 @@
+// Kazi mbili zenye jina moja hazikubaliki. Zamani ufafanuzi wa
+// kwanza ulishinda kimya na wa pili ulitupwa, bila kosa lolote —
+// hatari kubwa kwa maktaba (Swa haina maeneo ya majina: kila jina
+// la ngazi ya juu ni la ulimwengu). Sasa mkusanyaji analia kwa
+// sauti: toka 1, hakuna faili la tokeo. (Jaribio la mnyororo wa
+// .swa pekee — mbegu bado inakubali; kugandisha upya ni uamuzi wa
+// msimamizi.)
+N32 hesabu(N32 x) { rudisha x + 1; }
+N32 hesabu(N32 x) { rudisha x + 100; }
+N32 main() { rudisha hesabu(1); }

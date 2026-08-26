@@ -1,0 +1,17 @@
+// chagua yenye tawi la sivyo (chaguo-msingi) — mnyororo wa .swa pekee
+// (mbegu haijui neno la chagua).
+N32 kadiria(N32 x) {
+    chagua (x) {
+        hali 1: rudisha 10;
+        hali 2: rudisha 20;
+        sivyo: rudisha 99;
+    }
+}
+
+N32 main() {
+    kama (kadiria(1) != 10) rudisha 1;
+    kama (kadiria(2) != 20) rudisha 2;
+    kama (kadiria(7) != 99) rudisha 3;
+    kama (kadiria(9) != 99) rudisha 4;
+    rudisha 0;
+}

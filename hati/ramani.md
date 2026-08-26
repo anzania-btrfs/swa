@@ -2,11 +2,11 @@
 
 ## Muhtasari
 
-- **Keywords:** 42 za Kiswahili (hakuna Kiingereza katika sintaksia)
-- **Aina:** 25 za nambari (N8-N128, A8-A128, D16-D80, B1-B64, W0-W64)
-- **Majaribio:** 67/67 ya ujumuishaji + 146 za kitengo (Rust), vipimo 5/5 vya mbegu, JIT 5/5
-- **Backend:** uzalishaji.swa (native x86-64, inajikusanya); LLVM inabaki kwenye dereva wa Rust kwa vipimo pekee
-- **Bootstrap:** mbegu (NASM) → stage1 → stage2 → stage3 → stage4 — sawa kwa baiti
+- **Keywords:** 13 za Kiswahili (aina za nambari hutambuliwa kisintaksia kwa herufi kubwa)
+- **Aina:** familia 5 za nambari (N, A, D, B, W — upana wowote)
+- **Majaribio:** 227/227 (146 za maktaba + 80 za ujumuishaji + 1 ya nyaraka)
+- **Backend:** uzalishaji.swa (asilia x86-64, inajikusanya) ndiyo njia ya uzalishaji; LLVM ni ya MAJARIBIO kwenye dereva wa Rust pekee (mipaka.md 6)
+- **Bootstrap:** kwanza (baiti za mkono) → mbegu → stage1-exe → stage2-exe == stage3-exe — sawa kwa baiti
 
 ## Hatua ya 0: Mkusanyaji wa Bootstrap wa Rust [PASS] IMEFANIKIWA
 
@@ -14,7 +14,7 @@
 - [x] IR lowering (AST -> Swa IR)
 - [x] LLVM codegen (x86-64 native binaries)
 - [x] ABI classification (sret, struct returns)
-- [x] Majaribio 67/67 ya ujumuishaji + 146 za kitengo
+- [x] Majaribio 227/227 (146 za maktaba + 80 za ujumuishaji + 1 ya nyaraka)
 
 ## Hatua ya 1: Kujikusanya kwa Msingi [PASS] IMEFANIKIWA
 
@@ -30,14 +30,15 @@
 
 ### Mnyororo wa Kujikusanya wa Sasa
 
-1. `mbegu.bin` (NASM, syscalls pekee) husoma `msingi/*.swa` na kutoa `stage1.o`
-2. `stage1.bin` (codegen ya mbegu) inajikusanya maktaba → `stage2.o`
-3. `stage2.bin` (codegen ya Swa) inajikusanya maktaba → `stage3.o`
-4. `stage3.bin` inajikusanya → `stage4.o`
+1. `kwanza.bin` (baiti za mkono, hex → binary) hutoa `mbegu.bin` kutoka `mbegu.hex`
+2. `mbegu --exe` (syscalls pekee, hakuna kiunganishi) hukusanya `msingi/*.swa` → `stage1-exe`
+3. `stage1-exe --exe` inajikusanya maktaba → `stage2-exe`
+4. `stage2-exe --exe` inajikusanya → `stage3-exe`
 
-**Uthibitisho:** stage2.o == stage3.o == stage4.o sawa kwa baiti (209KB),
-s3.err na s4.err tupu, vipimo 5/5 (ts_tupu→0, ts_le_uongo→0,
-ts_le_kweli→7, ts_lt_kweli→5, ts_argc→2).
+**Uthibitisho:** stage2-exe == stage3-exe sawa kwa baiti, bila gcc/ld/clang/libc
+popote kwenye mnyororo. Kumbuka: hili linahusu mnyororo wa uzalishaji pekee —
+uthabiti wa mchanganuzi dhidi ya ingizo baya ni mhimili tofauti
+(angalia hati/mipaka.md).
 
 **JIT inafanya kazi (PR #143):** mmap → opcodes → rukia, na thamani ya
 kurudi inarudi kwa usahihi. Stub ya `jmp main`, tungo mwishoni mwa bafa,
@@ -49,15 +50,18 @@ towe lake halitumiki katika mnyororo wa kujikusanya — IR inatumika TU
 kwenye njia ya Rust → LLVM.
 
 ### Kipaumbele cha Juu (kilichobaki)
-- [ ] **Pengo la ABI la desimali:** hoja za desimali bado hupitishwa kwenye
-      rejesta kamili (rdi...r9), si xmm0-xmm7. Haiathiri kujikusanya
-      (N32 pekee) lakini inahitajika kwa lugha kamili.
-- [ ] **AST_BADILI (48)** — haina kishikizi maalum katika mkaguzi
+- [x] **Pengo la ABI la desimali** — IMEFANYIKA: mnyororo wa .swa una ABI
+      kamili ya xmm0-xmm7 (hoja na kurejesha) — mipaka.md 4c; mbegu
+      pekee bado haina ABI ya xmm kwenye wito wa kazi (CHINI, inalia
+      kwa sauti)
+- [x] **AST_BADILI (48)** — IMEFANYIKA: kishikizi kipo katika mkaguzi
+      (mkaguzi.swa) na katika uzalishaji (badili kumbukumbu → realloc)
 - [ ] **Uthibitishaji wa aina za hali za `chagua`** dhidi ya usemi unaojaribiwa
 - [ ] **mteremko.swa** — towe lake ni msimbo mfu; uamuzi: kuifuta au kuikamilisha
       kwa hatua za uboreshaji wa baadaye
-- [ ] **JIT kamili** — relocations za wito wa nje ndani ya msimbo wa JIT na
-      kupitisha argv (kwa sasa ni 0)
+- [x] **JIT kamili** — IMEFANYIKA: relocations za wito wa nje ndani ya
+      msimbo wa JIT (thunks za jmp + jedwali la anwani) na kupitisha
+      argv (uzalishaji_jit inapokea argc/argv)
 
 ### Kipaumbele cha Kati
 - [x] **Maktaba ya Kawaida**
@@ -75,7 +79,7 @@ kwenye njia ya Rust → LLVM.
 
 - [x] Mkusanyaji wa Swa unajikusanya **bila kutumia kande**
 - [x] Bootstrap inafungwa: mbegu -> Swa -> Swa -> binary
-- [x] Uthibitisho: stage2.o == stage3.o == stage4.o sawa kwa baiti
+- [x] Uthibitisho: stage2-exe == stage3-exe sawa kwa baiti
 - [!] Rust `kande` inabaki kama chombo cha vipimo na ukuzaji (CI) tu —
       si sehemu ya mnyororo wa uzalishaji
 
@@ -131,14 +135,16 @@ Angalia [`CONTRIBUTING.md`](CONTRIBUTING.md). Masuala yenye lebo `good-first-iss
 3. ~~Runtime ya syscalls~~ — IMESHAFANYIKA (PR #149): syscalls moja kwa moja
 4. ~~Kuziba hatua ya stage1~~ — IMESHAFANYIKA: mbegu inatoa stage1-exe
    moja kwa moja (`--exe`) — 0% bootstrap gap imefungwa
-5. **Uthabiti wa makosa ya mchanganuzi** — mbegu na mchanganuzi wa .swa
-   dhidi ya ingizo baya (hati/mipaka.md sehemu 1-2)
+5. ~~Uthabiti wa makosa ya mchanganuzi~~ — IMESHAFANYIKA: mbegu na
+   mchanganuzi wa .swa dhidi ya ingizo baya (hati/mipaka.md sehemu 1-2)
 6. ~~JIT ndani ya exe~~ — IMESHAFANYIKA: tekeleza kama builtin,
    anwani_ya_kazi ya ndani (jedwali la anwani 0x400078+ofseti) —
    exe haina alama za nje kabisa
-7. **ABI ya desimali kamili** — D32 na ugeuzi wa aina (D64 ndiyo pekee
-   inayofanya kazi kwa sasa)
-8. **Dereva wa Rust** — desimali katika codegen ya LLVM
+7. ~~ABI ya desimali kamili~~ — IMESHAFANYIKA: xmm0-xmm7 (hoja na
+   kurejesha) kwenye mnyororo wa .swa (mipaka.md 4c). Kilichobaki:
+   D32 na ugeuzi wa aina (D64 ndiyo pekee yenye majaribio kamili)
+8. ~~Dereva wa Rust~~ — IMESHAFANYIKA: desimali katika codegen ya LLVM
+   (suala #135; jaribio_mende_135_desimali — mipaka.md 4c)
 9. **Uamuzi wa mteremko.swa** — kuifuta au kuikamilisha
 
 ## Historia Fupi ya Milestone (Julai-Agosti 2026)

@@ -1,0 +1,6 @@
+// Tangazo la kazi bila mwili (declaration) — linapaswa kukusanyika.
+N32 fanya(N32 x);
+
+N32 main() {
+    rudisha 0;
+}
