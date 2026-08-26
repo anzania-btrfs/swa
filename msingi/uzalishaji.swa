@@ -3942,7 +3942,18 @@ W0 uzalishaji_exe(N32 text_size, N32 data_size, N32 bss_size, N32 main_off) {
             tgt = data_vaddr + data_ulimwengu_off[gidx];
             tgt = tgt + (data_ulimwengu_bss[gidx] == 1) * data_size;
         } sivyo {
-            tgt = text_vaddr + kazi_nafasi_kwa_jina(nje_pool + nje_jina_off[nje_idx]);
+            // Kazi iliyoitwa haijafafanuliwa popote. Zamani ilikuwa
+            // ikitulia kimya kwa anwani potofu na kuleta SEGV wakati wa
+            // utekelezaji — k.m. `husisha { faili.swa }` hailiwii chanzo
+            // (kinapaswa kuunganishwa) na makosa ya tahajia ya majina ya
+            // kazi yalipita hadi kwenye mchakato. Kama mbegu, sasa inalia
+            // kwa sauti wakati wa kukusanya.
+            N32 nafasi = kazi_nafasi_kwa_jina(nje_pool + nje_jina_off[nje_idx]);
+            kama (nafasi < 0) {
+                andika_stderr("Hitilafu: kazi haijafafanuliwa: %s\n", nje_pool + nje_jina_off[nje_idx]);
+                wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+            }
+            tgt = text_vaddr + nafasi;
         }
         andika_disp32_kwenye(bafa_text, pos, tgt - (text_vaddr + pos + 4));
         ri = ri + 1;
@@ -4481,7 +4492,11 @@ W0 uzalishaji_jit(N32 mzizi, N32 argc_jit, N8** argv_jit, N32 ofseti_jit) {
             N32 pos = rela_text_off[r];
             andika_disp32_kwenye(kumbukumbu, pos, thunk_pos - (pos + 4));
         } sivyo {
-            andika_stderr("; JIT-RELA: %s haipatikani\n", jina_nje);
+            // Kazi iliyoitwa haijafafanuliwa popote — zamani ilikuwa
+            // onyo la kimya na wito ulielekea anwani 0 (SEGV). Kama
+            // hali ya exe, sasa inalia kwa sauti.
+            andika_stderr("Hitilafu: kazi haijafafanuliwa: %s\n", jina_nje);
+            wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
         }
         r = r + 1;
     }
