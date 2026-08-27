@@ -57,3 +57,10 @@ KATA	jaribio_kazi_marudio (stage1 pekee: mbegu bado inakubali kazi mbili zenye j
 0	jaribio_kazi_isiyo_na_mwili	majaribio/programu/jaribio_kazi_isiyo_na_mwili.swa
 0	jaribio_k9c_kurudisha_sahihi	majaribio/programu/jaribio_k9c_kurudisha_sahihi.swa
 0	jaribio_k14_maktaba_zaidi	majaribio/programu/jaribio_k14_maktaba_zaidi.swa
+20	jaribio_mende_faharisi_hasi (faharisi hasi p[-1] inapanuliwa kwa ishara)	majaribio/programu/jaribio_mende_faharisi_hasi.swa
+14	jaribio_mende_safu_ya_miundo (safu ya miundo: anwani si thamani)	majaribio/programu/jaribio_mende_safu_ya_miundo.swa
+17	jaribio_mende_muundo_ugawi (ugawi wa muundo b = a: chanzo ni anwani)	majaribio/programu/jaribio_mende_muundo_ugawi.swa
+12	jaribio_mende_muundo_hoja_kwa_thamani (muundo wa baiti 8 kwa thamani)	majaribio/programu/jaribio_mende_muundo_hoja_kwa_thamani.swa
+6	jaribio_mende_muundo_hoja_kubwa (muundo wa baiti 12 kwa thamani)	majaribio/programu/jaribio_mende_muundo_hoja_kubwa.swa
+30	jaribio_mende_muundo_hoja_n64 (muundo wa N64 x2 kwa thamani)	majaribio/programu/jaribio_mende_muundo_hoja_n64.swa
+10	jaribio_mende_orodha_inakua (Orodha inayokua — badili na faharisi hasi)	majaribio/programu/jaribio_mende_orodha_inakua.swa
