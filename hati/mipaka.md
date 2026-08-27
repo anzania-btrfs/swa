@@ -19,6 +19,14 @@ Pia rekebisho la upande: maneno ya lexer sasa huandika token_line
 
 Uthibitisho: majaribio ya kudumu kwenye jaribio_exe_kujijenga.
 
+KILICHOPIMWA 2026-08-27 (hati/uthibitisho-wa-lugha.md): mbegu bado
+inakataa KIMYA (msimbo 1, hakuna ujumbe) kwa kesi kadhaa: kigezo
+cha ulimwengu cha muundo, kianzilishi cha safu, safu ya pande
+mbili, halisi za herufi, kazi yenye hoja 10, ukubwa(Muundo), na
+moduli za libc (faili, nasibu, wakati). "Ingizo baya linalia kwa
+sauti" bado si kamili — mkusanyaji wa uzalishaji pia anaanguka
+(SEGV) kwa `sivyo` bila `kama`.
+
 ## 2. Mchanganuzi wa .swa: ingizo lililokatwa linaning'inia [IMEREKEBISHWA]
 
 Ilikuwa: kitanzi cha changanua_kazi_vigezo hakikuwa na mwendo wala toka
@@ -70,7 +78,7 @@ kilizunguka milele kama hatua ndiyo njia pekee ya kuendelea.
 Sasa: semantiki ya C — hatua imefungwa kwenye block-mini yenye
 alama, uzalishaji_block hurekodi nafasi yake, na endelea inaruka
 hapo. Uthibitisho: kwa (i=0; i<6; i=i+1) { kama (i==2) endelea; s++ }
-→ s=5, na kesi ya endelea-pekee inapita. Mnyororo wa .swa UMEWIWA
+hutoa s=5, na kesi ya endelea-pekee inapita. Mnyororo wa .swa UMEWIWA
 tarehe 2026-08 (AST_BLOCK yenye alama -777777, lebo ya hatua
 iliyotengwa mapema) — minyororo yote miwili sasa ina semantiki ya C
 (uthibitisho: jaribio_exe_kujijenga sehemu ya 11 inaendesha kupitia
@@ -80,7 +88,7 @@ mbegu NA stage1).
 
 Hali halisi (iliyothibitishwa 2026-08-20, kwa ushahidi wa kila mnyororo):
 - Mnyororo wa mbegu: IMEREKEBISHWA — vitambulisho vya desimali
-  (kigeuzi cha desimali→double kwenye lexer), AST_HALISI_D, hesabu
+  (kigeuzi cha desimali hadi double kwenye lexer), AST_HALISI_D, hesabu
   za kuelea (addsd/subsd/mulsd/divsd), ulinganisho (ucomisd+setcc),
   na ukanushaji (mulsd kwa -1.0 — xorpd ya kumbukumbu ilionekana
   kuvunjika kwenye VM ya mtumiaji). Jaribio:
@@ -91,12 +99,22 @@ Hali halisi (iliyothibitishwa 2026-08-20, kwa ushahidi wa kila mnyororo):
 - Mnyororo wa LLVM (dereva wa Rust): IMEREKEBISHWA 2026-08 (suala
   #135) — jaribio_mende_135_desimali.
 
-Kikomo kilichobaki (CHINI): mbegu bado HAIJATEKELEZA ABI ya xmm
-kwenye wito wa kazi — program za mbegu zenye kazi za D64 (hoja au
-kurejesha kwa desimali) zinalia kwa sauti (`Hitilafu: D64 kwenye
-wito wa kazi haisaidiwi bado na mbegu`). Mnyororo wa .swa unashughulikia
-hali hiyo kikamilifu — tumia mkusanyaji wa .swa kwa program zenye
-kazi za D64.
+KILICHOPIMWA 2026-08-27 (hati/uthibitisho-wa-lugha.md): kauli ya
+zamani "mbegu bado HAIJATEKELEZA ABI ya xmm kwenye wito wa kazi —
+program za mbegu zenye kazi za D64 zinalia kwa sauti" SI KWELI tena.
+Mbegu inatekeleza wito wa kazi za D64 (parameta NA kurudisha) kwa
+usahihi (jaribio u062/u063 hutoa matokeo 1) bila kosa lolote. ABI yake
+hutumia uhamisho wa GP (`movq rax, xmm0`; `movq xmm1, rcx`) si xmm
+moja kwa moja — lakini inafanya kazi kwa hesabu, ulinganisho na
+ukanushaji ndani ya ulimwengu wa D64.
+
+Kilichobaki cha desimali (CHINI, kilichopimwa 2026-08-27):
+- Kila mpaka kati ya D64 na nambari kamili umevunjika kwa minyororo
+  yote miwili: kurudisha D64 kwenye kazi ya N32 (J1), operesheni
+  mchanganyiko (J2), upakiaji wa ulimwengu wa D64 (J7) — jibu baya
+  la kimya.
+- D32 imevunjika (poromoko kwenye wito wa kazi; J9).
+- `D64 % int` na `D64 << int` zinakubaliwa kimya na kutoa takataka.
 
 ## 5. Maneno halisi ni 32-bit signed [IMEREKEBISHWA kwa mnyororo wa .swa]
 
@@ -105,21 +123,33 @@ Ilikuwa: neno halisi `2147483648` linatafsiriwa kama `-2147483648`
 lazima zijengwe wakati wa utekelezaji.
 
 Sasa (mnyororo wa .swa, uliothibitishwa 2026-08-25): mkusanyaji wa
-kujikusanya unachanganua maneno halisi hadi N64 kamili. `tokeni_kwa_nambari_n64`
+kujikusanya unachanganua maneno halisi hadi N64 (mpaka wake wa
+kikamilifu umepimwa 2026-08-27 — angalia hapa chini). `tokeni_kwa_nambari_n64`
 inakusanya thamani kama N64; `changanua_primary` huhifadhi baiti 8
 kwenye dimbwi la AST kwa thamani > 2147483647 (alama `ast_tiga=1`);
 mkaguzi huweka usimbaji wa N64 (upana 64); `uzalishaji_nambari` hutoa
 `mov rax, imm64`; na kianzio cha ulimwengu kinakili baiti 8 kutoka
-dimbwi. Uthibitisho: `N64 x = 4294967296; rudisha x / 4294967296` → 1
-(juu) na `x % 4294967296` → 0 (chini), kwa kigeu cha ndani NA cha
+dimbwi. Uthibitisho: `N64 x = 4294967296; rudisha x / 4294967296` hutoa 1
+(juu) na `x % 4294967296` hutoa 0 (chini), kwa kigeu cha ndani NA cha
 ulimwengu.
 
 Kikomo kilichobaki (CHINI): mbegu (bootstrap pekee) na dereva wa Rust
 bado zinachanganua maneno halisi kama 32-bit. Mbegu haihitaji maneno
 ya N64 kwa kujikusanya (chanzo cha .swa kinatumia thamani chini ya
 2^31 pekee) — lakini kama mkusanyaji wa kujitegemea, mbegu bado hukata
-thamani kubwa (k.m. `4294967296` → 0, na kusababisha FPE katika
-ugawanyo).
+thamani kubwa (k.m. `4294967296` hukatwa hadi 0, na kusababisha FPE
+katika ugawanyo).
+
+KILICHOPIMWA 2026-08-27 (hati/uthibitisho-wa-lugha.md) — mpaka wa
+mnyororo wa .swa ni finyu kuliko ilivyoandikwa:
+- Ahadi "maneno halisi hadi N64 kamili" inashikilia kwa [2^31, 2^63)
+  pekee. Thamani >= 2^63 zinakatwa KIMYA hadi biti 32 kwa minyororo
+  yote miwili (uthibitisho wa mashine: `mov eax, 0xFFFFFFFF`) — J3.
+- Halisi kubwa kama HOJA ya wito inavunjika: uzalishaji unakataa kwa
+  kosa lisilo sahihi, hoja ya katikati inapoteza thamani (J4).
+- Halisi ÷ halisi yenye N64 inaanguka kwa FPE (J5).
+- Kigezo na ulimwengu wa N64 kwenye mnyororo wa .swa hufanya kazi
+  (`N64 x = 4294967296; x / 4294967296` hutoa 1).
 
 ## 6. Dereva wa Rust/LLVM: njia ya MAJARIBIO yenye ulinzi wa sauti [IMEREKEBISHWA — JUU imefungwa 2026-08-20]
 
@@ -166,19 +196,43 @@ inayoganda mbegu.
 - Utekelezaji wa makosa: exit 0/1 inafanya kazi kwa makosa
   YANAYOTAMBULIWA.
 
-## 8. Mbegu haiwi viungo vya ndani vya `husisha { faili.swa }` [UKALI: CHINI — SASA INALIA]
+## 8. Hakuna mnyororo unaochakata `husisha { faili.swa }` [UKALI: CHINI — SASA INALIA]
 
-Mbegu HAICHAMBUZI faili lililotajwa na `husisha { faili.swa }` —
-linarukwa na mchanganuzi. Hii ni kwa makusudi: mkusanyaji wa .swa
-unajijenga kwa chanzo KILICHOUNGANISHWA (cat msingi/*.swa), na
-husisha C::xxx bado inachakatwa kwa usahihi.
+Hakuna mkusanyaji (mbegu WALA mnyororo wa .swa) anayechambua faili
+lililotajwa na `husisha { faili.swa }` — mstari unarukwa na
+mchanganuzi. Hii ni kwa makusudi: mkusanyaji wa .swa unajijenga kwa
+chanzo KILICHOUNGANISHWA (cat msingi/*.swa), na husisha C::xxx
+bado inachakatwa kwa usahihi.
 
 Hatari ya zamani: wito wa kazi kutoka faili "lililoingizwa" bila
 kuunganisha ulikuwa ukitulia kimya kwa anwani 0 — mchakato
 ulivunjika SEGV wakati wa utekelezaji. Sasa toa_exe inachapisha
 `Hitilafu: kazi haijafafanuliwa: <jina>` na kutoka kwa msimbo 1
-(jaribio la kurejesha: jaribio_mbegu_kazi_kukosa).
+kwenye mnyororo wa uzalishaji (jaribio la kurejesha:
+jaribio_mbegu_kazi_kukosa). Mbegu inakataa kimya katika kesi
+kadhaa (tazama sehemu ya 1).
 
-Kanuni kwa watumiaji wa mbegu: faili lazima ziunganishwe kwanza
-(`cat msingi/mfuatano.swa msingi/hesabu.swa program.swa`), au
-tumia mkusanyaji wa .swa (stage1+) ambao unawiwa viungo vya ndani.
+KILICHOPIMWA 2026-08-27 (hati/uthibitisho-wa-lugha.md): mnyororo
+wa .swa (stage1+) pia HAUSOMI faili lililotajwa — ahadi ya zamani
+"mkusanyaji wa .swa unawiwa viungo vya ndani" HAIKUBALIKI. Kesi
+iliyopimwa: `husisha { kumbukumbu.swa }` + wito wa `weka_sifuri`
+bila cat hutoa "kazi haijafafanuliwa: weka_sifuri" kwa minyororo yote
+miwili. Ahadi ya vipimo-vya-lugha.md sehemu ya 8 ("mkusanyaji wa
+.swa hulichakata faili lililotajwa") imerekebishwa pamoja na rekodi
+hii.
+
+Kanuni kwa watumiaji: faili lazima ziunganishwe kwanza
+(`cat msingi/mfuatano.swa msingi/hesabu.swa program.swa`) —
+hakuna mnyororo unaoingiza faili kwa sasa.
+
+## 9. Rekodi ya uzingatiaji (2026-08-27)
+
+Uthibitisho kamili wa lugha (mfumo wa aina, taarifa, viendeshaji,
+miundo, kumbukumbu, maktaba; kesi ~487 zilizokusanywa na kuendeshwa
+kwenye minyororo yote miwili) umeandikwa kwenye
+`hati/uthibitisho-wa-lugha.md`: jedwali za uzingatiaji, kila jibu
+baya kwa kipimo chake, poromoko zote, ukataaji unaokiuka hati, na
+ambapo minyororo miwili inatofautiana. Mipaka iliyorekebishwa na
+rekodi hiyo: kipengee 4c (ABI ya D64 kwenye mbegu — imefanya kazi),
+kipengee 5 (N64 — kwa [2^31, 2^63) pekee), na kipengee 8 (husisha —
+hakuna mnyororo unaoingiza faili).

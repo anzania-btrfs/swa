@@ -3,7 +3,8 @@
 ## Muhtasari
 
 - **Keywords:** 13 za Kiswahili (aina za nambari hutambuliwa kisintaksia kwa herufi kubwa)
-- **Aina:** familia 5 za nambari (N, A, D, B, W — upana wowote)
+- **Aina:** familia 5 za nambari (N, A, D, B, W — upana halisi
+  8/16/32/64; upana mwingine haujaungwa mkono, uthibitisho 2026-08-27)
 - **Majaribio:** 227/227 (146 za maktaba + 80 za ujumuishaji + 1 ya nyaraka)
 - **Backend:** uzalishaji.swa (asilia x86-64, inajikusanya) ndiyo njia ya uzalishaji; LLVM ni ya MAJARIBIO kwenye dereva wa Rust pekee (mipaka.md 6)
 - **Bootstrap:** kwanza (baiti za mkono) → mbegu → stage1-exe → stage2-exe == stage3-exe — sawa kwa baiti
@@ -50,10 +51,10 @@ towe lake halitumiki katika mnyororo wa kujikusanya — IR inatumika TU
 kwenye njia ya Rust → LLVM.
 
 ### Kipaumbele cha Juu (kilichobaki)
-- [x] **Pengo la ABI la desimali** — IMEFANYIKA: mnyororo wa .swa una ABI
-      kamili ya xmm0-xmm7 (hoja na kurejesha) — mipaka.md 4c; mbegu
-      pekee bado haina ABI ya xmm kwenye wito wa kazi (CHINI, inalia
-      kwa sauti)
+- [x] **Pengo la ABI la desimali** — IMEFUNGWA kwenye minyororo yote
+      miwili (mbegu inatumia ABI ya uhamisho wa GP; kilichopimwa
+      2026-08-27 — mipaka.md 4c imerekebishwa). Kilichobaki: mpaka
+      wa D64 na nambari kamili (jibu baya) na D32 (poromoko)
 - [x] **AST_BADILI (48)** — IMEFANYIKA: kishikizi kipo katika mkaguzi
       (mkaguzi.swa) na katika uzalishaji (badili kumbukumbu → realloc)
 - [ ] **Uthibitishaji wa aina za hali za `chagua`** dhidi ya usemi unaojaribiwa
@@ -65,15 +66,23 @@ kwenye njia ya Rust → LLVM.
 
 ### Kipaumbele cha Kati
 - [x] **Maktaba ya Kawaida**
-  - [x] `orodha.swa` — orodha inayobadilika (dynamic array)
+  - [x] `orodha.swa` — orodha (inavyofanya kazi kwa uwezo uliotengwa
+        mapema; UKUAJI umevunjika — orodha_ongeza zaidi ya uwezo
+        inaanguka SEGV kwa minyororo yote miwili, uthibitisho
+        2026-08-27)
   - [x] `mfuatano.swa` — shughuli za nyuzi kamili
-  - [x] `ramani.swa` — jedwali la hashi
+  - [x] `ramani.swa` — jedwali la hashi (kwenye uzalishaji; kwenye
+        mbegu weka ni no-op — jibu baya, uthibitisho 2026-08-27)
   - [x] `faili.swa` — shughuli za faili
   - [x] `hesabu.swa` — hesabu za ziada
   - [x] `kumbukumbu.swa` — usimamizi wa kumbukumbu
   - [x] `mpangilio.swa` — upangaji
   - [x] `nasibu.swa` — nambari nasibu
   - [x] `wakati.swa` — vipimo vya wakati
+
+Kumbuka (uthibitisho 2026-08-27): moduli za `faili.swa`, `nasibu.swa`
+na `wakati.swa` zinahitaji libc na hazifanyi kazi kwenye mnyororo
+asilia (mbegu/exe) — uzalishaji unakataa kwa sauti, mbegu kimya.
 
 ## Hatua ya 3: Kuondoa Utegemezi wa Rust [PASS] IMEFANIKIWA
 
@@ -140,9 +149,10 @@ Angalia [`CONTRIBUTING.md`](CONTRIBUTING.md). Masuala yenye lebo `good-first-iss
 6. ~~JIT ndani ya exe~~ — IMESHAFANYIKA: tekeleza kama builtin,
    anwani_ya_kazi ya ndani (jedwali la anwani 0x400078+ofseti) —
    exe haina alama za nje kabisa
-7. ~~ABI ya desimali kamili~~ — IMESHAFANYIKA: xmm0-xmm7 (hoja na
-   kurejesha) kwenye mnyororo wa .swa (mipaka.md 4c). Kilichobaki:
-   D32 na ugeuzi wa aina (D64 ndiyo pekee yenye majaribio kamili)
+7. ~~ABI ya wito wa kazi za D64~~ — IMESHAFANYIKA kwenye minyororo
+   yote miwili (kilichopimwa 2026-08-27 — mipaka.md 4c imerekebishwa).
+   Kilichobaki: mpaka wa D64 na nambari kamili (jibu baya) na D32
+   (poromoko)
 8. ~~Dereva wa Rust~~ — IMESHAFANYIKA: desimali katika codegen ya LLVM
    (suala #135; jaribio_mende_135_desimali — mipaka.md 4c)
 9. **Uamuzi wa mteremko.swa** — kuifuta au kuikamilisha
