@@ -4,7 +4,8 @@ FAIL	# k10c orodha: maktaba imeunganishwa moja kwa moja lakini tenga/badili hutu
 FAIL	# k10d ramani: maktaba imeunganishwa moja kwa moja lakini tenga hutumia hesabu ya anwani ambayo mbegu haijui (SEGV) — stage1 inaifanya sawa; rejesha baada ya mbegu kuipata	majaribio/programu/jaribio_k10d_ramani.swa
 0	jaribio_k10e_mpangilio	majaribio/programu/jaribio_k10e_mpangilio.swa
 0	jaribio_k10f_hesabu	majaribio/programu/jaribio_k10f_hesabu.swa
-FAIL	# k10g faili: faili.swa inaitia C::stdio (fopen/fread...) — mbegu na stage1 hawana maktaba ya C	majaribio/programu/jaribio_k10g_faili.swa
+0	jaribio_k10g_faili	majaribio/programu/jaribio_k10g_faili.swa
+0	jaribio_k10h_umbizo	majaribio/programu/jaribio_k10h_umbizo.swa
 FAIL	# k11a maoni ya kijiuzi: upachikaji wa maoni /* /* */ */ haukubaliki na mbegu (msomaji wa mnyororo wa .swa unajua)	majaribio/programu/jaribio_k11a_maoni_ya_kijiuzi.swa
 KATA	jaribio_k11b_nambari_za_radiksi (stage1 pekee: radiksi hazijaungwa mkono — hati 2.3 inaahidi "mfuatano wa tarakimu" tu; mbegu ya zamani bado inakubali — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_k11b_nambari_za_radiksi.swa	stage1	halisi za radiksi hazijaungwa mkono
 FAIL	# k11c utorokaji wa herufi: \n \t \\xNN havikubaliki na mbegu	majaribio/programu/jaribio_k11c_mfuatano_wa_utorokaji.swa
@@ -131,3 +132,8 @@ KATA	jaribio_mende_kata_vunja_ndani_ya_chagua_nje (vunja ndani ya chagua isiyo n
 KATA	jaribio_mende_kata_kianzio_usemi (kianzio cha hesabu kilikubaliwa kimya kuhifadhi 0 — sasa kinakataliwa kwa sauti, sawa na mbegu; stage1 pekee)	majaribio/programu/jaribio_mende_kianzio_usemi.swa	stage1	lazima kiwe halisi ya nambari
 KATA	jaribio_mende_kata_tangazo_mbele (tangazo la mbele bila ufafanuzi linakataliwa kwa sauti — mwili tupu { } si tangazo la mbele; stage1 pekee)	majaribio/programu/jaribio_mende_tangazo_mbele.swa	stage1	kazi haijafafanuliwa
 0	jaribio_rafu_wito_mfumo (wito_wa_mfumo wenye hoja 4 ulitengeneza "pop r9" usio na masharti — rafu iliteleza +8 kwa wito na kuharibu vigezo vya ndani; sasa rafu inasawazika kwenye mnyororo wote)	majaribio/programu/jaribio_rafu_wito_mfumo.swa
+KATA	jaribio_mende_nukuu_kisayansi (nukuu ya kisayansi si katika hati 2.3 — hati inaahidi "21.5" pekee; zamani kipeo kilimezwa kimya (1.5e2 = 1.5); sasa inakataliwa kwa sauti, sawa na halisi za radiksi; stage1 pekee)	majaribio/programu/jaribio_mende_nukuu_kisayansi.swa	stage1	nukuu ya kisayansi
+KATA	jaribio_mende_kipengele_cha_muundo (viungwa visivyojulikana vya muundo wa andika (k.m. %u, %x) vinakubaliwa kimya na kutoa hakuna kitu; uthibitisho unatuahidi %d %s %c pekee — sasa vinakataliwa kwa sauti; stage1 pekee)	majaribio/programu/jaribio_mende_kipengele_cha_muundo.swa	stage1	kipengele cha muundo
+KATA	jaribio_mende_ugawaji_wito (ugawaji unahitaji kihifadhi; matokeo ya wito si lvalue — zamani pata() = 7 ilikubaliwa kimya kama no-op; mbegu inakataa kwa "uwekaji usiotumika"; stage1 pekee)	majaribio/programu/jaribio_mende_ugawaji_wito.swa	stage1	unahitaji kihifadhi
+KATA	jaribio_mende_ugawaji_ternary (ugawaji unahitaji kihifadhi; matokeo ya ternary si lvalue — zamani x ? y : z = 5 ilikubaliwa kimya kama no-op; stage1 pekee)	majaribio/programu/jaribio_mende_ugawaji_ternary.swa	stage1	unahitaji kihifadhi
+0	jaribio_k16_mbumo_asilimia (%% inachapisha asilimia halisi kwenye mnyororo wa uzalishaji; mbegu ya zamani bado inaimeza — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_k16_mbumo_asilimia.swa
