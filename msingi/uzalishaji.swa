@@ -2693,6 +2693,25 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
     andika_mov_al(xmm_reg);
 
     kama (ni_syscall_wito) {
+        // Pangilia rafu kwa hoja 8+: hoja 7+ zilibaki kwenye rafu kwa
+        // mpangilio wa a7..aN (aN juu) — sukuma kinyume ili a7 iwe juu
+        // (pop r9 hapo chini itachukua ofseti, sawa na mbegu.s).
+        // N=8: pop r11, pop rax, push r11, push rax.
+        // N=9: pia pop r10, push r10 (rax, r10, r11 ni rejesta za muda
+        // za syscall — zinaandikwa tena na mpangilio wa ABI hapo chini).
+        kama (hoja_n == 8) {
+            andika_baiti(65); andika_baiti(91);  // pop r11 (41 5B)
+            andika_pop_rax();                    // pop rax (58)
+            andika_baiti(65); andika_baiti(83);  // push r11 (41 53)
+            andika_push_rax();                   // push rax (50)
+        } sivyo { kama (hoja_n == 9) {
+            andika_baiti(65); andika_baiti(91);  // pop r11 (41 5B)
+            andika_pop_rax();                    // pop rax (58)
+            andika_baiti(65); andika_baiti(90);  // pop r10 (41 5A)
+            andika_baiti(65); andika_baiti(83);  // push r11 (41 53)
+            andika_push_rax();                   // push rax (50)
+            andika_baiti(65); andika_baiti(82);  // push r10 (41 52)
+        } }
         // Pangilia hoja kwa ABI ya syscall:
         // rdi=namba, rsi=a1, rdx=a2, rcx=a3, r8=a4, r9=a5 →
         // rax=namba, rdi=a1, rsi=a2, rdx=a3, r10=a4, r8=a5, r9=0
@@ -2701,7 +2720,11 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
         andika_baiti(72); andika_baiti(137); andika_baiti(247);  // mov rdi, rsi (48 89 F7)
         andika_baiti(72); andika_baiti(137); andika_baiti(214);  // mov rsi, rdx (48 89 D6)
         andika_baiti(72); andika_baiti(137); andika_baiti(202);  // mov rdx, rcx (48 89 CA)
-        andika_baiti(65); andika_baiti(89);  // pop r9 (41 59) — hoja ya 7 (ofseti)
+        // pop r9 (41 59) — hoja ya 7 (ofseti). KWA MASHARTI: r9
+        // inatolewa tu wakati hoja 7 ipo. Awali ilitolewa bila masharti —
+        // kwa wito wenye hoja < 7 rafu iliteleza +8 kwa kila wito na
+        // push zilizofuata ziliandika kwenye sloti za vigezo vya ndani.
+        kama (hoja_n > 6) { andika_pop_r9(); }
         andika_baiti(15); andika_baiti(5);  // syscall (0F 05)
     } sivyo { kama (ni_tekeleza_wito) {
             // tekeleza(kazi, argc, argv, ofseti): rdi=kazi, rsi=argc,
@@ -2736,9 +2759,16 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
 
     // Safisha hoja za rafu zilizobaki (hoja 7+ za GP, baiti 8 kila moja)
     kama (hoja_n > 6) {
-        // add rsp, imm8 (48 83 C4 xx)
-        andika_baiti(72); andika_baiti(131); andika_baiti(196);
-        andika_baiti((hoja_n - 6) * 8);
+        // Kwa syscall, pop r9 tayari iliondoa a7 (ofseti) — zilizobaki
+        // ni a8..aN (hoja_n - 7). Kwa wito wa kawaida, a7..aN zote
+        // zilibaki kwenye rafu (hoja_n - 6).
+        N32 idadi_rafu = hoja_n - 6;
+        kama (ni_syscall_wito) { idadi_rafu = hoja_n - 7; }
+        kama (idadi_rafu > 0) {
+            // add rsp, imm8 (48 83 C4 xx)
+            andika_baiti(72); andika_baiti(131); andika_baiti(196);
+            andika_baiti(idadi_rafu * 8);
+        }
     }
 
     // Kwa sret: rudisha kielekezi cha bafa kwenye rax
