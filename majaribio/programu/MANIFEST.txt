@@ -91,3 +91,8 @@ KATA	jaribio_mende_kianzilishi_safu_mfuatano (stage1 pekee: kianzilishi cha safu
 KATA	jaribio_mende_mpaka_modulo (modulo ya desimali inakataliwa kwa sauti — stage1 pekee: mbegu bado inakubali kimya)	majaribio/programu/jaribio_mende_mpaka_modulo.swa	stage1	operesheni hii haifanyi kazi kwa desimali
 KATA	jaribio_mende_mpaka_hamisha (uhamishaji wa biti kwenye desimali unakataliwa kwa sauti — stage1 pekee)	majaribio/programu/jaribio_mende_mpaka_hamisha.swa	stage1	operesheni hii haifanyi kazi kwa desimali
 KATA	jaribio_mende_mpaka_ulimwengu_kamili (kianzio cha ulimwengu wa D64 lazima kiwe halisi ya desimali — stage1 pekee)	majaribio/programu/jaribio_mende_mpaka_ulimwengu_kamili.swa	stage1	kianzio cha ulimwengu wa D64 lazima kiwe halisi ya desimali
+KATA	jaribio_mende_sivyo_bila_kama ('sivyo' bila 'kama' inakataliwa kwa sauti — stage1 pekee: mbegu ina kosa lingine)	majaribio/programu/jaribio_mende_sivyo_bila_kama.swa	stage1	'sivyo' inahitaji 'kama'
+KATA	jaribio_mende_hakuna_main (programu bila main inakataliwa bila faili — zamani binary ilianguka SEGV)	majaribio/programu/jaribio_mende_hakuna_main.swa	stage1	'main' haipo
+5	jaribio_mende_d32_kazi (kazi ya D32: parameta na kurudisha — zamani SEGV; stage1 pekee: mbegu bado inaanguka)	majaribio/programu/jaribio_mende_d32_kazi.swa	stage1
+178	jaribio_mende_d32_hesabu (hesabu, ulinganisho, ulimwengu, ugawaji wa D32 — stage1 pekee)	majaribio/programu/jaribio_mende_d32_hesabu.swa	stage1
+64	jaribio_mende_kurudia_kirefu (kina 40,000 — fremu ndogo za rafu zinahitajika)	majaribio/programu/jaribio_mende_kurudia_kirefu.swa
