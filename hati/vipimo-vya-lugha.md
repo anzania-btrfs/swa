@@ -131,31 +131,43 @@ mkusanyaji wowote kati ya wawili (kilichopimwa 2026-08-27).
 
 ## 4. Usemi na Utangulizi
 
-Utangulizi wa ishara (kutoka juu hadi chini):
+Utangulizi wa ishara ni ule wa C (kutoka juu hadi chini):
 
 | Kina | Ishara |
 |---|---|
-| 6 | `*` `/` `%` |
-| 5 | `+` `-` |
-| 4 | `<<` `>>` |
-| 3 | `<` `>` `<=` `>=` |
-| 2 | `==` `!=` `=` (ugawi) |
-| 1 | `&&` `||` `&` `|` `^` |
+| 12 | `*` `/` `%` |
+| 11 | `+` `-` |
+| 10 | `<<` `>>` |
+| 9 | `<` `>` `<=` `>=` |
+| 8 | `==` `!=` |
+| 7 | `&` |
+| 6 | `^` |
+| 5 | `|` |
+| 4 | `&&` |
+| 3 | `||` |
+| 2 | `?:` (ternary) |
+| 1 | `=` (ugawi) |
 
 Mabano hubadilisha utangulizi. Chaguo la ternary `sharti ? kweli :
-uwongo` linasaidiwa.
+uwongo` linasaidiwa; upande wa uwongo wa ternary haushiki ugawi
+(`a ? b : c = d` ni `(a ? b : c) = d`). Ugawi ni wa ushirika wa
+kulia (`a = b = c` ni `a = (b = c)`); viendeshaji vingine vyote
+vya binary ni vya ushirika wa kushoto.
 
-Kilichopimwa (2026-08-27, hati/uthibitisho-wa-lugha.md sehemu ya 7):
-jedwali hili linashikiliwa na MBEGU (isipokuwa `^` — mbegu
-inakataa). Mnyororo wa uzalishaji unatumia utangulizi wa C: `=`
-iko chini ya ternary, `&` ina kiwango chake kubwa kuliko `|`, na
-`&&` inafunga nguvu kuliko `=` — kwa hiyo `a = 1 && 0` inagawia
-a = 0 (mbegu: a = 1), `4 | 2 & 1` hutoa 4 (mbegu: 0), `a = 2 == 2`
-hutoa a = 1 (mbegu: a = 2), `x = 1 ? 2 : 3` hutoa x = 2 (mbegu:
-x = 1). Tofauti hii kati ya minyororo ni tatizo la usahihi kwa
-lugha inayojijenga. Pia: `<<`/`>>` upande wa KULIA wa `< > <= >=`
-haubaliwi kwenye mnyororo wa uzalishaji (`1 < 2 << 1` hutoa kosa)
-ingawa jedwali la juu linaruhusu (kina 4 > 3).
+Mifano: `4 | 2 & 1` ni `4 | (2 & 1)` = 4, `12 & 10 | 3` ni
+`(12 & 10) | 3` = 11, `a = 1 && 0` inagawia a = 0,
+`a = 2 == 2` inagawia a = 1, `x = 1 ? 2 : 3` inagawia x = 2.
+
+Kilichopimwa (2026-08-31): jedwali hili linashikiliwa na minyororo
+yote miwili (mbegu na mnyororo wa .swa) — tofauti ya zamani kati
+ya minyororo (mbegu ilikuwa na `&&` `||` `&` `|` `^` katika
+kiwango kimoja na `=` pamoja na `==`) imefungwa kwa kufuata
+utangulizi wa C kwenye mbegu. Pia: `<<`/`>>` upande wa KULIA wa
+`< > <= >=` haubaliwi kwenye minyororo yote miwili (`1 < 2 << 1`
+hutoa kosa la mchanganuzi) hata ingawa jedwali la juu linaweka
+uhamishaji juu ya ulinganisho; `2 << 1 < 4` inafanya kazi.
+`^` inakataliwa na mbegu na inarudisha operanda ya kushoto pekee
+kwenye mnyororo wa uzalishaji (jibu baya — angalia 2.5).
 
 ### 4.1 Mantiki ya fupi-hali (short-circuit)
 
