@@ -2444,46 +2444,58 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
         kama (kazi_nafasi_kwa_jina("andika_sehemu") < 0) { ni_andika_nje = 1; }
         kama (a0 != -1 && ast_aina[a0] == 5 && ni_andika_nje == 0) {
             N8* muundo = ast_pool + ast_jina_off[a0];
-            N32 fd = 1;
-            kama (jina_linganisha(callee, "andika_stderr")) { fd = 2; }
-            N32 urefu_m = jina_urefu(muundo);
-            N32 h = ast_tiga[a0];
-            N32 p = 1;  // baada ya nukuu ya mwanzo
-            N32 mwanzo_sehemu = 1;
-            wakati (p < urefu_m) {
-                kama (muundo[p] == 37) {  // '%'
-                    kama (p > mwanzo_sehemu) {
-                        N32 lebo = sehemu_tungo_hifadhi(muundo + mwanzo_sehemu, p - mwanzo_sehemu);
-                        kama (lebo >= 0) { andika_wito_sehemu(fd, lebo, sehemu_len[sehemu_idadi - 1]); }
-                    }
-                    N8 sp = muundo[p + 1];
-                    kama (h != -1) {
-                        kama (sp == 100) {  // %d
-                            N32 enc_h = ast_thamani[h];
-                            kama (ast_aina[h] == 45) { enc_h = ast_nne[h]; }
-                            uzalishaji_usemi(h, kazi_node);
-                            kama (ukubwa_kutoka_enc(enc_h) < 8) { andika_cdqe(); }
-                            andika_wito_n64(fd);
-                        } sivyo { kama (sp == 115) {  // %s
-                                uzalishaji_usemi(h, kazi_node);
-                                andika_wito_mfuatano(fd);
-                            } sivyo { kama (sp == 99) {  // %c
+            // Njia ya kukusanya-wakati inatumika kwa halisi ya kamba
+            // PEKEE (mwanzo wake ni nukuu ya mwanzo). Kigeu kama muundo
+            // (mf. andika(bafa)) kinapaswa kuingia kwenye wito wa
+            // kawaida — andika_ndani huchakata muundo wakati wa
+            // kukimbia. Zamani jina la kigeu lenyewe lilitumiwa kama
+            // muundo (herufi ya kwanza na ya mwisho zikipotea kimya,
+            // mf. bafa ikichapishwa "af").
+            kama (muundo[0] == 34) {
+                N32 fd = 1;
+                kama (jina_linganisha(callee, "andika_stderr")) { fd = 2; }
+                N32 urefu_m = jina_urefu(muundo);
+                N32 h = ast_tiga[a0];
+                N32 p = 1;  // baada ya nukuu ya mwanzo
+                N32 mwanzo_sehemu = 1;
+                wakati (p < urefu_m) {
+                    kama (muundo[p] == 37) {  // '%'
+                        kama (p > mwanzo_sehemu) {
+                            N32 lebo = sehemu_tungo_hifadhi(muundo + mwanzo_sehemu, p - mwanzo_sehemu);
+                            kama (lebo >= 0) { andika_wito_sehemu(fd, lebo, sehemu_len[sehemu_idadi - 1]); }
+                        }
+                        N8 sp = muundo[p + 1];
+                        kama (sp == 37) {  // %% — asilimia halisi (hatumii hoja)
+                            andika_mov_eax(37);
+                            andika_wito_baiti(fd);
+                        } sivyo { kama (h != -1) {
+                                kama (sp == 100) {  // %d
+                                    N32 enc_h = ast_thamani[h];
+                                    kama (ast_aina[h] == 45) { enc_h = ast_nne[h]; }
                                     uzalishaji_usemi(h, kazi_node);
-                                    andika_wito_baiti(fd);
-                                } } }
-                        h = ast_tiga[h];
+                                    kama (ukubwa_kutoka_enc(enc_h) < 8) { andika_cdqe(); }
+                                    andika_wito_n64(fd);
+                                } sivyo { kama (sp == 115) {  // %s
+                                        uzalishaji_usemi(h, kazi_node);
+                                        andika_wito_mfuatano(fd);
+                                    } sivyo { kama (sp == 99) {  // %c
+                                            uzalishaji_usemi(h, kazi_node);
+                                            andika_wito_baiti(fd);
+                                        } } }
+                                h = ast_tiga[h];
+                            } }
+                        p = p + 2;
+                        mwanzo_sehemu = p;
+                    } sivyo {
+                        p = p + 1;
                     }
-                    p = p + 2;
-                    mwanzo_sehemu = p;
-                } sivyo {
-                    p = p + 1;
                 }
+                kama (urefu_m - 1 > mwanzo_sehemu) {
+                    N32 lebo = sehemu_tungo_hifadhi(muundo + mwanzo_sehemu, urefu_m - 1 - mwanzo_sehemu);
+                    kama (lebo >= 0) { andika_wito_sehemu(fd, lebo, sehemu_len[sehemu_idadi - 1]); }
+                }
+                rudisha;
             }
-            kama (urefu_m - 1 > mwanzo_sehemu) {
-                N32 lebo = sehemu_tungo_hifadhi(muundo + mwanzo_sehemu, urefu_m - 1 - mwanzo_sehemu);
-                kama (lebo >= 0) { andika_wito_sehemu(fd, lebo, sehemu_len[sehemu_idadi - 1]); }
-            }
-            rudisha;
         }
     }
 
@@ -4376,6 +4388,12 @@ W0 kusanya_vigeu_vya_ndani(N32 node) {
         }
     }
 
+    // NAMBARI (4): ast_nne hubeba usimbaji wa aina (288/320) na
+    // ast_kulia alama ya N64 (1) — SI nodi za AST. Kuzitembelea
+    // kungeingia kwenye kazi yenye faharisi 288/320 na kuandikisha
+    // vigeu vya kazi zote (kufurika kwa 64 kwenye vyanzo vikubwa).
+    kama (aina == 4) { rudisha; }
+
     // Tembelea watoto kwa kujirudia
     kusanya_vigeu_vya_ndani(ast_kushoto[node]);
     kusanya_vigeu_vya_ndani(ast_kulia[node]);
@@ -4404,6 +4422,7 @@ W0 kusanya_vigeu_vya_ndani(N32 node) {
     N32 ruka_nne = 0;
     kama (aina == 33 || aina == 34) { ruka_nne = 1; }
     kama (aina == 45) { ruka_nne = 1; }  // HALISI_D: ast_nne ina enc, ast_tiga baiti
+    kama (aina == 4) { ruka_nne = 1; }  // NAMBARI: mkaguzi huweka enc (288/320) kwenye ast_nne — SI nodi
     kama (ruka_nne == 0) {
         kusanya_vigeu_vya_ndani(ast_nne[node]);
     }

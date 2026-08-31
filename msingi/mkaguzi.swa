@@ -16,7 +16,13 @@ N8* mkaguzi_kazi_sasa;
 N32 wigo_jina_off[256];
 N32 wigo_aina_enc[256];
 N32 wigo_idadi = 0;
-N32 wigo_vidokezo[16];  // fahirisi za mwanzo za wigo kwa sukuma/toa
+// Fahirisi za mwanzo za wigo kwa sukuma/toa. Kikomo cha zamani (16)
+// kilifurika kwenye upachikaji wa kina (kila sivyo husukuma mara
+// mbili: KAMA kisha SIVYO) — wigo_toa ilirejesha wigo_idadi kwa
+// nafasi isiyo sahihi na vigeu vikaonekana kutokuwepo (mkaguzi
+// wa zamani haukujali — vitambulisho visivyojulikana havikuwa
+// makosa; ukaguzi wa kihifadhi unategemea wigo kamili).
+N32 wigo_vidokezo[256];
 N32 wigo_vidokezo_idadi = 0;
 
 // Kina cha kitanzi kwa ukaguzi wa muktadha wa vunja/endelea
@@ -26,7 +32,7 @@ N32 kitanzi_kina = 0;
 N32 kazi_ret_enc = 0;
 
 W0 wigo_sukuma() {
-    kama (wigo_vidokezo_idadi < 16) {
+    kama (wigo_vidokezo_idadi < 256) {
         wigo_vidokezo[wigo_vidokezo_idadi] = wigo_idadi;
         wigo_vidokezo_idadi = wigo_vidokezo_idadi + 1;
     }
@@ -308,6 +314,42 @@ N32 mkaguzi_kagua_wito(N32 node) {
                 }
             }
         }
+        // Uthibitishaji wa kamba ya muundo kwa andika/andika_stderr
+        // (hoja ya KWANZA ikitolewa kama halisi ya kamba): viungwa
+        // vinavyofanya kazi ni %d, %s, %c, %% (asilimia halisi), na
+        // \% (utorokaji wa asilimia). Vingine (k.m. %u, %x, %f, %l,
+        // %n) vinakubaliwa kimya na mzalishaji na kutoa HAKUNA kitu —
+        // kataa kwa sauti (uthibitisho-wa-lugha.md unaahidi %d %s %c
+        // pekee).
+        kama (jina_linganisha(jina, "andika") || jina_linganisha(jina, "andika_stderr")) {
+            N32 a0 = ast_kulia[node];
+            kama (a0 != -1 && ast_aina[a0] == 5) {
+                N8* muundo = ast_pool + ast_jina_off[a0];
+                kama (muundo[0] == 34) {  // nukuu ya mwanzo — ni halisi ya kamba
+                    N32 ml = 0;
+                    wakati (muundo[ml] != 0) { ml = ml + 1; }
+                    N32 mp = 1;  // baada ya nukuu ya mwanzo
+                    wakati (mp < ml - 1) {
+                        kama (muundo[mp] == 92 && muundo[mp + 1] == 37) {  // \%
+                            mp = mp + 2;
+                            endelea;
+                        }
+                        kama (muundo[mp] == 37) {  // '%'
+                            N8 sp = muundo[mp + 1];
+                            kama (sp == 100 || sp == 115 || sp == 99 || sp == 37) {
+                                mp = mp + 2;
+                                endelea;
+                            }
+                            andika_stderr("kosa [%s]: kipengele cha muundo %d hakitumiki (viungwa: asilimia, d, s, c)\n", mkaguzi_kazi_sasa, sp);
+                            mkaguzi_makosa = mkaguzi_makosa + 1;
+                            mp = mp + 2;
+                            endelea;
+                        }
+                        mp = mp + 1;
+                    }
+                }
+            }
+        }
         // Tafuta aina ya kurudi kwa matumizi ya nafasi ya usemi
         N32 j = 0;
         wakati (j < kazi_ret_idadi) {
@@ -362,8 +404,19 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
     }
     kama (aina == 10) {  // WAKATI
         mkaguzi_kagua_usemi(ast_kushoto[node]);
-        // Kwa kitanzi cha "kwa", ast_tiga ina taarifa ya anzisha
-        kama (ast_tiga[node] != -1) { mkaguzi_kagua_usemi(ast_tiga[node]); }
+        // Kwa kitanzi cha "kwa", ast_tiga ina taarifa ya anzisha.
+        // Tangazo (N32 j = 0) lazima lisajiriwe kwenye wigo — usemi
+        // pekee hupitia mkaguzi_kagua_usemi. Zamani j haikujulikana
+        // kwenye hatua na mwili (mkaguzi haukujali — vitambulisho
+        // visivyojulikana havikuwa makosa); ukaguzi wa kihifadhi
+        // unategemea wigo kamili.
+        kama (ast_tiga[node] != -1) {
+            kama (ast_aina[ast_tiga[node]] == 11) {
+                mkaguzi_kagua_taarifa(ast_tiga[node]);
+            } sivyo {
+                mkaguzi_kagua_usemi(ast_tiga[node]);
+            }
+        }
         kitanzi_kina = kitanzi_kina + 1;
         wigo_sukuma();
         mkaguzi_kagua_taarifa(ast_kulia[node]);
@@ -482,6 +535,33 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
         N32 rhs_node = ast_kulia[node];
         N32 lhs_enc = mkaguzi_kagua_usemi(lhs_node);
         N32 rhs_enc = mkaguzi_kagua_usemi(rhs_node);
+        // Ugawaji unahitaji kihifadhi: kigeu, nyoosha, sehemu, au
+        // kipengele cha safu. Matokeo ya wito, ternary, au oparesheni SI
+        // kihifadhi — kuyakubali kimya kunaacha no-op kwenye mzalishaji
+        // (LHS hupuuzwa, RHS pekee hutathminiwa). Mbegu hukataa sawa
+        // ("uwekaji usiotumika") — weka mnyororo huu wenye mwendo uleule.
+        N32 ni_lvalue = 0;
+        kama (lhs_node != -1) {
+            N32 aina_l = ast_aina[lhs_node];
+            kama (aina_l == 5) {  // kitambulisho: lazima kiwe kigeu (wigo au ulimwengu)
+                N8* jina_l = ast_pool + ast_jina_off[lhs_node];
+                kama (wigo_tafuta(jina_l) != -1) { ni_lvalue = 1; }
+                sivyo {
+                    N32 g3 = 0;
+                    wakati (g3 < global_idadi) {
+                        kama (jina_linganisha(global_jina_pool + global_jina_off[g3], jina_l)) { ni_lvalue = 1; vunja; }
+                        g3 = g3 + 1;
+                    }
+                }
+            }
+            kama (aina_l == 29) { ni_lvalue = 1; }  // nyoosha / kipengele cha safu
+            kama (aina_l == 33) { ni_lvalue = 1; }  // sehemu kwa nukta
+            kama (aina_l == 34) { ni_lvalue = 1; }  // sehemu kwa mshale
+        }
+        kama (ni_lvalue == 0) {
+            andika_stderr("kosa [%s]: ugawaji unahitaji kihifadhi (kigeu, nyoosha, sehemu, au kipengele cha safu)\n", mkaguzi_kazi_sasa);
+            mkaguzi_makosa = mkaguzi_makosa + 1;
+        }
         // Aina za mtumiaji zinaweza kuwa hasi
         kama (lhs_enc != 0 && lhs_enc != -1 && rhs_enc != 0 && rhs_enc != -1) {
             // Inaruhusu upanuzi/kupungua ndani ya familia moja;
