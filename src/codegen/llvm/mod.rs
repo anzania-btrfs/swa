@@ -1243,7 +1243,11 @@ fn lower_instruction(
                 let cast = if val_kind == LLVMTypeKind::Integer as u32
                     && target_kind == LLVMTypeKind::Integer as u32
                     && LLVMGetIntTypeWidth(val_ty) != LLVMGetIntTypeWidth(llvm_ty) {
-                    LLVMBuildIntCast2(builder, value, llvm_ty, 1, c_str("cast").as_ptr())
+                    // Boolean (i1) inapanuliwa kwa SIFURI (0/1) kama mnyororo wa
+                    // asili unavyofanya; upanuzi wenye ishara ungeleta -1 kwa kweli.
+                    // Aina nyingine (i32 → i64, n.k.) hudumisha upanuzi wenye ishara.
+                    let is_boolean = LLVMGetIntTypeWidth(val_ty) == 1;
+                    LLVMBuildIntCast2(builder, value, llvm_ty, i32::from(!is_boolean), c_str("cast").as_ptr())
                 } else if val_kind == LLVMTypeKind::Integer as u32
                     && target_kind == LLVMTypeKind::Pointer as u32 {
                     LLVMBuildIntToPtr(builder, value, llvm_ty, c_str("inttoptr").as_ptr())
@@ -1420,24 +1424,21 @@ fn lower_instruction(
                 // Hesabu kukabiliana kwa baiti ya sehemu kwa upatanisho.
                 let byte_off: u64 = match struct_ty_opt {
                     Some(IrType::Struct { fields, .. }) => {
-                        // Hesabu ukubwa uliopatanishwa wa aina (inalingana na mpangilio wa LLVM ndani ya muundo).
-                        let aligned = |ty: &IrType| -> u64 {
-                            let w = ty.width_bytes() as u64;
-                            let a = std::cmp::min(w, 8);
-                            (w + a - 1) & !(a - 1)
-                        };
+                        // Ukabilishaji unaofanana na mpangilio wa muundo wa LLVM
+                        // (usio bandikwa): kila sehemu huanza kwa upatanisho wake
+                        // wa asili.  Miundo ya ndani hupangwa kwa upatanisho wa
+                        // sehemu zao, SI kwa upana wao kamili — kosa la awali
+                        // lililoweka muundo wa baiti 8 (upatanisho 4) kwenye
+                        // nafasi 8, likiacha sehemu za mwisho zikigongana na
+                        // anwani ya kurudi kwenye rafu.
                         let mut off: u64 = 0;
-                        let target_fw = fields.get(*field_idx).map(|(_, t)| t.width_bytes() as u64).unwrap_or(4);
                         for (fi, (_, fty)) in fields.iter().enumerate() {
+                            let align = fty.alignment_bytes() as u64;
+                            off = (off + align - 1) & !(align - 1);
                             if fi == *field_idx as usize {
-                                let align = std::cmp::min(target_fw, 8);
-                                off = (off + align - 1) & !(align - 1);
                                 break;
                             }
-                            let fw_aligned = aligned(fty);
-                            let align = std::cmp::min(fw_aligned, 8);
-                            off = (off + align - 1) & !(align - 1);
-                            off += fw_aligned;
+                            off += fty.width_bytes() as u64;
                         }
                         off
                     }
@@ -1918,8 +1919,9 @@ fn coerce_int(
                 return val;
             }
             // Panua-ishara (kwa usalama kwa thamani zenye ishara; panua-sifuri kwa zisizo na ishara
-            // inashughulikiwa na mwita wakati inahitajika).
-            LLVMBuildIntCast2(builder, val, target_ty, 1, c_str("coerce").as_ptr())
+            // inashughulikiwa na mwita wakati inahitajika).  Boolean (i1) hupanuliwa
+            // kwa SIFURI — upanuzi wenye ishara ungeleta -1 kwa kweli, si 1.
+            LLVMBuildIntCast2(builder, val, target_ty, i32::from(val_width != 1), c_str("coerce").as_ptr())
         } else if val_kind == LLVMTypeKind::Pointer as u32
             && target_kind == LLVMTypeKind::Pointer as u32
         {

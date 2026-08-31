@@ -999,8 +999,10 @@ impl<'a> Lowerer<'a> {
                 let blk = self.new_block("call_stmt");
                 let (_val, end_blk) = self.lower_expr_into(node, blk);
                 // Weka kimalizio cha kishika nafasi ili lower_block kiweze kukiunganisha.
+                // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — hoja ya
+                // fupi-hali ungeacha phi ya muunganiko bila kuingia kwa watangulizi.
                 self.set_terminator(end_blk, Terminator::Br(end_blk));
-                end_blk
+                blk
             }
             // ---- usemi kama taarifa -------------------------------------------
             _ => {
@@ -1009,8 +1011,10 @@ impl<'a> Lowerer<'a> {
                 let (_val, end_blk) = self.lower_expr_into(node, blk);
                 // Weka kimalizio cha kishika nafasi ili lower_block kiweze kukiunganisha
                 // (waendeshaji fupi-hali huweka vimalizio vyao wenyewe; usiandike juu).
+                // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — usemi wa
+                // fupi-hali ungeacha phi ya muunganiko bila kuingia kwa watangulizi.
                 self.patch_br_if_needed(end_blk, end_blk);
-                end_blk
+                blk
             }
         }
     }
@@ -1163,8 +1167,12 @@ impl<'a> Lowerer<'a> {
             }
         }
         self.sret_dest = None;
+        // Weka kishika nafasi kwenye kizuizi cha mwisho wa usemi wa kulia.
+        // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — usemi wa
+        // fupi-hali huweka BrCond kwenye kuingia, na chaining ya lower_block
+        // inatembea hadi muunganiko (kosa la phi ya kujizungusha vinginevyo).
         self.set_terminator(end_blk, Terminator::Br(end_blk));
-        end_blk
+        blk
     }
 
     /// Teremsha `KAMA` (kama): `kama (sharti) tawi_la_kweli [tiga tawi_la_sivyo]`.
@@ -1315,7 +1323,29 @@ impl<'a> Lowerer<'a> {
         // mantiki ya actual_prev ya lower_block ipate exit_blk kama kipitio.
         self.set_terminator(exit_blk, Terminator::Br(exit_blk));
 
-        self.set_terminator(init_blk, Terminator::Br(header_blk));
+        // Unganisha kizuizi cha MWISHO cha kianzisha kwa kichwa.  Kianzisha cha
+        // fupi-hali huweka BrCond kwenye kizuizi cha kuingia na phi kwenye
+        // muunganiko wake — kuandika juu kimalizio cha kuingia kungeacha
+        // muunganiko huo bila watangulizi (kosa la uthibitishaji wa LLVM).
+        let mut last_init = init_blk;
+        loop {
+            let term = &self.func.blocks[last_init.0].terminator;
+            match term {
+                Terminator::Br(target) if *target != last_init => {
+                    last_init = *target;
+                }
+                Terminator::Br(_) => {
+                    break;
+                }
+                Terminator::BrCond(_, _, merge) => {
+                    last_init = *merge;
+                }
+                _ => {
+                    break;
+                }
+            }
+        }
+        self.ensure_br(last_init, header_blk);
 
         // Sukuma mazingira ya mzunguko.
         self.loops.push(LoopInfo {
@@ -1428,7 +1458,13 @@ impl<'a> Lowerer<'a> {
             } else {
                 self.set_terminator(end_blk, Terminator::Ret(val));
             }
-            end_blk
+            // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho: usemi wa
+            // fupi-hali unaweza kuunda kizuizi cha muunganiko chenye phi kati
+            // ya kuingia na kimalizio cha Ret.  Kurudisha muunganiko kungeruhusu
+            // taarifa ya awali kuunganishwa moja kwa moja ndani yake, kikiruka
+            // tathmini ya upande wa kushoto na kuacha phi bila kuingia kwa
+            // watangulizi wake (kosa la uthibitishaji wa LLVM).
+            blk
         } else {
             // Hakuna thamani wazi ya rudisha.
             if self.func.sret_value_id.is_some() {
@@ -1542,8 +1578,16 @@ impl<'a> Lowerer<'a> {
                 }
             }
             self.define_var(var_name, alloc, var_ty);
+            // Weka kishika nafasi kwenye kizuizi cha mwisho cha kianzisha.  Rudisha
+            // kizuizi cha KUINGIA (`blk`), si cha mwisho: kianzisha cha fupi-hali
+            // huweka BrCond kwenye kizuizi cha kuingia, na mantiki ya actual_prev ya
+            // lower_block inatembea tawi la uongo hadi kizuizi cha muunganiko.
+            // Kurudisha kizuizi cha mwisho kungeunganisha taarifa ya awali moja kwa
+            // moja kwenye muunganiko, kikiruka tathmini ya upande wa kushoto na
+            // kuacha phi bila kuingia kwa watangulizi wake (kosa la uthibitishaji
+            // wa LLVM: PHINode should have one entry for each predecessor).
             self.set_terminator(end_blk, Terminator::Br(end_blk));
-            end_blk
+            blk
         } else {
             self.define_var(var_name, alloc, var_ty.clone());
             // Anzisha vigezo vya ndani kwa sifuri, lakini ruka kielekezi
@@ -1648,8 +1692,10 @@ impl<'a> Lowerer<'a> {
         let (size_val, end_blk) = self.lower_expr_into(arg_node, blk);
         self.emit(end_blk, Instruction::HeapAlloc(size_val));
         // Matokeo ya kielekezi yametupwa katika mazingira ya taarifa.
+        // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — ukubwa wa
+        // fupi-hali ungeacha phi ya muunganiko bila kuingia kwa watangulizi.
         self.set_terminator(end_blk, Terminator::Br(end_blk));
-        end_blk
+        blk
     }
 
     /// Teremsha `ACHILIA` (achilia kwenye chungu): `achilia <usemi_kielekezi>`.
@@ -1662,8 +1708,10 @@ impl<'a> Lowerer<'a> {
 
         let (ptr_val, end_blk) = self.lower_expr_into(arg_node, blk);
         self.emit(end_blk, Instruction::HeapFree(ptr_val));
+        // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — kielekezi cha
+        // fupi-hali ungeacha phi ya muunganiko bila kuingia kwa watangulizi.
         self.set_terminator(end_blk, Terminator::Br(end_blk));
-        end_blk
+        blk
     }
 }
 
@@ -2349,7 +2397,13 @@ impl<'a> Lowerer<'a> {
                 _ => None,
             })
             .unwrap_or(IrType::I8);
-        let val = self.emit(end_blk, Instruction::Load(pointee_ty, ptr_val));
+        // Muundo wa pointee unawakilishwa kama kielekezi — rudisha kielekezi
+        // chenyewe, si upakiaji wake (kosa la thamani-kama-anwani kwa memcpy).
+        let val = if matches!(&pointee_ty, IrType::Struct { .. }) {
+            ptr_val
+        } else {
+            self.emit(end_blk, Instruction::Load(pointee_ty, ptr_val))
+        };
         (val, end_blk)
     }
 
@@ -2606,7 +2660,15 @@ impl<'a> Lowerer<'a> {
 
         // Hesabu anwani ya sehemu, kisha pakia kwa aina sahihi.
         let field_ptr = self.emit(blk, Instruction::FieldAddr(base_ptr, field_idx, struct_ty));
-        let val = self.emit(blk, Instruction::Load(field_ty, field_ptr));
+        // Sehemu ya muundo inawakilishwa kama kielekezi (mf. vitambulisho na
+        // wito wa sret) — rudisha anwani ya sehemu, si upakiaji wake.
+        // Kupakia muundo kungeleta thamani ya sehemu ya kwanza kama anwani
+        // ya memcpy (kosa la thamani-kama-anwani).
+        let val = if matches!(&field_ty, IrType::Struct { .. }) {
+            field_ptr
+        } else {
+            self.emit(blk, Instruction::Load(field_ty, field_ptr))
+        };
         (val, blk)
     }
 
@@ -2650,7 +2712,15 @@ impl<'a> Lowerer<'a> {
         }).unwrap_or(IrType::I32);
 
         let field_ptr = self.emit(end_blk, Instruction::FieldAddr(struct_ptr, field_idx, struct_ty_opt));
-        let val = self.emit(end_blk, Instruction::Load(field_ty, field_ptr));
+        // Sehemu ya muundo inawakilishwa kama kielekezi (mf. vitambulisho na
+        // wito wa sret) — rudisha anwani ya sehemu, si upakiaji wake.
+        // Kupakia muundo kungeleta thamani ya sehemu ya kwanza kama anwani
+        // ya memcpy (kosa la thamani-kama-anwani).
+        let val = if matches!(&field_ty, IrType::Struct { .. }) {
+            field_ptr
+        } else {
+            self.emit(end_blk, Instruction::Load(field_ty, field_ptr))
+        };
         (val, end_blk)
     }
 
@@ -2686,7 +2756,13 @@ impl<'a> Lowerer<'a> {
 
         // GEP kwa kipengele, kisha pakia.
         let elem_ptr = self.emit(end_blk, Instruction::Gep(ary_ptr, vec![idx_val]));
-        let val = self.emit(end_blk, Instruction::Load(elem_ty, elem_ptr));
+        // Kipengele cha muundo kinawakilishwa kama kielekezi — rudisha anwani
+        // ya kipengele, si upakiaji wake (kosa la thamani-kama-anwani kwa memcpy).
+        let val = if matches!(&elem_ty, IrType::Struct { .. }) {
+            elem_ptr
+        } else {
+            self.emit(end_blk, Instruction::Load(elem_ty, elem_ptr))
+        };
         (val, end_blk)
     }
 
