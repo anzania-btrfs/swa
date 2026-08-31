@@ -238,18 +238,20 @@ impl IrType {
             IrType::Ptr(_) | IrType::FnPtr { .. } => 8,
 
             IrType::Struct { fields, .. } => {
-                // Khesabu kwa upatanisho ili kuendana na mpangilio wa muundo wa LLVM.
+                // Khesabu kwa upatanisho unaofanana na mpangilio wa muundo wa
+                // LLVM (usio bandikwa): kila sehemu huanza kwa upatanisho wake
+                // wa asili, na ukubwa wa muundo huzungushwa hadi upatanisho wa
+                // juu wa sehemu zake.  Miundo ya ndani hupangwa kwa upatanisho
+                // wa sehemu zao, SI kwa upana wao kamili (kosa la awali
+                // lililoleta nafasi 8 kwa muundo wa baiti 8 wenye upatanisho 4).
                 let mut off: usize = 0;
                 for (_, fty) in fields {
-                    let fw = fty.width_bytes();
-                    let align = std::cmp::min(fw, 8);
-                    off = (off + align - 1) & !(align - 1);
-                    off += fw;
+                    let a = fty.alignment_bytes();
+                    off = (off + a - 1) & !(a - 1);
+                    off += fty.width_bytes();
                 }
-                let max_align = fields.iter()
-                    .map(|(_, ty)| std::cmp::min(ty.width_bytes(), 8))
-                    .max().unwrap_or(4);
-                off = (off + max_align - 1) & !(max_align - 1);
+                let struct_align = self.alignment_bytes();
+                off = (off + struct_align - 1) & !(struct_align - 1);
                 off
             }
 
@@ -259,11 +261,12 @@ impl IrType {
         }
     }
 
-    /// Upatanisho wa aina hii kwa baiti.
+    /// Upatanisho wa aina hii kwa baiti, unaofanana na upatanisho wa LLVM
+    /// kwa aina zilizotangazwa bila kubandika.
     ///
-    /// Kanuni rahisi: upatanisho == upana asilia kwa aina za awali, 8 kwa
-    /// vielekezi kwenye 64-bit, na 8 kwa miundo/safu (hifadhi —
-    /// LLVM hukokotoa upatanisho halisi wa ABI baadaye).
+    /// Kanuni: upatanisho == upana asilia kwa aina za awali, 8 kwa vielekezi
+    /// kwenye 64-bit; muundo hupangwa kwa upatanisho wa juu wa sehemu zake
+    /// (unaorudiwa); safu hupangwa kwa upatanisho wa kipengele chake.
     pub fn alignment_bytes(&self) -> usize {
         match self {
             IrType::Void => 1,
@@ -276,9 +279,12 @@ impl IrType {
 
             IrType::Ptr(_) | IrType::FnPtr { .. } => 8,
 
-            // Hifadhi: panga miundo/safu kwa upana wa kielekezi.
-            // LLVM itakaza hili wakati wa kodejeni.
-            IrType::Struct { .. } | IrType::Array { .. } => 8,
+            IrType::Struct { fields, .. } => fields
+                .iter()
+                .map(|(_, ty)| ty.alignment_bytes())
+                .max()
+                .unwrap_or(1),
+            IrType::Array { element, .. } => element.alignment_bytes(),
         }
     }
 
