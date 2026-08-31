@@ -491,6 +491,17 @@ N32 teremsha_usemi(Mteremshi* t, N32 node) {
         rudisha ir_node_mpya(IR_BIT_AU, 0, 0, l, r);
     }
 
+    kama (aina == AST_XOR) {
+        N32 l = teremsha_usemi(t, kushoto);
+        N32 r = teremsha_usemi(t, kulia);
+        rudisha ir_node_mpya(AST_XOR, 0, 0, l, r);
+    }
+
+    kama (aina == AST_KINYUME) {
+        N32 expr = teremsha_usemi(t, kushoto);
+        rudisha ir_node_mpya(AST_KINYUME, 0, 0, expr, -1);
+    }
+
     // Ternary
     kama (aina == AST_TERNARY) {
         N32 cond = teremsha_usemi(t, kushoto);

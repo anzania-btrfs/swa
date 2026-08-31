@@ -57,6 +57,8 @@ N32 AST_HALISI_D = 45;  // desimali halisi (D64)
 N32 AST_BADILI = 48;  // badili(ptr, size) -> realloc
 N32 AST_MODULO = 49;  // asilimia (%)
 N32 AST_BLOCK = 50;  // kifungio cha ndani (hatua ya kwa)
+N32 AST_XOR = 46;  // ^ (AU ya biti za kipekee)
+N32 AST_KINYUME = 47;  // ~ (kanusha biti)
 
 // -------------------------------------------------------
 // Safu bapa za AST
@@ -1043,6 +1045,25 @@ N32 changanua_primary(Msambazaji* p) {
         rudisha s;
     }
 
+    // Kiambishi KANUSHA kimantiki  !usemi  (matokeo ni 1 au 0)
+    // Neno la Kiswahili 'si' HALISI si kiambishi — ni kitambulisho cha
+    // kawaida (limezimwa).
+    kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "!")) {
+        sogeza(p);
+        N32 operand = changanua_usemi_upande(p);
+        kama (operand == -1) { rudisha -1; }
+        rudisha node_mpya(AST_SI, 0, operand, -1);
+    }
+
+    // Kiambishi KINYUME cha biti  ~usemi  (lazima kiwe kabla ya
+    // kitambulisho: '~' ina nambari 126, '^' 94 — zote juu ya 65)
+    kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "~")) {
+        sogeza(p);
+        N32 operand = changanua_usemi_upande(p);
+        kama (operand == -1) { rudisha -1; }
+        rudisha node_mpya(AST_KINYUME, 0, operand, -1);
+    }
+
     // Kitambulisho
     kama ((p->sasa.mwanzo[0] >= 65 && p->sasa.mwanzo[0] != 91 && p->sasa.mwanzo[0] != 93 && p->sasa.mwanzo[0] != 123 && p->sasa.mwanzo[0] != 125)) {
         // Jina la aina HALITUMIKI kama usemi — kukubali kunaleta
@@ -1082,9 +1103,6 @@ N32 changanua_primary(Msambazaji* p) {
 
     N32 r_orodha = changanua_primary_orodha(p);
     kama (r_orodha != -1) { rudisha r_orodha; }
-
-    // Kiambishi KANUSHA kimantiki si usemi — IMEZIMWA
-    // 'si' sasa inashughulikiwa kama kitambulisho cha kawaida
 
     // Kiambishi TOA unari  -usemi
     kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "-")) {
@@ -1347,17 +1365,35 @@ N32 changanua_usemi_bit_na(Msambazaji* p) {
 }
 
 // -------------------------------------------------------
+// BITWISE XOR :: ^  (kati ya & na |, utangulizi wa C)
+// -------------------------------------------------------
+N32 changanua_usemi_bit_xor(Msambazaji* p) {
+    N32 kushoto = changanua_usemi_bit_na(p);
+    kama (kushoto == -1) { rudisha -1; }
+
+    wakati (1 == 1) {
+        kama (p->sasa.urefu != 1) { vunja; }
+        kama (neno_ni(&p->sasa, "^") == 0) { vunja; }
+        sogeza(p);
+        N32 kulia = changanua_usemi_bit_na(p);
+        kushoto = node_mpya(AST_XOR, 0, kushoto, kulia);
+    }
+
+    rudisha kushoto;
+}
+
+// -------------------------------------------------------
 // BITWISE AU :: |
 // -------------------------------------------------------
 N32 changanua_usemi_bit_au(Msambazaji* p) {
-    N32 kushoto = changanua_usemi_bit_na(p);
+    N32 kushoto = changanua_usemi_bit_xor(p);
     kama (kushoto == -1) { rudisha -1; }
 
     wakati (1 == 1) {
         kama (p->sasa.urefu != 1) { vunja; }
         kama (neno_ni(&p->sasa, "|") == 0) { vunja; }
         sogeza(p);
-        N32 kulia = changanua_usemi_bit_na(p);
+        N32 kulia = changanua_usemi_bit_xor(p);
         kushoto = node_mpya(AST_BIT_AU, 0, kushoto, kulia);
     }
 
@@ -1441,13 +1477,21 @@ N32 changanua_usemi_asimilia(Msambazaji* p) {
             op = AST_ASIMILIA;
             ni_kiunganishi = 0;
         }
-        // Ugawa wa kiwanja: +=  -=  *=  /=
+        // Ugawa wa kiwanja: +=  -=  *=  /=  %=  &=  |=  ^=  <<=  >>=
         kama (op == -1 && p->sasa.urefu == 2) {
             kama (neno_ni(&p->sasa, "+=")) { op = AST_JUMLISHA; ni_kiunganishi = 1; }
             kama (neno_ni(&p->sasa, "-=")) { op = AST_TOFAUTI; ni_kiunganishi = 1; }
             kama (neno_ni(&p->sasa, "*=")) { op = AST_ZIDISHA; ni_kiunganishi = 1; }
             kama (neno_ni(&p->sasa, "/=")) { op = AST_GAWANYA; ni_kiunganishi = 1; }
             kama (neno_ni(&p->sasa, "%=")) { op = AST_MODULO; ni_kiunganishi = 1; }
+            kama (neno_ni(&p->sasa, "&=")) { op = AST_BIT_NA; ni_kiunganishi = 1; }
+            kama (neno_ni(&p->sasa, "|=")) { op = AST_BIT_AU; ni_kiunganishi = 1; }
+            kama (neno_ni(&p->sasa, "^=")) { op = AST_XOR; ni_kiunganishi = 1; }
+        }
+        // Ugawa wa kiwanja wa hamisha: <<=  >>=  (tokeni ya herufi 3)
+        kama (op == -1 && p->sasa.urefu == 3) {
+            kama (neno_ni(&p->sasa, "<<=")) { op = AST_HAMISHA_KUSHOTO; ni_kiunganishi = 1; }
+            kama (neno_ni(&p->sasa, ">>=")) { op = AST_HAMISHA_KULIA; ni_kiunganishi = 1; }
         }
         kama (op == -1) { vunja; }
 
