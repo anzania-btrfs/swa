@@ -1594,19 +1594,20 @@ N32 main() {
 
 /// K11c: Mfuatano wa utorokaji katika herufi (\n, \t, \\\\, \\xNN).
 /// Huhakikisha msomaji wa .swa unashughulikia tokeni za utorokaji
-/// katika herufi bila kuanguka. (Mifuatano ina mdudu wa awali kwenye stage1
-/// inayozuia majaribio kupitia njia ya kujikusanya.)
+/// bila kuanguka. Halisi za herufi ('a') zimekataliwa kwa sauti
+/// (hati 2.3 haijaahidi) — utorokaji hujaribiwa kupitia mifuatano,
+/// ndio njia iliyoahidiwa.
 #[test]
 fn jaribio_k11c_mfuatano_wa_utorokaji() {
     let test_chanzo = "\
 N32 main() {
-    N8 a = '\\n';
-    N8 b = '\\t';
-    N8 c = '\\r';
-    N8 d = '\\\\';
-    N8 e = '\\0';
-    N8 f = '\\x41';
-    N8 g = '\\x5A';
+    N8* a = \"\\n\";
+    N8* b = \"\\t\";
+    N8* c = \"\\r\";
+    N8* d = \"\\\\\";
+    N8* e = \"\\0\";
+    N8* f = \"\\x41\";
+    N8* g = \"\\x5A\";
     rudisha 0;
 }
 ";
