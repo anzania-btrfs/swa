@@ -51,7 +51,7 @@
 %define TOK_JUWILI        14         ; :
 %define TOK_NUKTA         15         ; .
 %define TOK_ALAMA         16         ; &
-%define TOK_ISHARA        17         ; alama ya hesabu (+ - / % | < > !)
+%define TOK_ISHARA        17         ; alama ya hesabu (+ - / % | < > ! ^ ~)
 %define TOK_MWISHO        18         ; mwisho wa faili
 %define TOK_HERUFI        19         ; mfuatano wa herufi ("...")
 %define TOK_SWALI         20         ; ?
@@ -100,6 +100,7 @@
 %define AST_HALISI_D       46          ; desimali halisi (D64)
 %define AST_ENDELEA        44
 %define AST_HASILI         45
+%define AST_MAKOSA_BITI    47          ; ~ (kukanusha biti, unari)
 
 ; Ishara za hesabu
 %define OP_JUMLISHA       0
@@ -123,6 +124,7 @@
 %define OP_AU_BITI         18         ; | (AU ya biti, binary)
 %define OP_XOR_BITI        19         ; ^ (XOR ya biti)
 %define OP_HUU             20         ; ?: (uchaguzi)
+%define OP_MAKOSA_BITI     21         ; ~ (kukanusha biti, unari)
 
 ; =============================================================================
 ; Sehemu ya 1: Data iliyosanifiwa
@@ -1131,6 +1133,10 @@ soma_ishara:
         je      .and
         cmp     al, '|'
         je      .or
+        cmp     al, '^'
+        je      .xor
+        cmp     al, '~'
+        je      .makosa_biti
         cmp     al, '<'
         je      .lt_or_shift_or_le
         cmp     al, '>'
@@ -1221,6 +1227,16 @@ soma_ishara:
         mov     eax, TOK_ISHARA
         mov     ebx, OP_AU
         jmp     .ret
+.xor:
+        inc     r12
+        mov     eax, TOK_ISHARA
+        mov     ebx, OP_XOR_BITI
+        jmp     .ret
+.makosa_biti:
+        inc     r12
+        mov     eax, TOK_ISHARA
+        mov     ebx, OP_MAKOSA_BITI
+        jmp     .ret
 .lt_or_shift_or_le:
         inc     r12
         cmp     r12, r14
@@ -1286,13 +1302,18 @@ soma_ishara:
 .ne:
         inc     r12
         cmp     r12, r14
-        jae     .fail
+        jae     .not
         mov     al, [r13 + r12]
         cmp     al, '='
-        jne     .fail
+        jne     .not
         inc     r12
         mov     eax, TOK_ISHARA
         mov     ebx, OP_SIO_SAWA
+        jmp     .ret
+.not:
+        ; ! pekee — kukanusha kimantiki (OP_MAKOSA)
+        mov     eax, TOK_ISHARA
+        mov     ebx, OP_MAKOSA
         jmp     .ret
 .fail:
         mov     eax, 0
@@ -2343,6 +2364,8 @@ changanua_kipengele_kimoja:
         je      .hasili
         cmp     qword [token_val + rdi*8], OP_MAKOSA
         je      .makosa
+        cmp     qword [token_val + rdi*8], OP_MAKOSA_BITI
+        je      .makosa_biti
 
 .no_prefix:
         call    changanua_kipengele_msingi
@@ -2395,6 +2418,18 @@ changanua_kipengele_kimoja:
         je      .done
         mov     r9d, eax
         mov     r8d, AST_MAKOSA
+        mov     r10d, -1
+        mov     r11d, -1
+        call    ast_nodi_mpya
+        jmp     .done
+
+.makosa_biti:
+        inc     qword [token_pos]       ; tumia ~
+        call    changanua_kipengele_kimoja
+        cmp     eax, -1
+        je      .done
+        mov     r9d, eax
+        mov     r8d, AST_MAKOSA_BITI
         mov     r10d, -1
         mov     r11d, -1
         call    ast_nodi_mpya
@@ -10263,6 +10298,9 @@ uzalishaji_ast:
         ; Kukanusha kimantiki: !usemi (AST_MAKOSA)
         cmp     ebx, AST_MAKOSA
         je      .call_makosa
+        ; Kukanusha biti: ~usemi (AST_MAKOSA_BITI)
+        cmp     ebx, AST_MAKOSA_BITI
+        je      .call_makosa_biti
 
         cmp     ebx, AST_HALISI_D
         je      .call_halisi_d
@@ -10428,6 +10466,17 @@ uzalishaji_ast:
         test    eax, eax
         sete    al
         movzx   eax, al
+        jmp     .done
+
+.call_makosa_biti:
+        mov     r12d, [ast_kushoto + r12*4]
+        call    uzalishaji_ast
+        ; not eax → f7 d0
+        mov     al, 0xf7
+        call    gen_baiti
+        mov     al, 0xd0
+        call    gen_baiti
+        not     eax
         jmp     .done
 
 .return_neg1:
