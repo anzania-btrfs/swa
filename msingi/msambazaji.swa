@@ -879,11 +879,10 @@ N32 changanua_kazi_vigezo(Msambazaji* p) {
 }
 
 N32 changanua_kazi_mwili(Msambazaji* p) {
-    // Tangazo la mbele: hakuna mwili wa kazi, ishara pekee ni ';'
-    kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
-        kama (neno_ni(&p->sasa, ";")) { sogeza(p); rudisha -1; }
-    }
-    kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, ";")) { sogeza(p); rudisha -1; }
+    // Kifungio TUPU { } ni ufafanuzi, si tangazo la mbele (tangazo ni
+    // ';' pekee baada ya vigezo) — rudisha kifungio tupu ili ast_tiga
+    // ya kazi isiwe -1, vinginevyo uzalishaji ungeiruka kimya na wito
+    // wake kuleta "kazi haijafafanuliwa".
 
     // Changanua taarifa za mwili
     N32 body = -1;
@@ -911,6 +910,9 @@ N32 changanua_kazi_mwili(Msambazaji* p) {
     }
 
 
+    kama (body == -1) {
+        body = node_mpya(AST_BLOCK, 0, -1, -1);  // mwili tupu { }
+    }
     rudisha body;
 }
 
@@ -1637,6 +1639,18 @@ N32 changanua_bloku(Msambazaji* p) {
 }
 
 N32 changanua_taarifa(Msambazaji* p) {
+    // Taarifa tupu: ';' pekee — isongeze na urudi kifungio tupu.
+    // C-semantiki, sawa na mbegu (N32 f() { ; } ni mwili halali).
+    kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
+        kama (neno_ni(&p->sasa, ";")) {
+            sogeza(p);
+            rudisha node_mpya(AST_BLOCK, 0, -1, -1);
+        }
+    }
+    kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, ";")) {
+        sogeza(p);
+        rudisha node_mpya(AST_BLOCK, 0, -1, -1);
+    }
     // 'sivyo' bila 'kama' iliyotangulia ni kosa la mchanganuzi.
     // Hapo awali ilipita kama kitambulisho (msimbo wenye maana ya
     // takataka) au kutoa kosa lisilo sahihi la kianzilishi cha safu.

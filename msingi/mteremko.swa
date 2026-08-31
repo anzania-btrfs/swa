@@ -322,6 +322,10 @@ N32 teremsha_taarifa(Mteremshi* t, N32 node) {
         rudisha teremsha_usemi(t, node);
     }
 
+    // Kifungio tupu (mwili tupu wa kazi { } au taarifa tupu ';') —
+    // hakuna msimbo wa IR; ruka kimya bila kosa.
+    kama (aina == AST_BLOCK) { rudisha -1; }
+
     // Usemi kama taarifa (mf. wito wa kazi;)
     N32 ir_expr = teremsha_usemi(t, node);
     kama (ir_expr != -1) { rudisha ir_expr; }
