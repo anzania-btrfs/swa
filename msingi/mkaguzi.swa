@@ -89,6 +89,32 @@ N32 mkaguzi_aina_zifanane(N32 a, N32 b) {
     rudisha fa == fb;
 }
 
+// Mpaka wa kamili/desimali (C-semantiki ya pandisha): desimali
+// (familia 3) na nambari kamili yenye ishara/bila ishara (familia
+// 1/2) zinachanganyika kwa hiari — operesheni inapandishwa hadi
+// D64/D32 na mzalishaji. Rudisha 1 ikiwa zinaweza kuchanganyika.
+N32 mkaguzi_mpaka_wa_desimali(N32 a, N32 b) {
+    kama (a == 0) { rudisha 0; }
+    kama (b == 0) { rudisha 0; }
+    kama (a == -1) { rudisha 0; }
+    kama (b == -1) { rudisha 0; }
+    kama (a < 0) { rudisha 0; }  // miundo — mpaka hautumiki
+    kama (b < 0) { rudisha 0; }
+    N32 fa = (a / 256) % 256;
+    N32 fb = (b / 256) % 256;
+    kama (fa == 3) {
+        kama (fb == 1) { rudisha 1; }
+        kama (fb == 2) { rudisha 1; }
+        rudisha 0;
+    }
+    kama (fb == 3) {
+        kama (fa == 1) { rudisha 1; }
+        kama (fa == 2) { rudisha 1; }
+        rudisha 0;
+    }
+    rudisha 0;
+}
+
 // Akiba ndogo ya nodi za miundo kwa utendaji
 N32 muundo_nodes[32];
 N32 muundo_count = 0;
@@ -362,8 +388,10 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
             // Aina za mtumiaji (muundo) ni hasi; tumia != 0 && != -1
             kama (init_enc != 0 && init_enc != -1 && var_enc != 0) {
                 kama (mkaguzi_aina_zifanane(var_enc, init_enc) == 0) {
-                    andika_stderr("kosa [%s]: aina ya kianzio hailingani na tangazo la '%s' (tangazo=%d, kianzio=%d)\n", mkaguzi_kazi_sasa, var_jina, var_enc, init_enc);
-                    mkaguzi_makosa = mkaguzi_makosa + 1;
+                    kama (mkaguzi_mpaka_wa_desimali(var_enc, init_enc) == 0) {
+                        andika_stderr("kosa [%s]: aina ya kianzio hailingani na tangazo la '%s' (tangazo=%d, kianzio=%d)\n", mkaguzi_kazi_sasa, var_jina, var_enc, init_enc);
+                        mkaguzi_makosa = mkaguzi_makosa + 1;
+                    }
                 }
             }
         }
@@ -377,10 +405,13 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
         N32 rhs_enc = mkaguzi_kagua_usemi(rhs_node);
         // Aina za mtumiaji zinaweza kuwa hasi
         kama (lhs_enc != 0 && lhs_enc != -1 && rhs_enc != 0 && rhs_enc != -1) {
-            // Inaruhusu upanuzi/kupungua ndani ya familia moja
+            // Inaruhusu upanuzi/kupungua ndani ya familia moja;
+            // mpaka wa kamili/desimali ni halali (C-semantiki)
             kama (mkaguzi_aina_zifanane(lhs_enc, rhs_enc) == 0) {
-                andika_stderr("kosa [%s]: aina ya ugawaji hailingani (L=%d, R=%d)\n", mkaguzi_kazi_sasa, lhs_enc, rhs_enc);
-                mkaguzi_makosa = mkaguzi_makosa + 1;
+                kama (mkaguzi_mpaka_wa_desimali(lhs_enc, rhs_enc) == 0) {
+                    andika_stderr("kosa [%s]: aina ya ugawaji hailingani (L=%d, R=%d)\n", mkaguzi_kazi_sasa, lhs_enc, rhs_enc);
+                    mkaguzi_makosa = mkaguzi_makosa + 1;
+                }
             }
         }
         mkaguzi_kagua_taarifa(ast_nne[node]);
@@ -407,9 +438,11 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
                 // Aina za mtumiaji (muundo) zinaweza kuwa hasi
                 kama (param_enc != 0 && param_enc != -1 && arg_enc != 0 && arg_enc != -1) {
                     kama (mkaguzi_aina_zifanane(arg_enc, param_enc) == 0) {
-                        andika_stderr("kosa [%s]: aina ya hoja #%d kwa '%s' hailingani (arg=%d, param=%d)\n",
-                        mkaguzi_kazi_sasa, hoja_idadi + 1, jina, arg_enc, param_enc);
-                        mkaguzi_makosa = mkaguzi_makosa + 1;
+                        kama (mkaguzi_mpaka_wa_desimali(arg_enc, param_enc) == 0) {
+                            andika_stderr("kosa [%s]: aina ya hoja #%d kwa '%s' hailingani (arg=%d, param=%d)\n",
+                            mkaguzi_kazi_sasa, hoja_idadi + 1, jina, arg_enc, param_enc);
+                            mkaguzi_makosa = mkaguzi_makosa + 1;
+                        }
                     }
                 }
                 hoja_idadi = hoja_idadi + 1;
@@ -442,8 +475,10 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
             N32 ret_enc = mkaguzi_kagua_usemi(expr_node);
             kama (ret_enc != 0 && ret_enc != -1 && kazi_ret_enc != 0) {
                 kama (mkaguzi_aina_zifanane(ret_enc, kazi_ret_enc) == 0) {
-                    andika_stderr("kosa [%s]: aina ya kurudi hailingani na tangazo la kazi (ret=%d, tangazo=%d)\n", mkaguzi_kazi_sasa, ret_enc, kazi_ret_enc);
-                    mkaguzi_makosa = mkaguzi_makosa + 1;
+                    kama (mkaguzi_mpaka_wa_desimali(ret_enc, kazi_ret_enc) == 0) {
+                        andika_stderr("kosa [%s]: aina ya kurudi hailingani na tangazo la kazi (ret=%d, tangazo=%d)\n", mkaguzi_kazi_sasa, ret_enc, kazi_ret_enc);
+                        mkaguzi_makosa = mkaguzi_makosa + 1;
+                    }
                 }
             }
         }
@@ -514,12 +549,21 @@ N32 mkaguzi_kagua_usemi(N32 node) {
         // Tawi la uwongo liko ast_nne — ast_tiga hubeba kiungo cha hoja
         // cha mnyororo wa wito (mchanganuzi/mkaguzi huiandika).
         N32 false_enc = mkaguzi_kagua_usemi(ast_nne[node]);  // tawi la uwongo
+        // Halisi kamili inarudisha 0 ("aina yoyote") — enc halisi iko
+        // ast_nne; iresolvi kwa mpaka wa desimali.
+        kama (ast_aina[ast_kulia[node]] == 4) { true_enc = ast_nne[ast_kulia[node]]; }
+        kama (ast_aina[ast_nne[node]] == 4) { false_enc = ast_nne[ast_nne[node]]; }
         // Angalia utangamano kati ya matawi
         kama (true_enc != 0 && true_enc != -1 && false_enc != 0 && false_enc != -1) {
             kama (mkaguzi_aina_zifanane(true_enc, false_enc) == 0) {
-                andika_stderr("kosa [%s]: aina za matawi ya ternary haziendani (kweli=%d, uwongo=%d)\n",
-                mkaguzi_kazi_sasa, true_enc, false_enc);
-                mkaguzi_makosa = mkaguzi_makosa + 1;
+                kama (mkaguzi_mpaka_wa_desimali(true_enc, false_enc) == 0) {
+                    andika_stderr("kosa [%s]: aina za matawi ya ternary haziendani (kweli=%d, uwongo=%d)\n",
+                    mkaguzi_kazi_sasa, true_enc, false_enc);
+                    mkaguzi_makosa = mkaguzi_makosa + 1;
+                } sivyo {
+                    // PANDISHA YA C: desimali inashinda nambari kamili
+                    kama (ni_desimali_enc(false_enc)) { true_enc = false_enc; }
+                }
             }
         }
         // Hifadhi encoding kwa mzalishaji; ukubwa hukokotolewa kutoka enc.
@@ -555,10 +599,13 @@ N32 mkaguzi_kagua_usemi(N32 node) {
         N32 rhs = mkaguzi_kagua_usemi(ast_kulia[node]);
         kama (lhs != 0 && lhs != -1) {
             kama (rhs != 0 && rhs != -1) {
-                // Angalia upatanifu wa aina za operesheni
+                // Angalia upatanifu wa aina za operesheni; mpaka wa
+                // kamili/desimali ni halali (C-semantiki ya pandisha)
                 kama (mkaguzi_aina_zifanane(lhs, rhs) == 0) {
-                    andika_stderr("kosa [%s]: aina haziendani kwenye operesheni (l=%d, r=%d)\n", mkaguzi_kazi_sasa, lhs, rhs);
-                    mkaguzi_makosa = mkaguzi_makosa + 1;
+                    kama (mkaguzi_mpaka_wa_desimali(lhs, rhs) == 0) {
+                        andika_stderr("kosa [%s]: aina haziendani kwenye operesheni (l=%d, r=%d)\n", mkaguzi_kazi_sasa, lhs, rhs);
+                        mkaguzi_makosa = mkaguzi_makosa + 1;
+                    }
                 }
             }
         }
@@ -581,6 +628,12 @@ N32 mkaguzi_kagua_usemi(N32 node) {
             kama (rhs_enc > 0) {
                 kama ((lhs_enc / 256) % 256 == (rhs_enc / 256) % 256) {
                     kama (ukubwa_kutoka_enc(rhs_enc) > ukubwa_kutoka_enc(lhs_enc)) { enc_ya_op = rhs_enc; }
+                } sivyo {
+                    // PANDISHA YA C: familia zikitofautiana na moja ni
+                    // desimali, operesheni nzima inapandishwa hadi
+                    // desimali (1 + 2.5 ni D64, si N32).
+                    kama (ni_desimali_enc(lhs_enc)) { enc_ya_op = lhs_enc; }
+                    sivyo { kama (ni_desimali_enc(rhs_enc)) { enc_ya_op = rhs_enc; } }
                 }
             }
         }
