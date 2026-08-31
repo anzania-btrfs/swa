@@ -91,14 +91,19 @@ hati/uthibitisho-wa-lugha.md.
 `+ - * / % << >> < > <= >= == != && || & | = ? : ( ) { } [ ]
 -> * & , ;`
 
-Kilichopimwa (2026-08-27): `!` na `~` zinakataliwa kwa minyororo
-yote miwili (mbegu: "herufi isiyojulikana"; uzalishaji: kosa la
-mchanganuzi) — ahadi za sehemu ya 3 (matokeo ya `!` ni 1 au 0) na
-ya orodha hii hazishikiki. `^`
-inachanganuliwa na mnyororo wa uzalishaji lakini usemi wa kulia
-unatupwa kimya (jibu baya); mbegu inakataa. Viendeshaji vya kiwanja
-`+= -= *= /= %=` vinafanya kazi kwenye uzalishaji pekee; `&= |= ^=
-<<= >>=` vinakubaliwa na kuwa NO-OP kimya kwenye uzalishaji.
+Kilichopimwa (2026-08-27): `!` na `~` zilikuwa zinakataliwa kwa
+minyororo yote miwili (mbegu: "herufi isiyojulikana"; uzalishaji:
+kosa la mchanganuzi) — ahadi za sehemu ya 3 (matokeo ya `!` ni 1 au
+0) na ya orodha hii hazikushikika. `^` ilichanganuliwa na mnyororo
+wa uzalishaji lakini usemi wa kulia ulitupwa kimya (jibu baya);
+mbegu inakataa. Viendeshaji vya kiwanja `+= -= *= /= %=` vilifanya
+kazi kwenye uzalishaji pekee; `&= |= ^= <<= >>=` vilikubaliwa na
+kuwa NO-OP kimya kwenye uzalishaji.
+Kilichopimwa (2026-08-31): mnyororo wa uzalishaji sasa unatekeleza
+`!`, `~`, `^` (utangulizi wa C: `&` juu ya `^` juu ya `|`), na
+viendeshaji vya kiwanja `&= |= ^= <<= >>=` (pamoja na N64). `!`
+na `~` kwa operesheni ya D64 zinakataliwa kwa sauti. Mbegu bado
+inakataa `^`, `!`, `~`, na viendeshaji hivyo vya kiwanja.
 
 ## 3. Aina
 
@@ -126,8 +131,9 @@ mkusanyaji wa mbegu. Hakuna neno muhimu la "tupu" au halisi za
 "kweli"/"uongo" — W0 hutumika kwa bila-thamani na 1/0 kwa ukweli.
 
 Matokeo ya `==`, `!=`, `<`, `>`, `<=`, `>=`, `&&`, `||` ni thamani
-ya 1 (kweli) au 0 (si kweli). Kiambishi `!` hakijatekelezwa kwenye
-mkusanyaji wowote kati ya wawili (kilichopimwa 2026-08-27).
+ya 1 (kweli) au 0 (si kweli). Kiambishi `!` hutoa 1 (operesheni ni
+0) au 0 (operesheni si 0) kwenye mnyororo wa uzalishaji; mbegu bado
+inakataa (kilichopimwa 2026-08-27; kurekebishwa 2026-08-31).
 
 ## 4. Usemi na Utangulizi
 
@@ -166,8 +172,9 @@ utangulizi wa C kwenye mbegu. Pia: `<<`/`>>` upande wa KULIA wa
 `< > <= >=` haubaliwi kwenye minyororo yote miwili (`1 < 2 << 1`
 hutoa kosa la mchanganuzi) hata ingawa jedwali la juu linaweka
 uhamishaji juu ya ulinganisho; `2 << 1 < 4` inafanya kazi.
-`^` inakataliwa na mbegu na inarudisha operanda ya kushoto pekee
-kwenye mnyororo wa uzalishaji (jibu baya — angalia 2.5).
+`^` inakataliwa na mbegu; mnyororo wa uzalishaji ulirudisha
+operanda ya kushoto pekee (jibu baya — angalia 2.5) na tangu
+2026-08-31 unatekeleza `^` kwa utangulizi wa C.
 
 ### 4.1 Mantiki ya fupi-hali (short-circuit)
 
@@ -278,6 +285,11 @@ hazilingani kamwe (lebo inakuwa 0 kwenye kizazi) — jibu baya la
 kimya; lebo maradufu: ya kwanza inashinda bila kosa; `kama` +
 `sivyo` ndani ya mkono wa `chagua` na bloku `{ }` ndani ya mkono
 zinakataliwa na uzalishaji.
+Kilichopimwa (2026-08-31): mnyororo wa uzalishaji unalinganisha
+lebo hasi na lebo za N64 kwa usahihi (kwa upana wa selecta); lebo
+za usemi au kigezo zinakataliwa kwa sauti na mkaguzi ("lebo ya
+hali lazima iwe halisi ya nambari"). Mbegu bado inakataa `chagua`
+kwa muundo.
 
 ### 6.7 Vunja na endelea
 

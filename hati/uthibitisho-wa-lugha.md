@@ -518,6 +518,10 @@ N32 main() { N32 x = 6 ^ 3; rudisha x - 5; }
 - Kilichoonekana (uzalishaji): 1 (x = 6 — sehemu baada ya `^`
   imetupwa). Kinachotarajiwa: 0 (x = 5). Mbegu inakataa kwa sauti;
   hati 2.5 na 4 zinaahidi `^`.
+- KUREKEBISHWA 2026-08-31: mnyororo wa uzalishaji unatekeleza `^`
+  (AST_XOR) kati ya `&` na `|` kwa utangulizi wa C; `(12) ^ (10)`
+  = 6, `1 ^ 2 & 3` = 3, `1 | 2 ^ 3` = 1 (kama gcc). Majaribio:
+  jaribio_mende_17_xor.
 
 **18. Viendeshaji vya kiwanja vya biti `&= |= ^= <<= >>=` ni NO-OP kimya (uzalishaji)**
 
@@ -530,6 +534,10 @@ N32 main() { N32 a = 12; a &= 10; rudisha a - 8; }
   inaendesha, HAIFANYI LO LOTE. Mbegu inakataa kwa sauti. Hati
   haitoi ahadi — lakini ukubali wa kimya ni hatari zaidi kuliko
   kukataa.
+- KUREKEBISHWA 2026-08-31: mnyororo wa uzalishaji unatekeleza
+  `&= |= ^= <<= >>=` (na `+= -= *= /= %=` zimehakikiwa zinafanya
+  kazi) kwa N32 na N64. Majaribio: jaribio_mende_18_kiwanja_biti,
+  jaribio_k12_opereta_ya_asilimia (%= sasa ni jaribio hai).
 
 **19. Lebo hasi za `hali` zinalinganishwa kama 0 (uzalishaji)**
 
@@ -547,6 +555,9 @@ N32 main() {
 - Kinachotarajiwa: -3 inalingana na -3 pekee; 0 inalingana na 0
   pekee. Sababu: lebo isiyo AST_NAMBARI (hasi ni usemi wa
   toa-unari) inakuwa thamani 0 kwenye kizazi.
+- KUREKEBISHWA 2026-08-31: lebo za hali zinatathminiwa kwa usahihi
+  (halisi chanya au hasi, N32 au N64) na kulinganishwa kwa upana wa
+  selecta. Majaribio: jaribio_mende_19_lebo_hasi.
 
 **20. Lebo za `hali` za N64 > 2^31 hazilingani kamwe (uzalishaji)**
 
@@ -562,6 +573,8 @@ N32 main() {
   (s = 77). Lebo ya N64 inakuwa 0 kwenye kizazi. Mipaka 5 inasema
   mnyororo wa .swa unashughulikia N64 kikamilifu — si kwenye
   `chagua`.
+- KUREKEBISHWA 2026-08-31: selecta na lebo za N64 zinalinganishwa
+  kwa 64-bit. Majaribio: jaribio_mende_20_lebo_n64.
 
 **21. Lebo za usemi na kigezo kwenye `hali` zinakubaliwa lakini hazilingani (uzalishaji)**
 
@@ -576,6 +589,9 @@ N32 main() {
 - Kilichoonekana (uzalishaji): 214 (s = 0). Kinachotarajiwa: 0
   (s = 42). C inakataa lebo zisizo za kudumu kwa sauti; Swa
   inapaswa kufanya vivyo hivyo.
+- KUREKEBISHWA 2026-08-31: lebo zisizo halisi zinakataliwa kwa
+  sauti na mkaguzi ("lebo ya hali lazima iwe halisi ya nambari").
+  Majaribio: jaribio_mende_21_lebo_isiyo_halisi (KATA).
 
 **22. `hali` maradufu: ya kwanza inashinda kimya (uzalishaji)**
 
@@ -794,8 +810,8 @@ N32 main() {
 
 | Kipengele | Mbegu | Uzalishaji | Hati inayoahidi |
 |---|---|---|---|
-| `!` (kanusha mantiki) | imekataliwa | imekataliwa | 2.2/3 (matokeo ni 1 au 0); 2.5 (ishara) |
-| `~` (kanusha biti) | imekataliwa | imekataliwa | 2.5 (ishara) |
+| `!` (kanusha mantiki) | imekataliwa | inapita (tangu 2026-08-31) | 2.2/3 (matokeo ni 1 au 0); 2.5 (ishara) |
+| `~` (kanusha biti) | imekataliwa | inapita (tangu 2026-08-31) | 2.5 (ishara) |
 | `husisha { faili.swa }` | imekataliwa (kazi haijafafanuliwa) | imekataliwa (kazi haijafafanuliwa) | 8: mkusanyaji wa .swa hulichakata faili lililotajwa — hakuna mnyororo unaosoma faili |
 | Kazi yenye mwili tupu `N32 f() { }` | inapita | imekataliwa (kazi haijafafanuliwa) | 5: mwili wowote wa taarifa |
 | `a < b << c` (hamisha upande wa kulia wa linganisho) | inapita | imekataliwa (KOSA) | 4: utangulizi unaoruhusu (kina 4 > 3) |
@@ -828,8 +844,8 @@ kuanguka) kwenye mwingine — na hakuna kosa linalotangaza hilo.
 | `a = 0 || 3` | imekataliwa (mnyororo) | a = 1 (C) |
 | `x = 1 ? 2 : 3` | x = 1 (ugawi inafunga nguvu) | x = 2 (C) |
 | +=, -=, mnyororo wa ugawi | imekataliwa | inapita (C-kama) |
-| `^` | imekataliwa | jibu baya (inakata usemi) |
-| &=, |=, <<=, >>= | imekataliwa | jibu baya (NO-OP) |
+| `^` | imekataliwa | inapita (tangu 2026-08-31) |
+| &=, |=, <<=, >>= (na ^=) | imekataliwa | inapita (tangu 2026-08-31) |
 | Shift za N64 | 32-bit (jibu baya) | 64-bit (sahihi) |
 | Ugawaji upya wa D64 | jibu baya | inapita |
 | ukubwa(aina) | 8 kwa kila aina | sahihi (4, 1, 8) |
@@ -880,7 +896,9 @@ kukusanywa tu.
    ya usemi); uzalishaji unaruhusu upachikaji — kinyume cha hati.
 4. Hati 2.5 na 3 (`!`, `~`, `^` ni ishara; matokeo ya `!` ni
    1/0): `!` na `~` hazijatekelezwa popote; `^` inakata usemi
-   kimya kwenye uzalishaji (4.2.17, 6).
+   kimya kwenye uzalishaji (4.2.17, 6). KUREKEBISHWA 2026-08-31:
+   mnyororo wa uzalishaji unatekeleza `!`, `~` na `^`; mbegu bado
+   inakataa.
 5. Hati 3 (W0 — "kwa kazi tu"): inakubaliwa kama kigezo chenye
    thamani kwa minyororo yote miwili (4.1.15).
 6. Hati 3 ("kila familia ikifuatiwa na upana wowote wa tarakimu"):
@@ -906,6 +924,9 @@ kukusanywa tu.
 12. Hati 6.6 (`chagua`): mbegu inakataa kwa muundo; uzalishaji
     unafanya kazi kwa hali za nambari ndogo pekee — lebo hasi,
     N64 kubwa na usemi hazilingani kamwe (4.2.19-21).
+    KUREKEBISHWA 2026-08-31: lebo hasi na N64 zinalingana kwa
+    usahihi; lebo za usemi zinakataliwa kwa sauti kwenye
+    uzalishaji; mbegu bado inakataa chagua kwa muundo.
 13. Hati 7 ("Miundo inaweza kupitishwa kwa thamani"): mbegu
     inarudisha takataka; uzalishaji unapoteza baiti zaidi ya 8
     (4.3.34-35). Pamoja na 4.2: safu za miundo zinaanguka
@@ -957,20 +978,24 @@ orodha bila kukua).
 Makosa makubwa ya kimya (jibu baya), kwa mpangilio wa uzito:
 mpaka mzima wa D64 na nambari kamili (4.1.1, 4.1.2, 4.1.5), ukataji
 wa halisi >= 2^63 (4.1.3), hoja za wito zenye halisi kubwa
-(4.1.4), makosa ya mkaguzi yasiyo ya kufa (4.1.7), lebo za chagua
-za hasi/N64/usemi (4.2.19-21), `^` na viendeshaji vya kiwanja vya
-biti (4.2.17-18), `*(p + n)` bila ukuzaji (4.2.26), kianzilishi
-cha safu (4.3.37), N64 hasi na ukanushaji (4.1.13), ukubwa
-(4.1.11), nambari_kwa_mfuatano_n64 (4.3.38), ramani kwenye mbegu
-(4.3.41), na endelea-mwisho wa uzalishaji (4.2.16).
+(4.1.4), makosa ya mkaguzi yasiyo ya kufa (4.1.7), `*(p + n)`
+bila ukuzaji (4.2.26), kianzilishi cha safu (4.3.37), N64 hasi na
+ukanushaji (4.1.13), ukubwa (4.1.11), nambari_kwa_mfuatano_n64
+(4.3.38), ramani kwenye mbegu (4.3.41), na endelea-mwisho wa
+uzalishaji (4.2.16). Kurekebishwa 2026-08-31: lebo za chagua
+za hasi/N64/usemi (4.2.19-21), `^` (4.2.17) na viendeshaji vya
+kiwanja vya biti (4.2.18) — zote zinafanya kazi au zinakataliwa
+kwa sauti kwenye mnyororo wa uzalishaji.
 
 Poromoko kubwa: safu za miundo (zote mbili), faharisi hasi/badili/
 ukuaji wa Orodha (zote mbili), D32 (zote mbili), mkusanyaji wa
 mbegu kwenye familia A/B/W na upana usio wa kawaida, mkusanyaji wa
 uzalishaji kwenye `sivyo` bila `kama`, na main isiyopo (uzalishaji).
 
-Ukataaji unaokiuka hati: `!`, `~`, `husisha { faili }`, kazi tupu,
+Ukataaji unaokiuka hati: `husisha { faili }`, kazi tupu,
 `a < b << c`, `chagua` kwenye mbegu, `/* */` kwenye mbegu.
+(`!` na `~` zimetekelezwa kwenye mnyororo wa uzalishaji 2026-08-31;
+mbegu bado inakataa.)
 
 Tofauti kubwa kati ya minyororo: utangulizi wa viendeshaji (mbegu
 inafuata hati; uzalishaji ni C-kama) na ruhusa za uzalishaji
