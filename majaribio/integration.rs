@@ -2359,3 +2359,50 @@ fn jaribio_zana_umbizaji_kujijenga() {
     assert_eq!(towe.stdout, chanzo_awali,
         "formatter inapaswa kuwa fixpoint: kuumbiza yenyewe = baiti sawa");
 }
+
+/// #139: kianzilishi cha tangazo chenye NA/AU (fupi-hali) kilivunja LLVM
+/// ya dereva — kizuizi cha muunganiko kilipata Br cha kujizungusha na phi
+/// bila kuingia kwa watangulizi wake ("PHINode should have one entry for
+/// each predecessor").  lower_decl na lower_return zilirudisha kizuizi cha
+/// MWISHO badala ya kizuizi cha KUINGIA, kikiruka tathmini ya upande wa
+/// kushoto.  Hapa: `N32 a = (x && y);`, `N32 b = (a || x);` na
+/// `rudisha (a || b);` zote lazima zithibitike (LLVM verification).
+#[test]
+fn jaribio_mende_139_kianzilishi_fupi_hali() {
+    let chanzo = "\
+N32 tathmini(N32 x, N32 y) {
+    N32 a = (x && y);
+    N32 b = (a || x);
+    kama (a == 0 && b == 1) { rudisha 1; }
+    rudisha (a || b);
+}
+N32 main() { rudisha tathmini(0, 1); }
+";
+    let ir = compile_and_verify(chanzo).expect("inapaswa kukusanyika");
+    assert!(ir.contains("phi"), "IR inapaswa kuwa na nodi za phi");
+}
+
+/// #140: kuanzisha kigezo cha muundo kutoka sehemu ya muundo
+/// (`Ndani x = p->sasa;`) kilichukua thamani ya sehemu ya kwanza kama
+/// anwani ya chanzo ya memcpy.  Sehemu ya muundo inawakilishwa kama
+/// kielekezi (sawa na vitambulisho na wito wa sret), na ufutaji wa
+/// sehemu za muundo wa ndani unalingana na mpangilio wa LLVM
+/// (upatanisho wa sehemu zake, si upana wake kamili).
+#[test]
+fn jaribio_mende_140_nakili_sehemu_muundo() {
+    let chanzo = "\
+muundo Ndani { N32 a; N32 b; }
+muundo Nje { N32 alama; Ndani sasa; N32 mwisho; }
+N32 main() {
+    Nje p;
+    p.sasa.a = 11;
+    p.sasa.b = 13;
+    Nje* ptr = &p;
+    Ndani x = ptr->sasa;
+    Ndani y = p.sasa;
+    rudisha x.a + y.b;
+}
+";
+    let ir = compile_and_verify(chanzo).expect("inapaswa kukusanyika");
+    assert!(ir.contains("memcpy"), "IR inapaswa kuwa na wito wa memcpy");
+}
