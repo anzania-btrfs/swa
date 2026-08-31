@@ -157,7 +157,8 @@ Jumla ya kesi zilizopimwa: 195 (mfumo wa aina) + ~130 (udhibiti) +
 | Ugawi wa muundo `b = a;` | jibu baya (takataka) | huanguka (SEGV 139) | nakala | zote mbili mbovu |
 | kama/sivyo (rahisi, mlolongo, viota, masharti yasiyo ya boolean, mwili tupu) | inapita | inapita | hati 6.3 | inapita |
 | wakati, kwa, vunja, endelea (misingi) | inapita | inapita | hati 6.4/6.5/6.7 | inapita |
-| endelea kama taarifa ya MWISHO ya mwili wa kwa | inapita | jibu baya (taarifa baada ya kitanzi hazitekelezwi) | semantiki ya C (mipaka 4b) | uzalishaji jibu baya |
+| endelea kama taarifa ya MWISHO ya mwili wa kwa | inapita | KUREKEBISHWA 2026-08-31: inapita | semantiki ya C (mipaka 4b) | imefungwa |
+| kwa yenye hali iliyoachwa (mf. kwa (;;)) | inapita | KUREKEBISHWA 2026-08-31: inapita (zamani hali tupu = uongo, mwili haukutekelezwa) | semantiki ya C: hali tupu = kweli daima | imefungwa |
 | vunja/endelea nje ya kitanzi | inapuuzwa kimya | onyo lakini binary bado inatolewa | C: kosa la kukusanya | jibu baya |
 | chagua msingi (mikono, sivyo, viota, selecta ya usemi, kuteremka kwa muundo) | imekataliwa (kosa la mchanganuzi) | inapita | hati 6.6 | uzalishaji unapita; mbegu imekataliwa kwa muundo |
 | Lebo hasi za hali: `hali -3` | imekataliwa | jibu baya (lebo inalinganishwa kama 0) | hali -3 inalingana na -3 pekee | uzalishaji jibu baya |
@@ -505,6 +506,17 @@ N32 main() {
 - Kinachotarajiwa: pato "s=3 i=3", msimbo wa kutoka 0. Mipaka 4b
   inasema semantiki ya C imewianishwa kwenye minyororo yote miwili
   — si kweli kwa kesi hii.
+- KUREKEBISHWA 2026-08-31: `endelea` kama taarifa ya MOJA KWA MOJA
+  (pamoja na taarifa ya mwisho) imefungwa kwenye mnyororo wa
+  uzalishaji. Mzizi ulikuwa: msambazaji huweka hatua ya `kwa`
+  (kifungio cha -777777) MWISHONI mwa mnyororo wa mwili, lakini
+  kitoa programu husimama kwenye taarifa zinazomaliza (rudisha,
+  vunja, endelea) — lebo ya hatua haikutolewa kamwe na `endelea`
+  iliruka mahali pasipo lebo (kitanzi kisichoisha, msimbo wa kutoka
+  124). Sasa kusanya_hatua_ya_kwa inakusanya kifungio cha hatua
+  kilichofichwa nyuma ya taarifa za kumaliza. Majaribio:
+  jaribio_mende_endelea_moja_kwa_moja,
+  jaribio_mende_endelea_na_vunja_mwisho.
 
 **17. `^` (XOR) inakata usemi kimya (uzalishaji)**
 
