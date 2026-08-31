@@ -116,3 +116,14 @@ KATA	jaribio_mende_kata_ongezaji ('++' haipo katika lugha — zamani no-op kimya
 KATA	jaribio_mende_kata_punguzaji ('--' haipo katika lugha — zamani no-op kimya; sasa inakataliwa kwa sauti — stage1 pekee: mbegu bado inakubali kimya)	majaribio/programu/jaribio_mende_kata_punguzaji.swa	stage1	'--' haitekelezwi
 KATA	jaribio_mende_kata_operanda_iliyopotea (operanda ya kulia iliyopotea inakataliwa kwa sauti — zamani jibu baya la kimya)	majaribio/programu/jaribio_mende_kata_operanda_iliyopotea.swa	stage1	operanda ya kulia haipo
 KATA	jaribio_mende_kata_vunja_ndani_ya_chagua_nje (vunja ndani ya chagua isiyo ndani ya kitanzi inakataliwa na mkaguzi)	majaribio/programu/jaribio_mende_kata_vunja_ndani_ya_chagua_nje.swa	stage1	vunja nje ya kitanzi
+1	jaribio_mende_n64_kianzio (kianzio cha N64 kilikuwa kikihifadhi nusu ya juu kama nakala ya nusu ya chini — alama iko ast_kulia, si ast_tiga)	majaribio/programu/jaribio_mende_n64_kianzio.swa
+1	jaribio_mende_n64_kianzio_kubwa (halisi ya 2^32 ilikuwa ikihifadhiwa kama 8589934594 — mbegu ina ulinganisho wa halisi kubwa uliovunjika; stage1 pekee)	majaribio/programu/jaribio_mende_n64_kianzio_kubwa.swa	stage1
+1	jaribio_mende_n64_kianzio_hasi (N64 g = -5 ilikuwa ikihifadhiwa kama nakala ya nusu ya chini — sasa inapanuliwa kwa ishara)	majaribio/programu/jaribio_mende_n64_kianzio_hasi.swa
+1	jaribio_mende_n64_kianzio_hasi_sawa (ulinganisho kamili dhidi ya -5 — mbegu inakataa halisi kubwa kwenye ulinganisho; stage1 pekee)	majaribio/programu/jaribio_mende_n64_kianzio_hasi_sawa.swa	stage1
+3	jaribio_mende_kazi_mwili_tupu (mwili tupu { } ni ufafanuzi, si tangazo la mbele — wito haupaswi kuleta "kazi haijafafanuliwa")	majaribio/programu/jaribio_mende_kazi_mwili_tupu.swa
+3	jaribio_mende_kazi_mwili_nukta (taarifa tupu ';' ndani ya mwili ni halali)	majaribio/programu/jaribio_mende_kazi_mwili_nukta.swa
+0	jaribio_mende_safu_miundo_12 (safu ya miundo ilitumia mwendo wa baiti 8 — muundo wa baiti 12 uliingiliana kimya)	majaribio/programu/jaribio_mende_safu_miundo_12.swa
+0	jaribio_mende_safu_miundo_20 (mwendo wa baiti 8 kwa muundo wa baiti 20 uliingiliana kimya)	majaribio/programu/jaribio_mende_safu_miundo_20.swa
+0	jaribio_mende_safu_miundo_24 (mwendo wa baiti 8 kwa muundo wa baiti 24 uliingiliana kimya)	majaribio/programu/jaribio_mende_safu_miundo_24.swa
+KATA	jaribio_mende_kata_kianzio_usemi (kianzio cha hesabu kilikubaliwa kimya kuhifadhi 0 — sasa kinakataliwa kwa sauti, sawa na mbegu; stage1 pekee)	majaribio/programu/jaribio_mende_kianzio_usemi.swa	stage1	lazima kiwe halisi ya nambari
+KATA	jaribio_mende_kata_tangazo_mbele (tangazo la mbele bila ufafanuzi linakataliwa kwa sauti — mwili tupu { } si tangazo la mbele; stage1 pekee)	majaribio/programu/jaribio_mende_tangazo_mbele.swa	stage1	kazi haijafafanuliwa
