@@ -10,7 +10,7 @@ N8 chanzo_buf[1048576];
 N32 chanzo_urefu = 0;
 
 W0 ongeza_faili(N8* njia) {
-    N64 f = sys_fungua(njia, 0);
+    N64 f = sys_fungua(njia, 0, 0);
     kama (f < 0) {
         andika_stderr("; KOSA: faili halifunguki: %s\n", njia);
         rudisha;
