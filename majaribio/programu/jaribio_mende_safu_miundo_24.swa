@@ -1,0 +1,16 @@
+// Mende: mwendo wa baiti 8 kwa safu ya miundo — muundo wa baiti 24
+// (sehemu sita) uliingiliana kimya kati ya vipengele.
+muundo P { N32 a; N32 b; N32 c; N32 d; N32 e; N32 f; }
+N32 main() {
+    P s[3];
+    s[0].a = 11; s[0].f = 61;
+    s[1].b = 22; s[1].f = 62;
+    s[2].c = 33; s[2].f = 63;
+    kama (s[0].a != 11) rudisha 101;
+    kama (s[0].f != 61) rudisha 106;
+    kama (s[1].b != 22) rudisha 112;
+    kama (s[1].f != 62) rudisha 116;
+    kama (s[2].c != 33) rudisha 123;
+    kama (s[2].f != 63) rudisha 126;
+    rudisha 0;
+}
