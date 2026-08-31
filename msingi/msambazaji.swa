@@ -674,95 +674,151 @@ N32 changanua_taarifa_kwa(Msambazaji* p) {
 N32 changanua_taarifa_tangazo(Msambazaji* p) {
     // ---- Tangazo la ndani lenye kiambishi cha aina: N32 x ;  /  N32 x = usemi ; ----
     // Pia hushughulikia matamko mengi: N32 a, b, c;
-    kama (ni_aina_tokeni(&p->sasa)) {
-        N32 decl_type = changanua_aina_tokeni(p);
-        N32 kwanza = -1;
-        N32 prev = -1;
-        N32 safu_ukubwa = 0;
+    //
+    // C-semantiki ya kutofautisha tangazo na usemi: jina la aina
+    // likifuatiwa na jina la kigeu (baada ya viashiria) → tangazo.
+    // Likifuatiwa na '=', kiendeshi, au ';' → taarifa ya usemi.
+    // Hii inaruhusu kigezo chenye jina linaloanza na herufi kubwa
+    // kupewa thamani: N32 G = 1; G = 5;
+    kama (ni_jina_la_aina(&p->sasa)) {
+        // Tazama mbele kwa tokeni inayofuata jina la aina na nyota
+        // zake — hakuna urejeshaji wa vitenzi; rejesha hali kamili.
+        // Hifadhi sehemu moja-moja: kianzio cha kigeu cha muundo
+        // kutoka kwa sehemu haijulikani kwa dereva wa Rust (memcpy
+        // inachukua thamani ya kwanza kama anwani na kuanguka).
+        N32 ni_tangazo = 0;
+        N64 nafasi_iliyohifadhiwa = p->msomaji.nafasi;
+        N32 mstari_uliohifadhiwa = p->msomaji.mstari;
+        N32 safu_iliyohifadhiwa = p->msomaji.safu;
+        Tokeni sasa_iliyohifadhiwa;
+        sasa_iliyohifadhiwa.aina = p->sasa.aina;
+        sasa_iliyohifadhiwa.mwanzo = p->sasa.mwanzo;
+        sasa_iliyohifadhiwa.urefu = p->sasa.urefu;
+        sasa_iliyohifadhiwa.mstari = p->sasa.mstari;
+        sasa_iliyohifadhiwa.safu = p->sasa.safu;
+        Tokeni ifuatayo_iliyohifadhiwa;
+        ifuatayo_iliyohifadhiwa.aina = p->inayofuata.aina;
+        ifuatayo_iliyohifadhiwa.mwanzo = p->inayofuata.mwanzo;
+        ifuatayo_iliyohifadhiwa.urefu = p->inayofuata.urefu;
+        ifuatayo_iliyohifadhiwa.mstari = p->inayofuata.mstari;
+        ifuatayo_iliyohifadhiwa.safu = p->inayofuata.safu;
+        sogeza(p);  // tumia jina la aina kwa jaribio
+        // Ruka viashiria vya herufi moja: Jina* j;  /  Jina** j;
+        wakati (p->sasa.urefu == 1 && p->sasa.mwanzo[0] == 42) { sogeza(p); }
+        kama (p->sasa.urefu >= 1 && p->sasa.mwanzo[0] >= 65) { ni_tangazo = 1; }
+        p->msomaji.nafasi = nafasi_iliyohifadhiwa;
+        p->msomaji.mstari = mstari_uliohifadhiwa;
+        p->msomaji.safu = safu_iliyohifadhiwa;
+        p->sasa = sasa_iliyohifadhiwa;
+        p->inayofuata = ifuatayo_iliyohifadhiwa;
+        kama (ni_tangazo) {
+            N32 decl_type = changanua_aina_tokeni(p);
+            N32 kwanza = -1;
+            N32 prev = -1;
+            N32 safu_ukubwa = 0;
 
-        wakati (1 == 1) {
-            safu_ukubwa = 0;
-            N32 safu_ilipo = 0;
-            kama ((p->sasa.mwanzo[0] >= 65 && p->sasa.mwanzo[0] != 91 && p->sasa.mwanzo[0] != 93 && p->sasa.mwanzo[0] != 123 && p->sasa.mwanzo[0] != 125)) {
-                N32 var_name = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
-                hifadhi_jina(var_name, p->sasa.mwanzo, p->sasa.urefu);
-                ast_thamani[var_name] = decl_type;
-                sogeza(p);
+            wakati (1 == 1) {
+                safu_ukubwa = 0;
+                N32 safu_ilipo = 0;
+                kama ((p->sasa.mwanzo[0] >= 65 && p->sasa.mwanzo[0] != 91 && p->sasa.mwanzo[0] != 93 && p->sasa.mwanzo[0] != 123 && p->sasa.mwanzo[0] != 125)) {
+                    N32 var_name = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
+                    hifadhi_jina(var_name, p->sasa.mwanzo, p->sasa.urefu);
+                    ast_thamani[var_name] = decl_type;
+                    sogeza(p);
 
-                // Ruka [ukubwa] kama ipo (kwa matamko ya safu ya ndani)
-                kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
-                    kama (neno_ni(&p->sasa, "[")) {
-                        safu_ilipo = 1;
-                        sogeza(p);
-                        kama (p->sasa.urefu > 0) {
-                            // Halisi ya herufi kama ukubwa: kataa kwa sauti.
-                            kama (p->sasa.mwanzo[0] == 39) {
-                                andika_stderr("kosa: halisi ya herufi haijaungwa mkono\n");
-                                p->kosa = 1;
-                                rudisha -1;
-                            }
-                            safu_ukubwa = neno_kwa_nambari(p->sasa.mwanzo, p->sasa.urefu);
+                    // Ruka [ukubwa] kama ipo (kwa matamko ya safu ya ndani)
+                    kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
+                        kama (neno_ni(&p->sasa, "[")) {
+                            safu_ilipo = 1;
                             sogeza(p);
-                        }
-                        kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
-                            kama (neno_ni(&p->sasa, "]")) { sogeza(p); }
+                            kama (p->sasa.urefu > 0) {
+                                // Halisi ya herufi kama ukubwa: kataa kwa sauti.
+                                kama (p->sasa.mwanzo[0] == 39) {
+                                    andika_stderr("kosa: halisi ya herufi haijaungwa mkono\n");
+                                    p->kosa = 1;
+                                    rudisha -1;
+                                }
+                                safu_ukubwa = neno_kwa_nambari(p->sasa.mwanzo, p->sasa.urefu);
+                                sogeza(p);
+                            }
+                            kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
+                                kama (neno_ni(&p->sasa, "]")) { sogeza(p); }
+                            }
                         }
                     }
-                }
 
-                N32 init = -1;
-                // Angalia kwa kianzisha '='
-                kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "=")) {
-                    // Safu + kianzilishi si katika hati 6.1; kukubali kimya
-                    // kunatupa kianzilishi. Kataa kwa sauti, sawa na mbegu.
-                    kama (safu_ilipo != 0) {
-                        andika_stderr("kosa: kianzilishi cha safu hakijaungwa mkono\n");
-                        p->kosa = 1;
-                        rudisha -1;
+                    N32 init = -1;
+                    // Angalia kwa kianzisha '='
+                    kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "=")) {
+                        // Safu + kianzilishi si katika hati 6.1; kukubali kimya
+                        // kunatupa kianzilishi. Kataa kwa sauti, sawa na mbegu.
+                        kama (safu_ilipo != 0) {
+                            andika_stderr("kosa: kianzilishi cha safu hakijaungwa mkono\n");
+                            p->kosa = 1;
+                            rudisha -1;
+                        }
+                        sogeza(p);
+                        init = changanua_usemi(p);
                     }
-                    sogeza(p);
-                    init = changanua_usemi(p);
-                }
 
-                N32 decl_node = node_mpya(AST_TANGAZO, decl_type, var_name, init);
-                kama (safu_ukubwa > 0) { ast_tiga[decl_node] = safu_ukubwa; }
-                kama (kwanza == -1) { kwanza = decl_node; }
-                sivyo { ast_nne[prev] = decl_node; }
-                prev = decl_node;
+                    N32 decl_node = node_mpya(AST_TANGAZO, decl_type, var_name, init);
+                    kama (safu_ukubwa > 0) { ast_tiga[decl_node] = safu_ukubwa; }
+                    kama (kwanza == -1) { kwanza = decl_node; }
+                    sivyo { ast_nne[prev] = decl_node; }
+                    prev = decl_node;
 
-                // Angalia kama kuna koma kwa tangazo linalofuata
-                N32 ina_koma = 0;
-                kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
-                    kama (neno_ni(&p->sasa, ",")) { ina_koma = 1; }
+                    // Angalia kama kuna koma kwa tangazo linalofuata
+                    N32 ina_koma = 0;
+                    kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
+                        kama (neno_ni(&p->sasa, ",")) { ina_koma = 1; }
+                    }
+                    kama (ina_koma == 0 && p->sasa.urefu == 1 && neno_ni(&p->sasa, ",")) { ina_koma = 1; }
+                    kama (ina_koma) {
+                        sogeza(p);
+                        endelea;
+                    }
+                    vunja;
+                } sivyo {
+                    vunja;
                 }
-                kama (ina_koma == 0 && p->sasa.urefu == 1 && neno_ni(&p->sasa, ",")) { ina_koma = 1; }
-                kama (ina_koma) {
-                    sogeza(p);
-                    endelea;
-                }
-                vunja;
-            } sivyo {
-                vunja;
             }
-        }
 
-        // Aina ilisomwa lakini hakuna jina la kigeu lililofuata — fomu
-        // isiyo halali (mf. `N32;` au `N32* p = tenga N32;`). Zamani
-        // ilimezwa kimya na kuacha tokeni ya aina ikiwa imepotea.
-        kama (kwanza == -1) {
+            // Aina ilisomwa lakini hakuna jina la kigeu lililofuata — fomu
+            // isiyo halali (mf. `N32;` au `N32* p = tenga N32;`). Zamani
+            // ilimezwa kimya na kuacha tokeni ya aina ikiwa imepotea.
+            kama (kwanza == -1) {
+                p->kosa = 1;
+                andika_stderr("kosa: jina la aina halifuatwi na jina la kigeu\n");
+                rudisha -1;
+            }
+
+            // Tumia semicolon ya hiari (baada ya matamko yote)
+            kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
+                kama (neno_ni(&p->sasa, ";")) { sogeza(p); }
+            }
+            // Pia shughulikia tokeni za waendeshaji zinazokosa aina ISHARA
+            kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, ";")) { sogeza(p); }
+
+            rudisha kwanza;
+        }
+    }
+    // Aina haikujulikana. Neno linalofuatiwa na neno lingine ni
+    // jaribio la tangazo la aina isiyojulikana (mf. Foo bar;) —
+    // kosa la sauti, si taarifa ya usemi (usemi halali hauanzi
+    // kwa maneno mawili mfululizo — sawa na mbegu).
+    kama (p->sasa.aina == TOKENI_KITAMBULISHO || p->sasa.aina == TOKENI_MANENO) {
+        kama (p->inayofuata.aina == TOKENI_KITAMBULISHO || p->inayofuata.aina == TOKENI_MANENO) {
+            N8 bafa_jina[64];
+            N32 bi = 0;
+            wakati (bi < p->sasa.urefu && bi < 63) {
+                bafa_jina[bi] = p->sasa.mwanzo[bi];
+                bi = bi + 1;
+            }
+            bafa_jina[bi] = 0;
+            andika_stderr("kosa: aina isiyojulikana: %s\n", bafa_jina);
             p->kosa = 1;
-            andika_stderr("kosa: jina la aina halifuatwi na jina la kigeu\n");
             rudisha -1;
         }
-
-        // Tumia semicolon ya hiari (baada ya matamko yote)
-        kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
-            kama (neno_ni(&p->sasa, ";")) { sogeza(p); }
-        }
-        // Pia shughulikia tokeni za waendeshaji zinazokosa aina ISHARA
-        kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, ";")) { sogeza(p); }
-
-        rudisha kwanza;
     }
     rudisha -1;
 }
@@ -1068,11 +1124,13 @@ N32 changanua_primary(Msambazaji* p) {
 
     // Kitambulisho
     kama ((p->sasa.mwanzo[0] >= 65 && p->sasa.mwanzo[0] != 91 && p->sasa.mwanzo[0] != 93 && p->sasa.mwanzo[0] != 123 && p->sasa.mwanzo[0] != 125)) {
-        // Jina la aina HALITUMIKI kama usemi — kukubali kunaleta
-        // msimbo unaoanguka kimya (mf. `N32* p = tenga N32;`).
-        // Hoja ya ukubwa(...) ndiyo pekee inayoruhusiwa.
+        // Jina la aina ya nambari HALITUMIKI kama usemi — kukubali
+        // kunaleta msimbo unaoanguka kimya (mf. `N32* p = tenga N32;`).
+        // Jina la muundo lililotangazwa linaruhusiwa: kigezo kinaweza
+        // kubeba jina linalofanana na muundo (sawa na mbegu).
+        // Hoja ya ukubwa(...) ndiyo pekee inayoruhusu aina ya nambari.
         kama (ukubwa_hoja == 0) {
-            kama (ni_jina_la_aina(&p->sasa)) {
+            kama (ni_aina_msingi(p->sasa.mwanzo, p->sasa.urefu)) {
                 N8 bafa_jina[64];
                 N32 bi = 0;
                 wakati (bi < p->sasa.urefu && bi < 63) {
