@@ -466,7 +466,9 @@ N32 mkaguzi_kagua_usemi(N32 node) {
     // kwenye ast_nne kwa ukusanyaji wa hoja za wito (uzalishaji_wito
     // unasoma enc hapo — si ast_thamani, ambayo ni thamani ya namba).
     kama (aina == 4) {
-        kama (ast_tiga[node] == 1) {
+        // Alama ya N64 iko ast_kulia (ast_tiga ni kiungo cha mnyororo
+        // wa hoja — mkaguzi wa wito huiandika juu ya ast_tiga).
+        kama (ast_kulia[node] == 1) {
             ast_nne[node] = 320;  // N64: familia 1, upana 64
         } sivyo {
             ast_nne[node] = 288;  // N32: familia 1, upana 32
@@ -531,6 +533,10 @@ N32 mkaguzi_kagua_usemi(N32 node) {
     kama (aina == 7) {
         kama (ast_kushoto[node] == -1) {
             N32 op = mkaguzi_kagua_usemi(ast_kulia[node]);
+            // Halisi kamili inarudisha 0 ("aina yoyote") — enc halisi
+            // iko ast_nne. Iihifadhi ili kukanusha kwa upana sahihi
+            // (-10000000000 inahitaji ukanushaji wa 64-bit; -90 wa 32).
+            kama (ast_aina[ast_kulia[node]] == 4) { op = ast_nne[ast_kulia[node]]; }
             ast_thamani[node] = op;
             rudisha op;
         }
@@ -560,8 +566,26 @@ N32 mkaguzi_kagua_usemi(N32 node) {
         // (ukubwa_kutoka_enc) — si ast_tiga, kwani mkaguzi wa wito
         // huandika kiungo cha mnyororo wa hoja juu ya ast_tiga.
         // Hifadhi encoding kamili kwa mzalishaji (kwa kutofautisha N/D/B/W)
-        ast_thamani[node] = lhs;
-        rudisha lhs;
+        //
+        // PANDISHA: operesheni yenye upana mchanganyiko ndani ya familia
+        // moja inachukua upana MKUBWA (C-semantiki) — 0 - 10000000000
+        // ni N64, si N32 (mende: ilikuwa ikikatwa hadi biti 32).
+        // Halisi kamili inarudisha 0 ("aina yoyote") — enc halisi iko
+        // ast_nne; D64 inarudisha enc yake yenyewe (832).
+        N32 lhs_enc = lhs;
+        kama (ast_aina[ast_kushoto[node]] == 4) { lhs_enc = ast_nne[ast_kushoto[node]]; }
+        N32 rhs_enc = rhs;
+        kama (ast_aina[ast_kulia[node]] == 4) { rhs_enc = ast_nne[ast_kulia[node]]; }
+        N32 enc_ya_op = lhs_enc;
+        kama (lhs_enc > 0) {
+            kama (rhs_enc > 0) {
+                kama ((lhs_enc / 256) % 256 == (rhs_enc / 256) % 256) {
+                    kama (ukubwa_kutoka_enc(rhs_enc) > ukubwa_kutoka_enc(lhs_enc)) { enc_ya_op = rhs_enc; }
+                }
+            }
+        }
+        ast_thamani[node] = enc_ya_op;
+        rudisha enc_ya_op;
     }
 
     // Wito wa kazi

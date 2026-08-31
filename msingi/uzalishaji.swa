@@ -314,6 +314,28 @@ W0 andika_call_r11() { andika_baiti(65); andika_baiti(255); andika_baiti(211); }
 // cdqe (48 98) — panua ishara ya eax hadi rax (kwa %d za N32)
 W0 andika_cdqe() { andika_baiti(72); andika_baiti(152); }
 
+// Baada ya uzalishaji_usemi: panua ishara ikiwa thamani ni ya aina
+// ndogo yenye ishara (N8/N16/N32) — cdqe (48 98). Hii inahakikisha
+// kigezo/hoja/kurudi kwa baiti 8 kinapata thamani iliyopanuliwa kwa
+// ishara, si biti za juu za takataka (mende: N64 x = -90 ilitoa
+// 4294967206 — upanuzi wa sifuri). Aina zisizo na ishara (A/B/W)
+// zina upanuzi wa sifuri tayari (mov eax husafisha biti za juu);
+// D64 ina thamani kwenye xmm0; miundo na kielekezi ni baiti 8.
+W0 panua_ishara_ndogo(N32 node) {
+    N32 enc = ast_thamani[node];
+    kama (ast_aina[node] == 4) { enc = ast_nne[node]; }  // halisi kamili: enc iko ast_nne
+    kama (ast_aina[node] == 45) { rudisha; }  // D64: thamani iko xmm0
+    kama (enc > 0) {
+        kama (ukubwa_kutoka_enc(enc) < 8) {
+            kama (ni_bila_ishara_enc(enc) == 0) {
+                kama (ni_desimali_enc(enc) == 0) {
+                    andika_cdqe();
+                }
+            }
+        }
+    }
+}
+
 // imul eax, eax, imm32 (69 C0 + imm32) — kuzidisha faharisi kwa ukubwa
 // wa kipengele usio nguvu ya 2 (miundo ya baiti 12, 20, 24, ...)
 W0 andika_imul_eax_imm32(N32 v) {
@@ -377,16 +399,19 @@ N32 kazi_nafasi_kwa_jina(N8* jina) {
 }
 
 // anwani_ya_kazi — jedwali la anwani za ndani kwa JIT (badala ya dlsym).
-// Kwenye exe ya kujitegemea (.text wenye msingi 0x400078), kazi za
-// ndani zinapatikana kupitia lebo_nafasi; kwenye .o iliyounganishwa
-// na ld, anwani ni za ld — haziwezi kukokotolewa hapa (0 → JIT-RELA
-// itaonya). Utambuzi wa modi: exe ina .bss mara baada ya .text
-// (< 0x500000); .o ya -no-pie ina .bss kwenye 0x608000+.
+// Kwenye exe ya kujitegemea (.text wenye msingi 4194424 = 0x400078),
+// kazi za ndani zinapatikana kupitia lebo_nafasi; kwenye .o
+// iliyounganishwa na ld, anwani ni za ld — haziwezi kukokotolewa hapa
+// (0 → JIT-RELA itaonya). Utambuzi wa modi: exe ina .bss mara baada
+// ya .text (< 5242880 = 0x500000); .o ya -no-pie ina .bss kwenye
+// 0x608000+.
+// KUMBUKA: hati 2.3 inaahidi "mfuatano wa tarakimu" pekee — radiksi
+// hazijaungwa mkono, kwa hiyo thamani hizi ni desimali za nia ya heksa.
 N8* anwani_ya_kazi(N8* jina) {
     N32 off = kazi_nafasi_kwa_jina(jina);
     kama (off < 0) { rudisha 0; }
-    N8* kikomo = 0x500000;
-    kama (&bafa_text < kikomo) { rudisha 0x400078 + off; }
+    N8* kikomo = 5242880;
+    kama (&bafa_text < kikomo) { rudisha 4194424 + off; }
     rudisha 0;
 }
 
@@ -2630,7 +2655,9 @@ W0 uzalishaji_taarifa(N32 node, N32 kazi_node) {
 
 // AST_NAMBARI (4) -- namba halisi
 W0 uzalishaji_nambari(N32 node, N32 kazi_node) {
-    kama (ast_tiga[node] == 1) {
+    // Alama ya N64 iko ast_kulia (ast_tiga ni kiungo cha mnyororo
+    // wa hoja kwenye wito — haijulikani wakati wa uzalishaji).
+    kama (ast_kulia[node] == 1) {
         // N64 halisi: baiti 8 zimehifadhiwa kwenye dimbwi la AST
         // (ast_thamani = ofseti). Toa mov rax, imm64 (48 B8 + baiti 8).
         N32 off = ast_thamani[node];
@@ -3793,14 +3820,18 @@ W0 uzalishaji_usemi_juu_a(N32 node, N32 kazi_node, N32 aina) {
 W0 uzalishaji_usemi(N32 node, N32 kazi_node) {
     kama (node == -1) { rudisha; }
     N32 aina = ast_aina[node];
-    kama (aina <= 8) { uzalishaji_usemi_chini(node, kazi_node, aina); rudisha; }
-    kama (aina <= 21) { uzalishaji_usemi_kati_a1(node, kazi_node, aina); rudisha; }
-    kama (aina <= 25) { uzalishaji_usemi_kati_a2(node, kazi_node, aina); rudisha; }
-    kama (aina <= 32) { uzalishaji_usemi_kati_b(node, kazi_node, aina); rudisha; }
-    kama (aina <= 44) { uzalishaji_usemi_juu_a(node, kazi_node, aina); rudisha; }
-    kama (aina == 45) { uzalishaji_halisi_d(node, kazi_node); rudisha; }
-    kama (aina == 48) { uzalishaji_usemi_kati_a1(node, kazi_node, aina); rudisha; }
-    kama (aina == 49) { uzalishaji_modulo(node, kazi_node); rudisha; }
+    kama (aina <= 8) { uzalishaji_usemi_chini(node, kazi_node, aina); }
+    sivyo { kama (aina <= 21) { uzalishaji_usemi_kati_a1(node, kazi_node, aina); }
+        sivyo { kama (aina <= 25) { uzalishaji_usemi_kati_a2(node, kazi_node, aina); }
+            sivyo { kama (aina <= 32) { uzalishaji_usemi_kati_b(node, kazi_node, aina); }
+                sivyo { kama (aina <= 44) { uzalishaji_usemi_juu_a(node, kazi_node, aina); }
+                    sivyo { kama (aina == 45) { uzalishaji_halisi_d(node, kazi_node); }
+                        sivyo { kama (aina == 48) { uzalishaji_usemi_kati_a1(node, kazi_node, aina); }
+                            sivyo { kama (aina == 49) { uzalishaji_modulo(node, kazi_node); } } } } } } } }
+    // Panua ishara kwa thamani ndogo yenye ishara — thamani inapotumiwa
+    // katika muktadha wa baiti 8 (kigezo, hoja, kurudi, operesheni ya
+    // 64-bit), eax lazima ipanuliwe hadi rax.
+    panua_ishara_ndogo(node);
 }
 
 // PAKIA KIGEZO CHA KAZI
