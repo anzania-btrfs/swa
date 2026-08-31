@@ -8,7 +8,7 @@ FAIL	# k10g faili: faili.swa inaitia C::stdio (fopen/fread...) — mbegu na stag
 FAIL	# k11a maoni ya kijiuzi: upachikaji wa maoni /* /* */ */ haukubaliki na mbegu (msomaji wa mnyororo wa .swa unajua)	majaribio/programu/jaribio_k11a_maoni_ya_kijiuzi.swa
 KATA	jaribio_k11b_nambari_za_radiksi (stage1 pekee: radiksi hazijaungwa mkono — hati 2.3 inaahidi "mfuatano wa tarakimu" tu; mbegu ya zamani bado inakubali — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_k11b_nambari_za_radiksi.swa	stage1	halisi za radiksi hazijaungwa mkono
 FAIL	# k11c utorokaji wa herufi: \n \t \\xNN havikubaliki na mbegu	majaribio/programu/jaribio_k11c_mfuatano_wa_utorokaji.swa
-FAIL	# k12 opereta ya asilimia: %= haisaidiwi na minyororo yote miwili (mbegu na stage1) — % pekee ndiyo inafanya kazi (tazama k12b)	majaribio/programu/jaribio_k12_opereta_ya_asilimia.swa
+7	jaribio_k12_opereta_ya_asilimia (%= inafanya kazi kwenye mnyororo wa uzalishaji; mbegu bado inakataa — stage1 pekee)	majaribio/programu/jaribio_k12_opereta_ya_asilimia.swa	stage1
 2	jaribio_k12b_modulo_pekee	majaribio/programu/jaribio_k12b_modulo_pekee.swa
 52	jaribio_k13_anwani_sehemu_kupitia_kielekezi_kama_hoja	majaribio/programu/jaribio_k13_anwani_sehemu_kupitia_kielekezi_kama_hoja.swa
 42	jaribio_k13_diag_a_anwani_kigeu_wito	majaribio/programu/jaribio_k13_diag_a_anwani_kigeu_wito.swa
@@ -96,3 +96,10 @@ KATA	jaribio_mende_hakuna_main (programu bila main inakataliwa bila faili — za
 5	jaribio_mende_d32_kazi (kazi ya D32: parameta na kurudisha — zamani SEGV; stage1 pekee: mbegu bado inaanguka)	majaribio/programu/jaribio_mende_d32_kazi.swa	stage1
 178	jaribio_mende_d32_hesabu (hesabu, ulinganisho, ulimwengu, ugawaji wa D32 — stage1 pekee)	majaribio/programu/jaribio_mende_d32_hesabu.swa	stage1
 64	jaribio_mende_kurudia_kirefu (kina 40,000 — fremu ndogo za rafu zinahitajika)	majaribio/programu/jaribio_mende_kurudia_kirefu.swa
+0	jaribio_mende_17_xor (XOR ^ inafanya kazi kwa utangulizi wa C — stage1 pekee: mbegu bado inakataa ^)	majaribio/programu/jaribio_mende_17_xor.swa	stage1
+0	jaribio_mende_18_kiwanja_biti (&= |= ^= <<= >>= zilikuwa NO-OP kimya; sasa zinafanya kazi, pamoja na N64 — stage1 pekee)	majaribio/programu/jaribio_mende_18_kiwanja_biti.swa	stage1
+0	jaribio_mende_19_lebo_hasi (lebo hasi ya hali inalingana na thamani hasi pekee — stage1 pekee)	majaribio/programu/jaribio_mende_19_lebo_hasi.swa	stage1
+0	jaribio_mende_20_lebo_n64 (lebo ya N64 kubwa inalinganishwa kwa 64-bit — stage1 pekee)	majaribio/programu/jaribio_mende_20_lebo_n64.swa	stage1
+KATA	jaribio_mende_21_lebo_isiyo_halisi (lebo ya usemi/kigezo inakataliwa kwa sauti, kama C — stage1 pekee)	majaribio/programu/jaribio_mende_21_lebo_isiyo_halisi.swa	stage1	lebo ya hali lazima iwe halisi
+0	jaribio_mende_134_kiambishi_si (kiambishi ! kinatoa 1 au 0 — stage1 pekee: mbegu bado inakataa !)	majaribio/programu/jaribio_mende_134_kiambishi_si.swa	stage1
+0	jaribio_mende_135_kiambishi_kinyume (kiambishi ~ kinageuza biti zote — stage1 pekee: mbegu bado inakataa ~)	majaribio/programu/jaribio_mende_135_kiambishi_kinyume.swa	stage1
