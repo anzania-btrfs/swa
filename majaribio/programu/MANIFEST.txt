@@ -72,3 +72,12 @@ KATA	jaribio_mende_radiksi (stage1 pekee: radiksi hazijaungwa mkono — hati 2.3
 0	jaribio_mende_n64_hoja (stage1 pekee: mbegu ya zamani inakata hoja — rejesha baada ya kugandisha)	majaribio/programu/jaribio_mende_n64_hoja.swa	stage1
 KATA	jaribio_mende_kianzilishi_safu (stage1 pekee: kianzilishi cha safu hakijaungwa mkono)	majaribio/programu/jaribio_mende_kianzilishi_safu.swa	stage1	kianzilishi cha safu hakijaungwa mkono
 KATA	jaribio_mende_kianzilishi_safu_mfuatano (stage1 pekee: kianzilishi cha safu hakijaungwa mkono)	majaribio/programu/jaribio_mende_kianzilishi_safu_mfuatano.swa	stage1	kianzilishi cha safu hakijaungwa mkono
+21	jaribio_mende_mpaka_kurudisha (D64 inakatwa hadi sifuri kwenye kurudi kwa kazi ya N32 — stage1 pekee: mbegu bado inarudisha 0)	majaribio/programu/jaribio_mende_mpaka_kurudisha.swa	stage1
+7	jaribio_mende_mpaka_mchanganyiko ((1 + 2.5) * 2 inapandishwa hadi D64 na kutoa 7 — stage1 pekee: mbegu bado inatoa 6)	majaribio/programu/jaribio_mende_mpaka_mchanganyiko.swa	stage1
+0	jaribio_mende_mpaka_ulinganisho (ulinganisho mchanganyiko: 0 == 2.5 ni si-kweli, 2.5 < 3 ni kweli — stage1 pekee)	majaribio/programu/jaribio_mende_mpaka_ulinganisho.swa	stage1
+0	jaribio_mende_mpaka_ulimwengu (ulimwengu wa D64: kianzio na upakiaji kwa movsd — stage1 pekee: mbegu bado inalinganisha na yenyewe)	majaribio/programu/jaribio_mende_mpaka_ulimwengu.swa	stage1
+0	jaribio_mende_mpaka_ugawaji (ugawaji 5 hadi D64 na 2.5 hadi N32 (kukata hadi sifuri) — stage1 pekee)	majaribio/programu/jaribio_mende_mpaka_ugawaji.swa	stage1
+0	jaribio_mende_mpaka_hoja (hoja za wito: kamili hadi parameta ya D64 na D64 hadi kamili — stage1 pekee)	majaribio/programu/jaribio_mende_mpaka_hoja.swa	stage1
+KATA	jaribio_mende_mpaka_modulo (modulo ya desimali inakataliwa kwa sauti — stage1 pekee: mbegu bado inakubali kimya)	majaribio/programu/jaribio_mende_mpaka_modulo.swa	stage1	operesheni hii haifanyi kazi kwa desimali
+KATA	jaribio_mende_mpaka_hamisha (uhamishaji wa biti kwenye desimali unakataliwa kwa sauti — stage1 pekee)	majaribio/programu/jaribio_mende_mpaka_hamisha.swa	stage1	operesheni hii haifanyi kazi kwa desimali
+KATA	jaribio_mende_mpaka_ulimwengu_kamili (kianzio cha ulimwengu wa D64 lazima kiwe halisi ya desimali — stage1 pekee)	majaribio/programu/jaribio_mende_mpaka_ulimwengu_kamili.swa	stage1	kianzio cha ulimwengu wa D64 lazima kiwe halisi ya desimali
