@@ -28,6 +28,16 @@ FAIL	# k12 opereta ya asilimia: %= haisaidiwi na minyororo yote miwili (mbegu na
 0	jaribio_mende_134_kamasivyo_mnyororo	majaribio/programu/jaribio_mende_134_kamasivyo_mnyororo.swa
 FAIL	# mende_135 desimali: FAIL KWA MUDA — FPE ya stage1 inachunguzwa na mtu mwingine; inawajibika kurejeshwa baada ya kurekebishwa	majaribio/programu/jaribio_mende_135_desimali.swa
 FAIL	# mende_138 aina tupu: FAIL KWA MUDA — FPE ya stage1 inachunguzwa na mtu mwingine; inawajibika kurejeshwa baada ya kurekebishwa	majaribio/programu/jaribio_mende_138_tupu_aina.swa
+KATA	jaribio_mende_aina_kata_kianzio (kianzio cha aina isiyolingana kinazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_kianzio.swa	stage1	aina ya kianzio hailingani
+KATA	jaribio_mende_aina_kata_ugawaji (ugawaji wa aina isiyolingana unazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_ugawaji.swa	stage1	aina ya ugawaji hailingani
+KATA	jaribio_mende_aina_kata_hoja (hoja isiyolingana na parameta inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_hoja.swa	stage1	aina ya hoja
+KATA	jaribio_mende_aina_kata_idadi_hoja (idadi isiyo sahihi ya hoja inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_idadi_hoja.swa	stage1	idadi ya hoja
+KATA	jaribio_mende_aina_kata_kurudi (aina ya kurudi isiyolingana inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_kurudi.swa	stage1	aina ya kurudi
+KATA	jaribio_mende_aina_kata_ternary (matawi ya ternary yasiyolingana yanazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_ternary.swa	stage1	matawi ya ternary
+KATA	jaribio_mende_aina_kata_operesheni (operesheni ya aina zisizolingana inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_operesheni.swa	stage1	aina haziendani kwenye operesheni
+KATA	jaribio_mende_aina_kata_kigeu_marudio (tangazo marudio la kigeu linazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_kigeu_marudio.swa	stage1	kimeshatangazwa
+KATA	jaribio_mende_aina_kata_vunja_nje (vunja nje ya kitanzi kunazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_vunja_nje.swa	stage1	vunja nje ya kitanzi
+KATA	jaribio_mende_aina_kata_endelea_nje (endelea nje ya kitanzi kunazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_endelea_nje.swa	stage1	endelea nje ya kitanzi
 
 0	jaribio_rudisha_nambari	majaribio/programu/jaribio_rudisha_nambari.swa
 0	jaribio_vigezo_na_mwili	majaribio/programu/jaribio_vigezo_na_mwili.swa
