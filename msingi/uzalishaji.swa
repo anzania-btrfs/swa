@@ -2243,7 +2243,15 @@ W0 uzalishaji_wakati(N32 node, N32 kazi_node) {
     uzalishaji_taarifa(body, kazi_node);
 
     weka_lebo(lebo_cond);
-    uzalishaji_usemi(cond, kazi_node);
+    kama (cond == -1) {
+        // Hali iliyoachwa wazi = kweli daima (semantiki ya C):
+        // kwa (i = 0; ; i = i + 1) na kwa (;;) ni vitanzi visivyoisha
+        // hadi vunja au rudisha. Hapo awali -1 ilitolewa kama usemi
+        // usiotoa kitu — mwili haukuwahi kutekelezwa (jibu baya la kimya).
+        andika_mov_eax(1);
+    } sivyo {
+        uzalishaji_usemi(cond, kazi_node);
+    }
     andika_test_eax_eax();
     toa_jne_lebo(lebo_body);
 
@@ -2727,6 +2735,27 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
     hoja_undani = hoja_undani - 1;
 }
 
+// Msaada: kusanya kifungio cha hatua ya kitanzi cha kwa kinachofichwa
+// nyuma ya taarifa zinazomaliza (rudisha/vunja/endelea). Mnyororo wa
+// mwili huisha kwenye taarifa ya kumaliza — lakini msambazaji huweka
+// kifungio cha hatua (AST_BLOCK yenye ast_kulia == -777777) MWISHONI
+// mwa mnyororo, na endelea inaruka kwenye lebo yake. Kifungio
+// kisipokusanywa, lebo ya hatua haitolewi kamwe na endelea inaruka
+// mahali pasipo lebo (kitanzi kisichoisha — jibu la kimya la mwendo
+// wa muda usio na mwisho). Taarifa zisizofikiwa katikati hazijalishi.
+W0 kusanya_hatua_ya_kwa(N32 node, N32 kazi_node) {
+    N32 nd = ast_nne[node];
+    wakati (nd != -1) {
+        kama (ast_aina[nd] == 50) {
+            kama (ast_kulia[nd] == -777777) {
+                uzalishaji_taarifa(nd, kazi_node);
+                rudisha;
+            }
+        }
+        nd = ast_nne[nd];
+    }
+}
+
 // -------------------------------------------------------
 // Kitoa programu (sehemu ya .text)
 // -------------------------------------------------------
@@ -2796,6 +2825,9 @@ W0 uzalishaji_taarifa(N32 node, N32 kazi_node) {
         }
         kama (frame_imeshinda) { andika_leave(); }
         andika_ret();
+        // Hatua ya kwa inayofuata taarifa ya kumaliza ni msimbo wa
+        // kufa — lakini lebo yake inahitajika na endelea iliyotangulia.
+        kusanya_hatua_ya_kwa(node, kazi_node);
         rudisha;
     }
 
@@ -2803,6 +2835,7 @@ W0 uzalishaji_taarifa(N32 node, N32 kazi_node) {
         kama (mzunguko_undani > 0) {
             toa_jmp_lebo(mzunguko_lebo_toka[mzunguko_undani - 1]);
         }
+        kusanya_hatua_ya_kwa(node, kazi_node);
         rudisha;
     }
 
@@ -2810,6 +2843,7 @@ W0 uzalishaji_taarifa(N32 node, N32 kazi_node) {
         kama (mzunguko_undani > 0) {
             toa_jmp_lebo(mzunguko_lebo_endelea[mzunguko_undani - 1]);
         }
+        kusanya_hatua_ya_kwa(node, kazi_node);
         rudisha;
     }
 
