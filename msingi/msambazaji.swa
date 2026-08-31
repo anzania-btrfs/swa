@@ -680,6 +680,7 @@ N32 changanua_taarifa_tangazo(Msambazaji* p) {
 
         wakati (1 == 1) {
             safu_ukubwa = 0;
+            N32 safu_ilipo = 0;
             kama ((p->sasa.mwanzo[0] >= 65 && p->sasa.mwanzo[0] != 91 && p->sasa.mwanzo[0] != 93 && p->sasa.mwanzo[0] != 123 && p->sasa.mwanzo[0] != 125)) {
                 N32 var_name = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
                 hifadhi_jina(var_name, p->sasa.mwanzo, p->sasa.urefu);
@@ -689,8 +690,15 @@ N32 changanua_taarifa_tangazo(Msambazaji* p) {
                 // Ruka [ukubwa] kama ipo (kwa matamko ya safu ya ndani)
                 kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
                     kama (neno_ni(&p->sasa, "[")) {
+                        safu_ilipo = 1;
                         sogeza(p);
                         kama (p->sasa.urefu > 0) {
+                            // Halisi ya herufi kama ukubwa: kataa kwa sauti.
+                            kama (p->sasa.mwanzo[0] == 39) {
+                                andika_stderr("kosa: halisi ya herufi haijaungwa mkono\n");
+                                p->kosa = 1;
+                                rudisha -1;
+                            }
                             safu_ukubwa = neno_kwa_nambari(p->sasa.mwanzo, p->sasa.urefu);
                             sogeza(p);
                         }
@@ -703,6 +711,13 @@ N32 changanua_taarifa_tangazo(Msambazaji* p) {
                 N32 init = -1;
                 // Angalia kwa kianzisha '='
                 kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "=")) {
+                    // Safu + kianzilishi si katika hati 6.1; kukubali kimya
+                    // kunatupa kianzilishi. Kataa kwa sauti, sawa na mbegu.
+                    kama (safu_ilipo != 0) {
+                        andika_stderr("kosa: kianzilishi cha safu hakijaungwa mkono\n");
+                        p->kosa = 1;
+                        rudisha -1;
+                    }
                     sogeza(p);
                     init = changanua_usemi(p);
                 }
@@ -901,6 +916,12 @@ N32 changanua_primary_orodha(Msambazaji* p) {
     // Orodha ya vianzisha  { kipengele , ... }
     kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
         kama (neno_ni(&p->sasa, "{")) {
+            // Vianzishi vya safu {a, b, c} si katika hati 6.1; kukubali
+            // kimya kunatupa vianzishi (msimbo unatoa 0). Kataa kwa sauti,
+            // sawa na mbegu.
+            andika_stderr("kosa: kianzilishi cha safu hakijaungwa mkono\n");
+            p->kosa = 1;
+            rudisha -1;
             sogeza(p);
             N32 kwanza = -1;
             N32 prev = -1;
@@ -931,6 +952,13 @@ N32 changanua_primary_orodha(Msambazaji* p) {
 N32 changanua_primary(Msambazaji* p) {
     // Halisi ya nambari (au desimali kama kuna '.')
     kama (p->sasa.aina == TOKENI_NAMBARI) {
+        // Halisi ya herufi ('h') si katika hati 2.3; kukubali kimya
+        // kunatoa 0 (tokeni haina tarakimu). Kataa kwa sauti, sawa na mbegu.
+        kama (p->sasa.mwanzo[0] == 39) {
+            andika_stderr("kosa: halisi ya herufi haijaungwa mkono\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         N32 ni_d = 0;
         N32 k2 = 0;
         wakati (k2 < p->sasa.urefu) {
@@ -1526,10 +1554,18 @@ N32 changanua_kazi(Msambazaji* p) {
             ni_global = 1;
             // Hifadhi ukubwa wa safu yakipo: jina[ukubwa]
             N32 safu_ukubwa = 0;
+            N32 safu_ilipo = 0;
             kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
                 kama (neno_ni(&p->sasa, "[")) {
+                    safu_ilipo = 1;
                     sogeza(p);  // ruka '['
                     kama (p->sasa.urefu > 0) {
+                        // Halisi ya herufi kama ukubwa: kataa kwa sauti.
+                        kama (p->sasa.mwanzo[0] == 39) {
+                            andika_stderr("kosa: halisi ya herufi haijaungwa mkono\n");
+                            p->kosa = 1;
+                            rudisha -1;
+                        }
                         safu_ukubwa = neno_kwa_nambari(p->sasa.mwanzo, p->sasa.urefu);
                         sogeza(p);  // ruka ukubwa
                     }
@@ -1538,8 +1574,15 @@ N32 changanua_kazi(Msambazaji* p) {
             }
             kama (p->sasa.urefu == 1) {
                 kama (neno_ni(&p->sasa, "[")) {
+                    safu_ilipo = 1;
                     sogeza(p);
                     kama (p->sasa.urefu > 0) {
+                        // Halisi ya herufi kama ukubwa: kataa kwa sauti.
+                        kama (p->sasa.mwanzo[0] == 39) {
+                            andika_stderr("kosa: halisi ya herufi haijaungwa mkono\n");
+                            p->kosa = 1;
+                            rudisha -1;
+                        }
                         safu_ukubwa = neno_kwa_nambari(p->sasa.mwanzo, p->sasa.urefu);
                         sogeza(p);
                     }
@@ -1548,10 +1591,28 @@ N32 changanua_kazi(Msambazaji* p) {
             }
             N32 init = -1;
             kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
-                kama (neno_ni(&p->sasa, "=")) { sogeza(p); init = changanua_usemi(p); }
+                kama (neno_ni(&p->sasa, "=")) {
+                    // Safu + kianzilishi si katika hati 6.1; kukubali kimya
+                    // kunatupa kianzilishi. Kataa kwa sauti, sawa na mbegu.
+                    kama (safu_ilipo != 0) {
+                        andika_stderr("kosa: kianzilishi cha safu hakijaungwa mkono\n");
+                        p->kosa = 1;
+                        rudisha -1;
+                    }
+                    sogeza(p); init = changanua_usemi(p);
+                }
             }
             kama (p->sasa.urefu == 1) {
-                kama (neno_ni(&p->sasa, "=")) { sogeza(p); init = changanua_usemi(p); }
+                kama (neno_ni(&p->sasa, "=")) {
+                    // Safu + kianzilishi si katika hati 6.1; kukubali kimya
+                    // kunatupa kianzilishi. Kataa kwa sauti, sawa na mbegu.
+                    kama (safu_ilipo != 0) {
+                        andika_stderr("kosa: kianzilishi cha safu hakijaungwa mkono\n");
+                        p->kosa = 1;
+                        rudisha -1;
+                    }
+                    sogeza(p); init = changanua_usemi(p);
+                }
             }
             kama ((p->sasa.mwanzo[0] < 65 || p->sasa.mwanzo[0] == 91 || p->sasa.mwanzo[0] == 93 || p->sasa.mwanzo[0] == 123 || p->sasa.mwanzo[0] == 125)) {
                 kama (neno_ni(&p->sasa, ";")) { sogeza(p); }
