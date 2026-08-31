@@ -614,6 +614,31 @@ W0 tokeni_soma_nambari(Tokeni* t, Msomaji* m, N64 mwanzo_nafasi) {
                         }
                     }
                 }
+                // Kipeo cha kisayansi hiari: e/E ikifuatiwa na ishara
+                // na tarakimu (1.5e2, 1E-3). Hati 2.3 haiahidi nukuu ya
+                // kisayansi — tokeni NZIMA inakusanywa hapa ili
+                // mchanganuzi aikatae kwa sauti (zamani kipeo kilimezwa
+                // kimya kama kitambulisho na halisi ikasomwa 1.5).
+                kama (msomaji_imeisha(m) == 0) {
+                    N8 ch3 = m->chanzo[m->nafasi];
+                    kama (ch3 == 101 || ch3 == 69) {
+                        m->nafasi = m->nafasi + 1;
+                        m->safu = m->safu + 1;
+                        kama (msomaji_imeisha(m) == 0) {
+                            N8 ch4 = m->chanzo[m->nafasi];
+                            kama (ch4 == 43 || ch4 == 45) {
+                                m->nafasi = m->nafasi + 1;
+                                m->safu = m->safu + 1;
+                            }
+                        }
+                        wakati (msomaji_imeisha(m) == 0) {
+                            N8 ch5 = m->chanzo[m->nafasi];
+                            kama (ni_tarakimu(ch5) == 0) { vunja; }
+                            m->nafasi = m->nafasi + 1;
+                            m->safu = m->safu + 1;
+                        }
+                    }
+                }
             } } }
 
     t->aina = TOKENI_NAMBARI;
