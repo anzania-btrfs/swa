@@ -32,6 +32,9 @@ KATA	jaribio_mende_aina_kata_kianzio (kianzio cha aina isiyolingana kinazuia mku
 KATA	jaribio_mende_aina_kata_ugawaji (ugawaji wa aina isiyolingana unazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_ugawaji.swa	stage1	aina ya ugawaji hailingani
 KATA	jaribio_mende_aina_kata_hoja (hoja isiyolingana na parameta inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_hoja.swa	stage1	aina ya hoja
 KATA	jaribio_mende_aina_kata_idadi_hoja (idadi isiyo sahihi ya hoja inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_idadi_hoja.swa	stage1	idadi ya hoja
+KATA	jaribio_mende_aina_kata_hoja_usemi (hoja isiyolingana katika nafasi ya usemi inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_hoja_usemi.swa	stage1	aina ya hoja
+KATA	jaribio_mende_aina_kata_idadi_hoja_usemi (idadi isiyo sahihi ya hoja katika nafasi ya usemi inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_idadi_hoja_usemi.swa	stage1	idadi ya hoja
+KATA	jaribio_mende_aina_kata_hoja_kiota (wito ulioota ndani ya hoja ya wito mwingine unakaguliwa — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_hoja_kiota.swa	stage1	idadi ya hoja
 KATA	jaribio_mende_aina_kata_kurudi (aina ya kurudi isiyolingana inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_kurudi.swa	stage1	aina ya kurudi
 KATA	jaribio_mende_aina_kata_ternary (matawi ya ternary yasiyolingana yanazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_ternary.swa	stage1	matawi ya ternary
 KATA	jaribio_mende_aina_kata_operesheni (operesheni ya aina zisizolingana inazuia mkusanyaji — stage1 pekee)	majaribio/programu/jaribio_mende_aina_kata_operesheni.swa	stage1	aina haziendani kwenye operesheni

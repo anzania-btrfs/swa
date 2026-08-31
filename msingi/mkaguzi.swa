@@ -258,6 +258,67 @@ N32 mkaguzi_tafuta_param_enc(N8* jina, N32 idx) {
     rudisha -1;
 }
 
+// Kagua wito wa kazi (AST_WITO, 8): thibitisha aina za hoja dhidi ya
+// vigezo na idadi ya hoja dhidi ya tangazo. Huitwa kutoka kwa wito
+// wa nafasi ya taarifa NA wa nafasi ya usemi — mwito wa nafasi ya
+// usemi haupaswi kukwepa ukaguzi (mende: aina na idadi zisizofaa
+// zilipita bila kugunduliwa kwenye usemi). andika/andika_stderr ni
+// za kutofautiana (variadic) — idadi yao haithibitishwi. Kazi za
+// nje (wito_wa_mfumo, tekeleza) hazijaandikishwa, kwa hiyo hazina
+// idadi ya kuthibitisha. Rudisha usimbaji wa aina ya kurudi
+// (0 = kazi ya nje — aina haijulikani, inakubaliana na yoyote).
+N32 mkaguzi_kagua_wito(N32 node) {
+    N32 name_node = ast_kushoto[node];
+    kama (name_node != -1) {
+        N8* jina = ast_pool + ast_jina_off[name_node];
+        // Hesabu na kagua hoja zilizotolewa
+        N32 hoja_idadi = 0;
+        N32 a = ast_kulia[node];
+        wakati (a != -1) {
+            N32 ijayo = ast_tiga[a];  // Hifadhi kabla mkaguzi_kagua_usemi abadilishe ast_tiga[a]
+            N32 arg_enc = mkaguzi_kagua_usemi(a);
+            ast_tiga[a] = ijayo;  // Rejesha kiungo cha mnyororo wa hoja
+            // Angalia aina ya hoja dhidi ya aina ya parameta
+            N32 param_enc = mkaguzi_tafuta_param_enc(jina, hoja_idadi);
+            // Aina za mtumiaji (muundo) zinaweza kuwa hasi
+            kama (param_enc != 0 && param_enc != -1 && arg_enc != 0 && arg_enc != -1) {
+                kama (mkaguzi_aina_zifanane(arg_enc, param_enc) == 0) {
+                    kama (mkaguzi_mpaka_wa_desimali(arg_enc, param_enc) == 0) {
+                        andika_stderr("kosa [%s]: aina ya hoja #%d kwa '%s' hailingani (arg=%d, param=%d)\n",
+                        mkaguzi_kazi_sasa, hoja_idadi + 1, jina, arg_enc, param_enc);
+                        mkaguzi_makosa = mkaguzi_makosa + 1;
+                    }
+                }
+            }
+            hoja_idadi = hoja_idadi + 1;
+            a = ijayo;
+        }
+        // Angalia idadi ya hoja dhidi ya tangazo la kazi.
+        N32 inatarajiwa = mkaguzi_tafuta_kazi(jina);
+        kama (inatarajiwa >= 0) {
+            kama (hoja_idadi != inatarajiwa) {
+                N32 ni_ya_kutofautiana = 0;
+                kama (jina_linganisha(jina, "andika") || jina_linganisha(jina, "andika_stderr")) {
+                    ni_ya_kutofautiana = 1;
+                }
+                kama (ni_ya_kutofautiana == 0) {
+                    andika_stderr("kosa [%s]: idadi ya hoja kwa '%s' si sahihi (%d badala ya %d)\n",
+                    mkaguzi_kazi_sasa, jina, hoja_idadi, inatarajiwa);
+                    mkaguzi_makosa = mkaguzi_makosa + 1;
+                }
+            }
+        }
+        // Tafuta aina ya kurudi kwa matumizi ya nafasi ya usemi
+        N32 j = 0;
+        wakati (j < kazi_ret_idadi) {
+            N8* rj = kazi_jina_pool + kazi_ret_jina_off[j];
+            kama (jina_linganisha(rj, jina)) { rudisha kazi_ret_aina[j]; }
+            j = j + 1;
+        }
+    }
+    rudisha 0;  // kazi ya nje — aina haijulikani, inakubaliana na yoyote
+}
+
 W0 mkaguzi_kagua_kazi(N32 kazi_node) {
     // Sajili kazi hii kwa ukaguzi wa idadi ya hoja.
     mkaguzi_sajili_kazi(kazi_node);
@@ -441,49 +502,7 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
         rudisha;
     }
     kama (aina == 8) {  // WITO (wito wa kazi)
-        N32 name_node = ast_kushoto[node];
-        kama (name_node != -1) {
-            N8* jina = ast_pool + ast_jina_off[name_node];
-            // Hesabu na kagua hoja zilizotolewa
-            N32 hoja_idadi = 0;
-            N32 a = ast_kulia[node];
-            wakati (a != -1) {
-                N32 ijayo = ast_tiga[a];  // Hifadhi kabla mkaguzi_kagua_usemi abadilishe ast_tiga[a]
-                N32 arg_enc = mkaguzi_kagua_usemi(a);
-                ast_tiga[a] = ijayo;  // Rejesha kiungo cha mnyororo wa hoja
-                // Angalia aina ya hoja dhidi ya aina ya parameta
-                N32 param_enc = mkaguzi_tafuta_param_enc(jina, hoja_idadi);
-                // Aina za mtumiaji (muundo) zinaweza kuwa hasi
-                kama (param_enc != 0 && param_enc != -1 && arg_enc != 0 && arg_enc != -1) {
-                    kama (mkaguzi_aina_zifanane(arg_enc, param_enc) == 0) {
-                        kama (mkaguzi_mpaka_wa_desimali(arg_enc, param_enc) == 0) {
-                            andika_stderr("kosa [%s]: aina ya hoja #%d kwa '%s' hailingani (arg=%d, param=%d)\n",
-                            mkaguzi_kazi_sasa, hoja_idadi + 1, jina, arg_enc, param_enc);
-                            mkaguzi_makosa = mkaguzi_makosa + 1;
-                        }
-                    }
-                }
-                hoja_idadi = hoja_idadi + 1;
-                a = ijayo;
-            }
-            // Angalia idadi ya hoja dhidi ya tangazo la kazi.
-            // andika/andika_stderr ni za kutofautiana (variadic) —
-            // idadi ya hoja inaamuliwa na muundo.
-            N32 inatarajiwa = mkaguzi_tafuta_kazi(jina);
-            kama (inatarajiwa >= 0) {
-                kama (hoja_idadi != inatarajiwa) {
-                    N32 ni_ya_kutofautiana = 0;
-                    kama (jina_linganisha(jina, "andika") || jina_linganisha(jina, "andika_stderr")) {
-                        ni_ya_kutofautiana = 1;
-                    }
-                    kama (ni_ya_kutofautiana == 0) {
-                        andika_stderr("kosa [%s]: idadi ya hoja kwa '%s' si sahihi (%d badala ya %d)\n",
-                        mkaguzi_kazi_sasa, jina, hoja_idadi, inatarajiwa);
-                        mkaguzi_makosa = mkaguzi_makosa + 1;
-                    }
-                }
-            }
-        }
+        mkaguzi_kagua_wito(node);
         mkaguzi_kagua_taarifa(ast_nne[node]);
         rudisha;
     }
@@ -662,26 +681,9 @@ N32 mkaguzi_kagua_usemi(N32 node) {
 
     // Wito wa kazi
     kama (aina == 8) {
-        // Kagua hoja zote za wito, hata kama wito uko katika nafasi ya usemi.
-        // Hifadhi ast_tiga kwa sababu SEHEMU_MSHALE/SEHEMU_DOT huiandika.
-        N32 a = ast_kulia[node];
-        wakati (a != -1) {
-            N32 ijayo = ast_tiga[a];  // hifadhi kiungo cha mnyororo
-            mkaguzi_kagua_usemi(a);
-            ast_tiga[a] = ijayo;  // rejesha kiungo cha mnyororo
-            a = ijayo;
-        }
-        N32 name_node = ast_kushoto[node];
-        kama (name_node != -1) {
-            N8* jina = ast_pool + ast_jina_off[name_node];
-            N32 j = 0;
-            wakati (j < kazi_ret_idadi) {
-                N8* rj = kazi_jina_pool + kazi_ret_jina_off[j];
-                kama (jina_linganisha(rj, jina)) { rudisha kazi_ret_aina[j]; }
-                j = j + 1;
-            }
-        }
-        rudisha 0;  // kazi ya nje — aina haijulikani, inakubaliana na yoyote
+        // Kagua hoja zote za wito — aina NA idadi — hata kama wito uko
+        // katika nafasi ya usemi. Pia rudisha aina ya kurudi ya wito.
+        rudisha mkaguzi_kagua_wito(node);
     }
 
     // Oparesheni unari
