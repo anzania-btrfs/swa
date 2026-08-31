@@ -113,6 +113,11 @@ W0 andika_pop_rcx() {
     andika_baiti(89);
 }
 
+// pop rax (58)
+W0 andika_pop_rax() {
+    andika_baiti(88);
+}
+
 // add eax, ecx (01 C8)
 W0 andika_add_eax_ecx() {
     andika_baiti(1);
@@ -222,6 +227,31 @@ W0 andika_and_rax_rcx() {
 // or rax, rcx (48 09 C8)
 W0 andika_or_rax_rcx() {
     andika_baiti(72); andika_baiti(9); andika_baiti(200);
+}
+
+// xor eax, ecx (31 C8)
+W0 andika_xor_eax_ecx() {
+    andika_baiti(49); andika_baiti(200);
+}
+
+// xor rax, rcx (48 31 C8)
+W0 andika_xor_rax_rcx() {
+    andika_baiti(72); andika_baiti(49); andika_baiti(200);
+}
+
+// not eax (F7 D0)
+W0 andika_not_eax() {
+    andika_baiti(247); andika_baiti(208);
+}
+
+// not rax (48 F7 D0)
+W0 andika_not_rax() {
+    andika_baiti(72); andika_baiti(247); andika_baiti(208);
+}
+
+// neg rax (48 F7 D8)
+W0 andika_neg_rax() {
+    andika_baiti(72); andika_baiti(247); andika_baiti(216);
 }
 
 // shl rax, cl (48 D3 E0)
@@ -1308,6 +1338,13 @@ W0 andika_test_eax_eax() {
     andika_baiti(192);
 }
 
+// test rax, rax (48 85 C0)
+W0 andika_test_rax_rax() {
+    andika_baiti(72);
+    andika_baiti(133);
+    andika_baiti(192);
+}
+
 // setne al (0F 95 C0)
 W0 andika_setne_al() {
     andika_baiti(15);
@@ -2219,6 +2256,42 @@ W0 uzalishaji_wakati(N32 node, N32 kazi_node) {
 // Utoaji wa chagua (switch) — AST_CHAGUA (14)
 // Hutumia mnyororo wa kama-ikiwa (if-else chain)
 // -------------------------------------------------------
+
+// Toa thamani ya lebo ya hali kwenye rax. Mkaguzi ameidhinisha lebo
+// kuwa halisi ya nambari (chanya au hasi); hii inashughulikia N32,
+// N64 (alama ast_kulia == 1), na toa-unari (-N). Kwa kinga, usemi
+// mwingine wowote unatathminiwa kama usemi wa kawaida.
+W0 uzalishaji_lebo_ya_hali(N32 label_node, N32 kazi_node) {
+    N32 ni_hasi = 0;
+    N32 lit = label_node;
+    kama (ast_aina[label_node] == 7) {  // toa-unari: -N
+        kama (ast_kushoto[label_node] == -1) {
+            ni_hasi = 1;
+            lit = ast_kulia[label_node];
+        }
+    }
+    kama (ast_aina[lit] == 4) {
+        kama (ast_kulia[lit] == 1) {
+            // N64 halisi: baiti 8 kwenye dimbwi — mov rax, imm64
+            N32 off = ast_thamani[lit];
+            andika_baiti(72);  // 0x48 — REX.W
+            andika_baiti(184);  // 0xB8 — mov rax, imm64
+            N32 bi = 0;
+            wakati (bi < 8) {
+                andika_baiti(ast_pool[off + bi]);
+                bi = bi + 1;
+            }
+            kama (ni_hasi) { andika_neg_rax(); }
+        } sivyo {
+            andika_mov_eax(ast_thamani[lit]);
+            kama (ni_hasi) { andika_neg_eax(); }
+        }
+        rudisha;
+    }
+    // Kinga pekee — mkaguzi hukataa lebo zisizo halisi kwa sauti.
+    uzalishaji_usemi(label_node, kazi_node);
+}
+
 W0 uzalishaji_chagua(N32 node, N32 kazi_node) {
     N32 tested_node = ast_kushoto[node];
     N32 hali_list = ast_kulia[node];
@@ -2230,6 +2303,14 @@ W0 uzalishaji_chagua(N32 node, N32 kazi_node) {
     // Hifadhi thamani kwenye rafu kwa ajili ya kulinganisha
     andika_push_rax();  // push thamani ya skrutini
 
+    // Upana wa ulinganisho unafuatwa na aina ya skrutini: N64 (na
+    // kielekezi) zinalinganishwa kwa 64-bit; N8/N16/N32 kwa 32-bit.
+    // Ulinganisho wa 32-bit kwa lebo za N64 unakata kwa sifuri —
+    // semantiki ya C (lebo inabadilishwa hadi aina ya skrutini).
+    N32 saizi_selecta = ukubwa_kutoka_enc(aina_ya_usemi(tested_node));
+    N32 ni_pana = 0;
+    kama (saizi_selecta >= 8) { ni_pana = 1; }
+
     // Tengeneza lebo za mwisho na chaguo-msingi
     N32 lebo_mwisho = lebo_buf_mpya();
     N32 lebo_default = lebo_buf_mpya();
@@ -2240,23 +2321,20 @@ W0 uzalishaji_chagua(N32 node, N32 kazi_node) {
         N32 label_node = ast_kushoto[chk];
         N32 case_body = ast_kulia[chk];
 
-        // Pata thamani ya lebo
-        N32 case_val = 0;
-        kama (ast_aina[label_node] == 4) {  // AST_NAMBARI
-            case_val = ast_thamani[label_node];
-        }
+        // Tathmini thamani ya lebo kwenye rax (halisi au toa-unari)
+        uzalishaji_lebo_ya_hali(label_node, kazi_node);
+        andika_push_rax();  // hifadhi thamani ya lebo
 
         // Linganisha thamani ya skrutini na thamani ya hali.
-        // Skrutini iko kwenye rafu ([rsp]); inatolewa kwenye rcx,
-        // ikilinganishwa na thamani ya hali, kisha inarudishwa kwenye
-        // rafu kwa rcx. KUMBUKA: mov eax imeharibu rax (thamani ya
-        // hali imechukua nafasi), kwa hiyo kurudisha kwa rax kungekuweka thamani ya
-        // HALI kwenye rafu — hali inayofuata ingelinganishwa na hali
-        // iliyotangulia badala ya skrutini (mende wa kimya-kimya).
-        andika_pop_rcx();  // chukua thamani ya skrutini kutoka rafu
-        andika_mov_eax(case_val);  // weka thamani ya hali
-        andika_cmp_eax_ecx();  // linganisha
-        andika_push_rcx();  // rudisha thamani ya skrutini kwenye rafu
+        // Skrutini iko kwenye rafu ([rsp]); lebo inatolewa kwenye rcx,
+        // skrutini kwenye rax, ikilinganishwa, kisha skrutini
+        // inarudishwa kwenye rafu kwa rax — hali inayofuata
+        // inalinganishwa na skrutini, si na lebo ya zamani.
+        andika_pop_rcx();  // rcx = thamani ya lebo
+        andika_pop_rax();  // rax = thamani ya skrutini
+        kama (ni_pana) { andika_cmp_rax_rcx(); }
+        sivyo { andika_cmp_eax_ecx(); }
+        andika_push_rax();  // rudisha thamani ya skrutini kwenye rafu
 
         N32 lebo_kesi = lebo_buf_mpya();
         toa_jne_lebo(lebo_kesi);  // ruka ikiwa hailingani
@@ -3244,9 +3322,13 @@ W0 uzalishaji_au(N32 node, N32 kazi_node) {
 }
 
 // AST_SI (28) -- si (kukanusha)
+// Thamani za N64 hujaribiwa kwa 64-bit: 2^32 ina nusu ya chini
+// sifuri — test eax pekee ingerudisha 1 kwa jibu lisilo sahihi.
 W0 uzalishaji_si(N32 node, N32 kazi_node) {
+    N32 saizi = ukubwa_kutoka_enc(ast_thamani[node]);
     uzalishaji_usemi(ast_kushoto[node], kazi_node);
-    andika_test_eax_eax();
+    kama (saizi >= 8) { andika_test_rax_rax(); }
+    sivyo { andika_test_eax_eax(); }
     andika_sete_al();
     andika_movzx_eax_al();
 }
@@ -3383,6 +3465,26 @@ W0 uzalishaji_bit_na(N32 node, N32 kazi_node) {
     uzalishaji_usemi(ast_kushoto[node], kazi_node); andika_pop_rcx();
     kama (saizi >= 8) { andika_and_rax_rcx(); }
     sivyo { andika_and_eax_ecx(); }
+}
+
+// AST_XOR (46) -- AU ya biti za kipekee (^)
+W0 uzalishaji_bit_xor(N32 node, N32 kazi_node) {
+    N32 saizi = ukubwa_kutoka_enc(ast_thamani[node]);
+    kataa_operesheni_ya_desimali(node);
+
+    uzalishaji_usemi(ast_kulia[node], kazi_node); andika_push_rax();
+    uzalishaji_usemi(ast_kushoto[node], kazi_node); andika_pop_rcx();
+    kama (saizi >= 8) { andika_xor_rax_rcx(); }
+    sivyo { andika_xor_eax_ecx(); }
+}
+
+// AST_KINYUME (47) -- kanusha biti (~)
+W0 uzalishaji_kinyume(N32 node, N32 kazi_node) {
+    N32 saizi = ukubwa_kutoka_enc(ast_thamani[node]);
+
+    uzalishaji_usemi(ast_kushoto[node], kazi_node);
+    kama (saizi >= 8) { andika_not_rax(); }
+    sivyo { andika_not_eax(); }
 }
 
 // AST_TERNARY (44) -- ? :
@@ -4069,8 +4171,10 @@ W0 uzalishaji_usemi(N32 node, N32 kazi_node) {
             sivyo { kama (aina <= 32) { uzalishaji_usemi_kati_b(node, kazi_node, aina); }
                 sivyo { kama (aina <= 44) { uzalishaji_usemi_juu_a(node, kazi_node, aina); }
                     sivyo { kama (aina == 45) { uzalishaji_halisi_d(node, kazi_node); }
-                        sivyo { kama (aina == 48) { uzalishaji_usemi_kati_a1(node, kazi_node, aina); }
-                            sivyo { kama (aina == 49) { uzalishaji_modulo(node, kazi_node); } } } } } } } }
+                        sivyo { kama (aina == 46) { uzalishaji_bit_xor(node, kazi_node); }
+                            sivyo { kama (aina == 47) { uzalishaji_kinyume(node, kazi_node); }
+                                sivyo { kama (aina == 48) { uzalishaji_usemi_kati_a1(node, kazi_node, aina); }
+                                    sivyo { kama (aina == 49) { uzalishaji_modulo(node, kazi_node); } } } } } } } } } }
     // Panua ishara kwa thamani ndogo yenye ishara — thamani inapotumiwa
     // katika muktadha wa baiti 8 (kigezo, hoja, kurudi, operesheni ya
     // 64-bit), eax lazima ipanuliwe hadi rax.

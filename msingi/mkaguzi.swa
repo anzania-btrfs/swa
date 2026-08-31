@@ -334,6 +334,24 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
         mkaguzi_kagua_usemi(ast_kushoto[node]);
         N32 h = ast_kulia[node];
         wakati (h != -1) {
+            // Lebo lazima iwe halisi ya nambari (chanya au hasi). Lebo
+            // hasi ni toa-unari ya halisi. Kila kitu kingine (lebo ya
+            // usemi, ya kigezo, wito) kinakataliwa kwa sauti — C
+            // inakataa lebo zisizo za kudumu (uthibitisho 19-21).
+            N32 lebo = ast_kushoto[h];
+            N32 ni_halisi = 0;
+            kama (ast_aina[lebo] == 4) { ni_halisi = 1; }  // halisi chanya
+            sivyo {
+                kama (ast_aina[lebo] == 7) {  // toa-unari: -N
+                    kama (ast_kushoto[lebo] == -1) {
+                        kama (ast_aina[ast_kulia[lebo]] == 4) { ni_halisi = 1; }
+                    }
+                }
+            }
+            kama (ni_halisi == 0) {
+                andika_stderr("kosa [%s]: lebo ya hali lazima iwe halisi ya nambari (chanya au hasi)\n", mkaguzi_kazi_sasa);
+                mkaguzi_makosa = mkaguzi_makosa + 1;
+            }
             wigo_sukuma();
             mkaguzi_kagua_taarifa(ast_kulia[h]);
             wigo_toa();
@@ -594,6 +612,7 @@ N32 mkaguzi_kagua_usemi(N32 node) {
     kama (aina == 8) { ni_binary = 0; }  // WITO limehudumiwa tofauti hapo juu
     kama (aina == 44) { ni_binary = 0; }  // TERNARY sio oparesheni jozi
     kama (aina == 49) { ni_binary = 1; }  // AST_MODULO
+    kama (aina == 46) { ni_binary = 1; }  // AST_XOR (^)
     kama (ni_binary) {
         N32 lhs = mkaguzi_kagua_usemi(ast_kushoto[node]);
         N32 rhs = mkaguzi_kagua_usemi(ast_kulia[node]);
@@ -678,9 +697,36 @@ N32 mkaguzi_kagua_usemi(N32 node) {
         kama (sub_enc != 0 && sub_enc != -1) { kama ((sub_enc / 2) * 2 == sub_enc) { rudisha sub_enc + 1; } rudisha sub_enc; }
         rudisha 1;  // kielekezi cha aina isiyojulikana
     }
-    kama (aina == 28) {  // SI (si)
-        mkaguzi_kagua_usemi(ast_kushoto[node]);
-        rudisha (4 << 8) | 1;  // B1 (boole)
+    kama (aina == 28) {  // SI (!)
+        N32 op = mkaguzi_kagua_usemi(ast_kushoto[node]);
+        // Halisi kamili inarudisha 0 ("aina yoyote") — enc halisi iko
+        // ast_nne. Iisome ili upana wa matokeo usikose (0 - 10000000000
+        // inahitaji upana wa 64; ~0 kwenye N64 vilevile).
+        kama (ast_aina[ast_kushoto[node]] == 4) { op = ast_nne[ast_kushoto[node]]; }
+        // ! kwa desimali haijatekelezwa — kataa kwa sauti badala ya
+        // kutoa jibu la takataka (thamani ya D64 iko xmm0, si eax).
+        kama (ni_desimali_enc(op)) {
+            andika_stderr("kosa [%s]: kiambishi ! hakikubaliki kwa desimali\n", mkaguzi_kazi_sasa);
+            mkaguzi_makosa = mkaguzi_makosa + 1;
+        }
+        // Matokeo ni 1 au 0 kwa aina ya operesheni (kama && na ||)
+        // — si B1, ili ugawaji kwa N32 ufanye kazi.
+        ast_thamani[node] = op;
+        rudisha op;
+    }
+    kama (aina == 47) {  // KINYUME (~)
+        N32 op = mkaguzi_kagua_usemi(ast_kushoto[node]);
+        // Halisi kamili inarudisha 0 ("aina yoyote") — enc halisi iko
+        // ast_nne. Iisome ili upana wa matokeo usikose.
+        kama (ast_aina[ast_kushoto[node]] == 4) { op = ast_nne[ast_kushoto[node]]; }
+        // ~ kwa desimali haijatekelezwa — kataa kwa sauti.
+        kama (ni_desimali_enc(op)) {
+            andika_stderr("kosa [%s]: kiambishi ~ hakikubaliki kwa desimali\n", mkaguzi_kazi_sasa);
+            mkaguzi_makosa = mkaguzi_makosa + 1;
+        }
+        // Matokeo yana upana uleule wa operesheni (si B1).
+        ast_thamani[node] = op;
+        rudisha op;
     }
 
     // Halisi ya kamba
