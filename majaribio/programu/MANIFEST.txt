@@ -130,3 +130,4 @@ KATA	jaribio_mende_kata_vunja_ndani_ya_chagua_nje (vunja ndani ya chagua isiyo n
 0	jaribio_mende_safu_miundo_24 (mwendo wa baiti 8 kwa muundo wa baiti 24 uliingiliana kimya)	majaribio/programu/jaribio_mende_safu_miundo_24.swa
 KATA	jaribio_mende_kata_kianzio_usemi (kianzio cha hesabu kilikubaliwa kimya kuhifadhi 0 — sasa kinakataliwa kwa sauti, sawa na mbegu; stage1 pekee)	majaribio/programu/jaribio_mende_kianzio_usemi.swa	stage1	lazima kiwe halisi ya nambari
 KATA	jaribio_mende_kata_tangazo_mbele (tangazo la mbele bila ufafanuzi linakataliwa kwa sauti — mwili tupu { } si tangazo la mbele; stage1 pekee)	majaribio/programu/jaribio_mende_tangazo_mbele.swa	stage1	kazi haijafafanuliwa
+0	jaribio_rafu_wito_mfumo (wito_wa_mfumo wenye hoja 4 ulitengeneza "pop r9" usio na masharti — rafu iliteleza +8 kwa wito na kuharibu vigezo vya ndani; sasa rafu inasawazika kwenye mnyororo wote)	majaribio/programu/jaribio_rafu_wito_mfumo.swa
