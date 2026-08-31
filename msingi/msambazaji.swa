@@ -959,6 +959,17 @@ N32 changanua_primary(Msambazaji* p) {
             p->kosa = 1;
             rudisha -1;
         }
+        // Halisi za radiksi (0x, 0o, 0b) si katika hati 2.3 — hati
+        // inaahidi "mfuatano wa tarakimu" pekee. Kukubali kimya
+        // kunatoa jibu la desimali (0x10 = 10). Kataa kwa sauti.
+        kama (p->sasa.urefu >= 2) {
+            N8 c1 = p->sasa.mwanzo[1];
+            kama (c1 == 120 || c1 == 88 || c1 == 111 || c1 == 79 || c1 == 98 || c1 == 66) {
+                andika_stderr("kosa: halisi za radiksi hazijaungwa mkono\n");
+                p->kosa = 1;
+                rudisha -1;
+            }
+        }
         N32 ni_d = 0;
         N32 k2 = 0;
         wakati (k2 < p->sasa.urefu) {
@@ -968,10 +979,16 @@ N32 changanua_primary(Msambazaji* p) {
         kama (ni_d == 0) {
             N64 v = tokeni_kwa_nambari_n64(p->sasa.mwanzo, p->sasa.urefu);
             sogeza(p);
+            // Ulinganisho wa > 2147483647 ni WENYE ISHARA — thamani za
+            // [2^63, 2^64) zinaonekana hasi na kuanguka kwenye njia ya
+            // N32 (ukataji wa kimya, mov eax, 0xFFFFFFFF). "v < 0"
+            // (ishara) kinakamata [2^63, 2^64) — pamoja viko sawa na
+            // ulinganisho BILA ishara dhidi ya 2^31.
             kama (v > 2147483647) {
                 // N64 halisi: ast_thamani (N32) haiwezi kubeba thamani
                 // kubwa — hifadhi baiti 8 kwenye dimbwi la AST na uweke
-                // ast_tiga=1 kama alama ya N64.
+                // ast_kulia=1 kama alama ya N64 (ast_tiga ni kiungo cha
+                // mnyororo wa hoja kwenye wito — usiguse).
                 N32 off_n = ast_pool_wapi;
                 N8* bv = &v;
                 N32 bvi = 0;
@@ -981,10 +998,26 @@ N32 changanua_primary(Msambazaji* p) {
                 }
                 ast_pool_wapi = off_n + 8;
                 N32 nn = node_mpya(AST_NAMBARI, off_n, -1, -1);
-                ast_tiga[nn] = 1;
+                ast_kulia[nn] = 1;
                 rudisha nn;
             }
-            rudisha node_mpya(AST_NAMBARI, v, -1, -1);
+            sivyo {
+                kama (v < 0) {
+                    // [2^63, 2^64): ishara hasi — bado halisi ya N64.
+                    N32 off_n = ast_pool_wapi;
+                    N8* bv = &v;
+                    N32 bvi = 0;
+                    wakati (bvi < 8) {
+                        ast_pool[off_n + bvi] = bv[bvi];
+                        bvi = bvi + 1;
+                    }
+                    ast_pool_wapi = off_n + 8;
+                    N32 nn = node_mpya(AST_NAMBARI, off_n, -1, -1);
+                    ast_kulia[nn] = 1;
+                    rudisha nn;
+                }
+                rudisha node_mpya(AST_NAMBARI, v, -1, -1);
+            }
         }
         // Desimali halisi (D64): baiti kutoka daraja la C (strtod),
         // zimehifadhiwa kwenye dimbwi la AST (baiti 8) — ast_thamani
