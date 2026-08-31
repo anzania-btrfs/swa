@@ -2092,7 +2092,7 @@ N32 main() {
     pangilia_n32(data, 5);
     kama (data[0] != 1) rudisha 9;
     kama (data[4] != 5) rudisha 10;
-    N64 fd = sys_fungua(\"mstari-jaribio.txt\", 0);
+    N64 fd = sys_fungua(\"mstari-jaribio.txt\", 0, 0);
     kama (fd < 0) rudisha 11;
     N8 bafa[64];
     N64 n = soma_mstari(fd, bafa, 64);
