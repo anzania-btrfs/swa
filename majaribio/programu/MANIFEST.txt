@@ -103,3 +103,16 @@ KATA	jaribio_mende_hakuna_main (programu bila main inakataliwa bila faili — za
 KATA	jaribio_mende_21_lebo_isiyo_halisi (lebo ya usemi/kigezo inakataliwa kwa sauti, kama C — stage1 pekee)	majaribio/programu/jaribio_mende_21_lebo_isiyo_halisi.swa	stage1	lebo ya hali lazima iwe halisi
 0	jaribio_mende_134_kiambishi_si (kiambishi ! kinatoa 1 au 0 — stage1 pekee: mbegu bado inakataa !)	majaribio/programu/jaribio_mende_134_kiambishi_si.swa	stage1
 0	jaribio_mende_135_kiambishi_kinyume (kiambishi ~ kinageuza biti zote — stage1 pekee: mbegu bado inakataa ~)	majaribio/programu/jaribio_mende_135_kiambishi_kinyume.swa	stage1
+3	jaribio_mende_endelea_moja_kwa_moja (endelea kama taarifa ya moja kwa moja ndani ya kwa — zamani kitanzi kisichoisha kwenye uzalishaji)	majaribio/programu/jaribio_mende_endelea_moja_kwa_moja.swa
+3	jaribio_mende_kwa_hali_tupu (kwa yenye hali iliyoachwa = kweli daima — zamani mwili haukutekelezwa kamwe kwenye uzalishaji)	majaribio/programu/jaribio_mende_kwa_hali_tupu.swa
+3	jaribio_mende_kwa_mabano_matupu (kwa (;;) — sehemu zote tatu ni za hiari; vunja ndiyo inayoondoka)	majaribio/programu/jaribio_mende_kwa_mabano_matupu.swa
+1	jaribio_mende_endelea_na_vunja_mwisho (endelea ndani ya kama + vunja mwishoni: lebo ya hatua lazima itolewe hata mnyororo unakatika)	majaribio/programu/jaribio_mende_endelea_na_vunja_mwisho.swa
+3	jaribio_mende_endelea_ndani_ya_wakati (endelea ndani ya wakati inaruka hadi hali — wakati hauna hatua)	majaribio/programu/jaribio_mende_endelea_ndani_ya_wakati.swa
+6	jaribio_mende_endelea_vitanda_vilivyopachikwa (endelea inaruka hadi hatua ya kitanzi cha NDANI kwa kwa iliyopachikwa)	majaribio/programu/jaribio_mende_endelea_vitanda_vilivyopachikwa.swa
+2	jaribio_mende_vunja_ndani_ya_wakati (vunja ndani ya wakati inamaliza kitanzi mara moja)	majaribio/programu/jaribio_mende_vunja_ndani_ya_wakati.swa
+0	jaribio_mende_chagua_bila_mwanguko (UAMIZI 2026-08-31: hakuna mwanguko wa mkono hadi mkono kwenye chagua — kila mkono unamalizika peke yake; mkono tupu haufanyi chochote)	majaribio/programu/jaribio_mende_chagua_bila_mwanguko.swa	stage1
+1	jaribio_mende_chagua_vunja_ndani_ya_kitanzi (vunja ndani ya mkono wa chagua inamaliza KITANZI cha ndani, si chagua)	majaribio/programu/jaribio_mende_chagua_vunja_ndani_ya_kitanzi.swa	stage1
+KATA	jaribio_mende_kata_ongezaji ('++' haipo katika lugha — zamani no-op kimya; sasa inakataliwa kwa sauti — stage1 pekee: mbegu bado inakubali kimya)	majaribio/programu/jaribio_mende_kata_ongezaji.swa	stage1	'++' haitekelezwi
+KATA	jaribio_mende_kata_punguzaji ('--' haipo katika lugha — zamani no-op kimya; sasa inakataliwa kwa sauti — stage1 pekee: mbegu bado inakubali kimya)	majaribio/programu/jaribio_mende_kata_punguzaji.swa	stage1	'--' haitekelezwi
+KATA	jaribio_mende_kata_operanda_iliyopotea (operanda ya kulia iliyopotea inakataliwa kwa sauti — zamani jibu baya la kimya)	majaribio/programu/jaribio_mende_kata_operanda_iliyopotea.swa	stage1	operanda ya kulia haipo
+KATA	jaribio_mende_kata_vunja_ndani_ya_chagua_nje (vunja ndani ya chagua isiyo ndani ya kitanzi inakataliwa na mkaguzi)	majaribio/programu/jaribio_mende_kata_vunja_ndani_ya_chagua_nje.swa	stage1	vunja nje ya kitanzi
