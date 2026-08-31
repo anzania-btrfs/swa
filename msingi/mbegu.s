@@ -177,6 +177,8 @@ msg_muundo_marudio_1: db "Hitilafu: muundo '", 0
 msg_muundo_marudio_2: db "' umeshafafanuliwa", 10, 0
 msg_jina_aina_mbili_1: db "Hitilafu: jina '", 0
 msg_jina_aina_mbili_2: db "' limeshafafanuliwa kama aina nyingine ya ngazi ya juu", 10, 0
+msg_aina_isiyojulikana_1: db "Hitilafu: aina isiyojulikana '", 0
+msg_aina_isiyojulikana_2: db "'", 10, 0
 msg_d64_wito:    db "Hitilafu: hoja za D64 zilizochanganywa na hoja 7-9 hazisaidiwi bado na mbegu — tumia mkusanyaji wa .swa", 10, 0
 msg_mstari_mpya: db 10, 0
 msg_fixup_full:  db "Hitilafu: jedwali la fixup limejaa", 10, 0
@@ -1870,19 +1872,28 @@ changanua_aina:
         je      .is_d64
 
         ; Jaribu aina ya muundo (jina la mtumiaji)
+        ; Muundo lazima UTANGAZWE kabla ya matumizi (utangulizi wa C).
+        ; Jina lisilotangazwa (A32, B1, W64, N128, D80 n.k.) si aina
+        ; yoyote — ni kosa la sauti, si kugawanyika kwa mkusanyaji.
         mov     rdi, [token_pos]
         cmp     dword [token_ty + rdi*4], TOK_NENO
         jne     .unknown
 
-        ; Ni jina la muundo — hifadhi na urudi aina=6
         mov     rsi, [token_text + rdi*8]
         movzx   ecx, word [token_len + rdi*2]
         push    rdi
         call    hifadhi_jina
         pop     rdi
-        mov     [muundo_jina], eax        ; hifadhi kwa matumizi ya baadaye
-        inc     qword [token_pos]          ; tumia jina la muundo
-        mov     eax, 6                     ; aina = muundo
+        mov     r14d, eax                ; ofseti ya jina (r14 imehifadhiwa)
+        mov     edi, r14d
+        call    tafuta_muundo            ; rax = faharisi ya muundo au -1
+        cmp     eax, 0
+        jl      .unknown                 ; haujatangazwa — si aina
+
+        ; Ni jina la muundo lililotangazwa — urudi aina=6
+        mov     [muundo_jina], r14d      ; hifadhi kwa matumizi ya baadaye
+        inc     qword [token_pos]         ; tumia jina la muundo
+        mov     eax, 6                    ; aina = muundo
         xor     ebx, ebx
         jmp     .check_star
 
@@ -1937,6 +1948,26 @@ changanua_aina:
         pop     r13
         pop     r12
         ret
+
+; -------------------------------------------------------
+; kosa_aina_isiyojulikana: kosa la aina isiyojulikana kwa neno
+; la sasa kwenye token_pos — andika ujumbe kamili na toka 1.
+; Inaharibu rax, rcx, rdi, rsi, rdx, r14 (hakuna kurudi).
+; -------------------------------------------------------
+kosa_aina_isiyojulikana:
+        mov     rdi, [token_pos]
+        mov     rsi, [token_text + rdi*8]
+        movzx   ecx, word [token_len + rdi*2]
+        call    hifadhi_jina            ; rax = ofseti ya jina kwenye str_pool
+        mov     r14d, eax
+        lea     rdi, [msg_aina_isiyojulikana_1]
+        call    andika_mfuatano
+        lea     rdi, [str_pool + r14]
+        call    andika_mfuatano
+        lea     rdi, [msg_aina_isiyojulikana_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
 
 ; -------------------------------------------------------
 ; ukubwa_kutoka_aina: rudisha ukubwa wa aina kwa baiti
@@ -2952,7 +2983,7 @@ changanua_taarifa:
         push    qword [token_pos]
         call    changanua_aina
         cmp     eax, 0
-        je      .not_decl_pop
+        je      .angalia_aina_taarifa
 
         ; Tulipata aina! eax = nambari ya aina, ebx = nyota
         mov     r12d, eax               ; hifadhi aina
@@ -3069,6 +3100,21 @@ changanua_taarifa:
         pop     rax
         mov     [token_pos], rax
         jmp     .not_decl
+
+.angalia_aina_taarifa:
+        ; Aina haikujulikana. Neno linalofuatiwa na neno lingine ni
+        ; jaribio la tangazo la aina isiyojulikana (A32, B1, W64,
+        ; N128, D80 n.k.) — kosa la sauti, si kurudi kwenye usemi.
+        ; (Usemi halali hauanzi kwa maneno mawili mfululizo.)
+        mov     rdi, [token_pos]
+        cmp     dword [token_ty + rdi*4], TOK_NENO
+        jne     .not_decl_pop
+        lea     rsi, [rdi + 1]
+        cmp     rsi, [token_count]
+        jae     .not_decl_pop
+        cmp     dword [token_ty + rsi*4], TOK_NENO
+        jne     .not_decl_pop
+        jmp     kosa_aina_isiyojulikana
 
 .not_decl_pop:
         pop     rax                     ; toa token_pos iliyohifadhiwa
@@ -3198,7 +3244,7 @@ changanua_vigezo:
         ; Changanua aina
         call    changanua_aina
         cmp     eax, 0
-        je      .skip_unknown_param
+        je      .angalia_param_aina
 
         ; r15d = aina (msingi)
         ; rbx = nyota
@@ -3254,8 +3300,17 @@ changanua_vigezo:
         mov     r13d, eax
         jmp     .param_check_comma
 
+.angalia_param_aina:
+        ; Aina ya param haijulikani. Neno (D32, A8 n.k.) ni aina
+        ; isiyojulikana — kosa la sauti. Isiyo neno (tarakimu,
+        ; ishara): ruka kama zamani.
+        mov     rdi, [token_pos]
+        cmp     dword [token_ty + rdi*4], TOK_NENO
+        jne     .skip_unknown_param
+        jmp     kosa_aina_isiyojulikana
+
 .skip_unknown_param:
-        ; Aina haijulikani (k.m. jina la muundo) - ruka kigezo hiki
+        ; Aina haijulikani (isiyo neno) - ruka kigezo hiki
         ; token_pos bado iko kwenye jina la aina
         inc     qword [token_pos]       ; ruka jina la aina
         ; Angalia kama kuna nyota
@@ -3904,7 +3959,7 @@ changanua_programu:
         ; Chunguza aina: eax = aina, ebx = idadi ya nyota
         call    changanua_aina
         cmp     eax, 0
-        je      .skip_token             ; haikujulikana, haikutumia tokeni
+        je      .angalia_aina_ngazi     ; haikujulikana, haikutumia tokeni
         cmp     eax, 6
         jae     .skip_token             ; muundo — hatuutegemezi kama kigeu cha ulimwengu
 
@@ -4155,6 +4210,14 @@ changanua_programu:
         call    andika_mfuatano
         mov     edi, 1
         call    sys_exit
+
+.angalia_aina_ngazi:
+        ; Neno la ngazi ya juu lisilojulikana kama aina — kosa la
+        ; sauti lenye jina (si la jumla); usigawanyike kimya.
+        mov     rdi, [token_pos]
+        cmp     dword [token_ty + rdi*4], TOK_NENO
+        jne     .skip_token
+        jmp     kosa_aina_isiyojulikana
 
 .skip_token:
         ; Tokeni isiyojulikana kwenye kiwango cha juu — kosa LAUTI
@@ -4466,6 +4529,14 @@ uzalishaji_tangazo:
         ; Hakuna kianzilishi: hakuna msimbo wa kuhifadhi
         cmp     r13d, -1
         je      .tangazo_mwisho
+        ; Kinga: muundo usiotambulika (id hasi au nje ya jedwali)
+        ; haupaswi kuwapo — ikiwa utatokea, ruka nakala kabla ya
+        ; kutoa msimbo wowote (usisome muundo_ukubwa kwa id hasi).
+        mov     edi, [local_muundo_id + rcx*4]
+        cmp     edi, 0
+        jl      .tangazo_mwisho
+        cmp     edi, [muundo_count]
+        jae     .tangazo_mwisho
         ; Muundo wenye kianzilishi: lea rax, [rbp + disp32]
         mov     al, 0x48
         call    gen_baiti
