@@ -1574,8 +1574,11 @@ N32 main() {
 }
 
 /// K11b: Nambari za heksadesimali (0x), oktali (0o), na binary (0b).
-/// Thamani hazijabadilishwa kwa usahihi na mchanganuzi wa .swa bado,
-/// lakini msomaji unatambua tokeni hizo bila kuanguka.
+/// Hati 2.3 inaahidi "mfuatano wa tarakimu" pekee kwa nambari kamili —
+/// radiksi si lugha, na kuzikubali kimya kama desimali ni jibu baya.
+/// Mnyororo wa .swa (mbegu + uzalishaji) unazikataa kwa sauti; jaribio
+/// hili linajenga stage1 (dereva wa Rust) na kuthibitisha kukataa huko.
+/// (Angalia pia MANIFEST: jaribio_k11b_nambari_za_radiksi ni KATA.)
 #[test]
 fn jaribio_k11b_nambari_za_radiksi() {
     let test_chanzo = "\
@@ -1589,7 +1592,52 @@ N32 main() {
     rudisha 0;
 }
 ";
-    run_k6_test(test_chanzo, 0);
+    // Jenga stage1 kutoka msingi/stage1.swa kupitia dereva wa Rust.
+    let src = std::fs::read_to_string("msingi/stage1.swa")
+        .expect("inapaswa kusoma faili");
+    let mut driver = Driver::new();
+    let ir_module = driver
+        .compile_to_ir(&src, PathBuf::from("msingi/stage1.swa"))
+        .expect("stage1.swa inapaswa kuchanganua na kuteremsha");
+
+    let dir = tempfile::tempdir().expect("inapaswa kuunda saraka ya muda");
+    let obj_path = dir.path().join("stage1.o");
+    let exe_path = dir.path().join("stage1");
+
+    let backend = LlvmBackend::new()
+        .with_opt_level(kande_lib::codegen::llvm::ffi::LLVMCodeGenOptLevel::Less);
+    backend
+        .compile_to_file(&ir_module, &obj_path)
+        .expect("inapaswa kutoa faili la kitu");
+
+    // Unganisha kwa njia ya trampoline ya C (kama run_k6_test).
+    let clang = which_clang().expect("clang inapaswa kupatikana");
+    let trampoline_c = dir.path().join("trampoline.c");
+    std::fs::write(&trampoline_c,
+        "#include <stdio.h>\n#include <stdarg.h>\nint andika(const char* f, ...) { va_list a; va_start(a,f); int r=vfprintf(stdout,f,a); va_end(a); fflush(stdout); return r; }\nint andika_stderr(const char* f, ...) { va_list a; va_start(a,f); int r=vfprintf(stderr,f,a); va_end(a); fflush(stderr); return r; }\nint tekeleza(void* kazi, int argc, void* argv, int ofseti) { int (*f)(int, void*) = (int (*)(int, void*))kazi; return f(argc, (void*)((char**)argv + ofseti)); }\nvoid* anwani_ya_kazi(const char* jina) { extern void* dlsym(void*, const char*); return dlsym((void*)0, jina); }\nlong wito_wa_mfumo(long n, long a1, long a2, long a3, long a4, long a5) { extern long syscall(long, long, long, long, long, long, long); return syscall(n, a1, a2, a3, a4, a5, 0); }\n"
+    ).expect("inapaswa kuandika trampoline.c");
+    let trampoline_o = dir.path().join("trampoline.o");
+    let compile_status = std::process::Command::new(&clang)
+        .arg("-c").arg(&trampoline_c).arg("-o").arg(&trampoline_o)
+        .status().expect("inapaswa kuendesha clang kwa trampoline");
+    assert!(compile_status.success(), "clang inapaswa kukusanya trampoline");
+    let link_status = std::process::Command::new(&clang)
+        .arg(&obj_path).arg(&trampoline_o).arg("-o").arg(&exe_path).arg("-no-pie")
+        .status().expect("inapaswa kuendesha clang");
+    assert!(link_status.success(), "clang inapaswa kuunganisha kwa mafanikio");
+
+    // Endesha stage1 dhidi ya chanzo chenye radiksi — lazima kikataliwe.
+    let test_input = dir.path().join("jaribio.swa");
+    std::fs::write(&test_input, test_chanzo).expect("inapaswa kuandika faili la jaribio");
+    let output = std::process::Command::new(&exe_path)
+        .arg(&test_input)
+        .output()
+        .expect("inapaswa kuendesha binary iliyounganishwa");
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(!output.status.success(),
+        "radiksi lazima zikataliwe kwa sauti (msimbo si 0)\nstderr: {stderr}");
+    assert!(stderr.contains("halisi za radiksi hazijaungwa mkono"),
+        "kosa la radiksi linapaswa kutajwa\nstderr: {stderr}");
 }
 
 /// K11c: Mfuatano wa utorokaji katika herufi (\n, \t, \\\\, \\xNN).
