@@ -1258,6 +1258,11 @@ N32 changanua_usemi_zidisha(Msambazaji* p) {
         kama (op == -1) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_upande(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(op, 0, kushoto, kulia);
     }
 
@@ -1277,7 +1282,33 @@ N32 changanua_usemi_jumlisha(Msambazaji* p) {
         kama (p->sasa.urefu == 1 && neno_ni(&p->sasa, "-")) { op = AST_TOFAUTI; }
         kama (op == -1) { vunja; }
         sogeza(p);
+        // Rekodi ikiwa tokeni inayofuata ni kiendeshi kingine cha +/-
+        // (kwa utambuzi wa '++' na '--' baada ya kujaribu operanda).
+        // KUMBUKA: kianzilishi chenye '&&' kinavunja LLVM ya dereva wa
+        // Rust (phi ya kujizungusha) — tumia kama/ugawaji badala yake.
+        N32 inayofuata_plus = 0;
+        N32 inayofuata_minus = 0;
+        kama (p->sasa.urefu == 1) {
+            kama (neno_ni(&p->sasa, "+")) { inayofuata_plus = 1; }
+            kama (neno_ni(&p->sasa, "-")) { inayofuata_minus = 1; }
+        }
         N32 kulia = changanua_usemi_zidisha(p);
+        kama (kulia == -1) {
+            // '++' na '--' zinaingia hapa: operanda inayofuata haipo, na
+            // tokeni iliyotangulia ni kiendeshi kingine cha +/-, si usemi.
+            // Viendeshaji hivyo HAVIPO kwenye vipimo (2.5) — lazima
+            // vikataliwe kwa sauti, si no-op kimya (zamani 'x++;' ilitengeneza
+            // 'x + (bila operanda)' — jibu baya la kimya).
+            kama (op == AST_JUMLISHA && inayofuata_plus) {
+                andika_stderr("kosa: '++' haitekelezwi; andika 'x = x + 1' badala yake\n");
+            } sivyo { kama (op == AST_TOFAUTI && inayofuata_minus) {
+                    andika_stderr("kosa: '--' haitekelezwi; andika 'x = x - 1' badala yake\n");
+                } sivyo {
+                    andika_stderr("kosa: operanda ya kulia haipo\n");
+                } }
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(op, 0, kushoto, kulia);
     }
 
@@ -1298,6 +1329,11 @@ N32 changanua_usemi_hamisha(Msambazaji* p) {
         kama (op == -1) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_jumlisha(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(op, 0, kushoto, kulia);
     }
 
@@ -1320,6 +1356,11 @@ N32 changanua_usemi_linganisha(Msambazaji* p) {
         kama (op == -1) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_jumlisha(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(op, 0, kushoto, kulia);
     }
 
@@ -1340,6 +1381,11 @@ N32 changanua_usemi_sawa(Msambazaji* p) {
         kama (op == -1) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_linganisha(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(op, 0, kushoto, kulia);
     }
 
@@ -1358,6 +1404,11 @@ N32 changanua_usemi_bit_na(Msambazaji* p) {
         kama (neno_ni(&p->sasa, "&") == 0) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_sawa(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(AST_BIT_NA, 0, kushoto, kulia);
     }
 
@@ -1376,6 +1427,11 @@ N32 changanua_usemi_bit_xor(Msambazaji* p) {
         kama (neno_ni(&p->sasa, "^") == 0) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_bit_na(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(AST_XOR, 0, kushoto, kulia);
     }
 
@@ -1394,6 +1450,11 @@ N32 changanua_usemi_bit_au(Msambazaji* p) {
         kama (neno_ni(&p->sasa, "|") == 0) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_bit_xor(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(AST_BIT_AU, 0, kushoto, kulia);
     }
 
@@ -1412,6 +1473,11 @@ N32 changanua_usemi_na(Msambazaji* p) {
         kama (neno_ni(&p->sasa, "&&") == 0) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_bit_au(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(AST_NA, 0, kushoto, kulia);
     }
 
@@ -1430,6 +1496,11 @@ N32 changanua_usemi_au(Msambazaji* p) {
         kama (neno_ni(&p->sasa, "||") == 0) { vunja; }
         sogeza(p);
         N32 kulia = changanua_usemi_na(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
         kushoto = node_mpya(AST_AU, 0, kushoto, kulia);
     }
 
@@ -1498,6 +1569,11 @@ N32 changanua_usemi_asimilia(Msambazaji* p) {
         sogeza(p);
         // Kujirudia-kulia kwa ushirika wa kulia: a = b = c
         N32 kulia = changanua_usemi_asimilia(p);
+        kama (kulia == -1) {
+            andika_stderr("kosa: operanda ya kulia haipo\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
 
         kama (ni_kiunganishi) {
             // Ondoa sukari: x += y  =>  x = x + y
