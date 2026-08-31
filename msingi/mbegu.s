@@ -2371,55 +2371,93 @@ changanua_kipengele_kimoja:
         ret
 
 ; -------------------------------------------------------
-; utangulizi_wa_ishara: rudisha utangulizi wa ishara
+; utangulizi_wa_ishara: rudisha utangulizi wa ishara (utangulizi wa C)
 ;   edi = msimbo wa ishara
-;   rax = utangulizi (1..5) au 0 ikiwa haijulikani
+;   rax = utangulizi (1..12) au 0 ikiwa haijulikani
+;   Viwango (juu zaidi = inafunga nguvu zaidi):
+;     12  * / %
+;     11  + -
+;     10  << >>
+;      9  < > <= >=
+;      8  == !=
+;      7  &
+;      6  ^
+;      5  |
+;      4  &&
+;      3  ||
+;      1  = (ugawi — chini kabisa, ushirika wa kulia)
+;   Hii ni utangulizi wa C, unaoendana na mnyororo wa .swa
+;   (msambazaji.swa). Kabla ya 2026-08 mbegu ilikuwa na && || & | ^
+;   katika kiwango kimoja na = pamoja na == — mipango miwili
+;   iliyotofautiana na C.
 ; -------------------------------------------------------
 utangulizi_wa_ishara:
         cmp     edi, OP_ZIDISHA
-        je      .prec_6
+        je      .prec_12
         cmp     edi, OP_GAWANYA
-        je      .prec_6
+        je      .prec_12
         cmp     edi, OP_MODULO
-        je      .prec_6
+        je      .prec_12
         cmp     edi, OP_JUMLISHA
-        je      .prec_5
+        je      .prec_11
         cmp     edi, OP_TOA
-        je      .prec_5
+        je      .prec_11
         cmp     edi, OP_HAMISHA_KUSHOTO
-        je      .prec_4
+        je      .prec_10
         cmp     edi, OP_HAMISHA_KULIA
-        je      .prec_4
+        je      .prec_10
         cmp     edi, OP_KIDOGO
-        je      .prec_3
+        je      .prec_9
         cmp     edi, OP_KUBWA
-        je      .prec_3
+        je      .prec_9
         cmp     edi, OP_KIDOGO_SAWA
-        je      .prec_3
+        je      .prec_9
         cmp     edi, OP_KUBWA_SAWA
+        je      .prec_9
+        cmp     edi, OP_SAWA_SAWA
+        je      .prec_8
+        cmp     edi, OP_SIO_SAWA
+        je      .prec_8
+        cmp     edi, OP_NA_BITI
+        je      .prec_7
+        cmp     edi, OP_XOR_BITI
+        je      .prec_6
+        cmp     edi, OP_AU_BITI
+        je      .prec_5
+        cmp     edi, OP_NA
+        je      .prec_4
+        cmp     edi, OP_AU
         je      .prec_3
         cmp     edi, OP_SAWA
-        je      .prec_2
-        cmp     edi, OP_SAWA_SAWA
-        je      .prec_2
-        cmp     edi, OP_SIO_SAWA
-        je      .prec_2
-        cmp     edi, OP_NA
-        je      .prec_1
-        cmp     edi, OP_AU
-        je      .prec_1
-        cmp     edi, OP_NA_BITI
-        je      .prec_1
-        cmp     edi, OP_AU_BITI
-        je      .prec_1
-        cmp     edi, OP_XOR_BITI
         je      .prec_1
         mov     eax, 0
         ret
 ; Viwango vinaanza kutoka 1 kwa sababu changanua_usemi_na_utangulizi
 ; hutumia 0 kama ishara ya "acha kuchunguza" (cmp eax, 0 / je .done).
-; Kwa hiyo && na || zinabaki kwenye 1, chini ya ulinganisho (2),
-; kulinganisha (3), uhamishaji (4), kujumlisha (5), na kuzidisha (6).
+; Ugawi (=) ni kiwango 1 — chini ya kila kitu — kwa ushirika wa kulia
+; (upande wake wa kulia unachanganuliwa kwa kiwango 1, si 2).
+; Ulinganisho (< > <= >=) ni 9, lakini upande wake wa kulia
+; unachanganuliwa kwa kiwango 11 (jumlisha) — mnyororo wa .swa
+; hukataa << >> upande wa kulia wa ulinganisho (mfano: `1 < 2 << 1`
+; ni kosa, si `(1 < 2) << 1`).
+.prec_12:
+        mov     eax, 12
+        ret
+.prec_11:
+        mov     eax, 11
+        ret
+.prec_10:
+        mov     eax, 10
+        ret
+.prec_9:
+        mov     eax, 9
+        ret
+.prec_8:
+        mov     eax, 8
+        ret
+.prec_7:
+        mov     eax, 7
+        ret
 .prec_6:
         mov     eax, 6
         ret
@@ -2431,9 +2469,6 @@ utangulizi_wa_ishara:
         ret
 .prec_3:
         mov     eax, 3
-        ret
-.prec_2:
-        mov     eax, 2
         ret
 .prec_1:
         mov     eax, 1
@@ -2450,6 +2485,8 @@ changanua_usemi_na_utangulizi:
         push    r14
         push    rbx
         push    rdi                     ; hifadhi utangulizi wa chini (min_prec) kwenye stack
+        push    qword 0                 ; bendera: kiwango cha ishara iliyotumiwa mara ya mwisho
+                                        ; (0 = hakuna) — [rsp] = bendera, [rsp+8] = min_prec
 
         call    changanua_kipengele_kimoja
         cmp     eax, -1
@@ -2482,12 +2519,14 @@ changanua_usemi_na_utangulizi:
         jmp     .got_op
 
 .check_swali:
-        ; ?: — uchaguzi (ternary), kwenye kiwango cha juu pekee
+        ; ?: — uchaguzi (ternary), kwenye kiwango cha ugawi na cha juu
+        ; (min_prec <= 2): kiwango 0 = mwanzo/mfuatano wa ternary,
+        ; 1 = upande wa kulia wa =, 2 = tawi la uwongo la ternary.
         cmp     dword [token_ty + rdi*4], TOK_SWALI
         jne     .done
-        mov     r14d, [rsp]             ; utangulizi wa chini
-        cmp     r14d, 0
-        jne     .done
+        mov     r14d, [rsp+8]           ; utangulizi wa chini
+        cmp     r14d, 2
+        jg      .done
         inc     qword [token_pos]       ; tumia ?
 
         ; Changanua upande wa kweli
@@ -2509,10 +2548,13 @@ changanua_usemi_na_utangulizi:
         cmp     eax, 0
         je      .fail
 
-        ; Changanua upande wa uwongo
+        ; Changanua upande wa uwongo kwa kiwango 2 — unaweza kushika
+        ; viendeshaji vyote vya binary (|| hadi * / %) na ternary ya
+        ; ndani, lakini SI ugawi (=) — uoani na mnyororo wa .swa
+        ; (upande wa uwongo wa ternary ni ternary, si ugawi).
         push    r8
         push    r10
-        mov     edi, 0
+        mov     edi, 2
         call    changanua_usemi_na_utangulizi
         mov     r11d, eax               ; nodi ya uwongo
         pop     r10
@@ -2559,19 +2601,42 @@ changanua_usemi_na_utangulizi:
         cmp     eax, 0
         je      .done
         mov     r13d, eax               ; utangulizi wa sasa
-        mov     r14d, [rsp]             ; utangulizi wa chini (kutoka stack)
+        ; Bendera ya ulinganisho: ikiwa ishara iliyotumiwa mara ya
+        ; mwisho ilikuwa ulinganisho (kiwango 9) na hii ni uhamishaji
+        ; (kiwango 10), acha kuchunguza — mnyororo wa .swa hukataa
+        ; << >> baada ya < > <= >= kwenye kiwango kile kile
+        ; (mfano: `1 < 2 << 1` ni kosa la mchanganuzi, si `(1 < 2) << 1`).
+        cmp     dword [rsp], 9
+        jne     .sema_iko_sawa
+        cmp     eax, 10
+        je      .done
+.sema_iko_sawa:
+        mov     r14d, [rsp+8]           ; utangulizi wa chini (kutoka stack)
         cmp     r13d, r14d
         jl      .done
 
         ; Tumia ishara
         inc     qword [token_pos]
+        mov     [rsp], r13d             ; kumbuka kiwango cha ishara iliyotumiwa
 
         push    rbx                     ; hifadhi ishara
         push    r12                     ; hifadhi kushoto
 
-        ; Changanua upande wa kulia kwa utangulizi wa juu
+        ; Changanua upande wa kulia kwa utangulizi wa juu:
+        ;   - ugawi (=) unajirudia kwa kiwango chake (ushirika wa kulia)
+        ;   - ulinganisho (< > <= >=) unachukua kulia kwa kiwango 11
+        ;     (jumlisha) — << >> hazijumuiwi, mwigo wa mnyororo wa .swa
+        ;   - vingine vyote: kiwango + 1 (ushirika wa kushoto)
         mov     edi, r13d
+        cmp     edi, 9
+        je      .kulia_linganisho
+        cmp     edi, 1
+        je      .kulia_endelea          ; edi = 1 tayari (kiwango cha =)
         inc     edi
+        jmp     .kulia_endelea
+.kulia_linganisho:
+        mov     edi, 11
+.kulia_endelea:
         call    changanua_usemi_na_utangulizi
         mov     r10d, eax               ; kulia
         pop     r9                      ; kushoto
@@ -2595,6 +2660,7 @@ changanua_usemi_na_utangulizi:
 
 .done:
         mov     eax, r12d
+        add     rsp, 8                  ; toa nafasi ya bendera
         pop     rdi
         pop     rbx
         pop     r14
@@ -2603,6 +2669,7 @@ changanua_usemi_na_utangulizi:
         ret
 .fail:
         mov     eax, -1
+        add     rsp, 8                  ; toa nafasi ya bendera
         pop     rdi
         pop     rbx
         pop     r14
