@@ -970,7 +970,11 @@ N32 aina_ya_usemi(N32 node) {
         N8* jina = ast_pool + ast_jina_off[ast_kushoto[node]];
         N32 j = 0;
         wakati (j < kazi_ret_idadi) {
-            kama (jina_linganisha(kazi_ret_pool + kazi_ret_jina_off[j], jina)) { rudisha kazi_ret_aina[j]; }
+            // TAHADHARI: mkaguzi huandika majina kwenye kazi_jina_pool
+            // (ofseti ziko kazi_ret_jina_off) — kazi_ret_pool haijawahi
+            // kujazwa, hivyo ulinganisho ungekosa na aina ya kurudi
+            // ya wito ingebaki 0 (jibu baya la `rudisha f()`).
+            kama (jina_linganisha(kazi_jina_pool + kazi_ret_jina_off[j], jina)) { rudisha kazi_ret_aina[j]; }
             j = j + 1;
         }
     }
@@ -992,7 +996,22 @@ W0 badili_mpaka_wa_desimali(N32 node, N32 enc_lengwa) {
     }
     // Lengwa ni desimali: badilisha nambari kamili hadi xmm0
     kama (ni_desimali_enc(enc_lengwa)) {
-        kama (ni_desimali_enc(enc)) { rudisha; }  // tayari iko xmm0
+        kama (ni_desimali_enc(enc)) {
+            // Desimali kwa desimali: upana ukitofautiana (D32/D64),
+            // badilisha kupitia cvtsd2ss/cvtss2sd. Hapo awali ilirudi
+            // kimya na D32 ilibaki na thamani ya D64 — jibu baya.
+            N32 saizi_l2 = ukubwa_kutoka_enc(enc_lengwa);
+            N32 saizi_e2 = ukubwa_kutoka_enc(enc);
+            kama (saizi_l2 == saizi_e2) { rudisha; }  // tayari iko xmm0
+            kama (saizi_l2 >= 8) {
+                // cvtss2sd xmm0, xmm0 (F3 0F 5A C0) — D32 hadi D64
+                andika_baiti(243); andika_baiti(15); andika_baiti(90); andika_baiti(192);
+            } sivyo {
+                // cvtsd2ss xmm0, xmm0 (F2 0F 5A C0) — D64 hadi D32
+                andika_baiti(242); andika_baiti(15); andika_baiti(90); andika_baiti(192);
+            }
+            rudisha;
+        }
         N32 familia = (enc / 256) % 256;
         N32 ni_kamili = 0;
         kama (familia == 1) { ni_kamili = 1; }
@@ -1863,6 +1882,8 @@ N32 var_kwa_rejea[64];  // 1 = paramu ya muundo inayopitishwa kwa rejea
 N32 wito_buf_off = 0;  // ofseti ya rbp kwa bafa ya nakala za miundo ya wito
 N32 wito_buf_max = 0;  // ukubwa wa bafa (uliokokotolewa na kipitishi awali)
 N32 wito_buf_haja = 0;  // juu ya haja ya nakala kwenye wito wa sasa (wakati wa kipitishi)
+N32 wito_sret_haja = 0;  // 1 ikiwa kazi ya sasa inaita kazi inayorudisha muundo
+N32 uzalishaji_mzizi = 0;  // mzizi wa AST (kwa utafutaji wa kazi za ndani)
 
 // -------------------------------------------------------
 // Usimamizi wa alama za nje (kazi za maktaba kama printf)
@@ -2520,8 +2541,9 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
                 // Vuta thamani ya desimali moja kwa moja kwenye rejesta
                 // sahihi ya XMM: movsd/movss xmmN, [rsp]; add rsp, 8
                 // (pop_xmm0 + movapd ilikuwa ikiharibu xmm0 ya hoja ya kwanza)
-                N32 familia = (enc >> 8) & 255;
-                kama (familia == 2) {
+                // Upana wa D32 ni baiti 4 (movss); D64 ni baiti 8 (movsd).
+                N32 saizi_h = ukubwa_kutoka_enc(enc);
+                kama (saizi_h < 8) {
                     // movss xmmN, [rsp] (F3 0F 10 /r)
                     andika_baiti(243); andika_baiti(15); andika_baiti(16);
                 } sivyo {
@@ -3049,8 +3071,9 @@ W0 uzalishaji_cmp_kwa_enc(N32 enc) {
 // Kisaidizi cha kusukuma thamani kwenye rafu (int, D32, au D64)
 W0 sukuma_thamani(N32 enc) {
     kama (ni_desimali_enc(enc)) {
-        N32 familia = (enc >> 8) & 255;
-        kama (familia == 2) { andika_push_xmm0_d32(); }
+        // D32 ni baiti 4 (movss); D64 ni baiti 8 (movsd)
+        N32 saizi_s = ukubwa_kutoka_enc(enc);
+        kama (saizi_s < 8) { andika_push_xmm0_d32(); }
         sivyo { andika_push_xmm0_d64(); }
     }
     sivyo { andika_push_rax(); }
@@ -3059,8 +3082,8 @@ W0 sukuma_thamani(N32 enc) {
 // Kisaidizi cha kuvuta thamani kutoka rafu → rejesta ya pili (int, D32, au D64)
 W0 vuta_thamani_rcx(N32 enc) {
     kama (ni_desimali_enc(enc)) {
-        N32 familia = (enc >> 8) & 255;
-        kama (familia == 2) { andika_pop_xmm1_d32(); }
+        N32 saizi_v = ukubwa_kutoka_enc(enc);
+        kama (saizi_v < 8) { andika_pop_xmm1_d32(); }
         sivyo { andika_pop_xmm1_d64(); }
     }
     sivyo { andika_pop_rcx(); }
@@ -4074,6 +4097,25 @@ N32 pakia_kigezo_ikiwa_ni_paramu(N32 node, N8* jina, N32 kazi_node) {
     }
     rudisha 0;
 }
+// Tafuta enc ya kurudi ya kazi ya ndani kwa jina (kupitia AST).
+// Inatumiwa na kipitishi cha awali kuamua ikiwa wito unahitaji
+// bafa ya sret — kazi zote zinajulikana, hata za mbele.
+N32 kazi_ret_enc_kwa_jina(N8* jina) {
+    N32 gn = ast_kushoto[uzalishaji_mzizi];
+    wakati (gn != -1) {
+        kama (ast_aina[gn] == 2) {  // AST_KAZI
+            N32 name_n = ast_kushoto[gn];
+            kama (name_n != -1) {
+                kama (jina_linganisha(ast_pool + ast_jina_off[name_n], jina)) {
+                    rudisha ast_thamani[gn];
+                }
+            }
+        }
+        gn = ast_nne[gn];
+    }
+    rudisha 0;
+}
+
 // -------------------------------------------------------
 // Kipitishi cha awali: kusanya vigeu vyote vya ndani
 // ili kuepuka alloca-in-loop — hoji yote kwenye utangulizi
@@ -4110,6 +4152,11 @@ W0 kusanya_vigeu_vya_ndani(N32 node) {
         kama (ast_tiga[node] > 0) { sz = sz * ast_tiga[node]; }
         // Sajiri kigeu mapema (kabla ya kutoa utangulizi)
         pata_au_unda_kigeu_ukubwa(jina, sz, enc);
+        // Tembelea kianzio: wito wa sret na hoja za miundo vinaweza
+        // kuwemo (mf. `Msambazaji p = msambazaji_mpya(...)`). Bila hii,
+        // bafa za sret/wito za kazi zisizo na vianzio katika mwili
+        // zingekosa — poromoko la rafu kwa sret.
+        kusanya_vigeu_vya_ndani(ast_kulia[node]);
         // Tembelea ndugu (mfululizo wa matangazo kwenye block) —
         // vinginevyo matangazo yaliyofuata yangesajiliwa baada ya
         // bafa ya sret kupata ofseti za juu (>= 256).
@@ -4128,6 +4175,22 @@ W0 kusanya_vigeu_vya_ndani(N32 node) {
             a_w = ast_tiga[a_w];
         }
         kama (cum_w > wito_buf_haja) { wito_buf_haja = cum_w; }
+        // Bafa ya sret inahitajika tu kama wito wowote unalenga kazi
+        // inayorudisha muundo (kielekezi cha sret hutumia bafa ya
+        // MPIGAJI). Bila hii, kila fremu ingetumia baiti 256 bure —
+        // kurudia kirefu kungeanguka rafu mapema.
+        kama (wito_sret_haja == 0) {
+            N32 cn = ast_kushoto[node];
+            kama (cn != -1) {
+                kama (ast_aina[cn] == 5) {  // KITAMBULISHO — jina la kazi
+                    N32 cre = kazi_ret_enc_kwa_jina(ast_pool + ast_jina_off[cn]);
+                    kama (cre != 0) {
+                        kama ((cre / 256) % 256 == 6) { wito_sret_haja = 1; }
+                        kama (cre < 0 && (cre / 2) * 2 == cre) { wito_sret_haja = 1; }
+                    }
+                }
+            }
+        }
     }
 
     // Tembelea watoto kwa kujirudia
@@ -4263,17 +4326,21 @@ W0 uzalishaji_kazi(N32 kazi_node) {
     kvn_gen = kvn_gen + 1;
     kvn_idadi = 0;
     wito_buf_haja = 0;
+    wito_sret_haja = 0;
     N32 body = ast_tiga[kazi_node];
     kama (body != -1) { kusanya_vigeu_vya_ndani(body); }
-    // Tenga bafa ya muda ya sret MWISHONI mwa fremu (baada ya vigeu vyote)
-    // Hii inaizuia kusukuma vigeu vya ndani nje ya upeo wa disp8
-    sret_buf_max = 256;
+    // Tenga bafa ya muda ya sret MWISHONI mwa fremu (baada ya vigeu vyote).
+    // Inahitajika tu kama kazi hii inarudisha muundo (wenyewe) au inaita
+    // kazi inayorudisha muundo — vinginevyo fremu yote ya 256B ni taka na
+    // kurudia kirefu (kina 100,000) kungeanguka kwa rafu ndogo. Hii
+    // inaizuia pia kusukuma vigeu vya ndani nje ya upeo wa disp8.
+    sret_buf_max = 0;
+    kama (sret_inafanya || wito_sret_haja) { sret_buf_max = 256; }
     sret_buf_off = var_stack_idadi + sret_buf_max;
     var_stack_idadi = var_stack_idadi + sret_buf_max;
     // Bafa ya nakala za miundo kwa hoja kwa thamani (ukubwa kutoka
-    // kipitishi awali; upeo wa chini wa baiti 32)
+    // kipitishi awali; sifuri kama hakuna nakala — usipoteze rafu)
     wito_buf_max = wito_buf_haja;
-    kama (wito_buf_max < 32) { wito_buf_max = 32; }
     wito_buf_off = var_stack_idadi + wito_buf_max;
     var_stack_idadi = var_stack_idadi + wito_buf_max;
     // Toa utangulizi na ukubwa kamili wa rafu
@@ -4296,10 +4363,12 @@ W0 uzalishaji_kazi(N32 kazi_node) {
         N32 off = param_off[pi];
         kama (ni_desimali_enc(enc)) {
             kama (xmm_idx < 8) {
-                N32 familia = (enc >> 8) & 255;
-                kama (familia == 2) {  // D32 (float)
+                // D32 ni upana wa baiti 4 (movss); D64 ni baiti 8 (movsd).
+                // Familia zote mbili ni 3 (D) — upana ndio hutofautisha.
+                N32 saizi_p = ukubwa_kutoka_enc(enc);
+                kama (saizi_p < 8) {  // D32 (float)
                     andika_movss_rbp_off_xmm(xmm_idx, off);
-                } sivyo {  // D64 (double) — familia == 3
+                } sivyo {  // D64 (double)
                     andika_movsd_rbp_off_xmm(xmm_idx, off);
                 }
                 xmm_idx = xmm_idx + 1;
@@ -4563,10 +4632,54 @@ W0 hakiki_marudio_ya_ngazi_ya_juu(N32 mzizi) {
 }
 
 // -------------------------------------------------------
+// Badilisha biti za D64 (double) hadi biti za D32 (float) —
+// IEEE 754, kwa kuzungusha karibu-sawa (round-to-nearest-even).
+// Hufanya kazi kwa sifuri, thamani za kawaida, na kufurika (inf);
+// D64 subnormal na NaN huhifadhiwa kama sifuri/inf mtawalia.
+// Inatumiwa na vianzio vya ulimwengu wa D32 (baiti 8 → 4).
+// -------------------------------------------------------
+N32 d64_bits_hadi_d32(N64 d64) {
+    N64 alama = d64 & 9223372036854775808;  // biti 63 (2^63)
+    N64 kielelezo = (d64 >> 52) & 2047;      // biti 52-62
+    N64 kiga = d64 & 4503599627370495;       // biti 0-51 (2^52 - 1)
+    kama (kielelezo == 2047) {
+        // inf/NaN → inf (D32 haina NaN sahili)
+        rudisha 2139095040 + (alama != 0) * 2147483648;
+    }
+    kama (kielelezo == 0) {
+        // D64 sifuri au subnormal — chini ya uwezo wa D32; zungusha hadi sifuri
+        rudisha 0;
+    }
+    // e32 = kielelezo - 1023 + 127 = kielelezo - 896
+    N64 e32 = kielelezo - 896;
+    kama (e32 >= 255) {
+        // kufurika kwa kielelezo → inf
+        rudisha 2139095040 + (alama != 0) * 2147483648;
+    }
+    kama (e32 <= 0) {
+        // < 2^-126 → sifuri (subnormal ya D32 haijatengenezwa)
+        rudisha 0;
+    }
+    // Kigawanyo: biti 52 hadi 23 (ondoa 29), kisha zungusha
+    N64 kiga32 = kiga >> 29;
+    N64 salio = kiga & 536870911;  // biti 29 za chini (2^29 - 1)
+    N64 nusu = 268435456;          // 2^28
+    kama (salio > nusu) { kiga32 = kiga32 + 1; }
+    sivyo { kama (salio == nusu && (kiga32 & 1) == 1) { kiga32 = kiga32 + 1; } }
+    kama (kiga32 >= 8388608) { kiga32 = 0; e32 = e32 + 1; }  // kufurika → pandisha
+    kama (e32 >= 255) {
+        rudisha 2139095040 + (alama != 0) * 2147483648;
+    }
+    rudisha (alama != 0) * 2147483648 + (e32 << 23) + kiga32;
+}
+
+// -------------------------------------------------------
 // Kiingilio kikuu — toa ELF .o kwa AST nzima
 // -------------------------------------------------------
 
 W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
+    // Hifadhi mzizi kwa kipitishi cha awali (utafutaji wa kazi za ndani)
+    uzalishaji_mzizi = mzizi;
     // Bafa la muda la hali ya exe: stub ya _start (baiti 26) na
     // kichwa+phdr (baiti 120) — tangazo la kwanza (mbegu huhitaji
     // safu za ndani mwanzoni mwa kazi).
@@ -4648,10 +4761,10 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
                 data_ulimwengu_off[data_ulimwengu_idadi] = bafa_data_wapi;
                 N32 init_node = ast_kulia[gn];
                 kama (ni_desimali_enc(ast_thamani[gn])) {
-                    // D64 ya ulimwengu: kianzio lazima kiwe halisi ya desimali
-                    // (baiti 8 ziko kwenye dimbwi la AST) — vinginevyo baiti
-                    // za thamani ya kamili zingeandikwa kama desimali (jibu
-                    // baya). Kataa kwa sauti.
+                    // Ulimwengu wa desimali: kianzio lazima kiwe halisi ya
+                    // desimali (baiti ziko kwenye dimbwi la AST) — vinginevyo
+                    // baiti za thamani ya kamili zingeandikwa kama desimali
+                    // (jibu baya). Kataa kwa sauti.
                     kama (init_node == -1) {
                         andika_stderr("Hitilafu: kianzio cha ulimwengu wa D64 lazima kiwe halisi ya desimali\n");
                         wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
@@ -4662,12 +4775,35 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
                     }
                     N32 off8 = ast_thamani[init_node];
                     N32 k = 0;
-                    wakati (k < 8) {
-                        kama (bafa_data_wapi < 262144) {
-                            bafa_data[bafa_data_wapi] = ast_pool[off8 + k];
-                            bafa_data_wapi = bafa_data_wapi + 1;
+                    // D32 inahitaji baiti 4 za FLOAT, si 8 za double —
+                    // vinginevyo nusu ya kwanza ya double (sifuri kwa
+                    // thamani chanya) ingeandikwa na jibu likawa 0.
+                    kama (sz_elem >= 8) {
+                        wakati (k < 8) {
+                            kama (bafa_data_wapi < 262144) {
+                                bafa_data[bafa_data_wapi] = ast_pool[off8 + k];
+                                bafa_data_wapi = bafa_data_wapi + 1;
+                            }
+                            k = k + 1;
                         }
-                        k = k + 1;
+                    } sivyo {
+                        N64 bits64 = 0;
+                        wakati (k < 8) {
+                            // N64 baiti: hamisha ya 64-bit (shl rax, cl) —
+                            // N32 ingekata kwa mod 32
+                            N64 baiti = ast_pool[off8 + k];
+                            bits64 = bits64 + (baiti << (k * 8));
+                            k = k + 1;
+                        }
+                        N32 bits32 = d64_bits_hadi_d32(bits64);
+                        k = 0;
+                        wakati (k < 4) {
+                            kama (bafa_data_wapi < 262144) {
+                                bafa_data[bafa_data_wapi] = (bits32 >> (k * 8)) & 255;
+                                bafa_data_wapi = bafa_data_wapi + 1;
+                            }
+                            k = k + 1;
+                        }
                     }
                 } sivyo { kama (init_node != -1 && ast_aina[init_node] == 4 && ast_tiga[init_node] == 1) {
                     // N64 halisi: ast_thamani ni ofseti ya dimbwi, si thamani.
@@ -4819,6 +4955,12 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
     // jedwali la vigeu vya ndani lina ukomo wa 64.
     // ==================================================
     kama (hali_exe) {
+        // main haipo: wito wa _start ungeenda anwani 0 na binary
+        // ingeanguka. Kataa kwa sauti bila kutoa faili — sawa na mbegu.
+        kama (main_off == 0) {
+            andika_stderr("Hitilafu: kazi 'main' haipo — hakuna kiingilio cha programu\n");
+            wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+        }
         // Utoaji wa exe uko kwenye kazi yake — jedwali la vigeu vya
         // ndani la mbegu halina nafasi zaidi hapa.
         uzalishaji_exe(text_size, data_size, bss_size, main_off);
