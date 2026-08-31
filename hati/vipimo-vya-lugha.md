@@ -104,6 +104,16 @@ Kilichopimwa (2026-08-31): mnyororo wa uzalishaji sasa unatekeleza
 viendeshaji vya kiwanja `&= |= ^= <<= >>=` (pamoja na N64). `!`
 na `~` kwa operesheni ya D64 zinakataliwa kwa sauti. Mbegu bado
 inakataa `^`, `!`, `~`, na viendeshaji hivyo vya kiwanja.
+Kilichopimwa (2026-08-31): `++` na `--` HAVIPO katika lugha —
+vipimo vya awali havikuwahi kuviahidi. Mnyororo wa uzalishaji
+unavikataa kwa sauti ("kosa: '++' haitekelezwi; andika
+'x = x + 1' badala yake"); zamani vilikubaliwa kimya kama no-op
+(jibu baya la kimya: `x++;` ilirudisha thamani isiyobadilika).
+Operanda ya kulia iliyopotea kwenye kiendeshi chochote binari
+(mf. `x = x + ;`) pia inakataliwa kwa sauti na mchanganuzi
+("operanda ya kulia haipo"). Majaribio:
+jaribio_mende_kata_ongezaji, jaribio_mende_kata_punguzaji,
+jaribio_mende_kata_operanda_iliyopotea.
 
 ## 3. Aina
 
@@ -257,15 +267,22 @@ wakati (sharti) { ... }
 kwa (kianzilishi; sharti; hatua) { ... }
 ```
 
-Sehemu zote tatu ni za hiari. **Semantiki ya `endelea`:** inaruka
-kwenye HATUA (ya tatu), si kwenye sharti — semantiki ya C, katika
-mbegu NA mnyororo wa .swa (uliowiana 2026-08; angalia mipaka.md 4b).
+Sehemu zote tatu ni za hiari; hali iliyoachwa wazi ina maana KWELI
+DAIMA — `kwa (i = 0; ; i = i + 1)` na `kwa (;;)` ni vitanzi
+visivyoisha hadi `vunja` au `rudisha` (semantiki ya C).
+**Semantiki ya `endelea`:** inaruka kwenye HATUA (ya tatu), si
+kwenye sharti — semantiki ya C, katika mbegu NA mnyororo wa .swa
+(uliowiana 2026-08; angalia mipaka.md 4b).
 
-Kilichopimwa (2026-08-27): `endelea` kama TAARIFA YA MWISHO ya
-mwili wa `kwa` inavunja mnyororo wa uzalishaji — taarifa zote baada
-ya kitanzi hazitekelezwi kamwe (jibu baya la kimya); mbegu ni
-sahihi. Kesi hii ni kando ya majaribio ya kurejesha yaliyopo;
-angalia hati/uthibitisho-wa-lugha.md 4.2.
+Kilichopimwa (2026-08-31): `endelea` kama taarifa ya MOJA KWA MOJA
+ndani ya mwili wa `kwa` (pamoja na taarifa ya mwisho) imefungwa
+kwenye mnyororo wa uzalishaji. Zamani mnyororo ulikwama kwenye
+`endelea` wa mwisho (kitanzi kisichoisha, msimbo wa kutoka 124 —
+kosa lililoelezwa kwenye hati/uthibitisho-wa-lugha.md 4.2 namba
+16), na hali iliyoachwa ilichukuliwa kama uongo (mwili haukutekelezwa
+kamwe). Majaribio: jaribio_mende_endelea_moja_kwa_moja,
+jaribio_mende_kwa_hali_tupu, jaribio_mende_kwa_mabano_matupu,
+jaribio_mende_endelea_na_vunja_mwisho.
 
 ### 6.6 Chagua (switch)
 
@@ -290,6 +307,23 @@ lebo hasi na lebo za N64 kwa usahihi (kwa upana wa selecta); lebo
 za usemi au kigezo zinakataliwa kwa sauti na mkaguzi ("lebo ya
 hali lazima iwe halisi ya nambari"). Mbegu bado inakataa `chagua`
 kwa muundo.
+
+Kilichopimwa (2026-08-31) — UAMIZI WA KIMUUNDO: HAKUNA mwanguko
+wa mkono hadi mkono (fall-through) kwenye `chagua`. Kila mkono wa
+`hali` unamalizika peke yake kwa kuruka hadi mwisho wa `chagua`
+(sawa na `vunja` ya kimya ya C); mkono usio na taarifa yoyote
+haufanyi chochote; mkono wa `sivyo` (chaguo-msingi) unatekelezwa
+ikiwa hali ZOTE hazikulingana. `vunja` ndani ya mkono wa `chagua`
+inamaliza KITANZI cha ndani kabisa (wakati au kwa — semantiki ya
+6.7), si `chagua` chenyewe; `vunja` ndani ya `chagua` isiyo ndani
+ya kitanzi inakataliwa na mkaguzi kwa sauti. Sababu: vipimo vya
+awali havikutaja mwanguko wowote; mwanguko wa C ni chanzo cha
+makosa ya kawaida; na lugha hii haina njia ya kusimamisha mkono
+moja kwa moja (`vunja` ni ya vitanzi pekee) — kukubali mwanguko
+bila njia ya kuusimamisha kungeacha tabia isiyo na udhibiti.
+Majaribio: jaribio_mende_chagua_bila_mwanguko,
+jaribio_mende_chagua_vunja_ndani_ya_kitanzi,
+jaribio_mende_kata_vunja_ndani_ya_chagua_nje.
 
 ### 6.7 Vunja na endelea
 
