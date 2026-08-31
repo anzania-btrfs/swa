@@ -9190,16 +9190,40 @@ uzalishaji_wambile:
         call    gen_baiti
         mov     al, 0xCA
         call    gen_baiti
-        ; pop r9 — 41 59 (hoja ya 7: ofseti, daima 0 kwenye maktaba)
+        ; pop r9 — 41 59 (hoja ya 7: ofseti, daima 0 kwenye maktaba).
+        ; KWA MASHARTI: r9 inatolewa tu wakati hoja ya 7 ipo (r15d >= 7).
+        ; Awali ilitolewa bila masharti — kwa wito wenye hoja < 7, rafu
+        ; iliteleza +8 kwa kila wito na push zilizofuata ziliandika
+        ; kwenye sloti za vigezo vya ndani (uharibifu wa rafu).
+        cmp     r15d, 7
+        jl      .syscall_hoja7_hamna
         mov     al, 0x41
         call    gen_baiti
         mov     al, 0x59
         call    gen_baiti
+.syscall_hoja7_hamna:
         ; syscall — 0F 05
         mov     al, 0x0F
         call    gen_baiti
         mov     al, 0x05
         call    gen_baiti
+        ; Safisha hoja 8+ zilizobaki kwenye rafu (add rsp, (r15d-7)*8).
+        ; .do_call ilisukuma a7 juu — pop r9 tayari imeondoa a7, kwa
+        ; hivyo a8..aN (N-7 maneno) zinaondolewa hapa.
+        cmp     r15d, 8
+        jl      .syscall_rafu_safi
+        ; add rsp, imm32 = 48 81 C4 + (r15d - 7) * 8
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x81
+        call    gen_baiti
+        mov     al, 0xC4
+        call    gen_baiti
+        mov     edi, r15d
+        sub     edi, 7
+        imul    edi, 8
+        call    gen_neno4
+.syscall_rafu_safi:
         jmp     .baada_ya_wito
 .sio_builtin_syscall:
         ; Builtin ya tekeleza — ita bafa ya JIT kama kazi N32(N32, N8**).
