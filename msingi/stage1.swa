@@ -108,8 +108,14 @@ N32 main(N32 argc, N8** argv) {
 
 
     // 2. Ukaguzi wa kisemantiki
+    // Makosa ya aina ni ya kufa: programu iliyokataliwa haipaswi
+    // kutoa msimbo wowote. Kosa lolote la mkaguzi linazuia mkusanyaji
+    // (ona hati/uthibitisho-wa-lugha.md, kipengele J10).
     N32 makosa = mkaguzi_angalia(mzizi);
-    kama (makosa != 0) { andika_stderr("; ONYO: makosa %d, inaendelea\n", makosa); }
+    kama (makosa != 0) {
+        andika_stderr("Hitilafu: makosa %d ya aina yalipatikana; hakuna msimbo uliotolewa\n", makosa);
+        rudisha 1;
+    }
 
     // 3. Teremsha AST hadi IR (uthibitishaji wa muundo)
     Mteremshi t;
