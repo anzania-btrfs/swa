@@ -1517,6 +1517,17 @@ N32 changanua_bloku(Msambazaji* p) {
 }
 
 N32 changanua_taarifa(Msambazaji* p) {
+    // 'sivyo' bila 'kama' iliyotangulia ni kosa la mchanganuzi.
+    // Hapo awali ilipita kama kitambulisho (msimbo wenye maana ya
+    // takataka) au kutoa kosa lisilo sahihi la kianzilishi cha safu.
+    // Kataa kwa sauti — 'sivyo' inakubalika tu ndani ya changanua_kama.
+    kama (p->sasa.urefu >= 2 && p->sasa.mwanzo[0] >= 97) {
+        kama (neno_ni(&p->sasa, "sivyo")) {
+            andika_stderr("kosa: 'sivyo' inahitaji 'kama' kabla yake\n");
+            p->kosa = 1;
+            rudisha -1;
+        }
+    }
     // ndani kupitia kisaidizi
     N32 r_ndani = changanua_taarifa_ndani(p);
     kama (r_ndani != -1) { rudisha r_ndani; }
