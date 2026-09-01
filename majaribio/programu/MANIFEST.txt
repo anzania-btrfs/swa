@@ -137,3 +137,4 @@ KATA	jaribio_mende_kipengele_cha_muundo (viungwa visivyojulikana vya muundo wa a
 KATA	jaribio_mende_ugawaji_wito (ugawaji unahitaji kihifadhi; matokeo ya wito si lvalue — zamani pata() = 7 ilikubaliwa kimya kama no-op; mbegu inakataa kwa "uwekaji usiotumika"; stage1 pekee)	majaribio/programu/jaribio_mende_ugawaji_wito.swa	stage1	unahitaji kihifadhi
 KATA	jaribio_mende_ugawaji_ternary (ugawaji unahitaji kihifadhi; matokeo ya ternary si lvalue — zamani x ? y : z = 5 ilikubaliwa kimya kama no-op; stage1 pekee)	majaribio/programu/jaribio_mende_ugawaji_ternary.swa	stage1	unahitaji kihifadhi
 0	jaribio_k16_mbumo_asilimia (%% inachapisha asilimia halisi kwenye mnyororo wa uzalishaji; mbegu ya zamani bado inaimeza — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_k16_mbumo_asilimia.swa
+0	jaribio_husisha_hu (mistari ya "hu" haifutwi; maelekezo kamili ya husisha ndiyo pekee yanayoondolewa)	majaribio/programu/jaribio_husisha_hu.swa
