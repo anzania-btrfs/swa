@@ -20,7 +20,11 @@ N64 ukubwa(N32 aina) {
 
 N8* tenga(N64 ukubwa) {
     kama (arena_anwani == 0) {
-        arena_anwani = sys_mmap(0, 1048576, 3, 34, 0 - 1);
+        // Anwani sifuri = "popote" (kama mmap(NULL, ...) ya C).
+        // Halisi 0 kwa kigezo cha kielekezi inakataliwa na ukaguzi
+        // wa 2026-09-01 — tumia kielekezi cha sifuri wazi.
+        N8* anwani_sifuri = 0;
+        arena_anwani = sys_mmap(anwani_sifuri, 1048576, 3, 34, 0 - 1);
         kama (arena_anwani == 0 - 1) { rudisha 0; }
     }
     kama (ukubwa == 0) { ukubwa = 8; }

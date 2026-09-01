@@ -44,12 +44,12 @@ N64 sys_andika(N32 faili, N8* bafa, N64 urefu) {
     rudisha wito_wa_mfumo(1, faili, bafa, urefu, 0, 0, 0);
 }
 
-N64 sys_fungua(N8* njia, N64 bendera, N64 hali) {
+N64 sys_fungua(N8* njia, N64 bendera, N64 ruhusa) {
     // Hoja ya 3 (hali) ni ruhusa za faili linaloundwa (mode) — kernel
     // inaitumia tu wakati O_CREAT iko kwenye bendera, vinginevyo
     // inapuuzwa. Awali ilipitishwa kama 0, hivyo faili zilizoundwa
     // na O_CREAT zilipata ruhusa 0000 (hazikufunguka kwa usomaji).
-    rudisha wito_wa_mfumo(2, njia, bendera, hali, 0, 0, 0);
+    rudisha wito_wa_mfumo(2, njia, bendera, ruhusa, 0, 0, 0);
 }
 
 N64 sys_funga(N32 faili) {
@@ -183,6 +183,15 @@ W0 andika_heksa(N32 faili, N64 v) {
     }
 }
 
+// Kielekezi kutoka hoja ya N64: mkia wa andika (a1..a6) hupita kwa
+// rejesta za N64 kwa ABI, iwe thamani au kielekezi. %s huhitaji
+// kielekezi — ubadilishaji wazi (ukaguzi wa hoja unakataa N64 kwa
+// kigezo cha N8* tangu 2026-09-01).
+N8* kielekezi_kutoka_hoja(N64 v) {
+    N8* p = v;
+    rudisha p;
+}
+
 W0 andika_ndani(N32 faili, N8* f, N64 a1, N64 a2, N64 a3, N64 a4, N64 a5, N64 a6) {
     N32 p = 0;  // mfuatano hauna nukuu (kumbukumbu hutoa bila nukuu)
     N32 na = 0;  // faharisi ya hoja inayofuata
@@ -206,7 +215,7 @@ W0 andika_ndani(N32 faili, N8* f, N64 a1, N64 a2, N64 a3, N64 a4, N64 a5, N64 a6
                         andika_heksa(faili, hoja_kwa_na(a1, a2, a3, a4, a5, a6, na));
                         na = na + 1;
                     } sivyo { kama (sp == 115) {  // %s
-                            andika_mfuatano(faili, hoja_kwa_na(a1, a2, a3, a4, a5, a6, na));
+                            andika_mfuatano(faili, kielekezi_kutoka_hoja(hoja_kwa_na(a1, a2, a3, a4, a5, a6, na)));
                             na = na + 1;
                         } sivyo { kama (sp == 99) {  // %c
                                 andika_herufi(faili, hoja_kwa_na(a1, a2, a3, a4, a5, a6, na));
@@ -258,7 +267,11 @@ N64 arena_nafasi = 0;
 
 N8* tenga(N64 ukubwa) {
     kama (arena_anwani == 0) {
-        arena_anwani = sys_mmap(0, 1048576, 3, 34, 0 - 1);
+        // Anwani sifuri = "popote" (kama mmap(NULL, ...) ya C).
+        // Halisi 0 kwa kigezo cha kielekezi inakataliwa na ukaguzi
+        // wa 2026-09-01 — tumia kielekezi cha sifuri wazi.
+        N8* anwani_sifuri = 0;
+        arena_anwani = sys_mmap(anwani_sifuri, 1048576, 3, 34, 0 - 1);
         kama (arena_anwani == 0 - 1) { rudisha 0; }
     }
     kama (ukubwa == 0) { ukubwa = 8; }
@@ -276,7 +289,7 @@ N8* tenga(N64 ukubwa) {
     rudisha r + 8;
 }
 
-W0 achilia(N8* p) {
+W0 achilia_arena(N8* p) {
     // Arena haiwezi kufungua vipande — hakuna kitu
 }
 
@@ -449,9 +462,9 @@ N32 main() {
     kama (fd < 0) rudisha 1;
 
     // 42:42:2a:%:%f:%l:%n:habari:A
-    N8 muundo[64];
-    nakili(muundo, "%d:%u:%x:%%:%f:%l:%n:%s:%c\n", 40);
-    andika_ndani(fd, muundo, 42, 42, 42, "habari", 65, 0);
+    N8 umbo[64];
+    nakili(umbo, "%d:%u:%x:%%:%f:%l:%n:%s:%c\n", 40);
+    andika_ndani(fd, umbo, 42, 42, 42, "habari", 65, 0);
     sys_funga(fd);
 
     // Soma nyuma na ulinganishe
@@ -472,9 +485,9 @@ N32 main() {
     // '%' ya mwisho mwishoni mwa muundo — chapishwa kama herufi
     N64 fd5 = sys_fungua(njia, 577, 420);
     kama (fd5 < 0) rudisha 5;
-    N8 muundo3[64];
-    nakili(muundo3, "asilimia %", 40);
-    andika_ndani(fd5, muundo3, 0, 0, 0, 0, 0, 0);
+    N8 umbo3[64];
+    nakili(umbo3, "asilimia %", 40);
+    andika_ndani(fd5, umbo3, 0, 0, 0, 0, 0, 0);
     sys_funga(fd5);
     weka_sifuri(bafa, 128);
     N64 fd6 = sys_fungua(njia, 0, 0);
@@ -489,9 +502,9 @@ N32 main() {
     // Muundo wa nguvu kupitia kifungio cha andika (sio moja kwa moja
     // kwenye andika_ndani). %% haitumii hoja — kwa hiyo %x inachukua
     // a2 na %s inachukua a3.
-    N8 dmuundo[64];
-    nakili(dmuundo, "k10h: %d na %% na %x na %s\n", 40);
-    andika(dmuundo, 7, 42, "bora", 0, 0, 0);
+    N8 dumbo[64];
+    nakili(dumbo, "k10h: %d na %% na %x na %s\n", 40);
+    andika(dumbo, 7, 42, "bora", 0, 0, 0);
 
     // Futa faili la jaribio (unlink — wito_wa_mfumo namba 87)
     N64 r = wito_wa_mfumo(87, njia, 0, 0, 0, 0, 0);
