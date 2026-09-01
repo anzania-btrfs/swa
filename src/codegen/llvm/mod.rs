@@ -1256,6 +1256,15 @@ fn lower_instruction(
                     // Kielekezi → namba kamili: fanya ptrtoint ili kupata thamani sahihi
                     // na upana sahihi (huzuia uhifadhi wa baiti 8 kwenye nafasi ya baiti 4).
                     LLVMBuildPtrToInt(builder, value, llvm_ty, c_str("ptrtoint").as_ptr())
+                } else if val_kind == LLVMTypeKind::Integer as u32
+                    && target_kind == LLVMTypeKind::Array as u32 {
+                    // Safu inayoanzishwa kwa sifuri (Const::Zero): kata thamani
+                    // kwa upana KAMILI wa safu (kipengele × idadi).  Kigawanyiko
+                    // cha jumla ni i64 — stoo ya baiti 8 kwenye safu ndogo (mf.
+                    // [1 x i32]) ingeandika juu ya sehemu za rafu za jirani.
+                    let total_bits = (store_ty.width_bytes() * 8) as u32;
+                    let wide_ty = LLVMIntTypeInContext(LLVMGetGlobalContext(), total_bits);
+                    LLVMBuildIntCast2(builder, value, wide_ty, 0, c_str("safu_sifuri").as_ptr())
                 } else {
                     value
                 };
@@ -1771,7 +1780,7 @@ fn lower_terminator(
             Terminator::RetVoid => {
                 LLVMBuildRetVoid(builder);
             }
-            Terminator::Switch(scrutinee, default_block, arms) => {
+            Terminator::Switch(scrutinee, default_block, arms, _merge) => {
                 let scrut = vv(value_map, scrutinee);
                 if let Some(&default_bb) = llvm_blocks.get(&default_block.0) {
                     let switch =

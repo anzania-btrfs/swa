@@ -228,8 +228,10 @@ pub enum Terminator {
     Ret(ValueId),
     /// Rudisha kutoka kwa kazi ya void.
     RetVoid,
-    /// Usambazaji wa njia nyingi: (scrutinee, bloku_chaucho, mikono).
-    Switch(ValueId, BlockId, Vec<(ValueId, BlockId)>),
+    /// Usambazaji wa njia nyingi: (scrutinee, bloku_chaucho, mikono, bloku_ya_muunganiko).
+    /// Bloku ya muunganiko inahitajika kwa mnyororo wa taarifa (lower_block)
+    /// kujua mahali utekelezaji unaendelea baada ya chagua.
+    Switch(ValueId, BlockId, Vec<(ValueId, BlockId)>, BlockId),
 }
 
 // ---------------------------------------------------------------------------
@@ -729,8 +731,9 @@ impl<'f> IrBuilder<'f> {
         scrutinee: ValueId,
         default: BlockId,
         arms: Vec<(ValueId, BlockId)>,
+        merge: BlockId,
     ) {
-        self.set_terminator(Terminator::Switch(scrutinee, default, arms));
+        self.set_terminator(Terminator::Switch(scrutinee, default, arms, merge));
     }
 }
 
