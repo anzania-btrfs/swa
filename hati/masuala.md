@@ -5,27 +5,34 @@ inayojulikana imeandikwa kwa undani kwenye `hati/mipaka.md`.
 
 ## Masuala yaliyo wazi
 
-### 1. D64 kwenye wito wa kazi wa mbegu
+### 1. D64 kwenye wito wa kazi wa mbegu [IMEFUNGWA — uthibitisho 2026-08-27]
 
-Mbegu haijatekeleza ABI ya xmm0-xmm7 kwa wito wa kazi. Program za mbegu
-zenye kazi za D64 (hoja au kurejesha kwa desimali) zinalia kwa sauti
-(`Hitilafu: D64 kwenye wito`). Mnyororo wa .swa (stage1+) una ABI kamili.
-Angalia `hati/mipaka.md` 4c.
+Imekuwa: mbegu haijatekeleza ABI ya xmm0-xmm7 kwa wito wa kazi;
+program za mbegu zenye kazi za D64 zinalia kwa sauti.
+
+Sasa (kilichopimwa 2026-08-27): mbegu inatekeleza wito wa kazi za
+D64 (parameta na kurudisha) kwa usahihi — ABI yake hutumia uhamisho
+wa GP (`movq rax, xmm0`; `movq xmm1, rcx`), si xmm moja kwa moja,
+lakini inafanya kazi. Kilichobaki cha desimali: mpaka wa D64 na
+nambari kamili (jibu baya kwa minyororo yote miwili) na D32
+(poromoko). Angalia `hati/mipaka.md` 4c na `hati/uthibitisho-wa-lugha.md`.
 
 ### 2. Maneno halisi 64-bit (mbegu na dereva wa Rust)
 
 Mnyororo wa .swa umerekebishwa 2026-08-25 — maneno halisi hadi N64
-kamili (mipaka.md 5). Kilichobaki: mbegu (bootstrap pekee) na dereva
-wa Rust bado zinachanganua maneno halisi kama 32-bit — `2147483648`
-inatafsiriwa kama `-2147483648` (biti zinahifadhiwa, ishara inaenea),
-kwa hiyo thamani kubwa zaidi ya 32-bit lazima zijengwe wakati wa
-utekelezaji kwenye minyororo hiyo miwili. Angalia `hati/mipaka.md` 5.
+kwa [2^31, 2^63) pekee (mipaka.md 5). Kilichobaki: mbegu (bootstrap
+pekee) na dereva wa Rust bado zinachanganua maneno halisi kama 32-bit
+— `2147483648` inatafsiriwa kama `-2147483648` (biti zinahifadhiwa,
+ishara inaenea); halisi >= 2^63 zinakatwa KIMYA hadi biti 32 kwa
+minyororo yote miwili, na halisi kubwa kama hoja ya wito zinavunjika
+(uthibitisho 2026-08-27). Angalia `hati/mipaka.md` 5.
 
-### 3. Mbegu haiwi `husisha { faili.swa }`
+### 3. Hakuna mnyororo unaochakata `husisha { faili.swa }`
 
-Mbegu haichambuzi faili lililotajwa — faili lazima ziunganishwe kwanza
-(`cat`). Mnyororo wa .swa (stage1+) unaunga viungo vya ndani.
-Angalia `hati/mipaka.md` 8.
+Hakuna mkusanyaji (mbegu WALA mnyororo wa .swa) anayechambua faili
+lililotajwa — faili lazima ziunganishwe kwanza (`cat`). Ahadi ya
+zamani kwamba "mnyororo wa .swa unaunga viungo vya ndani" haishikiki
+(kilichopimwa 2026-08-27). Angalia `hati/mipaka.md` 8.
 
 ### 4. Kizuizi cha BSS kwenye Windows
 
@@ -41,9 +48,9 @@ O1. Mnyororo wa uzalishaji ni mbegu/exe pekee. Angalia `hati/mipaka.md` 6.
 
 | Kipaumbele | Kazi | Ukubwa | Hali |
 |-----------|------|--------|------|
-| 1 | ABI ya xmm0-xmm7 kwa wito wa D64 kwenye mbegu | kubwa | wazi |
-| 2 | Maneno halisi 64-bit (mbegu na dereva wa Rust; mnyororo wa .swa umeshafanyika) | wastani | wazi |
-| 3 | Viungo vya ndani (`husisha`) kwenye mbegu | wastani | wazi |
+| 1 | ABI ya wito wa D64 kwenye mbegu | kubwa | IMEFUNGWA (uthibitisho 2026-08-27) |
+| 2 | Maneno halisi 64-bit (mbegu na dereva wa Rust; mnyororo wa .swa umeshafanyika kwa [2^31, 2^63); halisi >= 2^63 na hoja za wito bado wazi) | wastani | wazi |
+| 3 | Viungo vya ndani (`husisha`) — minyororo yote miwili | wastani | wazi |
 | 4 | Mwisho wa LLVM kuwa wa kuaminika (si majaribio) | kubwa | wazi |
 | 5 | Malengo zaidi (ARM64, RISC-V) | kubwa | wazi |
 
@@ -58,4 +65,5 @@ O1. Mnyororo wa uzalishaji ni mbegu/exe pekee. Angalia `hati/mipaka.md` 6.
 - **Sintaksia**: maneno `kamasivyo` na `sivyo kama` yameondolewa — tawi-jingine
   huandikwa kwa kuingiza `kama` ndani ya `sivyo`. Dereva wa Rust na mchanganuzi
   wa kujikusanya zimewianishwa.
-- **D64 kwenye wito**: mbegu sasa inakataa kwa sauti (zamani ilikubali kimya).
+- **D64 kwenye wito**: mbegu sasa inatekeleza wito wa kazi za D64
+  (kilichopimwa 2026-08-27) — kikomo cha awali kimeondolewa.

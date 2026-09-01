@@ -16,14 +16,17 @@ kilichopo mbali.
 
 ## Kilicho karibu (muda wa wiki)
 
-1. **Mfumo wa moduli kwa watumiaji** — mbegu haiwi husisha { } (chanzo
-   kinapaswa kuunganishwa). Hati/vipimo-vya-lugha.md 8 linaeleza hili.
-   Kazi: mbegu ijifunze kupakia viungo vya ndani (msomaji wa faili
-   kwa kujirudia) — pengo la urahisi wa matumizi, si la usalama.
-2. **ABI ya xmm kwenye wito wa mbegu** — D64 kama hoja/kurejesha kwa
-   mbegu bado inalia kwa sauti (mipaka.md 4c, CHINI). Mnyororo wa
-   .swa tayari una ABI kamili. Kazi: hoja za xmm0-xmm7 + kurejesha
-   kwa xmm0 kwenye mbegu.
+1. **Mfumo wa moduli kwa watumiaji** — HAKUNA mnyororo (mbegu wala
+   .swa) unaosoma husisha { } (chanzo kinapaswa kuunganishwa;
+   kilichopimwa 2026-08-27). Hati/vipimo-vya-lugha.md 8 linaeleza
+   hili. Kazi: mnyororo ujifunze kupakia viungo vya ndani (msomaji
+   wa faili kwa kujirudia) — pengo la urahisi wa matumizi, si la
+   usalama.
+2. **Mpaka wa D64 na nambari kamili** — kurudisha, ugawaji,
+   operesheni mchanganyiko na ulinganisho mchanganyiko vina jibu
+   baya kwa minyororo yote miwili; D32 imevunjika (uthibitisho
+   2026-08-27). ABI ya wito wa kazi za D64 imefungwa kwenye
+   minyororo yote miwili (mipaka.md 4c imerekebishwa).
 
 ## Kilicho mbali (muda wa miezi)
 

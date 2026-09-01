@@ -44,8 +44,13 @@ N64 sys_andika(N32 faili, N8* bafa, N64 urefu) {
     rudisha wito_wa_mfumo(1, faili, bafa, urefu, 0, 0, 0);
 }
 
-N64 sys_fungua(N8* njia, N64 bendera) {
-    rudisha wito_wa_mfumo(2, njia, bendera, 0, 0, 0, 0);
+N64 sys_fungua(N8* njia, N64 bendera, N64 ruhusa) {
+    // Hoja ya 3 (ruhusa) ni ruhusa za faili linaloundwa (mode) —
+    // kernel inaitumia tu wakati O_CREAT iko kwenye bendera,
+    // vinginevyo inapuuzwa. Awali ilipitishwa kama 0, hivyo faili
+    // zilizoundwa na O_CREAT zilipata ruhusa 0000 (hazikufunguka
+    // kwa usomaji).
+    rudisha wito_wa_mfumo(2, njia, bendera, ruhusa, 0, 0, 0);
 }
 
 N64 sys_funga(N32 faili) {
@@ -110,8 +115,95 @@ W0 andika_sehemu(N32 faili, N8* s, N64 urefu) {
 // ==========================================================
 // andika / andika_stderr — utekelezaji wa ndani wa muundo
 // (kwa mbegu: wito za nje hujitatua hapa; codegen ya Swa ni builtin)
-// Muundo ni mfuatano PAMOJA na nukuu, viashiria: %d, %s, %c, \n.
+// Muundo ni mfuatano PAMOJA na nukuu.
+//
+// Viashiria vinavyotumika:
+//   %d  — N64 yenye ishara (desimali, na alama ya kutoa ikihitajika)
+//   %u  — N64 isiyo na ishara (desimali; thamani hasi inaonyeshwa
+//         kama mfuatano kamili wa bits za baiti 64)
+//   %x  — heksadesimali ndogo bila sifuri za mwanzo (42 → "2a");
+//         thamani hasi inaonyeshwa kama bits zote 64
+//   %s  — mfuatano unaoishia kwenye 0
+//   %c  — herufi moja
+//   %%  — alama ya % (haitumii hoja)
+// Viashiria VISIVYOSAIDIWA (%f, %l, %n, n.k.) vinachapishwa kama
+// herufi halisi ("%f" → "%f") — hakuna kinachomezwa, na havitumii
+// hoja. Mnyororo wa Rust (andika = printf ya C) unasaidia vyote
+// vya printf; tofauti hii kati ya minyororo imeandikwa kwenye
+// hati/uthibitisho-wa-lugha.md.
 // ==========================================================
+
+// Chagua hoja ya na kati ya a1..a6. na zaidi ya 5 hurudisha a6
+// (kama ilivyokuwa awali — hoja ya 7+ haiwezekani kwenye andika).
+N64 hoja_kwa_na(N64 a1, N64 a2, N64 a3, N64 a4, N64 a5, N64 a6, N32 na) {
+    kama (na == 0) { rudisha a1; }
+    kama (na == 1) { rudisha a2; }
+    kama (na == 2) { rudisha a3; }
+    kama (na == 3) { rudisha a4; }
+    kama (na == 4) { rudisha a5; }
+    rudisha a6;
+}
+
+// andika_u64 — andika N64 kama nambari isiyo na ishara (desimali
+// bila alama ya kutoa). Thamani hasi inaonyeshwa kama mfuatano
+// kamili wa bits 64: -1 → 18446744073709551615. (Zamani gawanya
+// la ishara lilitoa tarakimu za takataka kwa hasi — mdudu wa
+// 2026-09-01. Hesabu: 2^64 = 10 * 1844674407370955161 + 6, kwa
+// hiyo tarakimu ya chini ni (v+6) mod 10 na sehemu ya juu ni
+// 1844674407370955161 + (v+6)/10 — vyote viwili vya ishara.)
+W0 andika_u64(N32 faili, N64 v) {
+    N32 bafa[32];
+    N32 n = 0;
+    kama (v < 0) {
+        N64 u = v + 6;
+        N64 d = u % 10;
+        N32 ni_has = 0;
+        kama (d < 0) { d = d + 10; ni_has = 1; }  // salio la C ni hasi
+        bafa[n] = d;
+        n = n + 1;
+        v = 1844674407370955161 + u / 10;
+        kama (ni_has) { v = v - 1; }  // urekebishaji wa gawanya la C
+    }
+    wakati (1 == 1) {
+        bafa[n] = v - ((v / 10) * 10);
+        n = n + 1;
+        v = v / 10;
+        kama (v == 0) { vunja; }
+    }
+    wakati (n > 0) {
+        n = n - 1;
+        andika_herufi(faili, 48 + bafa[n]);
+    }
+}
+
+// andika_heksa — andika N64 kwa heksadesimali ndogo bila sifuri
+// za mwanzo. Thamani hasi inaonyeshwa kama kukamilisha mbili ya
+// bits zote 64: -1 → ffffffffffffffff. Nibble huchukuliwa kutoka
+// biti za juu kwa hamisha na mask (gawanya la ishara lilitoa
+// takataka kwa hasi — mdudu wa 2026-09-01).
+W0 andika_heksa(N32 faili, N64 v) {
+    N32 imeanza = 0;
+    N32 i = 15;
+    wakati (i >= 0) {
+        N32 d = (v >> (4 * i)) & 15;
+        kama (d != 0 || imeanza) {
+            imeanza = 1;
+            kama (d < 10) { andika_herufi(faili, 48 + d); }
+            sivyo { andika_herufi(faili, 87 + d); }  // 'a' = 97, 97 - 10 = 87
+        }
+        i = i - 1;
+    }
+    kama (imeanza == 0) { andika_herufi(faili, 48); }  // '0'
+}
+
+// Kielekezi kutoka hoja ya N64: mkia wa andika (a1..a6) hupita kwa
+// rejesta za N64 kwa ABI, iwe thamani au kielekezi. %s huhitaji
+// kielekezi — ubadilishaji wazi (ukaguzi wa hoja unakataa N64 kwa
+// kigezo cha N8* tangu 2026-09-01).
+N8* kielekezi_kutoka_hoja(N64 v) {
+    N8* p = v;
+    rudisha p;
+}
 
 W0 andika_ndani(N32 faili, N8* f, N64 a1, N64 a2, N64 a3, N64 a4, N64 a5, N64 a6) {
     N32 p = 0;  // mfuatano hauna nukuu (kumbukumbu hutoa bila nukuu)
@@ -120,23 +212,35 @@ W0 andika_ndani(N32 faili, N8* f, N64 a1, N64 a2, N64 a3, N64 a4, N64 a5, N64 a6
         kama (f[p] == 0) { vunja; }  // mwisho wa mfuatano (null terminator)
         kama (f[p] == 37) {  // '%'
             N8 sp = f[p + 1];
+            kama (sp == 0) {  // '%' mwishoni mwa mfuatano — chapisha kama herufi
+                andika_herufi(faili, 37);
+                p = p + 1;
+                endelea;
+            }
             p = p + 2;
             kama (sp == 100) {  // %d
-                kama (na == 0) { andika_n64(faili, a1); } sivyo { kama (na == 1) { andika_n64(faili, a2); }
-                    sivyo { kama (na == 2) { andika_n64(faili, a3); } sivyo { kama (na == 3) { andika_n64(faili, a4); }
-                            sivyo { kama (na == 4) { andika_n64(faili, a5); } sivyo { andika_n64(faili, a6); } } } } }
+                andika_n64(faili, hoja_kwa_na(a1, a2, a3, a4, a5, a6, na));
                 na = na + 1;
-            } sivyo { kama (sp == 115) {  // %s
-                    kama (na == 0) { andika_mfuatano(faili, a1); } sivyo { kama (na == 1) { andika_mfuatano(faili, a2); }
-                        sivyo { kama (na == 2) { andika_mfuatano(faili, a3); } sivyo { kama (na == 3) { andika_mfuatano(faili, a4); }
-                                sivyo { kama (na == 4) { andika_mfuatano(faili, a5); } sivyo { andika_mfuatano(faili, a6); } } } } }
+            } sivyo { kama (sp == 117) {  // %u
+                    andika_u64(faili, hoja_kwa_na(a1, a2, a3, a4, a5, a6, na));
                     na = na + 1;
-                } sivyo { kama (sp == 99) {  // %c
-                        kama (na == 0) { andika_herufi(faili, a1); } sivyo { kama (na == 1) { andika_herufi(faili, a2); }
-                            sivyo { kama (na == 2) { andika_herufi(faili, a3); } sivyo { kama (na == 3) { andika_herufi(faili, a4); }
-                                    sivyo { kama (na == 4) { andika_herufi(faili, a5); } sivyo { andika_herufi(faili, a6); } } } } }
+                } sivyo { kama (sp == 120) {  // %x
+                        andika_heksa(faili, hoja_kwa_na(a1, a2, a3, a4, a5, a6, na));
                         na = na + 1;
-                    } } }
+                    } sivyo { kama (sp == 115) {  // %s
+                            andika_mfuatano(faili, kielekezi_kutoka_hoja(hoja_kwa_na(a1, a2, a3, a4, a5, a6, na)));
+                            na = na + 1;
+                        } sivyo { kama (sp == 99) {  // %c
+                                andika_herufi(faili, hoja_kwa_na(a1, a2, a3, a4, a5, a6, na));
+                                na = na + 1;
+                            } sivyo { kama (sp == 37) {  // %%
+                                    andika_herufi(faili, 37);  // haina hoja
+                                } sivyo {
+                                    // Visivyosaidiwa (%f, %l, %n, ...) — chapisha
+                                    // kama herufi halisi, bila kutumia hoja.
+                                    andika_herufi(faili, 37);
+                                    andika_herufi(faili, sp);
+                                } } } } } }
             endelea;
         }
         kama (f[p] == 92 && f[p + 1] == 110) {  // \n
@@ -176,7 +280,11 @@ N64 arena_nafasi = 0;
 
 N8* tenga(N64 ukubwa) {
     kama (arena_anwani == 0) {
-        arena_anwani = sys_mmap(0, 1048576, 3, 34, 0 - 1);
+        // Anwani sifuri = "popote" (kama mmap(NULL, ...) ya C).
+        // Halisi 0 kwa kigezo cha kielekezi inakataliwa na ukaguzi
+        // wa 2026-09-01 — tumia kielekezi cha sifuri wazi.
+        N8* anwani_sifuri = 0;
+        arena_anwani = sys_mmap(anwani_sifuri, 1048576, 3, 34, 0 - 1);
         kama (arena_anwani == 0 - 1) { rudisha 0; }
     }
     kama (ukubwa == 0) { ukubwa = 8; }
@@ -194,8 +302,11 @@ N8* tenga(N64 ukubwa) {
     rudisha r + 8;
 }
 
-W0 achilia(N8* p) {
-    // Arena haiwezi kufungua vipande — hakuna kitu
+W0 achilia_arena(N8* p) {
+    // Arena haiwezi kufungua vipande — hakuna kitu.
+    // Jina lilibadilishwa kutoka "achilia" (2026-09-01): achilia ni
+    // neno muhimu (taarifa ya kufungua kumbukumbu) — hati 2.2
+    // inakataa maneno muhimu kama majina ya kazi.
 }
 
 N8* badili(N8* p, N64 ukubwa) {

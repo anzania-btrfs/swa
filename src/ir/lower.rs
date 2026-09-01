@@ -109,8 +109,11 @@ struct AllocInfo {
 /// na `endelea` ziweze kuzilenga.
 #[derive(Debug, Clone, Copy)]
 struct LoopInfo {
-    /// Kizuizi kinachojaribu sharti la mzunguko (ambapo `endelea` huruka).
+    /// Kizuizi kinachojaribu sharti la mzunguko.
     header: BlockId,
+    /// Kizuizi cha hatua ya kwa (ambapo `endelea` huruka kwa semantiki ya C);
+    /// si lazima — wakati na kwa zisizo na hatua hutumia kichwa.
+    step: Option<BlockId>,
     /// Kizuizi kinachofuata mara moja baada ya mzunguko (ambapo `vunja` huruka).
     exit: BlockId,
 }
@@ -999,8 +1002,10 @@ impl<'a> Lowerer<'a> {
                 let blk = self.new_block("call_stmt");
                 let (_val, end_blk) = self.lower_expr_into(node, blk);
                 // Weka kimalizio cha kishika nafasi ili lower_block kiweze kukiunganisha.
+                // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — hoja ya
+                // fupi-hali ungeacha phi ya muunganiko bila kuingia kwa watangulizi.
                 self.set_terminator(end_blk, Terminator::Br(end_blk));
-                end_blk
+                blk
             }
             // ---- usemi kama taarifa -------------------------------------------
             _ => {
@@ -1009,8 +1014,10 @@ impl<'a> Lowerer<'a> {
                 let (_val, end_blk) = self.lower_expr_into(node, blk);
                 // Weka kimalizio cha kishika nafasi ili lower_block kiweze kukiunganisha
                 // (waendeshaji fupi-hali huweka vimalizio vyao wenyewe; usiandike juu).
+                // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — usemi wa
+                // fupi-hali ungeacha phi ya muunganiko bila kuingia kwa watangulizi.
                 self.patch_br_if_needed(end_blk, end_blk);
-                end_blk
+                blk
             }
         }
     }
@@ -1036,47 +1043,70 @@ impl<'a> Lowerer<'a> {
             let next_stmt = self.ast_nne[current as usize];
             let stmt_blk = self.lower_stmt(current);
 
-            // Ikiwa stmt_blk ni kizuizi cha sharti (BrCond), kipitio halisi
-            // ni kizuizi cha muunganiko.  Tembea tawi la uongo; ikiwa linaisha kwa Ret,
-            // tembea tawi la kweli badala yake.  Shughulikia BrConds zilizopachikwa kwa kurudia.
-            let actual_prev = match &self.func.blocks[stmt_blk.0].terminator {
-                Terminator::BrCond(_, true_blk, false_blk) => {
-                    let mut seen: Vec<BlockId> = Vec::new();
-                    fn tembea_tawi(
-                        blocks: &[IrBlock],
-                        start: BlockId,
-                        seen: &mut Vec<BlockId>,
-                    ) -> (BlockId, bool) {
-                        if seen.contains(&start) {
-                            return (start, false);
-                        }
-                        seen.push(start);
-                        match &blocks[start.0].terminator {
-                            Terminator::Br(t) if *t != start => {
+            // Kipitio halisi cha taarifa ni kizuizi ambapo taarifa inayofuata
+            // inaweza kuunganishwa.  Kwa taarifa zenye sharti (BrCond, Switch)
+            // ni kizuizi cha muunganiko; kwa kianzisha cha kwa (tawi lisilo na
+            // sharti kwa kichwa) ni kipitio cha mzunguko.  Tembea msururu wa
+            // matawi bila sharti na tawi la uongo la BrConds; ikiwa tawi la
+            // uongo linaisha kwa Ret, tembea tawi la kweli badala yake.
+            let actual_prev = {
+                let mut seen: Vec<BlockId> = Vec::new();
+                fn tembea_tawi(
+                    blocks: &[IrBlock],
+                    start: BlockId,
+                    seen: &mut Vec<BlockId>,
+                ) -> (BlockId, bool) {
+                    if seen.contains(&start) {
+                        return (start, false);
+                    }
+                    seen.push(start);
+                    match &blocks[start.0].terminator {
+                        Terminator::Br(t) if *t != start => {
+                            // Simama kwenye vizuizi vya vunja/endelea: tawi
+                            // lao linaelekeza kwenye utiririko-dhibiti wa
+                            // mzunguko (exit/header) — kuufuata kungeunganisha
+                            // taarifa inayofuata ndani ya mzunguko huo.
+                            let label = &blocks[start.0].label;
+                            if label.starts_with("break.") || label.starts_with("continue.") {
+                                (start, false)
+                            } else {
                                 tembea_tawi(blocks, *t, seen)
                             }
-                            Terminator::BrCond(_, t, f) => {
-                                let (fb, f_ret) = tembea_tawi(blocks, *f, seen);
-                                if f_ret {
-                                    tembea_tawi(blocks, *t, seen)
-                                } else {
-                                    (fb, false)
-                                }
-                            }
-                            Terminator::Ret(_) | Terminator::RetVoid => {
-                                (start, true)
-                            }
-                            _ => (start, false),
                         }
-                    }
-                    let (result, is_ret) = tembea_tawi(&self.func.blocks, *false_blk, &mut seen);
-                    if is_ret {
-                        tembea_tawi(&self.func.blocks, *true_blk, &mut seen).0
-                    } else {
-                        result
+                        Terminator::BrCond(_, t, f) => {
+                            let (fb, f_ret) = tembea_tawi(blocks, *f, seen);
+                            if f_ret {
+                                tembea_tawi(blocks, *t, seen)
+                            } else {
+                                (fb, false)
+                            }
+                        }
+                        Terminator::Switch(_, _, _, merge) => {
+                            tembea_tawi(blocks, *merge, seen)
+                        }
+                        Terminator::Ret(_) | Terminator::RetVoid => {
+                            (start, true)
+                        }
+                        _ => (start, false),
                     }
                 }
-                _ => stmt_blk,
+                match &self.func.blocks[stmt_blk.0].terminator {
+                    // Kianzisha cha kwa (na vunja/endelea) kinatoka kwa tawi
+                    // lisilo na sharti — tembea kutoka kwenye kizuizi chenyewe.
+                    Terminator::Br(_) => {
+                        tembea_tawi(&self.func.blocks, stmt_blk, &mut seen).0
+                    }
+                    Terminator::BrCond(_, true_blk, false_blk) => {
+                        let (result, is_ret) = tembea_tawi(&self.func.blocks, *false_blk, &mut seen);
+                        if is_ret {
+                            tembea_tawi(&self.func.blocks, *true_blk, &mut seen).0
+                        } else {
+                            result
+                        }
+                    }
+                    Terminator::Switch(_, _, _, merge) => *merge,
+                    _ => stmt_blk,
+                }
             };
 
             if is_first {
@@ -1163,8 +1193,12 @@ impl<'a> Lowerer<'a> {
             }
         }
         self.sret_dest = None;
+        // Weka kishika nafasi kwenye kizuizi cha mwisho wa usemi wa kulia.
+        // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — usemi wa
+        // fupi-hali huweka BrCond kwenye kuingia, na chaining ya lower_block
+        // inatembea hadi muunganiko (kosa la phi ya kujizungusha vinginevyo).
         self.set_terminator(end_blk, Terminator::Br(end_blk));
-        end_blk
+        blk
     }
 
     /// Teremsha `KAMA` (kama): `kama (sharti) tawi_la_kweli [tiga tawi_la_sivyo]`.
@@ -1228,9 +1262,11 @@ impl<'a> Lowerer<'a> {
         // kipitio (badala ya RetVoid, ambayo ingechukuliwa kama rudisha).
         self.set_terminator(exit_blk, Terminator::Br(exit_blk));
 
-        // Sukuma mazingira ya mzunguko ili `vunja` → exit, `endelea` → header.
+        // Sukuma mazingira ya mzunguko ili `vunja` → exit, `endelea` → header
+        // (wakati hauna hatua).
         self.loops.push(LoopInfo {
             header: header_blk,
+            step: None,
             exit: exit_blk,
         });
 
@@ -1272,8 +1308,16 @@ impl<'a> Lowerer<'a> {
                     }
                     last = *merge;
                 }
+                Terminator::Switch(_, _, _, merge) => {
+                    // Chagua huisha kwenye kizuizi chake cha muunganiko —
+                    // endelea kutembea kutoka hapo.
+                    if *merge == exit_blk || *merge == header_blk {
+                        break;
+                    }
+                    last = *merge;
+                }
                 _ => {
-                    // Kimalizio halisi (Ret, Switch) — simama hapa.
+                    // Kimalizio halisi (Ret) — simama hapa.
                     break;
                 }
             }
@@ -1315,11 +1359,111 @@ impl<'a> Lowerer<'a> {
         // mantiki ya actual_prev ya lower_block ipate exit_blk kama kipitio.
         self.set_terminator(exit_blk, Terminator::Br(exit_blk));
 
-        self.set_terminator(init_blk, Terminator::Br(header_blk));
+        // Unganisha kizuizi cha MWISHO cha kianzisha kwa kichwa.  Kianzisha cha
+        // fupi-hali huweka BrCond kwenye kizuizi cha kuingia na phi kwenye
+        // muunganiko wake — kuandika juu kimalizio cha kuingia kungeacha
+        // muunganiko huo bila watangulizi (kosa la uthibitishaji wa LLVM).
+        let mut last_init = init_blk;
+        loop {
+            let term = &self.func.blocks[last_init.0].terminator;
+            match term {
+                Terminator::Br(target) if *target != last_init => {
+                    last_init = *target;
+                }
+                Terminator::Br(_) => {
+                    break;
+                }
+                Terminator::BrCond(_, _, merge) => {
+                    last_init = *merge;
+                }
+                Terminator::Switch(_, _, _, merge) => {
+                    last_init = *merge;
+                }
+                _ => {
+                    break;
+                }
+            }
+        }
+        self.ensure_br(last_init, header_blk);
 
-        // Sukuma mazingira ya mzunguko.
+        // Hatua huteremshwa KABLA ya mwili, kwa NAKILI MBILI: moja kwa
+        // kipitio cha mwili, moja kwa `endelea`.  Nakili mbili huepuka
+        // tawi linalolenga KATIKATI ya mnyororo wa vizuizi — mwisho wa
+        // LLVM (O1/Less) hukosea kuweka tawi la katikati na kuruka stoo
+        // ya hatua (hatua haikuwahi kutekelezwa baada ya endelea).
+        let ina_hatua = step_node != NO_NODE && step_node >= 0;
+
+        let step_kawaida = if ina_hatua {
+            let end = self.lower_stmt(step_node);
+            // Tembea msururu wa hatua kupata kizuizi cha mwisho na kukiunganisha kwa header_blk.
+            let mut last_step = end;
+            loop {
+                let term = &self.func.blocks[last_step.0].terminator;
+                match term {
+                    Terminator::Br(target) if *target != last_step => {
+                        last_step = *target;
+                    }
+                    Terminator::Br(_) => {
+                        break;
+                    }
+                    Terminator::BrCond(_, _, merge) => {
+                        last_step = *merge;
+                    }
+                    Terminator::Switch(_, _, _, merge) => {
+                        last_step = *merge;
+                    }
+                    _ => {
+                        break;
+                    }
+                }
+            }
+            self.ensure_br(last_step, header_blk);
+            end
+        } else {
+            step_blk
+        };
+        // Chomeka kizuizi cha lebo ya hatua kwenye kuingia kwa hatua (kujizungusha ikiwa hakuna hatua).
+        self.set_terminator(step_blk, Terminator::Br(step_kawaida));
+        // Hakuna hatua: kizuizi cha lebo ni kishika nafasi — kiunganishe kwa kichwa.
+        if !ina_hatua {
+            self.ensure_br(step_blk, header_blk);
+        }
+
+        let step_endelea = if ina_hatua {
+            let end = self.lower_stmt(step_node);
+            let mut last_step = end;
+            loop {
+                let term = &self.func.blocks[last_step.0].terminator;
+                match term {
+                    Terminator::Br(target) if *target != last_step => {
+                        last_step = *target;
+                    }
+                    Terminator::Br(_) => {
+                        break;
+                    }
+                    Terminator::BrCond(_, _, merge) => {
+                        last_step = *merge;
+                    }
+                    Terminator::Switch(_, _, _, merge) => {
+                        last_step = *merge;
+                    }
+                    _ => {
+                        break;
+                    }
+                }
+            }
+            self.ensure_br(last_step, header_blk);
+            Some(end)
+        } else {
+            None
+        };
+
+        // Sukuma mazingira ya mzunguko.  Kwa mzunguko wenye hatua, `endelea`
+        // huruka kwenye HATUA (semantiki ya C, sawa na mnyororo asilia); bila
+        // hatua huruka kwenye kichwa.
         self.loops.push(LoopInfo {
             header: header_blk,
+            step: step_endelea,
             exit: exit_blk,
         });
 
@@ -1338,14 +1482,21 @@ impl<'a> Lowerer<'a> {
                 Terminator::BrCond(cond_val, body_blk, exit_blk),
             );
         } else {
-            self.set_terminator(cond_end, Terminator::Br(body_blk));
+            // Hakuna sharti → mzunguko usio na sharti.  Tumia BrCond ya
+            // kweli-daima badala ya Br: tawi la uongo huweka kizuizi cha
+            // kutoka kifikiwe kupitia tawi (mantiki ya actual_prev ya
+            // lower_block hutembea tawi la uongo hadi kizuizi cha kutoka,
+            // kwa vile tawi la Br halisi linaweza kuzunguka bila mwisho).
+            let kweli = self.const_val(Const::Bool(true));
+            self.set_terminator(cond_end, Terminator::BrCond(kweli, body_blk, exit_blk));
         }
 
         // Mwili.
         let body_end = self.lower_block(body_node);
         self.set_terminator(body_blk, Terminator::Br(body_end));
 
-        // Tembea msururu wa mwili kupata kizuizi cha mwisho na kukiunganisha kwa step_blk.
+        // Tembea msururu wa mwili kupata kizuizi cha mwisho na kukiunganisha
+        // kwa kizuizi cha hatua (au kichwa kwa mzunguko usio na hatua).
         let mut last = body_end;
         loop {
             let term = &self.func.blocks[last.0].terminator;
@@ -1365,44 +1516,28 @@ impl<'a> Lowerer<'a> {
                     }
                     last = *merge;
                 }
-                _ => {
-                    break;
-                }
-            }
-        }
-        self.ensure_br(last, step_blk);
-
-        // Hatua.
-        let step_end = if step_node != NO_NODE && step_node >= 0 {
-            self.lower_stmt(step_node)
-        } else {
-            step_blk
-        };
-        // Chomeka kizuizi cha lebo ya hatua kwenye kuingia kwa hatua (kujizungusha ikiwa hakuna hatua).
-        self.set_terminator(step_blk, Terminator::Br(step_end));
-        // Tembea msururu wa hatua kupata kizuizi cha mwisho na kukiunganisha kwa header_blk.
-        let mut last_step = step_end;
-        loop {
-            let term = &self.func.blocks[last_step.0].terminator;
-            match term {
-                Terminator::Br(target) if *target != last_step => {
-                    last_step = *target;
-                }
-                Terminator::Br(_) => {
-                    break;
-                }
-                Terminator::BrCond(_, _, merge) => {
-                    last_step = *merge;
+                Terminator::Switch(_, _, _, merge) => {
+                    if *merge == exit_blk || *merge == header_blk {
+                        break;
+                    }
+                    last = *merge;
                 }
                 _ => {
                     break;
                 }
             }
         }
-        self.ensure_br(last_step, header_blk);
+        self.ensure_br(last, step_kawaida);
 
         self.loops.pop();
-        header_blk
+
+        // Rudisha kizuizi cha KUINGIA cha kianzisha, si kichwa: mnyororo wa
+        // lower_block unaunganisha taarifa iliyotangulia moja kwa moja kwenye
+        // kianzisha, ili kitekelezwe mara moja kabla ya mzunguko.  Mantiki ya
+        // actual_prev ya lower_block inatembea tawi la kianzisha → kichwa →
+        // kipitio cha mzunguko, na kuunganisha taarifa inayofuata kwenye
+        // kizuizi cha kutoka.
+        init_blk
     }
 
     /// Teremsha `RUDISHA` (rudisha): `rudisha [usemi]`.
@@ -1428,7 +1563,13 @@ impl<'a> Lowerer<'a> {
             } else {
                 self.set_terminator(end_blk, Terminator::Ret(val));
             }
-            end_blk
+            // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho: usemi wa
+            // fupi-hali unaweza kuunda kizuizi cha muunganiko chenye phi kati
+            // ya kuingia na kimalizio cha Ret.  Kurudisha muunganiko kungeruhusu
+            // taarifa ya awali kuunganishwa moja kwa moja ndani yake, kikiruka
+            // tathmini ya upande wa kushoto na kuacha phi bila kuingia kwa
+            // watangulizi wake (kosa la uthibitishaji wa LLVM).
+            blk
         } else {
             // Hakuna thamani wazi ya rudisha.
             if self.func.sret_value_id.is_some() {
@@ -1542,8 +1683,16 @@ impl<'a> Lowerer<'a> {
                 }
             }
             self.define_var(var_name, alloc, var_ty);
+            // Weka kishika nafasi kwenye kizuizi cha mwisho cha kianzisha.  Rudisha
+            // kizuizi cha KUINGIA (`blk`), si cha mwisho: kianzisha cha fupi-hali
+            // huweka BrCond kwenye kizuizi cha kuingia, na mantiki ya actual_prev ya
+            // lower_block inatembea tawi la uongo hadi kizuizi cha muunganiko.
+            // Kurudisha kizuizi cha mwisho kungeunganisha taarifa ya awali moja kwa
+            // moja kwenye muunganiko, kikiruka tathmini ya upande wa kushoto na
+            // kuacha phi bila kuingia kwa watangulizi wake (kosa la uthibitishaji
+            // wa LLVM: PHINode should have one entry for each predecessor).
             self.set_terminator(end_blk, Terminator::Br(end_blk));
-            end_blk
+            blk
         } else {
             self.define_var(var_name, alloc, var_ty.clone());
             // Anzisha vigezo vya ndani kwa sifuri, lakini ruka kielekezi
@@ -1578,6 +1727,9 @@ impl<'a> Lowerer<'a> {
         let (scrut_val, scrut_end) = self.lower_expr_into(scrut_node, scrut_blk);
 
         let merge_blk = self.new_block("switch.merge");
+        // Kishika nafasi cha kujizungusha ili mnyororo wa lower_block uweze
+        // kukiunganisha kwa taarifa inayofuata (mfano wa lower_if).
+        self.set_terminator(merge_blk, Terminator::Br(merge_blk));
 
         // Teremsha mkono wa chaguo-msingi.
         let default_blk = if default_node != NO_NODE && default_node >= 0 {
@@ -1606,11 +1758,17 @@ impl<'a> Lowerer<'a> {
 
         self.set_terminator(
             scrut_end,
-            Terminator::Switch(scrut_val, default_blk, arms),
+            Terminator::Switch(scrut_val, default_blk, arms, merge_blk),
         );
 
         self.patch_br_if_needed(default_blk, merge_blk);
-        merge_blk
+
+        // Rudisha kizuizi cha KUINGIA cha skrutini (`scrut_blk`), si kizuizi
+        // cha muunganiko: kurudisha muunganiko kungeacha skrutini bila
+        // watangulizi — usemi unaotathminiwa ungekuwa wafu.  Mantiki ya
+        // actual_prev ya lower_block hutumia bloku ya muunganiko iliyomo
+        // kwenye kimalizio cha Switch kwa taarifa inayofuata.
+        scrut_blk
     }
 
     /// Teremsha `VUNJA` (vunja): ruka kwenye kizuizi cha kutoka cha mzunguko wa ndani kabisa.
@@ -1628,12 +1786,14 @@ impl<'a> Lowerer<'a> {
     /// Teremsha `ENDELEA` (endelea): ruka kwenye kizuizi cha kichwa cha mzunguko wa ndani kabisa.
     fn lower_continue(&mut self, _node: i32) -> BlockId {
         let blk = self.new_block("continue");
-        let header = self
+        let mzunguko = self
             .loops
             .last()
-            .expect("endelea outside of loop")
-            .header;
-        self.set_terminator(blk, Terminator::Br(header));
+            .expect("endelea outside of loop");
+        // Semantiki ya C: kwa yenye hatua, endelea inaruka kwenye HATUA
+        // (sio kwenye sharti) — kwa bila hatua na wakati, kwenye kichwa.
+        let lengwa = mzunguko.step.unwrap_or(mzunguko.header);
+        self.set_terminator(blk, Terminator::Br(lengwa));
         blk
     }
 
@@ -1648,8 +1808,10 @@ impl<'a> Lowerer<'a> {
         let (size_val, end_blk) = self.lower_expr_into(arg_node, blk);
         self.emit(end_blk, Instruction::HeapAlloc(size_val));
         // Matokeo ya kielekezi yametupwa katika mazingira ya taarifa.
+        // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — ukubwa wa
+        // fupi-hali ungeacha phi ya muunganiko bila kuingia kwa watangulizi.
         self.set_terminator(end_blk, Terminator::Br(end_blk));
-        end_blk
+        blk
     }
 
     /// Teremsha `ACHILIA` (achilia kwenye chungu): `achilia <usemi_kielekezi>`.
@@ -1662,8 +1824,10 @@ impl<'a> Lowerer<'a> {
 
         let (ptr_val, end_blk) = self.lower_expr_into(arg_node, blk);
         self.emit(end_blk, Instruction::HeapFree(ptr_val));
+        // Rudisha kizuizi cha KUINGIA (`blk`), si cha mwisho — kielekezi cha
+        // fupi-hali ungeacha phi ya muunganiko bila kuingia kwa watangulizi.
         self.set_terminator(end_blk, Terminator::Br(end_blk));
-        end_blk
+        blk
     }
 }
 
@@ -2349,7 +2513,13 @@ impl<'a> Lowerer<'a> {
                 _ => None,
             })
             .unwrap_or(IrType::I8);
-        let val = self.emit(end_blk, Instruction::Load(pointee_ty, ptr_val));
+        // Muundo wa pointee unawakilishwa kama kielekezi — rudisha kielekezi
+        // chenyewe, si upakiaji wake (kosa la thamani-kama-anwani kwa memcpy).
+        let val = if matches!(&pointee_ty, IrType::Struct { .. }) {
+            ptr_val
+        } else {
+            self.emit(end_blk, Instruction::Load(pointee_ty, ptr_val))
+        };
         (val, end_blk)
     }
 
@@ -2606,7 +2776,15 @@ impl<'a> Lowerer<'a> {
 
         // Hesabu anwani ya sehemu, kisha pakia kwa aina sahihi.
         let field_ptr = self.emit(blk, Instruction::FieldAddr(base_ptr, field_idx, struct_ty));
-        let val = self.emit(blk, Instruction::Load(field_ty, field_ptr));
+        // Sehemu ya muundo inawakilishwa kama kielekezi (mf. vitambulisho na
+        // wito wa sret) — rudisha anwani ya sehemu, si upakiaji wake.
+        // Kupakia muundo kungeleta thamani ya sehemu ya kwanza kama anwani
+        // ya memcpy (kosa la thamani-kama-anwani).
+        let val = if matches!(&field_ty, IrType::Struct { .. }) {
+            field_ptr
+        } else {
+            self.emit(blk, Instruction::Load(field_ty, field_ptr))
+        };
         (val, blk)
     }
 
@@ -2650,7 +2828,15 @@ impl<'a> Lowerer<'a> {
         }).unwrap_or(IrType::I32);
 
         let field_ptr = self.emit(end_blk, Instruction::FieldAddr(struct_ptr, field_idx, struct_ty_opt));
-        let val = self.emit(end_blk, Instruction::Load(field_ty, field_ptr));
+        // Sehemu ya muundo inawakilishwa kama kielekezi (mf. vitambulisho na
+        // wito wa sret) — rudisha anwani ya sehemu, si upakiaji wake.
+        // Kupakia muundo kungeleta thamani ya sehemu ya kwanza kama anwani
+        // ya memcpy (kosa la thamani-kama-anwani).
+        let val = if matches!(&field_ty, IrType::Struct { .. }) {
+            field_ptr
+        } else {
+            self.emit(end_blk, Instruction::Load(field_ty, field_ptr))
+        };
         (val, end_blk)
     }
 
@@ -2686,7 +2872,13 @@ impl<'a> Lowerer<'a> {
 
         // GEP kwa kipengele, kisha pakia.
         let elem_ptr = self.emit(end_blk, Instruction::Gep(ary_ptr, vec![idx_val]));
-        let val = self.emit(end_blk, Instruction::Load(elem_ty, elem_ptr));
+        // Kipengele cha muundo kinawakilishwa kama kielekezi — rudisha anwani
+        // ya kipengele, si upakiaji wake (kosa la thamani-kama-anwani kwa memcpy).
+        let val = if matches!(&elem_ty, IrType::Struct { .. }) {
+            elem_ptr
+        } else {
+            self.emit(end_blk, Instruction::Load(elem_ty, elem_ptr))
+        };
         (val, end_blk)
     }
 
@@ -2737,8 +2929,13 @@ impl<'a> Lowerer<'a> {
                     work.push(*true_target);
                     work.push(*false_target);
                 }
+                Terminator::Switch(_, _, _, merge) => {
+                    // Fuata kizuizi cha muunganiko cha chagua — mikono yake
+                    // tayari imeunganishwa kwa muunganiko huo na lower_switch.
+                    work.push(*merge);
+                }
                 _ => {
-                    // Kimalizio halisi (Ret, Switch) — simama.
+                    // Kimalizio halisi (Ret) — simama.
                 }
             }
         }

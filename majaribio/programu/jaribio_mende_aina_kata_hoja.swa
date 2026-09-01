@@ -1,0 +1,12 @@
+// KATA: hoja ya aina isiyolingana na parameta inazuia mkusanyaji.
+// Muundo hadi parameta ya N32 si halali; hakuna msimbo unaotolewa.
+muundo Nukta { N32 x; }
+
+N32 kazi(N32 a) { rudisha a; }
+
+N32 main() {
+    Nukta n;
+    n.x = 1;
+    kazi(n);
+    rudisha 0;
+}

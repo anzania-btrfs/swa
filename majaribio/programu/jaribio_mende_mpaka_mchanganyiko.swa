@@ -1,0 +1,3 @@
+// Operesheni mchanganyiko ya kamili na desimali inapandishwa hadi
+// D64 (C-semantiki ya pandisha) — zamani (1 + 2.5) * 2 ilitoa 6.
+N32 main() { rudisha (1 + 2.5) * 2; }

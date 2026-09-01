@@ -8,6 +8,6 @@
 N32 main() {
     N32* p = tenga N32;
     *p = 42;
-    achilia(p);
+    achilia_arena(p);
     rudisha 42;
 }

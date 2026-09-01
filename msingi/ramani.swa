@@ -105,7 +105,7 @@ W0 ramani_futa(Ramani* r, N32 funguo) {
 }
 
 W0 ramani_huru(Ramani* r) {
-    achilia(r->funguo);
-    achilia(r->thamani);
-    achilia(r);
+    achilia_arena(r->funguo);
+    achilia_arena(r->thamani);
+    achilia_arena(r);
 }

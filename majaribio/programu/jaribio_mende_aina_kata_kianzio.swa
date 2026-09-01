@@ -1,0 +1,10 @@
+// KATA: kianzio cha aina isiyolingana kinazuia mkusanyaji.
+// Muundo (hasi) hadi N32 si halali; hakuna msimbo unaotolewa.
+muundo Nukta { N32 x; }
+
+N32 main() {
+    Nukta n;
+    n.x = 1;
+    N32 v = n;
+    rudisha v;
+}
