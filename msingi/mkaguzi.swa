@@ -763,7 +763,15 @@ N32 mkaguzi_kagua_usemi(N32 node) {
     kama (aina == 8) {
         // Kagua hoja zote za wito — aina NA idadi — hata kama wito uko
         // katika nafasi ya usemi. Pia rudisha aina ya kurudi ya wito.
-        rudisha mkaguzi_kagua_wito(node);
+        N32 ret_enc = mkaguzi_kagua_wito(node);
+        // Hifadhi enc ya kurudi kwenye nodi — mzalishaji wa wito
+        // anaisoma kwa hoja za wito mwingine. Bila hii, hoja inayoleta
+        // wito wa muundo (sret) ingeonekana kama aina isiyojulikana (0)
+        // na kielekezi cha bafa ya sret kikapitishwa kwa thamani —
+        // takataka kwa muundo wa baiti 5-8 (na bafa kuharibika kwa
+        // muundo mkubwa zaidi).
+        ast_thamani[node] = ret_enc;
+        rudisha ret_enc;
     }
 
     // Oparesheni unari
