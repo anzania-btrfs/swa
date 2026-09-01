@@ -103,6 +103,11 @@ W0 andika_push_rax() {
     andika_baiti(80);
 }
 
+// push rdi (57) — kwa kuhifadhi anwani ya lengwa la nakala
+W0 andika_push_rdi() {
+    andika_baiti(87);
+}
+
 // push rcx (51)
 W0 andika_push_rcx() {
     andika_baiti(81);
@@ -1920,6 +1925,14 @@ N32 wito_buf_off = 0;  // ofseti ya rbp kwa bafa ya nakala za miundo ya wito
 N32 wito_buf_max = 0;  // ukubwa wa bafa (uliokokotolewa na kipitishi awali)
 N32 wito_buf_haja = 0;  // juu ya haja ya nakala kwenye wito wa sasa (wakati wa kipitishi)
 N32 wito_sret_haja = 0;  // 1 ikiwa kazi ya sasa inaita kazi inayorudisha muundo
+// Bafa ya sret-hoja: matokeo ya wito unaorudisha muundo (sret) kama
+// hoja ya wito mwingine hunakiliwa MARA MOJA hapa — bafa ya sret ya
+// pamoja inaweza kuandikwa tena na wito unaofuata wa hoja nyingine
+// (halaiki: tofauti(tengeneza(2), tengeneza(5))). Kina kimoja cha
+// hoja_undani kinatumia sehemu yake ya bafa (mapande 8).
+N32 sret_hoja_buf_off = 0;  // ofseti ya rbp kwa bafa ya nakala za sret-hoja
+N32 sret_hoja_buf_max = 0;  // ukubwa wa bafa (uliokokotolewa na kipitishi awali)
+N32 sret_hoja_haja = 0;  // juu ya haja ya nakala za sret-hoja (wakati wa kipitishi)
 N32 uzalishaji_mzizi = 0;  // mzizi wa AST (kwa utafutaji wa kazi za ndani)
 
 // -------------------------------------------------------
@@ -2572,6 +2585,7 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
     // Tathmini hoja kutoka kulia kwenda kushoto, sukuma kwenye rafu
     // Hifadhi thamani kwenye rafu ili zisipotee wakati wa kutathmini hoja nyingine
     N32 i = hoja_n - 1;
+    N32 cum_sh = 0;
     wakati (i >= 0) {
         N32 enc_h = hoja_enc_bk[msingi + i];
         kama (ni_muundo_enc(enc_h)) {
@@ -2583,6 +2597,20 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
                 // Muundo mkubwa: sukuma anwani sasa; nakili kwenye bafa
                 // ya muda inafanyika baada ya hoja zote (tathmini za
                 // wito wa ndani zisiharishe bafa)
+                kama (ast_aina[hoja_nodes_bk[msingi + i]] == 8) {
+                    // Wito unaorudisha muundo (sret): nakili MARA MOJA
+                    // kwenye bafa ya sret-hoja — bafa ya sret ya pamoja
+                    // inaweza kuandikwa tena na wito unaofuata wa hoja
+                    // nyingine. Kina cha hoja_undani kinachagua panda
+                    // lake (wito wa ndani usiingiliane na wa nje).
+                    N32 panda = (hoja_undani - 1) * sret_hoja_haja;
+                    andika_mov_rsi_rax();  // rsi = bafa ya sret (chanzo)
+                    andika_lea_rdi_rbp_off(sret_hoja_buf_off - panda - cum_sh);  // rdi = lengwa
+                    andika_mov_ecx_imm32(sz_h);
+                    andika_rep_movsb();
+                    andika_lea_rax_rbp_off(sret_hoja_buf_off - panda - cum_sh);  // rax = anwani ya nakala
+                    cum_sh = cum_sh + sz_h;
+                }
                 hoja_muundo_bk[msingi + i] = sz_h;
                 andika_push_rax();
             } sivyo {
@@ -2607,11 +2635,24 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
     // Nakili miundo mikubwa kwenye bafa ya muda ya fremu (baada ya
     // tathmini zote — wito wa ndani hautengenezi nakala zilizokwisha
     // kukumbukwa). Sloti ya hoja inabadilishwa kuwa kielekezi cha bafa.
+    // KUMBUKA: sloti lazima ielekeze kwenye NAKALA (lengwa), si kwenye
+    // chanzo — la sivyo mabadiliko ya kigezo ndani ya kazi inayoitwa
+    // yangegusa kigeu cha mpigaji moja kwa moja (semantiki ya thamani
+    // imevunjwa).
     N32 cum_w = 0;
     N32 j_w = 0;
     wakati (j_w < hoja_n) {
         N32 sz_w = hoja_muundo_bk[msingi + j_w];
         kama (sz_w != 0) {
+            kama (ast_aina[hoja_nodes_bk[msingi + j_w]] == 8) {
+                // Wito unaorudisha muundo (sret): nakala yake tayari
+                // imefanywa mara moja kwenye bafa ya sret-hoja (bafa
+                // ya sret ya pamoja inaweza kuandikwa tena na wito
+                // unaofuata wa hoja nyingine) — usinakili tena.
+                cum_w = cum_w + sz_w;
+                j_w = j_w + 1;
+                endelea;
+            }
             kama (cum_w + sz_w > wito_buf_max) {
                 andika_stderr("Hitilafu: bafa ya miundo ya wito imejaa (kubwa mno)\n");
                 wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
@@ -2619,7 +2660,7 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
             andika_mov_rax_rsp_disp32(j_w * 8);  // rax = kielekezi cha chanzo
             andika_mov_rsi_rax();  // rsi = chanzo
             andika_lea_rdi_rbp_off(wito_buf_off - cum_w);  // rdi = lengwa
-            andika_push_rax();  // hifadhi anwani ya MWANZO wa nakala (rep movsb inasogeza rdi)
+            andika_push_rdi();  // hifadhi anwani ya MWANZO wa nakala (rep movsb inasogeza rdi)
             andika_mov_ecx_imm32(sz_w);
             andika_rep_movsb();
             andika_pop_rcx();  // rcx = anwani ya mwanzo wa nakala
@@ -3744,6 +3785,25 @@ W0 uzalishaji_asimilia(N32 node, N32 kazi_node) {
                 }
                 i = i + 1;
             }
+            // Muundo wa ulimwengu: anwani ya kimataifa (LEA rip-rel) —
+            // kusoma baiti za kwanza kama thamani kungeanguka (SEGV)
+            N32 gi = 0;
+            wakati (gi < data_ulimwengu_idadi) {
+                N8* gjina = ast_pool + data_ulimwengu_jina_off[gi];
+                kama (jina_linganisha(gjina, jina)) {
+                    andika_lea_rax_rip_rel(gi);
+                    kama (offset != -1) { andika_add_rax_imm32(offset); }
+                    andika_push_rax();
+                    kama (ni_muundo_enc(ast_thamani[lhs])) {
+                        uzalishaji_anwani_ya_usemi(rhs, kazi_node);
+                    } sivyo {
+                        uzalishaji_usemi(rhs, kazi_node);
+                    }
+                    andika_hifadhi_hoja(rhs, ast_thamani[lhs]);
+                    rudisha;
+                }
+                gi = gi + 1;
+            }
         }
         // Vinginevyo, tumia thamani ya usemi kama anwani
         uzalishaji_usemi(struct_node, kazi_node);  // eax = anwani ya muundo
@@ -4197,6 +4257,19 @@ W0 uzalishaji_sehemu_dot(N32 node, N32 kazi_node) {
             }
             i = i + 1;
         }
+        // Muundo wa ulimwengu: anwani ya kimataifa (LEA rip-rel) —
+        // kusoma baiti za kwanza kama thamani kungeanguka (SEGV)
+        N32 gi = 0;
+        wakati (gi < data_ulimwengu_idadi) {
+            N8* gjina = ast_pool + data_ulimwengu_jina_off[gi];
+            kama (jina_linganisha(gjina, jina)) {
+                andika_lea_rax_rip_rel(gi);
+                kama (offset != -1) { andika_add_rax_imm32(offset); }
+                andika_pakia_anwani_kwa_enc(ast_thamani[node]);
+                rudisha;
+            }
+            gi = gi + 1;
+        }
     }
     // Vinginevyo, tumia thamani ya usemi kama anwani
     uzalishaji_usemi(struct_node, kazi_node);
@@ -4361,15 +4434,22 @@ W0 kusanya_vigeu_vya_ndani(N32 node) {
 
     kama (aina == 8) {  // AST_WITO — pima haja ya bafa ya nakala za miundo
         N32 cum_w = 0;
+        N32 cum_sa = 0;
         N32 a_w = ast_kulia[node];
         wakati (a_w != -1) {
             kama (ni_muundo_enc(ast_thamani[a_w])) {
                 N32 sz_w = ukubwa_kutoka_enc(ast_thamani[a_w]);
-                kama (sz_w > 8) { cum_w = cum_w + sz_w; }
+                kama (sz_w > 8) {
+                    cum_w = cum_w + sz_w;
+                    // Matokeo ya wito (sret) kama hoja hunakiliwa mara
+                    // moja kwenye bafa ya sret-hoja — pima haja yake.
+                    kama (ast_aina[a_w] == 8) { cum_sa = cum_sa + sz_w; }
+                }
             }
             a_w = ast_tiga[a_w];
         }
         kama (cum_w > wito_buf_haja) { wito_buf_haja = cum_w; }
+        kama (cum_sa > sret_hoja_haja) { sret_hoja_haja = cum_sa; }
         // Bafa ya sret inahitajika tu kama wito wowote unalenga kazi
         // inayorudisha muundo (kielekezi cha sret hutumia bafa ya
         // MPIGAJI). Bila hii, kila fremu ingetumia baiti 256 bure —
@@ -4529,6 +4609,7 @@ W0 uzalishaji_kazi(N32 kazi_node) {
     kvn_idadi = 0;
     wito_buf_haja = 0;
     wito_sret_haja = 0;
+    sret_hoja_haja = 0;
     N32 body = ast_tiga[kazi_node];
     kama (body != -1) { kusanya_vigeu_vya_ndani(body); }
     // Tenga bafa ya muda ya sret MWISHONI mwa fremu (baada ya vigeu vyote).
@@ -4545,6 +4626,12 @@ W0 uzalishaji_kazi(N32 kazi_node) {
     wito_buf_max = wito_buf_haja;
     wito_buf_off = var_stack_idadi + wito_buf_max;
     var_stack_idadi = var_stack_idadi + wito_buf_max;
+    // Bafa ya sret-hoja: nakala za mara moja za matokeo ya wito
+    // (sret) yanayopitishwa kama hoja — mapande 8, moja kwa kila
+    // kina cha hoja_undani (chini: hoja_undani hukatwa kwa 8).
+    sret_hoja_buf_max = sret_hoja_haja * 8;
+    sret_hoja_buf_off = var_stack_idadi + sret_hoja_buf_max;
+    var_stack_idadi = var_stack_idadi + sret_hoja_buf_max;
     // Toa utangulizi na ukubwa kamili wa rafu
     andika_push_rbp(); andika_mov_rbp_rsp(); andika_baiti(72); andika_baiti(129); andika_baiti(236); sub_rsp_nafasi = bafa_text_wapi; andika_neno4(0); frame_imeshinda = 1;
     // Sret: hifadhi rdi (kielekezi cha sret) kwenye rafu
