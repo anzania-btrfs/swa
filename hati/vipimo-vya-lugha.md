@@ -372,7 +372,7 @@ muundo Nukta {
   (mbegu WALA mnyororo wa .swa) anayesoma faili lililotajwa —
   mstari unarukwa na mchanganuzi. Kiungo kinatoshelezwa kwa
   KUUNGANISHA (cat) pekee: faili lazima ziunganishwe kwanza
-  (mf. `cat msingi/kumbukumbu.swa program.swa`). Wito wa kazi
+  (mf. `cat msingi/maktaba/kumbukumbu.swa program.swa`). Wito wa kazi
   isiyofafanuliwa unalia kwa sauti kwenye mnyororo wa uzalishaji
   (`Hitilafu: kazi haijafafanuliwa: <jina>`); mbegu inakataa kimya
   katika kesi kadhaa. Ahadi ya awali kwamba "mkusanyaji wa .swa
@@ -392,7 +392,7 @@ muundo Nukta {
   unakataliwa ("kazi haijafafanuliwa"). Ahadi hii imeondolewa kwenye
   vipimo hadi itakapotekelezwa.
 
-## 10. Maktaba ya Kawaida (msingi/)
+## 10. Maktaba ya Kawaida (msingi/maktaba/)
 
 | Faili | Kazi muhimu |
 |---|---|

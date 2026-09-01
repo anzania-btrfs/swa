@@ -68,9 +68,9 @@ Andika baiti za mkono (opcodes za x86-64) zinazounda mkusanyaji wa kwanza.
 - `hati/ramani.md` — ramani ya mradi
 - `hati/malengo.md` — huu hapa (lengo letu halisi)
 - `hati/mipaka.md` — mipaka inayojulikana (kwa ukali)
-- `msingi/uzalishaji.swa` — codegen asilia (inajikusanya)
-- `msingi/mteremko.swa` — kiteremshi cha AST→IR (huitwa kwa uthibitishaji wa muundo; codegen asilia hutumia AST moja kwa moja)
-- `msingi/stage1.swa` — kiendeshi cha bootstrap
+- `msingi/mkusanyaji/uzalishaji.swa` — codegen asilia (inajikusanya)
+- `msingi/mkusanyaji/mteremko.swa` — kiteremshi cha AST→IR (huitwa kwa uthibitishaji wa muundo; codegen asilia hutumia AST moja kwa moja)
+- `msingi/mkusanyaji/stage1.swa` — kiendeshi cha bootstrap
 - `msingi/mbegu.s` — mbegu ya NASM (rejea ya kihistoria; NASM imeondolewa
   kwenye mnyororo wa uzalishaji — kwanza inachukua nafasi yake)
 

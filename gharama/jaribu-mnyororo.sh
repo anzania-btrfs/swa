@@ -30,18 +30,18 @@ MBEGU="/tmp/mbegu2.bin"
 
 # ============ 2. Jenga mkusanyaji wa .swa (stage1) ============
 # Msuluhishi wa husisha (gharama/msuluhishi.swa) hujengwa kwanza na
-# mbegu, kisha hutatua mnyororo wa msingi/stage1.swa: utegemezi
-# hufuatwa kwa mpangilio wa topolojia, marudio yanaondolewa, na
-# mistari ya husisha yanafutwa. ZIMA linalotokana ndilo linalojengwa.
+# mbegu, kisha hutatua mnyororo wa msingi/mkusanyaji/stage1.swa:
+# utegemezi hufuatwa kwa mpangilio wa topolojia, marudio yanaondolewa,
+# na mistari ya husisha yanafutwa. ZIMA linalotokana ndilo linalojengwa.
 ZIMA="$TMP/zima.swa"
 MSULU="$TMP/zima-msuluhishi.swa"
-cat msingi/kumbukumbu.swa msingi/mfuatano.swa msingi/faili.swa \
-    gharama/msuluhishi.swa > "$MSULU"
+cat msingi/maktaba/kumbukumbu.swa msingi/maktaba/mfuatano.swa \
+    msingi/maktaba/faili.swa gharama/msuluhishi.swa > "$MSULU"
 "$MBEGU" --exe "$MSULU" > "$TMP/msuluhishi" 2> "$TMP/msuluhishi.err" || {
     echo "SHINDWA: mbegu --exe msuluhishi"; cat "$TMP/msuluhishi.err"; exit 1; }
 chmod +x "$TMP/msuluhishi"
-"$TMP/msuluhishi" msingi/stage1.swa > "$ZIMA" || {
-    echo "SHINDWA: kutatua msingi/stage1.swa"; exit 1; }
+"$TMP/msuluhishi" msingi/mkusanyaji/stage1.swa > "$ZIMA" || {
+    echo "SHINDWA: kutatua msingi/mkusanyaji/stage1.swa"; exit 1; }
 "$MBEGU" --exe "$ZIMA" > "$TMP/stage1" 2> "$TMP/stage1.err" || {
     echo "SHINDWA: mbegu --exe zima.swa"; cat "$TMP/stage1.err"; exit 1; }
 chmod +x "$TMP/stage1"
@@ -189,12 +189,13 @@ EOF
 
 # ============ 9. Kazi isiyofafanuliwa inalia kwa sauti ============
 # Kesi ya kwanza: jina la kazi halipo kabisa (minyororo yote miwili).
-# Kesi ya pili: chanzo kinatangaza husisha { mfuatano.swa } — mbegu
-# (ya zamani) inasoma kwenye saraka ya faili pekee na kuacha mstari,
-# kwa hiyo kazi za maktaba hazipo na inalia; stage1 mpya inatatua
-# msingi/mfuatano.swa yenyewe na kufaulu (urefu wa "habari" = 6).
+# Kesi ya pili: chanzo kinatangaza husisha { maktaba/mfuatano.swa } —
+# mbegu (ya zamani) inasoma kwenye saraka ya faili pekee na kuacha
+# mstari, kwa hiyo kazi za maktaba hazipo na inalia; stage1 mpya
+# inatatua msingi/maktaba/mfuatano.swa yenyewe na kufaulu (urefu wa
+# "habari" = 6).
 echo 'N32 main() { rudisha kazi_haipo(); }' > "$TMP/kk.swa"
-echo 'husisha { mfuatano.swa }' > "$TMP/khus.swa"
+echo 'husisha { maktaba/mfuatano.swa }' > "$TMP/khus.swa"
 echo 'N32 main() { rudisha urefu_wa_mfuatano("habari"); }' >> "$TMP/khus.swa"
 for mk in "mbegu" "stage1"; do
     if [ "$mk" = "mbegu" ]; then
@@ -211,7 +212,7 @@ kagua "$rc|$?" "1|0" "husisha-kazi kukosa inalia kwa sauti (mbegu)"
 "$TMP/stage1" --exe "$TMP/khus.swa" > "$TMP/kh2" 2> "$TMP/kh2.err"; rc1=$?
 chmod +x "$TMP/kh2"
 if [ "$rc1" -eq 0 ]; then timeout 5 "$TMP/kh2"; rc2=$?; else rc2=99; fi
-kagua "$rc1|$rc2" "0|6" "husisha { mfuatano.swa } inatatuliwa na stage1 (jibu 6)"
+kagua "$rc1|$rc2" "0|6" "husisha { maktaba/mfuatano.swa } inatatuliwa na stage1 (jibu 6)"
 
 # ============ 10. Bomba la stdin (chanzo kubwa hadi EOF) ============
 BOM="$TMP/bomba.swa"
@@ -261,7 +262,7 @@ kagua "$rc|$?" "1|0" "D64 na hoja 7-9 inalia kwa sauti (mbegu)"
 
 # ============ 12. Formatter inajijenga (fixpoint) ============
 UMB="$TMP/umbizaji-zima.swa"
-cat msingi/kumbukumbu.swa msingi/mfuatano.swa zana/umbizaji.swa > "$UMB"
+cat msingi/maktaba/kumbukumbu.swa msingi/maktaba/mfuatano.swa zana/umbizaji.swa > "$UMB"
 "$MBEGU" --exe "$UMB" > "$TMP/umbizaji-exe" 2> /dev/null || { echo "SHINDWA: umbizaji --exe"; FAIL=$((FAIL+1)); }
 chmod +x "$TMP/umbizaji-exe"
 "$TMP/umbizaji-exe" zana/umbizaji.swa > "$TMP/umbizaji-towe" 2> /dev/null
@@ -269,9 +270,9 @@ cmp -s zana/umbizaji.swa "$TMP/umbizaji-towe"
 kagua "$?" "0" "umbizaji kujijenga (fixpoint)"
 
 # ============ 13. Uhakika wa bomba la stdin ============
-H1=$(cat msingi/hesabu.swa msingi/mfuatano.swa | "$MBEGU" --exe 2>/dev/null | md5sum | cut -c1-16)
-H2=$(cat msingi/hesabu.swa msingi/mfuatano.swa | "$MBEGU" --exe 2>/dev/null | md5sum | cut -c1-16)
-H3=$(cat msingi/hesabu.swa msingi/mfuatano.swa | "$MBEGU" --exe 2>/dev/null | md5sum | cut -c1-16)
+H1=$(cat msingi/maktaba/hesabu.swa msingi/maktaba/mfuatano.swa | "$MBEGU" --exe 2>/dev/null | md5sum | cut -c1-16)
+H2=$(cat msingi/maktaba/hesabu.swa msingi/maktaba/mfuatano.swa | "$MBEGU" --exe 2>/dev/null | md5sum | cut -c1-16)
+H3=$(cat msingi/maktaba/hesabu.swa msingi/maktaba/mfuatano.swa | "$MBEGU" --exe 2>/dev/null | md5sum | cut -c1-16)
 kagua "$H1$H2$H3" "$H1$H1$H1" "uhakika wa bomba (mara 3)"
 
 # ============ Matokeo ============

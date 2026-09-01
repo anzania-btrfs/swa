@@ -32,7 +32,7 @@
 ### Mnyororo wa Kujikusanya wa Sasa
 
 1. `kwanza.bin` (baiti za mkono, hex → binary) hutoa `mbegu.bin` kutoka `mbegu.hex`
-2. `mbegu --exe` (syscalls pekee, hakuna kiunganishi) hukusanya `msingi/*.swa` → `stage1-exe`
+2. `mbegu --exe` (syscalls pekee, hakuna kiunganishi) hukusanya `msingi/maktaba/*.swa na msingi/mkusanyaji/*.swa` → `stage1-exe`
 3. `stage1-exe --exe` inajikusanya maktaba → `stage2-exe`
 4. `stage2-exe --exe` inajikusanya → `stage3-exe`
 

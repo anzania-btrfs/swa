@@ -42,9 +42,9 @@ Baada ya kurekebisha hitilafu za codegen (hasa alloca-in-loop), binary ya kujiku
 
 | # | Hitilafu | Faili | Athari |
 |---|---------|-------|--------|
-| 10 | Tamko la mbele halikutumia `;` | `msingi/msambazaji.swa` | `;` ilivuja hadi kiwango cha juu, ikasababisha hitilafu ya "unexpected element" |
-| 11 | Uchanganuzi wa kitanzi cha `kwa` ulishindwa | `msingi/msambazaji.swa` | `N32 i = 0` katika `kwa` ilichanganuliwa kama usemi badala ya tamko |
-| 12 | Hitilafu mbalimbali za mchanganuzi: `sogeza()` ikikosa sehemu za `mstari`/`safu`, `{` ikitumiwa mara mbili, hakuna rudisha hasi (`-1`), kufurika kwa safu ya AST | `msingi/msambazaji.swa`, `msingi/msomaji.swa` | Uchanganuzi usio sahihi, kufurika kwa safu |
+| 10 | Tamko la mbele halikutumia `;` | `msingi/mkusanyaji/msambazaji.swa` | `;` ilivuja hadi kiwango cha juu, ikasababisha hitilafu ya "unexpected element" |
+| 11 | Uchanganuzi wa kitanzi cha `kwa` ulishindwa | `msingi/mkusanyaji/msambazaji.swa` | `N32 i = 0` katika `kwa` ilichanganuliwa kama usemi badala ya tamko |
+| 12 | Hitilafu mbalimbali za mchanganuzi: `sogeza()` ikikosa sehemu za `mstari`/`safu`, `{` ikitumiwa mara mbili, hakuna rudisha hasi (`-1`), kufurika kwa safu ya AST | `msingi/mkusanyaji/msambazaji.swa`, `msingi/mkusanyaji/msomaji.swa` | Uchanganuzi usio sahihi, kufurika kwa safu |
 
 ### 2.2 Majaribio yote 174 yanapita
 
@@ -111,8 +111,8 @@ Marekebisho yote yako kwenye tawi kuu (`main`).
 | Opaque pointer za LLVM 22, mgongano wa ValueId, builtins za kumbukumbu | `src/codegen/llvm/mod.rs`, `src/ir/lower.rs`, `src/ir/mod.rs`, `build.rs`, `ffi.rs` | ~200 |
 | CFG dead-code (actual_prev, BrCond, self-loop) | `src/ir/lower.rs` | ~40 |
 | Alloca-in-loop (kupitisha mara mbili, pre-allocated locals) | `src/ir/lower.rs` | ~100 |
-| Usomaji wa safu (AST_SAFU, AST_TAJA, faharasa) | `src/parser/mod.rs`, `msingi/msambazaji.swa` | ~130 |
-| Kitanzi cha `kwa`, tamko la mbele `;`, sogeza() kamili, unary minus | `msingi/msambazaji.swa`, `msingi/msomaji.swa` | ~50 |
+| Usomaji wa safu (AST_SAFU, AST_TAJA, faharasa) | `src/parser/mod.rs`, `msingi/mkusanyaji/msambazaji.swa` | ~130 |
+| Kitanzi cha `kwa`, tamko la mbele `;`, sogeza() kamili, unary minus | `msingi/mkusanyaji/msambazaji.swa`, `msingi/mkusanyaji/msomaji.swa` | ~50 |
 | Nyongeza za majaribio | `majaribio/` | ~55 |
 | **Jumla** | **Faili ~18** | **~850** |
 

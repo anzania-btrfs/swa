@@ -1,5 +1,5 @@
-husisha { ../../msingi/kumbukumbu.swa }
-husisha { ../../msingi/mfuatano.swa }
+husisha { ../../msingi/maktaba/kumbukumbu.swa }
+husisha { ../../msingi/maktaba/mfuatano.swa }
 
 N32 main() {
     N32 i = 0;

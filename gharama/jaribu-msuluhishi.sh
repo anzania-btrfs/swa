@@ -7,7 +7,7 @@
 #   2) mnyororo wa ngazi tatu (c <- b <- a) kwenye saraka ya sasa
 #   3) mzunguko wa faili mbili unakataliwa kwa sauti (msimbo 1)
 #   4) uhakika: mara mbili pato sawa kwa baiti (hoja na kituo cha kuingiza)
-#   5) grafu kamili ya mkusanyaji (msingi/stage1.swa) — fixpoint stage2 == stage3
+#   5) grafu kamili ya mkusanyaji (msingi/mkusanyaji/stage1.swa) — fixpoint stage2 == stage3
 #   6) kujitatua: towe la msuluhishi kujengwa linalingana kwa baiti
 #   7) kutoathirika: kutatua towe tena ni kitendo tupu
 #   8) husisha C:: inapitishwa; faili lisilopo na { bila kufunga zinalia
@@ -31,7 +31,7 @@ kagua() { # kagua <msimbo-halisi> <msimbo-tarajiwa> <maelezo>
 # ============ 1. Jenga msuluhishi kwa mbegu ============
 ZIMA="$TMP/zima-msuluhishi.swa"
 for f in kumbukumbu mfuatano faili; do
-    git show HEAD:msingi/$f.swa >> "$ZIMA"
+    cat msingi/maktaba/$f.swa >> "$ZIMA"
 done
 cat gharama/msuluhishi.swa >> "$ZIMA"
 ./msingi/mbegu.bin --exe "$ZIMA" > "$TMP/msuluhishi" 2> "$TMP/e" || {
@@ -41,9 +41,16 @@ PASS=$((PASS+1))
 
 # ============ 2. Jenga stage1 mpya (mnyororo wa .swa) ============
 ZIMA1="$TMP/zima.swa"
-for f in kumbukumbu mfuatano msomaji msambazaji mteremko mkaguzi uzalishaji orodha ramani stage1; do
-    git show HEAD:msingi/$f.swa >> "$ZIMA1"
+for f in kumbukumbu mfuatano; do
+    cat msingi/maktaba/$f.swa >> "$ZIMA1"
 done
+for f in msomaji msambazaji mteremko mkaguzi uzalishaji; do
+    cat msingi/mkusanyaji/$f.swa >> "$ZIMA1"
+done
+for f in orodha ramani; do
+    cat msingi/maktaba/$f.swa >> "$ZIMA1"
+done
+cat msingi/mkusanyaji/stage1.swa >> "$ZIMA1"
 ./msingi/mbegu.bin --exe "$ZIMA1" > "$TMP/stage1" 2> /dev/null || {
     echo "SHINDWA: ujenzi wa stage1"; exit 1; }
 chmod +x "$TMP/stage1"
@@ -97,7 +104,7 @@ H3=$(cat "$TMP/dogo.swa" | "$TMP/msuluhishi" | md5sum | cut -c1-16)
 kagua "$H1$H2$H3" "$H1$H1$H1" "uhakika wa pato"
 
 # ============ 7. Grafu kamili ya mkusanyaji ============
-"$TMP/msuluhishi" msingi/stage1.swa > "$TMP/gurafu.swa" || { echo "SHINDWA: kutatua grafu kamili"; exit 1; }
+"$TMP/msuluhishi" msingi/mkusanyaji/stage1.swa > "$TMP/gurafu.swa" || { echo "SHINDWA: kutatua grafu kamili"; exit 1; }
 grep -c "^husisha {" "$TMP/gurafu.swa"
 kagua "$?" "1" "gurafu: hakuna maelekezo ya { yaliyosalia"
 ./msingi/mbegu.bin --exe "$TMP/gurafu.swa" > "$TMP/stage1-k" 2> /dev/null || { echo "SHINDWA: kusanya grafu kamili"; exit 1; }

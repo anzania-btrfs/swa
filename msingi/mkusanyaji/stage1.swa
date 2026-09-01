@@ -1,8 +1,8 @@
 husisha C::stdio
-husisha { msambazaji.swa }
-husisha { mkaguzi.swa }
-husisha { mteremko.swa }
-husisha { uzalishaji.swa }
+husisha { mkusanyaji/msambazaji.swa }
+husisha { mkusanyaji/mkaguzi.swa }
+husisha { mkusanyaji/mteremko.swa }
+husisha { mkusanyaji/uzalishaji.swa }
 
 // ==========================================================
 // Kusoma na kutatua chanzo — mkusanyaji anatatua mistari ya
@@ -470,16 +470,16 @@ N32 main(N32 argc, N8** argv) {
     // zote kwa mpangilio — utegemezi wa ndani unatatuliwa kwa njia
     // ya rafu, kwa hiyo mpangilio wa mwisho ni wa kijiolojia.
     kama (argc <= faili_idx) {
-        tatua_husisha("kumbukumbu.swa");
-        tatua_husisha("mfuatano.swa");
-        tatua_husisha("msomaji.swa");
-        tatua_husisha("msambazaji.swa");
-        tatua_husisha("mteremko.swa");
-        tatua_husisha("mkaguzi.swa");
-        tatua_husisha("uzalishaji.swa");
-        tatua_husisha("orodha.swa");
-        tatua_husisha("ramani.swa");
-        tatua_husisha("stage1.swa");
+        tatua_husisha("maktaba/kumbukumbu.swa");
+        tatua_husisha("maktaba/mfuatano.swa");
+        tatua_husisha("mkusanyaji/msomaji.swa");
+        tatua_husisha("mkusanyaji/msambazaji.swa");
+        tatua_husisha("mkusanyaji/mteremko.swa");
+        tatua_husisha("mkusanyaji/mkaguzi.swa");
+        tatua_husisha("mkusanyaji/uzalishaji.swa");
+        tatua_husisha("maktaba/orodha.swa");
+        tatua_husisha("maktaba/ramani.swa");
+        tatua_husisha("mkusanyaji/stage1.swa");
     }
 
     kama (faili_idx < argc) {
