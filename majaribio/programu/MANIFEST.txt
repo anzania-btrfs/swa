@@ -67,7 +67,7 @@ KATA	jaribio_kazi_marudio (stage1 pekee: mbegu bado inakubali kazi mbili zenye j
 0	jaribio_vihamishaji_biti	majaribio/programu/jaribio_vihamishaji_biti.swa
 0	jaribio_ternary	majaribio/programu/jaribio_ternary.swa
 0	jaribio_bloku_tupu	majaribio/programu/jaribio_bloku_tupu.swa
-0	jaribio_neno_muhimu_kama_jina_la_kigezo	majaribio/programu/jaribio_neno_muhimu_kama_jina_la_kigezo.swa
+KATA	jaribio_neno_muhimu_kama_jina_la_kigezo (neno muhimu kama jina la kigezo linakataliwa — hati 2.2; stage1 pekee, mbegu ya zamani bado inakubali)	majaribio/programu/jaribio_neno_muhimu_kama_jina_la_kigezo.swa	stage1	neno muhimu
 0	jaribio_kazi_isiyo_na_mwili	majaribio/programu/jaribio_kazi_isiyo_na_mwili.swa
 0	jaribio_k9c_kurudisha_sahihi	majaribio/programu/jaribio_k9c_kurudisha_sahihi.swa
 0	jaribio_k14_maktaba_zaidi	majaribio/programu/jaribio_k14_maktaba_zaidi.swa
@@ -133,7 +133,7 @@ KATA	jaribio_mende_kata_kianzio_usemi (kianzio cha hesabu kilikubaliwa kimya kuh
 KATA	jaribio_mende_kata_tangazo_mbele (tangazo la mbele bila ufafanuzi linakataliwa kwa sauti — mwili tupu { } si tangazo la mbele; stage1 pekee)	majaribio/programu/jaribio_mende_tangazo_mbele.swa	stage1	kazi haijafafanuliwa
 0	jaribio_rafu_wito_mfumo (wito_wa_mfumo wenye hoja 4 ulitengeneza "pop r9" usio na masharti — rafu iliteleza +8 kwa wito na kuharibu vigezo vya ndani; sasa rafu inasawazika kwenye mnyororo wote)	majaribio/programu/jaribio_rafu_wito_mfumo.swa
 KATA	jaribio_mende_nukuu_kisayansi (nukuu ya kisayansi si katika hati 2.3 — hati inaahidi "21.5" pekee; zamani kipeo kilimezwa kimya (1.5e2 = 1.5); sasa inakataliwa kwa sauti, sawa na halisi za radiksi; stage1 pekee)	majaribio/programu/jaribio_mende_nukuu_kisayansi.swa	stage1	nukuu ya kisayansi
-KATA	jaribio_mende_kipengele_cha_muundo (viungwa visivyojulikana vya muundo wa andika (k.m. %u, %x) vinakubaliwa kimya na kutoa hakuna kitu; uthibitisho unatuahidi %d %s %c pekee — sasa vinakataliwa kwa sauti; stage1 pekee)	majaribio/programu/jaribio_mende_kipengele_cha_muundo.swa	stage1	kipengele cha muundo
+KATA	jaribio_mende_kipengele_cha_muundo (viungwa visivyojulikana vya muundo wa andika (k.m. %u, %x) vinakubaliwa kimya na kutoa hakuna kitu; uthibitisho unatuahidi %d %s %c pekee — sasa vinakataliwa kwa sauti; stage1 pekee)	majaribio/programu/jaribio_mende_kipengele_cha_muundo.swa	stage1	kipengele cha umbo
 KATA	jaribio_mende_ugawaji_wito (ugawaji unahitaji kihifadhi; matokeo ya wito si lvalue — zamani pata() = 7 ilikubaliwa kimya kama no-op; mbegu inakataa kwa "uwekaji usiotumika"; stage1 pekee)	majaribio/programu/jaribio_mende_ugawaji_wito.swa	stage1	unahitaji kihifadhi
 KATA	jaribio_mende_ugawaji_ternary (ugawaji unahitaji kihifadhi; matokeo ya ternary si lvalue — zamani x ? y : z = 5 ilikubaliwa kimya kama no-op; stage1 pekee)	majaribio/programu/jaribio_mende_ugawaji_ternary.swa	stage1	unahitaji kihifadhi
 0	jaribio_k16_mbumo_asilimia (%% inachapisha asilimia halisi kwenye mnyororo wa uzalishaji; mbegu ya zamani bado inaimeza — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_k16_mbumo_asilimia.swa
@@ -148,3 +148,15 @@ KATA	jaribio_mende_ugawaji_ternary (ugawaji unahitaji kihifadhi; matokeo ya tern
 0	jaribio_mende_136_gawanya_bila_ishara (mgawanyo bila ishara yenye biti ya juu: A32/B32/W32/A64 kwa / na % — zamani SIGFPE (136); edx sasa inafutwa kabla ya div; idiv yenye ishara haijarejea nyuma; stage1 pekee: mbegu inakataa familia A/B/W)	majaribio/programu/jaribio_mende_136_gawanya_bila_ishara.swa	stage1
 KATA	jaribio_mende_137_kata_upana_wa_aina (upana nje ya {8,16,32,64} — N128, D80, A128 — unakataliwa kwa sauti, sawa na mbegu; zamani ulikubalika kimya; stage1 pekee kwa KATA kama zilizopo)	majaribio/programu/jaribio_mende_137_kata_upana_wa_aina.swa	stage1	isiyojulikana
 0	jaribio_mende_139_upanuzi_ishara_ndogo (N8/N16 hasi zinapanuliwa kwa ishara kwenye upakiaji — vigeu vya ndani/ulimwengu, viashiria, safu, vigezo; zamani sifuri (255 badala ya -1); stage1 pekee: mbegu bado inapanua kwa sifuri)	majaribio/programu/jaribio_mende_139_upanuzi_ishara_ndogo.swa	stage1
+KATA	jaribio_hoja_kielekezi_kwa_n32_kata (kielekezi kwa kigezo cha N32 kinakataliwa — mdudu wa 2026-09-01: SEGV wakati wa kukimbia; stage1 pekee: mbegu bado inakubali)	majaribio/programu/jaribio_hoja_kielekezi_kwa_n32_kata.swa	stage1	kielekezi dhidi ya namba
+KATA	jaribio_hoja_n32_kwa_kielekezi_kata (N32 kwa kigezo cha kielekezi kinakataliwa — mdudu wa 2026-09-01: SEGV wakati wa kukimbia; stage1 pekee)	majaribio/programu/jaribio_hoja_n32_kwa_kielekezi_kata.swa	stage1	kielekezi dhidi ya namba
+KATA	jaribio_hoja_kielekezi_kwa_n32_usemi_kata (kielekezi kwa N32 katika nafasi ya usemi kinakataliwa — mdudu wa 2026-09-01; stage1 pekee)	majaribio/programu/jaribio_hoja_kielekezi_kwa_n32_usemi_kata.swa	stage1	kielekezi dhidi ya namba
+0	jaribio_hoja_kielekezi_sahihi (kielekezi kwa kigezo cha kielekezi na namba kwa namba vinakubaliwa — ukaguzi mkali wa 2026-09-01 hauvunji mchanganyiko halali)	majaribio/programu/jaribio_hoja_kielekezi_sahihi.swa
+KATA	jaribio_hoja_17_kata (wito wa hoja 17 unakataliwa — mdudu wa 2026-09-01: hoja zaidi ya 16 zilitupwa kimya; kikomo cha mzalishaji ni 16; stage1 pekee)	majaribio/programu/jaribio_hoja_17_kata.swa	stage1	kikomo ni 16
+0	jaribio_hoja_16_sahihi (wito wa hoja 16 unafanya kazi — kikomo cha mzalishaji; stage1 pekee: mbegu ina kikomo kidogo)	majaribio/programu/jaribio_hoja_16_sahihi.swa	stage1
+KATA	jaribio_neno_muhimu_kigezo_kata (neno muhimu kama jina la kigezo kinakataliwa — hati 2.2; stage1 pekee)	majaribio/programu/jaribio_neno_muhimu_kigezo_kata.swa	stage1	neno muhimu
+KATA	jaribio_neno_muhimu_kazi_kata (neno muhimu kama jina la kazi kinakataliwa — hati 2.2; stage1 pekee)	majaribio/programu/jaribio_neno_muhimu_kazi_kata.swa	stage1	neno muhimu
+KATA	jaribio_neno_muhimu_muundo_kata (neno muhimu kama jina la muundo/shamba kinakataliwa — hati 2.2; stage1 pekee)	majaribio/programu/jaribio_neno_muhimu_muundo_kata.swa	stage1	neno muhimu
+0	jaribio_kama_sivyo_bila_mabano (kama/sivyo bila mabano: taarifa moja, semantiki ya C — mdudu wa 2026-09-01: sivyo bila mabano ilitekelezwa kila mara; stage1 pekee)	majaribio/programu/jaribio_kama_sivyo_bila_mabano.swa	stage1
+0	jaribio_umbizo_hasi (%x/%u za hasi: kukamilisha mbili — ffffffffffffffff kwa -1; mdudu wa 2026-09-01: takataka; stage1 pekee)	majaribio/programu/jaribio_umbizo_hasi.swa	stage1
+KATA	jaribio_hoja_halisi_kwa_kielekezi_kata (halisi kamili kwa kigezo cha kielekezi inakataliwa — f(5) na f(0): enc 0 ya halisi ilikwepa ukaguzi mkali na kuleta SEGV (mdudu wa 2026-09-01); stage1 pekee)	majaribio/programu/jaribio_hoja_halisi_kwa_kielekezi_kata.swa	stage1	kielekezi dhidi ya namba
