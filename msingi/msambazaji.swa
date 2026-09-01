@@ -343,6 +343,30 @@ N32 changanua_aina_tokeni(Msambazaji* p) {
             j = j + 1;
         }
         upana = w;
+        // Hati 3 inaahidi upana 8/16/32/64 pekee; W0 (upana 0) ni tupu
+        // ya familia W. N128, D80, A128 n.k. zilikubalika kimya na
+        // kutoa msimbo usio na maana — kataa kwa sauti kama mbegu
+        // ("aina isiyojulikana").
+        kama (upana != 8) {
+            kama (upana != 16) {
+                kama (upana != 32) {
+                    kama (upana != 64) {
+                        kama (upana != 0 || familia != 5) {
+                            N8 bafa_jina[64];
+                            N32 bi = 0;
+                            wakati (bi < n && bi < 63) {
+                                bafa_jina[bi] = txt[bi];
+                                bi = bi + 1;
+                            }
+                            bafa_jina[bi] = 0;
+                            andika_stderr("kosa: aina isiyojulikana: %s\n", bafa_jina);
+                            p->kosa = 1;
+                            rudisha -1;
+                        }
+                    }
+                }
+            }
+        }
     }
     sogeza(p);
     // '*' kama kiendeshi cha herufi-moja kinaweza kukosa aina ISHARA kutoka kwa mchanganuaji.
