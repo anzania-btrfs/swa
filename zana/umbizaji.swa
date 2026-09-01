@@ -85,7 +85,7 @@ N32 neno_la_kabla_ni_muhimu(N32 i) {
     kama (neno_la_kabla_ni(i, "kwa") != 0) { rudisha 1; }
     kama (neno_la_kabla_ni(i, "chagua") != 0) { rudisha 1; }
     kama (neno_la_kabla_ni(i, "rudisha") != 0) { rudisha 1; }
-    kama (neno_la_kabla_ni(i, "hali") != 0) { rudisha 1; }
+    kama (neno_la_kabla_ni(i, "umoja") != 0) { rudisha 1; }
     rudisha 0;
 }
 
@@ -132,7 +132,7 @@ N32 ni_baina(N32 i) {
         N32 urefu = 0;
         neno_la_kabla(i, &mwanzo, &urefu);
         kama (neno_linalingana(mwanzo, urefu, "rudisha") != 0) { rudisha 0; }
-        kama (neno_linalingana(mwanzo, urefu, "hali") != 0) { rudisha 0; }
+        kama (neno_linalingana(mwanzo, urefu, "umoja") != 0) { rudisha 0; }
         rudisha 1;
     }
     rudisha 0;
@@ -255,7 +255,7 @@ W0 towe_kiendeshi_baina(N8 a, N8 b) {
 
 N32 panga_chanzo() {
     N32 i = 0;
-    N32 hali = HALI_MSIMBO;
+    N32 umoja = HALI_MSIMBO;
     N32 kina = 0;
     N32 kiwango = 0;
     N32 kiwango_mstari = 0;
@@ -265,7 +265,7 @@ N32 panga_chanzo() {
     wakati (i < chanzo_urefu) {
         N8 c = chanzo[i];
         kama (c == 10) {
-            kama (hali != HALI_MFUATANO && hali != HALI_HERUFI) {
+            kama (umoja != HALI_MFUATANO && umoja != HALI_HERUFI) {
                 wakati (towe_urefu > mwanzo_mstari && (towe[towe_urefu - 1] == 32 || towe[towe_urefu - 1] == 9)) {
                     towe_urefu = towe_urefu - 1;
                 }
@@ -276,8 +276,8 @@ N32 panga_chanzo() {
             kiwango = kiwango + funguka - funga;
             funguka = 0;
             funga = 0;
-            kama (hali == HALI_MAONI_M) {
-                hali = HALI_MSIMBO;
+            kama (umoja == HALI_MAONI_M) {
+                umoja = HALI_MSIMBO;
             }
             i = i + 1;
             endelea;
@@ -286,7 +286,7 @@ N32 panga_chanzo() {
             vunja;
         }
         kama (imeanza == 0) {
-            kama (hali == HALI_MSIMBO) {
+            kama (umoja == HALI_MSIMBO) {
                 N32 j = i;
                 wakati (j < chanzo_urefu && (chanzo[j] == 32 || chanzo[j] == 9)) {
                     j = j + 1;
@@ -306,7 +306,7 @@ N32 panga_chanzo() {
             }
             imeanza = 1;
         }
-        kama (hali == HALI_MFUATANO) {
+        kama (umoja == HALI_MFUATANO) {
             towe_herufi(c);
             kama (c == 92) {
                 i = i + 1;
@@ -317,12 +317,12 @@ N32 panga_chanzo() {
                 endelea;
             }
             kama (c == 34) {
-                hali = HALI_MSIMBO;
+                umoja = HALI_MSIMBO;
             }
             i = i + 1;
             endelea;
         }
-        kama (hali == HALI_HERUFI) {
+        kama (umoja == HALI_HERUFI) {
             towe_herufi(c);
             kama (c == 92) {
                 i = i + 1;
@@ -333,12 +333,12 @@ N32 panga_chanzo() {
                 endelea;
             }
             kama (c == 39) {
-                hali = HALI_MSIMBO;
+                umoja = HALI_MSIMBO;
             }
             i = i + 1;
             endelea;
         }
-        kama (hali == HALI_MAONI_K) {
+        kama (umoja == HALI_MAONI_K) {
             towe_herufi(c);
             kama (c == 47 && i + 1 < chanzo_urefu && chanzo[i + 1] == 42) {
                 kina = kina + 1;
@@ -353,14 +353,14 @@ N32 panga_chanzo() {
                 towe_herufi(chanzo[i]);
                 i = i + 1;
                 kama (kina == 0) {
-                    hali = HALI_MSIMBO;
+                    umoja = HALI_MSIMBO;
                 }
                 endelea;
             }
             i = i + 1;
             endelea;
         }
-        kama (hali == HALI_MAONI_M) {
+        kama (umoja == HALI_MAONI_M) {
             towe_herufi(c);
             i = i + 1;
             endelea;
@@ -380,14 +380,14 @@ N32 panga_chanzo() {
         kama (c == 34) {
             towe_nafasi_kabla();
             towe_herufi(34);
-            hali = HALI_MFUATANO;
+            umoja = HALI_MFUATANO;
             i = i + 1;
             endelea;
         }
         kama (c == 39) {
             towe_nafasi_kabla();
             towe_herufi(39);
-            hali = HALI_HERUFI;
+            umoja = HALI_HERUFI;
             i = i + 1;
             endelea;
         }
@@ -395,7 +395,7 @@ N32 panga_chanzo() {
             towe_nafasi_maoni();
             towe_herufi(47);
             towe_herufi(47);
-            hali = HALI_MAONI_M;
+            umoja = HALI_MAONI_M;
             i = i + 2;
             endelea;
         }
@@ -404,7 +404,7 @@ N32 panga_chanzo() {
             towe_herufi(47);
             towe_herufi(42);
             kina = 1;
-            hali = HALI_MAONI_K;
+            umoja = HALI_MAONI_K;
             i = i + 2;
             endelea;
         }
@@ -654,7 +654,7 @@ N32 panga_chanzo() {
         towe_herufi(c);
         i = i + 1;
     }
-    kama (hali != HALI_MFUATANO && hali != HALI_HERUFI) {
+    kama (umoja != HALI_MFUATANO && umoja != HALI_HERUFI) {
         wakati (towe_urefu > mwanzo_mstari && (towe[towe_urefu - 1] == 32 || towe[towe_urefu - 1] == 9)) {
             towe_urefu = towe_urefu - 1;
         }
