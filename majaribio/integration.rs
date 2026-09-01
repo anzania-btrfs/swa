@@ -1301,7 +1301,7 @@ N32 main() {
 
     // tafuta_herufi — inatafuta herufi kwenye mfuatano
     N8 s4[] = \"habari\";
-    kama (tafuta_herufi(s4, 98) != 1) rudisha 9;   // 'b' iko kwenye faharisi 1
+    kama (tafuta_herufi(s4, 98) != 2) rudisha 9;   // 'b' iko kwenye faharisi 2 (h-a-b-a-r-i)
     kama (tafuta_herufi(s4, 122) != -1) rudisha 10;  // 'z' haipo
 
     rudisha 0;
@@ -1444,6 +1444,93 @@ N32 main() {
     N32 tupu[1];
     pangilia_n32(tupu, 0);
 
+    rudisha 0;
+}
+";
+    run_msingi_test(test_source, 0);
+}
+
+// ============================================================================
+// K10e2 — Skrutini ya chagua yenye wito wenye athari inapaswa kutathminiwa
+// ============================================================================
+
+#[test]
+fn jaribio_k10e2_chagua_skrutini_athari() {
+    let test_source = "\
+N32 hesabu_kutoka(N32* kumbukumbu) {
+    *kumbukumbu = *kumbukumbu + 10;
+    rudisha *kumbukumbu;
+}
+
+N32 main() {
+    N32 thamani = 1;
+    N32 matokeo = 0;
+    // Skrutini ni wito wenye athari — lazima utekelezwe mara moja.
+    chagua (hesabu_kutoka(&thamani)) {
+        hali 11: matokeo = 100;
+        hali 21: matokeo = 200;
+        sivyo: matokeo = 999;
+    }
+    kama (thamani != 11) rudisha 1;
+    kama (matokeo != 100) rudisha 2;
+    rudisha 0;
+}
+";
+    run_msingi_test(test_source, 0);
+}
+
+// ============================================================================
+// K10e3 — Kianzisha cha kwa kina wito wenye athari — lazima kitekelezwe
+// ============================================================================
+
+#[test]
+fn jaribio_k10e3_kwa_kianzisha_athari() {
+    let test_source = "\
+N32 hesabu() {
+    rudisha 1;
+}
+
+N32 main() {
+    N32 j = 0;
+    N32 hesabu_zaidi = 0;
+    // Kianzisha kina wito wenye athari ya thamani — lazima kitekelezwe
+    // mara moja kabla ya mzunguko.
+    kwa (j = hesabu(); j < 3; j = j + 1) {
+        hesabu_zaidi = hesabu_zaidi + j;
+    }
+    kama (j != 3) rudisha 1;
+    kama (hesabu_zaidi != 3) rudisha 2;
+
+    // Tangazo la ndani kama kianzisha.
+    N32 hesabu_zaidi2 = 0;
+    kwa (N32 i = hesabu(); i < 3; i = i + 1) {
+        hesabu_zaidi2 = hesabu_zaidi2 + i;
+    }
+    kama (hesabu_zaidi2 != 3) rudisha 3;
+    rudisha 0;
+}
+";
+    run_msingi_test(test_source, 0);
+}
+
+// ============================================================================
+// K10e4 — Endelea katika kwa yenye hatua inaruka kwenye HATUA (semantiki ya C)
+// ============================================================================
+
+#[test]
+fn jaribio_k10e4_kwa_endelea_hatua() {
+    let test_source = "\
+N32 main() {
+    N32 jumla = 0;
+    N32 i = 0;
+    kwa (i = 0; i < 5; i = i + 1) {
+        kama (i == 2) {
+            endelea;
+        }
+        jumla = jumla + i;
+    }
+    kama (jumla != 8) rudisha 1;
+    kama (i != 5) rudisha 2;
     rudisha 0;
 }
 ";
