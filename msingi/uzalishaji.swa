@@ -2918,10 +2918,29 @@ W0 uzalishaji_taarifa(N32 node, N32 kazi_node) {
                     N32 i = 0; N32 kupatikana = 0;
                     wakati (i < var_idadi) {
                         kama (jina_linganisha(var_pool + var_jina_off[i], jina)) {
-                            andika_lea_rax_rbp_off(var_rbp_off[i]);
+                            kama (var_kwa_rejea[i] == 1) {
+                                // Paramu ya muundo mkubwa: sloti ina
+                                // kielekezi — pakia, si LEA (lengwa la
+                                // nakala ni muundo wenyewe, si sloti)
+                                andika_mov_rax_rbp_off(var_rbp_off[i]);
+                            } sivyo {
+                                andika_lea_rax_rbp_off(var_rbp_off[i]);
+                            }
                             kupatikana = 1; vunja;
                         }
                         i = i + 1;
+                    }
+                    // Muundo wa ulimwengu: anwani ya kimataifa (LEA rip-rel)
+                    kama (kupatikana == 0) {
+                        N32 gi = 0;
+                        wakati (gi < data_ulimwengu_idadi) {
+                            N8* gjina = ast_pool + data_ulimwengu_jina_off[gi];
+                            kama (jina_linganisha(gjina, jina)) {
+                                andika_lea_rax_rip_rel(gi);
+                                kupatikana = 1; vunja;
+                            }
+                            gi = gi + 1;
+                        }
                     }
                     kama (kupatikana == 0) { andika_xor_eax_eax(); }
                 } sivyo {
