@@ -400,7 +400,7 @@ fn jaribio_msingi_mkaguzi() {
 #[test]
 fn jaribio_msingi_stage1() {
     let ir = compile_file("msingi/stage1.swa").expect("stage1.swa inapaswa kukusanyika");
-    assert!(ir.contains("ongeza_faili"));
+    assert!(ir.contains("tatua_husisha"));
     assert!(ir.contains("main"));
 }
 
@@ -428,7 +428,7 @@ fn jaribio_stage1() {
     let src = std::fs::read_to_string("msingi/stage1.swa")
         .expect("inapaswa kusoma faili");
     let ir = compile_and_verify(&src).expect("stage1.swa inapaswa kukusanyika");
-    assert!(ir.contains("ongeza_faili"), "IR inapaswa kuwa na ongeza_faili");
+    assert!(ir.contains("tatua_husisha"), "IR inapaswa kuwa na tatua_husisha");
     assert!(ir.contains("main"), "IR inapaswa kuwa na main");
     assert!(ir.contains("chanzo_buf"), "IR inapaswa kuwa na chanzo_buf");
 }

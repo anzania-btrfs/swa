@@ -1,0 +1,11 @@
+// jaribio_husisha_tatua.swa — mkusanyaji (stage1) anatatua mstari wa
+// "husisha { mfuatano.swa }" mwenyewe: msingi/mfuatano.swa na
+// msingi/kumbukumbu.swa zinaingizwa kabla ya chanzo hiki, bila zana
+// ya nje. (Stage1 pekee: mbegu inasoma kwenye saraka ya faili pekee
+// na kuacha mstari huo — "kazi haijafafanuliwa".)
+husisha { mfuatano.swa }
+N32 main() {
+    N64 n = urefu_wa_mfuatano("habari");
+    kama (n == 6) { rudisha 0; }
+    rudisha 1;
+}
