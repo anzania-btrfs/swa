@@ -4734,6 +4734,14 @@ uzalishaji_tangazo:
         mov     r12d, r13d
         call    uzalishaji_ast
         pop     r12
+        ; Panua ishara ya matokeo ya hesabu ya binary kabla ya
+        ; kuhifadhiwa kwenye kigezo cha baiti 8: "N64 y = 0 - 90;"
+        ; — operesheni ya N32 (sub eax, ecx) huacha biti 32 za juu
+        ; kuwa sifuri; cdqe (48 98) huzipanua kwa ishara. Sawia na
+        ; panua_ishara_ndogo ya mnyororo wa .swa na uwekaji
+        ; (.do_assign); anwani (kielekezi, jina la safu) hazipanuliwi.
+        mov     edi, r13d
+        call    panua_ishara_ya_kauli
         jmp     .store_value
 .no_init:
         xor     eax, eax                ; hakuna kianzilishi, thamani = 0
@@ -6026,6 +6034,130 @@ fumbua_aina:
         ret
 
 ; -------------------------------------------------------
+; ni_jina_la_safu: je, nodi hii ni jina la SAFU?
+;   edi = faharisi ya nodi
+;   eax = 1 ikiwa jina la safu (ndani au ulimwengu), 0 vinginevyo
+;   Safu hutoa ANWANI (lea) si thamani — upanuzi wa ishara haufai.
+;   Huhifadhi r12-r15; r8-r11, rdi, rsi zinaweza kuharibiwa.
+; -------------------------------------------------------
+ni_jina_la_safu:
+        push    r12
+        push    r13
+        push    r14
+        push    r15
+        xor     eax, eax
+        cmp     edi, -1
+        je      .njs_mwisho
+        mov     r12d, [ast_aina + rdi*4]
+        cmp     r12d, AST_JINA
+        jne     .njs_mwisho
+        mov     r13d, [ast_jina_off + rdi*4]
+        lea     r13, [str_pool + r13]
+        ; Saka kati ya vigezo vya ndani
+        xor     r14d, r14d
+.njs_ndani:
+        cmp     r14, [local_count]
+        jae     .njs_ulimwengu
+        mov     rdi, [local_name + r14*8]
+        mov     rsi, r13
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        je      .njs_ndani_iko
+        inc     r14
+        jmp     .njs_ndani
+.njs_ndani_iko:
+        cmp     dword [local_array_size + r14*4], 0
+        jg      .njs_ndiyo
+        jmp     .njs_mwisho
+        ; Saka kati ya vigezo vya ulimwengu
+.njs_ulimwengu:
+        xor     r14d, r14d
+.njs_ulimwengu_mzunguko:
+        cmp     r14, [global_count]
+        jae     .njs_mwisho
+        mov     rdi, [global_name + r14*8]
+        mov     rsi, r13
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        je      .njs_ulimwengu_iko
+        inc     r14
+        jmp     .njs_ulimwengu_mzunguko
+.njs_ulimwengu_iko:
+        cmp     dword [global_is_array + r14*4], 0
+        jne     .njs_ndiyo
+        jmp     .njs_mwisho
+.njs_ndiyo:
+        mov     eax, 1
+.njs_mwisho:
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+        ret
+
+; -------------------------------------------------------
+; panua_ishara_ya_kauli: toa cdqe (48 98) ikiwa matokeo ya operesheni
+; ya binary yanahitaji upanuzi wa ishara kabla ya kuhifadhiwa kwenye
+; lengwa la baiti 8. "N64 y = 0 - 90;" — operesheni ya N32 (sub eax,
+; ecx) huacha biti 32 za juu kuwa sifuri; cdqe huzipanua kwa ishara.
+; Sawia na panua_ishara_ndogo ya mnyororo wa .swa. Hutoa cdqe ikiwa
+; nodi ni KAULI (si ?:), aina yake ni N8/N16/N32 bila nyota, na
+; operanda zake si majina ya safu. Anwani hazipanuliwi: kielekezi
+; (nyota > 0) na jina la safu (lea) si thamani ya hesabu; ?: (OP_HUU)
+; haijumuishwi kwa sababu fumbua_aina huukadiria kwa aina ya sharti,
+; si ya matokeo; N64 (4), W0 (5), muundo (6) na D64 (7) hazihitaji
+; — D64 inabeba thamani kwenye xmm0, si rax.
+;   edi = faharisi ya nodi
+;   Huhifadhi r12-r15; r8-r11, rdi, rsi zinaweza kuharibiwa.
+; -------------------------------------------------------
+panua_ishara_ya_kauli:
+        push    r12
+        push    r13
+        push    r14
+        push    r15
+        cmp     edi, -1
+        je      .pik_mwisho
+        mov     r13d, edi               ; r13d = faharisi ya nodi
+        mov     r14d, [ast_aina + r13*4]
+        cmp     r14d, AST_KAULI
+        jne     .pik_mwisho
+        mov     r14d, [ast_thamani + r13*4]
+        cmp     r14d, OP_HUU
+        je      .pik_mwisho
+        ; Operanda za anwani: jina la safu (kushoto au kulia) — matokeo
+        ; ni anwani (iliyopunguzwa), si thamani ya hesabu; usipanue.
+        mov     r15d, [ast_kushoto + r13*4]
+        mov     r12d, [ast_kulia + r13*4]
+        mov     edi, r15d
+        call    ni_jina_la_safu
+        test    eax, eax
+        jnz     .pik_mwisho
+        mov     edi, r12d
+        call    ni_jina_la_safu
+        test    eax, eax
+        jnz     .pik_mwisho
+        ; Aina ya matokeo: N8/N16/N32 yenye ishara, bila nyota
+        mov     r12d, r13d
+        call    fumbua_aina
+        test    eax, eax
+        jz      .pik_mwisho
+        cmp     eax, 3
+        ja      .pik_mwisho
+        test    ebx, ebx
+        jnz     .pik_mwisho
+        ; cdqe → 48 98: panua ishara ya eax hadi rax
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x98
+        call    gen_baiti
+.pik_mwisho:
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+        ret
+
+; -------------------------------------------------------
 ; uzalishaji_anwani_ya_nodi: zalisha msimbo wa anwani ya nodi
 ;   r12d = faharisi ya nodi
 ;   Hutoa msimbo unaoweka anwani kwenye rax
@@ -7100,6 +7232,18 @@ uzalishaji_kauli_ya_binary:
         pop     r15
         pop     r12
         mov     r8d, eax                ; hifadhi thamani ya wakati wa kukusanya
+
+        ; Panua ishara ya matokeo ya hesabu ya binary kabla ya
+        ; kuhifadhiwa kwenye lengwa la baiti 8 — sawia na
+        ; panua_ishara_ndogo ya mnyororo wa .swa na kianzilishi
+        ; cha tangazo (uzalishaji_tangazo). Anwani hazipanuliwi:
+        ; kielekezi (nyota > 0) na jina la safu (lea) si thamani ya
+        ; hesabu; ?: (OP_HUU) pia haijumuishwi kwa sababu fumbua_aina
+        ; huukadiria kwa aina ya sharti, si ya matokeo.
+        push    r8                      ; hifadhi CT ya RHS kwenye rafu
+        mov     edi, r14d
+        call    panua_ishara_ya_kauli
+        pop     r8
 
         ; Upande wa kushoto: jina la kigezo, faharisi ya safu, dereferensi
         ; au mwanachama wa muundo
