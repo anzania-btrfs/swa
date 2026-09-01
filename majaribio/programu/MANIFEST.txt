@@ -161,3 +161,6 @@ KATA	jaribio_neno_muhimu_muundo_kata (neno muhimu kama jina la muundo/shamba kin
 0	jaribio_umbizo_hasi (%x/%u za hasi: kukamilisha mbili — ffffffffffffffff kwa -1; mdudu wa 2026-09-01: takataka; stage1 pekee)	majaribio/programu/jaribio_umbizo_hasi.swa	stage1
 KATA	jaribio_hoja_halisi_kwa_kielekezi_kata (halisi kamili kwa kigezo cha kielekezi inakataliwa — f(5) na f(0): enc 0 ya halisi ilikwepa ukaguzi mkali na kuleta SEGV (mdudu wa 2026-09-01); stage1 pekee)	majaribio/programu/jaribio_hoja_halisi_kwa_kielekezi_kata.swa	stage1	kielekezi dhidi ya namba
 0	jaribio_mende_sret_kwa_thamani (kazi inayochukua muundo mkubwa kwa thamani NA kurudisha muundo — njia ya kurudi kwa sret ilipakua sloti (kielekezi) badala ya muundo; sasa kielekezi kinanyooshewa kabla ya nakili)	majaribio/programu/jaribio_mende_sret_kwa_thamani.swa
+1	jaribio_t94_asilimia_utorokaji (utorokaji wa \% unabadilishwa kuwa asilimia na \n kuwa mstari mpya katika kamba ya DATA — 8.2)	majaribio/programu/jaribio_t94_asilimia_utorokaji.swa
+1	jaribio_j8_d32_ulimwengu (D32 ya ulimwengu inalingana na halisi ya desimali — 8.7; mbegu haijui D32)	majaribio/programu/jaribio_j8_d32_ulimwengu.swa	stage1
+1	jaribio_d18_kamba_ndani_n (\n katika kamba ya DATA ya ndani inabadilishwa kuwa 0x0A — 8.18, hati 2.3)	majaribio/programu/jaribio_d18_kamba_ndani_n.swa
