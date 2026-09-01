@@ -188,10 +188,11 @@ EOF
     && timeout 5 "$TMP/mz"; kagua "$?" "0" "mzunguko mfupi (mbegu)"
 
 # ============ 9. Kazi isiyofafanuliwa inalia kwa sauti ============
-# Kesi ya kwanza: jina la kazi halipo kabisa. Kesi ya pili: chanzo
-# kinatangaza husisha { mfuatano.swa } lakini kinakusanywa peke yake —
-# kazi za maktaba hazipo, na mnyororo lazima ulie kwa sauti (mbegu
-# haiwii viungo vya ndani; stage1 pia).
+# Kesi ya kwanza: jina la kazi halipo kabisa (minyororo yote miwili).
+# Kesi ya pili: chanzo kinatangaza husisha { mfuatano.swa } — mbegu
+# (ya zamani) inasoma kwenye saraka ya faili pekee na kuacha mstari,
+# kwa hiyo kazi za maktaba hazipo na inalia; stage1 mpya inatatua
+# msingi/mfuatano.swa yenyewe na kufaulu (urefu wa "habari" = 6).
 echo 'N32 main() { rudisha kazi_haipo(); }' > "$TMP/kk.swa"
 echo 'husisha { mfuatano.swa }' > "$TMP/khus.swa"
 echo 'N32 main() { rudisha urefu_wa_mfuatano("habari"); }' >> "$TMP/khus.swa"
@@ -203,14 +204,14 @@ for mk in "mbegu" "stage1"; do
     fi
     grep -q "haijafafanuliwa" "$TMP/kk" "$TMP/kk.err"
     kagua "$rc|$?" "1|0" "kazi kukosa inalia kwa sauti ($mk)"
-    if [ "$mk" = "mbegu" ]; then
-        "$MBEGU" --exe "$TMP/khus.swa" > "$TMP/kh" 2> "$TMP/kh.err"; rc=$?
-    else
-        "$TMP/stage1" --exe "$TMP/khus.swa" > "$TMP/kh" 2> "$TMP/kh.err"; rc=$?
-    fi
-    grep -q "haijafafanuliwa" "$TMP/kh" "$TMP/kh.err"
-    kagua "$rc|$?" "1|0" "husisha-kazi kukosa inalia kwa sauti ($mk)"
 done
+"$MBEGU" --exe "$TMP/khus.swa" > "$TMP/kh" 2> "$TMP/kh.err"; rc=$?
+grep -q "haijafafanuliwa" "$TMP/kh" "$TMP/kh.err"
+kagua "$rc|$?" "1|0" "husisha-kazi kukosa inalia kwa sauti (mbegu)"
+"$TMP/stage1" --exe "$TMP/khus.swa" > "$TMP/kh2" 2> "$TMP/kh2.err"; rc1=$?
+chmod +x "$TMP/kh2"
+if [ "$rc1" -eq 0 ]; then timeout 5 "$TMP/kh2"; rc2=$?; else rc2=99; fi
+kagua "$rc1|$rc2" "0|6" "husisha { mfuatano.swa } inatatuliwa na stage1 (jibu 6)"
 
 # ============ 10. Bomba la stdin (chanzo kubwa hadi EOF) ============
 BOM="$TMP/bomba.swa"
