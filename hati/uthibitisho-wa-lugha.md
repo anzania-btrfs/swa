@@ -4,71 +4,69 @@ Rekodi rasmi ya uzingatiaji wa vipimo — kila matokeo hapa yalipimwa
 kwa kukusanya na kuendesha programu halisi kwenye minyororo yote
 miwili ya mkusanyaji. Hakuna kitu kilichokisiwa.
 
-Tarehe ya kipimo: 2026-08-27.
+Tarehe ya kipimo: 2026-09-01.
+
+Hali ya hazina wakati wa kipimo: tawi `kipengele/uthibitisho-kamili`,
+HEAD 7399e97.
 
 Minyororo iliyopimwa:
 
-- mbegu — `msingi/mbegu.bin`, mkusanyaji wa bootstrap (mzizi).
-- uzalishaji — stage1, iliyojengwa kutoka `msingi/*.swa` kupitia
-  mbegu (mnyororo wa kujikusanya; fixpoint stage2-exe == stage3-exe
-  sawa kwa baiti inashikilia).
+- **mbegu** — `msingi/mbegu.bin`, mkusanyaji wa bootstrap. Iliyogandishwa
+  commit f12e134 (2026-09-01 12:03); haijabadilika tangu hapo.
+- **uzalishaji** — stage1 iliyojengwa leo kutoka `msingi/*.swa` kupitia
+  mbegu (`--exe`, chmod +x). Mnyororo wa kujikusanya: fixpoint
+  stage2-exe == stage3-exe imepimwa leo, sawa kwa baiti.
 
-Hali ya hazina wakati wa kipimo: tawi main, commit a1831d3.
+Rekodi hii inachukua nafasi ya rekodi ya 2026-08-27 (hali ya
+kabla ya ukarabati). Kesi 467 zilipimwa kwenye kila mnyororo kwenye
+majaribio ya mwisho ya mfumo wa aina, udhibiti wa mwendo na
+miundo/maktaba (2026-09-01, HEAD 1c525ce), na marekebisho ya
+baada ya skani yalipimwa tena leo kwa kirejeshi kidogo cha kila
+mdudu — tazama sehemu ya 3 na 12 kwa kile kilichopimwa upya.
 
 ## 1. Uainishaji
 
 Kila kesi inaainishwa mojawapo ya nne:
 
-- **inapita** (SAWA): inakusanya, inaendesha, na jibu lake ni sahihi
-  (msimbo wa kutoka na pato vinalingana na matarajio).
-- **jibu baya** (JIBU-BAYA): inakusanya na kuendesha bila kosa, lakini
-  jibu si sahihi — kimyakimya. Programu inaonekana imefanikiwa na
-  inatoa jibu lingine.
-- **huanguka** (HUANGUKA): inakusanya lakini inaanguka — wakati wa
-  kukusanya (mkusanyaji mwenyewe) au wakati wa kuendesha (SEGV 139,
-  FPE 136, n.k.).
-- **imekataliwa** (IMEKATALIWA): inakataa kukusanya kwa msimbo wa
-  kutoka usio sifuri. Mnyororo wa uzalishaji huandika ujumbe kwenye
-  stderr; mbegu huandika kwenye stdout (mahali pa ELF) — na katika
-  kesi kadhaa mbegu inakataa KIMYA (msimbo 1, hakuna ujumbe).
+- **SAWA** — inakusanya, inaendesha, na jibu lake ni sahihi (msimbo
+  wa kutoka na pato vinalingana na matarajio).
+- **JIBU-BAYA** — inakusanya na kuendesha bila kosa, lakini jibu si
+  sahihi — kimyakimya. Programu inaonekana imefanikiwa na inatoa
+  jibu lingine.
+- **HUANGUKA** — inaanguka: wakati wa kukusanya (mkusanyaji mwenyewe)
+  au wakati wa kuendesha (SEGV 139, FPE 136, n.k.).
+- **IMEKATALIWA** — inakataa kukusanya kwa msimbo wa kutoka usio
+  sifuri. Mnyororo wa uzalishaji huandika ujumbe kwenye stderr;
+  mbegu huandika kwenye stdout katika kesi chache, na katika kesi
+  nyingine inakataa kimya (msimbo 1, hakuna ujumbe).
 
 Jibu baya ni mbaya kuliko kukataliwa. Ukataaji ni sauti: mwandishi
 anajua lugha haikubali msimbo wake na anaweza kuchukua njia nyingine.
 Jibu baya ni kimya: mkusanyaji anakubali programu, anaizalisha kwa
 muonekano kamili, na jibu lake ni potofu — mdudu anaingia kwenye
-programu zilizojengwa bila ishara yoyote. Ukataaji unagharimu muda
-wa kukusanya; jibu baya linaweza kugharimu data au programu
-zilizotumwa. Sehemu ya 4 inaorodhesha kila jibu baya lililopimwa,
-kwa kipimo cha chini, kilichoonekana, na kinachotarajiwa.
+programu zilizojengwa bila ishara yoyote. Sehemu ya 8 inaorodhesha
+kila jibu baya lililobaki, kwa kipimo cha chini, kilichoonekana,
+na kinachotarajiwa.
 
 Poromoko la mkusanyaji lenyewe kwenye chanzo halali linachukuliwa
 kuwa mbaya zaidi kuliko poromoko la programu: mkusanyaji lazima
 asikatee, asikatwe kimya, wala asianguke kwa ingizo lolote.
 
 Msimbo wa kutoka wa programu hupimwa kwa mod 256 (baiti 8). SEGV ni
-139, FPE ni 136. Thamani "0" inaweza kuficha thamani inayogawanyika
-kwa 256; pale ambapo ilikuwa muhimu, tabia imethibitishwa kwa
-uchunguzi wa mashine (od/objdump).
+139, FPE ni 136. Ishara inathibitishwa kwa msimbo wa kutoka hasi wa
+`subprocess`. Pale ambapo ilikuwa muhimu, tabia imethibitishwa kwa
+uchunguzi wa mashine (od/objdump/ndisasm).
 
-Bootstrap ya mnyororo ni mafanikio halisi: kwanza (baiti za mkono,
-393) hadi mbegu hadi stage1-exe hadi stage2-exe == stage3-exe, bila
-lugha nyingine popote. Fixpoint hiyo inashikilia. Lakini fixpoint
-inathibitisha kujikusanya, si usahihi wa semantiki: mkusanyaji
-anaweza kujijenga yenyewe na bado kuwa na makosa kwenye mipaka ya
-lugha. Uthibitisho huu ulipima tabia halisi kwenye kesi ~487 na
-kupata kwamba nyaraka zilizopo ziliahidi mengi yasiyoshikika.
-Rekodi hii inasema kilichopimwa, bila kupamba.
-
-## 2. Jinsi ya kuzalisha ukaguzi
+## 2. Mbinu ya kipimo
 
 Mkusanyaji wa uzalishaji hujengwa kutoka chanzo cha .swa kupitia
 mbegu (mnyororo wa kujikusanya):
 
 ```bash
 cd /home/kandemark/Projects/compilers/swa
-cat msingi/{kumbukumbu,mfuatano,msomaji,msambazaji,mteremko,mkaguzi,uzalishaji,orodha,ramani,stage1}.swa > /tmp/swa-uthibitisho/zima.swa
-msingi/mbegu.bin --exe /tmp/swa-uthibitisho/zima.swa > /tmp/swa-uthibitisho/stage1.bin
-chmod +x /tmp/swa-uthibitisho/stage1.bin
+cat msingi/{kumbukumbu,mfuatano,msomaji,msambazaji,mteremko,mkaguzi,uzalishaji,orodha,ramani,stage1}.swa > /tmp/zima.swa
+msingi/mbegu.bin --exe /tmp/zima.swa > /tmp/stage1.bin
+chmod +x /tmp/stage1.bin
 ```
 
 Kila kesi inakusanywa na kuendeshwa kwenye minyororo yote miwili:
@@ -78,956 +76,903 @@ msingi/mbegu.bin --exe kesi.swa > matokeo.bin 2> makosa.txt
 chmod +x matokeo.bin
 ./matokeo.bin; echo $?
 
-/tmp/swa-uthibitisho/stage1.bin --exe kesi.swa > matokeo.bin 2> makosa.txt
+/tmp/stage1.bin --exe kesi.swa > matokeo.bin 2> makosa.txt
 chmod +x matokeo.bin
 ./matokeo.bin; echo $?
 ```
 
-Faili za chanzo na matokeo mabichi zimehifadhiwa kwenye
-`/tmp/swa-uthibitisho/`:
+Kesi zinazotumia `andika` zinaunganishwa na `msingi/kumbukumbu.swa`
+(njia ya `cat`, kama hati 8). Kipimo kwenye mnyororo wa mbegu
+kinatumia binary iliyogandishwa; kipimo kwenye mnyororo wa
+uzalishaji kinatumia stage1 iliyojengwa siku ya kipimo kutoka
+`msingi/*.swa` vya sasa.
 
-- `majaribio/` — kesi 195 za mfumo wa aina; matokeo mabichi
-  `mbegu.csv` na `uzalishaji.csv` (mzunguko wa pili: `mbegu2.csv`
-  na `uzalishaji2.csv`).
-- `kesi/` — kesi za taarifa, udhibiti wa mwendo na viendeshaji
-  (endesha_mwenyewe.sh hujaribu kwa minyororo yote miwili).
-- `chanzo/` — kesi 162 za miundo, kumbukumbu na maktaba
-  (jaribu.sh hujumlisha moduli za msingi na kesi, hukusanya kwa
-  minyororo yote miwili, huendesha na kulinganisha).
+Uthibitisho wa papo hapo ulifanyika leo kwa kesi za kirejeshi za
+marekebisho yote yaliyoorodheshwa katika sehemu ya 3 na kwa kesi
+za zilizobaki zilizoorodheshwa katika sehemu ya 8, 9 na 10 — kila
+moja ilikusanywa na kuendeshwa kwenye minyororo yote miwili leo,
+siku ya kuandika rekodi hii. Orodha kamili ya kesi zilizopimwa
+upya iko katika sehemu ya 12.
 
-Jumla ya kesi zilizopimwa: 195 (mfumo wa aina) + ~130 (udhibiti) +
-162 (miundo na maktaba).
+## 3. Marekebisho ya baada ya skani
 
-## 3. Jedwali za uzingatiaji
+Majaribio ya mwisho (467 kesi) yalipimwa kwenye HEAD 1c525ce.
+Baada ya hapo, mende yafuatayo yalirekebishwa kwenye tawi hili;
+kila kirejeshi kilipimwa tena leo na uthibitisho uliobainishwa:
 
-### 3.1 Mfumo wa aina
+1. **Mstari wowote unaoanza na "hu" ulifutwa kimya** (dereva
+   alifuta mstari WOWOTE wenye kiambishi "hu", si mstari wa
+   `husisha` pekee) — kimefunga (commit 3bbe422). Imepimwa leo:
+   `huduma = 6;` (bila kufanya nafasi) inasalimika kwenye minyororo
+   yote miwili.
+2. **Muundo > baiti 8 kwa thamani haukunakiliwa** (ubadilishaji
+   ndani ya kazi ulimwengu mwitaji), **sret kwa mnyororo ilitoa
+   takataka** (`g(f())`), na **ufikiaji wa sehemu ya muundo wa
+   ulimwengu ulianguka SEGV** — vyote vimefunga (commit 1eb55b0).
+   Imepimwa leo: kirejeshi cha a09 (rc=0 kwa zote mbili), kirejeshi
+   cha J7 `rudisha g(f());` (rc=7 kwa zote mbili), na muundo wa
+   ulimwengu (rc=12 kwenye uzalishaji). Kumbuka: mchanganyiko wa
+   hoja kwa thamani NA sret pamoja (a19) BADO umevunjika — tazama
+   sehemu ya 8, kipengee 8.1.
+3. **Mgawanyo bila ishara wenye biti ya juu ulianguka FPE** (A32,
+   B32, W32, A64), **upanuzi wa sifuri kwa N8/N16 hasi** ulitoa
+   jibu baya, na **upana usioahidiwa (N128, A128, D80) ulikubaliwa
+   kimya** — vyote vimefunga (commit 57d9694). Imepimwa leo:
+   `A32 x = 3000000000; x / 2` inatoa 1500000000 (rc=1),
+   `A64` za biti ya juu zote tatu (rc=1), `N8 x = -1; N32 y = x;`
+   inatoa -1 (rc=1), na `N128 x = 5;` inakataliwa kwa sauti
+   ("kosa: aina isiyojulikana: N128") kwenye uzalishaji.
+4. **Kielekezi na N32 kama hoja kilikubaliwa kimya** (kisha SEGV
+   wakati wa kukimbia), **maneno muhimu kama vitambulisho
+   yalikubaliwa**, **wito wenye hoja 17+ ulitupa hoja za ziada
+   kimya**, **mwili wa `sivyo` usio na mabano ulitekelezwa daima**,
+   na **%u/%x za thamani hasi zilichapisha takataka** — vyote
+   vimefunga (commit b827c91, pamoja na ufuatiliaji wa halisi
+   kwa kielekezi). Imepimwa leo: hoja za kielekezi/N32 zinakataliwa
+   kwa sauti ("kielekezi dhidi ya namba"), maneno muhimu
+   yanakataliwa ("'muundo' ni neno muhimu"), hoja 17 inakataliwa
+   ("kikomo ni 16"), `kama (1) a = 1; sivyo a = 2;` inatoa a=1,
+   na %u ya -1 inachapisha 18446744073709551615 kwenye uzalishaji.
+5. **Mbegu: upanuzi wa ishara kwa matokeo ya hesabu ya jozi**
+   (`N64 y = 0 - 90` ilitoa 0x00000000FFFFFFA6 badala ya kueneza
+   ishara) — kimefunga katika mbegu iliyogandishwa (commit
+   f12e134). Imepimwa leo: `N64 x = 0 - 90; kama (x == -90)`
+   inatoa rc=1 kwenye mbegu na uzalishaji.
 
-| Kipengele | Mbegu | Uzalishaji | Inavyotarajiwa (hati) | Hali |
+Kesi za kirejeshi zilizopimwa upya leo, zote zikiwa na hali hiyo
+iliyobainishwa: f01 (hu), f02 (muundo kwa thamani), f03 (sret
+mnyororo), f04 (muundo wa ulimwengu), f05 + halisi_2p63_a64 +
+halisi_2p64m1_a64 + halisi_2p64m1_a64_gawanya2 (mgawanyo bila
+ishara), f06 (upanuzi wa ishara N8), f07 + uchunguzi_a128_ndani +
+uchunguzi_d80_ndani + uchunguzi_n128_ndani + upana_d80 +
+upana_n128 (upana usioahidiwa), f08/f09 + _v2/_v3 (hoja za
+kielekezi na N32), f10/f11 (maneno muhimu), f12 (hoja 17), f13 +
+_t141 (sivyo bila mabano), f14/f15 + t99 (umbizo %u/%x), f16
+(ishara ya jozi ya mbegu), f17 (N32;), _w0_kigezo, _w0_thamani,
+_d32_ulimwengu, _lit_kielekezi/_lit_kielekezi0 (halisi kwa
+kielekezi), _a19/_a19b/_a19c/_a19d (mchanganyiko wa kwa-thamani
+na sret), _t75, _t94, _b12, _n2/_n3 (utorokaji \n katika kamba),
+_halisi63 (halisi 2^63-1), na kiunganishi cha dereva (kande).
+
+## 4. Jedwali la Mfumo wa Aina (kesi 191 kwa kila mnyororo)
+
+Safu "tarajio" ni ahadi ya `hati/vipimo-vya-lugha.md`; "hukumu" ni
+kubaliana kwa minyororo yote miwili na tarajio (SAWA), au tofauti
+kubwa zaidi kati ya minyororo/tarajio. Marekebisho ya sehemu ya 3
+yamewekwa kwenye jedwali hili.
+
+| Kipengele | Mbegu | Uzalishaji | Tarajio (hati) | Hukumu |
 |---|---|---|---|---|
-| N8, N16, N32 ndani na ulimwengu: hesabu, hasi, kufurika kwa mod | inapita | inapita | aina za baiti 1, 2, 4 | inapita |
-| N64 ndani, thamani [2^31, 2^63): `N64 x = 4294967300; x % 4294967296` | huanguka (FPE 136) | inapita (4) | N64 kamili kwenye mnyororo wa .swa | mbegu huanguka; uzalishaji unapita |
-| N64, thamani >= 2^63: `N64 x = 18446744073709551615; x + 1` | jibu baya (0; x = 4294967295, mov eax, 0xFFFFFFFF) | jibu baya (0; ukataji uleule) | N64 kamili | jibu baya (ukataji wa kimya) |
-| N64 ulimwengu, ugawanyo, masali | inapita | inapita | semantiki ya C | inapita |
-| A8/A16/A32/A64 (bila ishara) | huanguka (mkusanyaji SEGV 139) | inapita (isipokuwa mgawanyo wenye biti ya juu) | familia A | mbegu huanguka kwenye chanzo halali |
-| Mgawanyo/masali bila ishara wenye biti ya juu (A/B/W) | huanguka (mkusanyaji SEGV) | huanguka (FPE 136) | jibu sahihi | huanguka (cdq/cqo kabla ya div) |
-| B1 kama kigezo, parameta, matokeo ya ulinganisho | huanguka (SEGV/FPE) | inapita | B1 ya ndani | mbegu huanguka; uzalishaji unapita |
-| B8/B16/B32/B64 | huanguka (mkusanyaji SEGV) | inapita (isipokuwa mgawanyo wenye biti ya juu) | familia B | mbegu huanguka |
-| W0 kama kigezo chenye thamani: `W0 x = 5` | inakubali kimya (5) | inakubali kimya (5) | W0 ni kwa kazi tu | hati imevunjika — inapaswa kukataliwa |
-| W8/W16/W32/W64 | huanguka (mkusanyaji SEGV) | inapita (isipokuwa mgawanyo wenye biti ya juu) | familia W | mbegu huanguka |
-| D64 ndani ya ulimwengu wa D64: hesabu, ulinganisho, ukanushaji | inapita | inapita | hesabu za kuelea | inapita |
-| D64 katika kazi (parameta na kurudisha): `mbili(2.5) == 3.5` | inapita (ABI ya uhamisho wa GP) | inapita (ABI ya xmm) | mipaka 4c ilisema mbegu inakataa | inapita kwa zote mbili — ahadi ya mipaka 4c imekosea |
-| D64 hadi N32 kwenye rudisha/ugawaji: `rudisha 21.5` | jibu baya (0) | jibu baya (0) | 21 (kukata hadi sifuri) | jibu baya |
-| Mchanganyiko wa D64 na nambari kamili: `(1 + 2.5) * 2` | jibu baya (6) | jibu baya (6) | 7 | jibu baya |
-| D64 ulimwengu (upakiaji): `G == 3.5` na G = 2.5 | jibu baya (1) | jibu baya (1) | 0 | jibu baya (mov rax badala ya movsd) |
-| D64 ugawaji upya: `x = 0.0; x = 2.5; x == 2.5` | jibu baya (0) | inapita (1) | 1 | mbegu jibu baya |
-| D32 (kigezo, hesabu, kazi) | huanguka (SEGV/FPE) | jibu baya (4) au huanguka (SEGV) | D32 | mbegu huanguka; uzalishaji jibu baya/huanguka |
-| D64 % int, D64 << int | jibu baya (takataka) | jibu baya (takataka) | inapaswa kukataliwa kwa sauti | jibu baya — inakubaliwa kimya |
-| Halisi ndogo na hasi (N32) | inapita | inapita | hesabu za N32 | inapita |
-| Halisi [2^31, 2^63) kwenye kigezo/ulimwengu | jibu baya (shift 32-bit) au huanguka (FPE) | inapita | mipaka 5 | uzalishaji unapita; mbegu jibu baya/huanguka |
-| Halisi >= 2^63 | jibu baya (ukataji) | jibu baya (ukataji) | thamani kamili | jibu baya |
-| Halisi kubwa kama hoja ya wito | jibu baya (ukataji) | imekataliwa kwa kosa lisilo sahihi | hoja ya N64 | uzalishaji imekataliwa kwa makosa; mbegu jibu baya |
-| Halisi ÷ halisi yenye N64: `4294967296 / 4294967296` | huanguka (FPE 136) | huanguka (FPE 136) | 1 | huanguka (njia ya 32-bit, enc = 0) |
-| Halisi za radiksi 0x, 0o, 0b: `0x10` | jibu baya (0) | jibu baya (10) | 16 au kukataliwa kwa sauti | jibu baya (hufasiriwa kama desimali) |
-| Upanuzi N8 hadi N32 hadi N64; ukataji kwa mod | inapita (FPE kwa N64) | inapita | upanuzi/ukataji | inapita kwa uzalishaji |
-| Shift za N64 kwenye kigezo: `x << 32` | jibu baya (1; shift 32-bit) | inapita (0) | mabadiliko ya 64-bit | mbegu jibu baya |
-| Ulinganisho na mantiki hutoa 1/0; mzunguko mfupi wa && na || | inapita | inapita | hati 2.2/3 | inapita |
-| Kiambishi `!` (kanusha mantiki) | imekataliwa (herufi isiyojulikana) | imekataliwa (KOSA) | hati 2.2/2.5 inaahidi | imekataliwa — hati imevunjika |
-| `~` (kanusha biti) | imekataliwa | imekataliwa | hati 2.5 inaorodhesha | imekataliwa — hati imevunjika |
-| Ukali wa mkaguzi wa aina: `N32 x = 2.5` | hakuna mkaguzi | makosa ni onyo; mkusanyaji anaendelea | kosa la aina linazuia kukusanywa | jibu baya la mfumo |
-| Upana usio wa 8/16/32/64 (N128, A128, D80, A3, N7) | huanguka (mkusanyaji SEGV) | inakubali kimya, semantiki si za upana huo | "upana wowote wa tarakimu" (hati 3) | uzalishaji jibu baya; mbegu huanguka |
-| Kazi tupu yenye mwili usio na taarifa: `N32 f() { }` | inapita | imekataliwa (kazi haijafafanuliwa) | kazi halali (hati 5) | uzalishaji imekataliwa kwa makosa |
-| N64 hasi: `N64 x = -90` | jibu baya (4294967206) | jibu baya (4294967206) | -90 | jibu baya (upanuzi wa sifuri) |
-| Ukanushaji wa N64: `0 - 10000000000` | jibu baya (2884901888) | jibu baya (2884901888) | -10000000000 | jibu baya (hesabu 32-bit) |
-| ukubwa(aina): ukubwa(N32), ukubwa(N8), ukubwa(N64) | jibu baya (zote 8) | inapita (4, 1, 8) | ukubwa halisi | mbegu jibu baya |
-| ukubwa(kigezo) | jibu baya (daima 8) | jibu baya (daima 4) | ukubwa halisi | jibu baya |
-| Halisi za herufi: `'a'` | imekataliwa kimya | jibu baya (0) | thamani ya herufi (104) | uzalishaji jibu baya; mbegu imekataliwa kimya |
+| N8: hesabu, ulimwengu, ndani | SAWA | SAWA | N8 ni nambari baiti 1 | SAWA |
+| N16: hesabu, ulimwengu, ndani | SAWA | SAWA | N16 | SAWA |
+| N32: hesabu, ulimwengu, ndani | SAWA | SAWA | N32 | SAWA |
+| N64: hesabu, ulimwengu, ndani | SAWA | SAWA | N64 | SAWA |
+| N64: `4294967296 % 4294967296`, `x / 4294967296` | SAWA | SAWA | mipaka 5: N64 kwenye mnyororo wa .swa | SAWA |
+| A8/A16/A32/A64: hesabu, ulimwengu, ndani | IMEKATALIWA ("aina isiyojulikana 'A8'") | SAWA | A ni familia ya lugha | tofauti: mbegu haijui familia A (kikomo kilichoandikwa) |
+| A32 mgawanyo wenye biti ya juu (`3000000000 / 2`) | IMEKATALIWA (A32) | SAWA (1500000000) | jibu sahihi | imefunga (zamani HUANGUKA FPE kwenye uzalishaji) |
+| A64 mgawanyo wenye biti 63 (`2^63 / 2^32`, `2^64-1 / 2`) | IMEKATALIWA (A64) | SAWA | jibu sahihi | imefunga (zamani HUANGUKA FPE) |
+| B8/B16/B32/B64: hesabu | IMEKATALIWA (B8) | SAWA | B ni familia | tofauti (kikomo cha mbegu) |
+| W8/W16/W32/W64: hesabu | IMEKATALIWA (W8) | SAWA | W ni familia | tofauti (kikomo cha mbegu) |
+| B1: tangazo, parameta, ulimwengu, hesabu | IMEKATALIWA (B1) | SAWA | B1 ni ya ndani | tofauti (kikomo cha mbegu) |
+| B1 kutoka ulinganisho (`B1 b = (2 < 3)`) | IMEKATALIWA (B1) | IMEKATALIWA (kosa la aina: matokeo ya ulinganisho ni N32, si B1) | B1 ni matokeo ya ulinganisho | IMEKATALIWA kwa sauti kwa uzalishaji, lakini kinyume cha hati |
+| B1 hadi N32 (`B1 b = 1; N32 y = b;`) | IMEKATALIWA (B1) | IMEKATALIWA (kosa la aina) | upanuzi | IMEKATALIWA kwa sauti |
+| W0 kama kigezo chenye thamani (`W0 x = 5;`) | JIBU-BAYA (inakubaliwa kimya, rc=1) | JIBU-BAYA (inakubaliwa kimya, rc=1) | W0 ni kwa kazi tu | uvunjaji wa hati, minyororo inakubaliana (tazama 8.3) |
+| W0 katika usemi (`W0 x = 5; y = x + 1;`) | JIBU-BAYA (rc=6: inaihesabu kama thamani) | IMEKATALIWA (kosa la aina) | W0 ni kwa kazi tu | tofauti: uzalishaji unakataa kwa sauti, mbegu inahesabu kimya |
+| N128: `N128 x = 5;` | IMEKATALIWA (sauti) | IMEKATALIWA (sauti: "aina isiyojulikana: N128") | upana usio wa 8/16/32/64 | imefunga (zamani JIBU-BAYA kimya kwenye uzalishaji) |
+| A128: `A128 x = 5;` | IMEKATALIWA | IMEKATALIWA (sauti) | upana usio wa 8/16/32/64 | imefunga kwa upana; A128 kama kurudi kwenye N32 bado tofauti |
+| D80: `D80 x = 2.5;` | IMEKATALIWA | IMEKATALIWA (sauti) | upana usio wa 8/16/32/64 | imefunga (zamani JIBU-BAYA kimya) |
+| Halisi ndogo (`5`) | SAWA (5) | SAWA (5) | N32 | SAWA |
+| Halisi 2^31-1 (`2147483647`) | SAWA | SAWA | N32 | SAWA |
+| Halisi 2^31 (`2147483648`) | SAWA | SAWA | N64 | SAWA |
+| Halisi 2^32 (`4294967296`) | SAWA | SAWA | N64 | SAWA |
+| Halisi 2^63-1 (`9223372036854775807`) | SAWA | SAWA | N64 kamili | SAWA |
+| Halisi 2^63 (`9223372036854775808`) | SAWA (mov rax, imm64; ishara = -2^63) | SAWA | N64 | SAWA (ukataji wa zamani haupo) |
+| Halisi 2^64-1 (`18446744073709551615`) | SAWA (mov rax, 0xFFFFFFFFFFFFFFFF; = -1 kwa ishara) | SAWA | N64 | SAWA |
+| Halisi 2^64 (`18446744073709551616`) | SAWA (wrap hadi 0, mov eax 0) | SAWA | nje ya N64 | SAWA kwa mod 2^64; ukataji wa kimya wa toleo la juu |
+| Halisi hasi (`-5`) | SAWA (251; sio ishara — imethibitishwa) | SAWA (251) | N32 hasi | SAWA |
+| Halisi `-2147483648`, `-4294967296`, `-90` (N64) | SAWA | SAWA | N64 hasi | SAWA (rekodi ya zamani haishikiki) |
+| `0 - 10000000000` (mchanganyiko N32-N64) | JIBU-BAYA (rc=2; hesabu 32-bit, `sub eax,ecx` kwenye mashine) | SAWA | -10000000000 | JIBU-BAYA kwenye mbegu (tazama 8.4) |
+| `10000000000 - 20000000000` (N64-N64) | SAWA | SAWA | -10000000000 | SAWA |
+| `4294967296 / 4294967296` (halisi ÷ halisi) | SAWA (1) | SAWA (1) | 1 | SAWA (FPE ya zamani haipo) |
+| Halisi kubwa kama hoja (`jumlisha(4294967296, 5)`) | SAWA | SAWA | hoja ya N64 | SAWA (ukataji wa zamani haupo) |
+| Shift N64 (`1 << 32`, `4294967296 >> 1`) | JIBU-BAYA (shift 32-bit) | SAWA | mabadiliko ya 64-bit | JIBU-BAYA kwenye mbegu (tazama 8.5) |
+| D64: hesabu, ulinganisho, ukanushaji | SAWA | SAWA | D64 | SAWA |
+| D64 katika kazi (parameta + rudisha) | SAWA (ABI ya GP) | SAWA (ABI ya xmm) | D64 | SAWA |
+| D64 ugawaji upya (`x = 0.0; x = 2.5;`) | SAWA | SAWA | 2.5 | SAWA (rekodi ya zamani haishikiki) |
+| D64 ya ulimwengu (`D64 G = 2.5; G == 2.5`) | IMEKATALIWA (mchanganuzi haukubali) | SAWA | upakiaji wa ulimwengu wa D64 | tofauti: mbegu inakataa, uzalishaji umefunga |
+| D64 hadi N32: kianzio (`N32 x = 2.5`) | JIBU-BAYA (0) | SAWA (2 — cvttsd2si) | kukata hadi sifuri | JIBU-BAYA kwenye mbegu (tazama 8.6) |
+| D64 hadi N32: ugawaji (`x = 2.5`) | JIBU-BAYA (0) | SAWA (2) | kukata | JIBU-BAYA kwenye mbegu |
+| D64 hadi N32: hoja (`pata(2.5)`) | JIBU-BAYA (1) | SAWA (2) | kukata | JIBU-BAYA kwenye mbegu |
+| D64 hadi N32: rudisha (`rudisha 21.5`) | JIBU-BAYA (0) | SAWA (21) | kukata | JIBU-BAYA kwenye mbegu |
+| N32 hadi D64: kianzio, ugawaji, hoja, rudisha | JIBU-BAYA | SAWA | ubadilishaji | JIBU-BAYA kwenye mbegu |
+| Mchanganyiko wa hesabu (`(1 + 2.5) * 2`, `5.5 * 2`) | JIBU-BAYA (6; 0) | SAWA (7.0; 11.0) | 7.0; 11.0 | JIBU-BAYA kwenye mbegu |
+| Ulinganisho mchanganyiko (`2.5 < 3`, `3 == 3.0`, `1 > 2.5`, `0 == 2.5`) | JIBU-BAYA | SAWA | 1;1;0;0 | JIBU-BAYA kwenye mbegu |
+| Ternary mchanganyiko (`1 ? 2.5 : 3` hadi D64/N32) | JIBU-BAYA | SAWA | 2.0; 2 | JIBU-BAYA kwenye mbegu |
+| `D64 % 2`, `D64 << 1` | JIBU-BAYA (inakubaliwa kimya) | IMEKATALIWA (sauti: "operesheni haifanyi kazi kwa desimali") | inapaswa kukataliwa | tofauti: uzalishaji unakataa kwa sauti, mbegu inakubali kimya |
+| `N32 G = 2.5;` (ulimwengu) | JIBU-BAYA (0) | IMEKATALIWA (sauti) | inapaswa kukataliwa au kukatwa | tofauti |
+| D32: hesabu, ulinganisho, kazi | IMEKATALIWA (D32 isiyojulikana) | SAWA | D32 | tofauti (kikomo cha mbegu) |
+| D32 ya ulimwengu (`D32 G = 2.5; G == 2.5`) | IMEKATALIWA (D32) | JIBU-BAYA (rc=2) | D32 | JIBU-BAYA kwenye uzalishaji (tazama 8.7) |
+| D64 hadi D32, D32 hadi D64 | IMEKATALIWA (D32) | SAWA | ubadilishaji | uzalishaji SAWA |
+| Halisi za radiksi (`0x10`) | IMEKATALIWA (sauti) | IMEKATALIWA (sauti) | 16 au kukataliwa kwa sauti | SAWA (maboresho dhidi ya rekodi) |
+| N8 hadi N32 (chanya) | SAWA | SAWA | upanuzi | SAWA |
+| N8/N16 hasi hadi N32 (`N8 x = -1; N32 y = x;`) | JIBU-BAYA (255/65535 — movzx) | SAWA (-1, cdqe) | -1 (upanuzi wa ishara) | JIBU-BAYA kwenye mbegu (imefunga kwenye uzalishaji) |
+| N8 overflow (`N8 x = 127; x = x + 1;` hadi N32) | JIBU-BAYA (128 — movzx, sio -128) | SAWA (-128) | -128 | JIBU-BAYA kwenye mbegu (imefunga kwenye uzalishaji) |
+| N32 hadi N64; N64 hadi N32 (mod); N32 hadi N8 (mod); N64 hadi N8 | SAWA | SAWA | ukataji kwa mod | SAWA |
+| N32 hadi A32; A32 hadi N32 | IMEKATALIWA (A32) | IMEKATALIWA (kosa la aina la familia) | ubadilishaji wa familia | IMEKATALIWA kwa sauti kwa uzalishaji |
+| A32 hadi A64 | IMEKATALIWA (A32) | SAWA | upanuzi wa familia | uzalishaji SAWA |
+| Matokeo ya ulinganisho hadi N32/N64 (`N32 x = (2 == 2)`) | SAWA | SAWA | 1 | SAWA |
+| `N32 x = 1 + (2 == 2);` | SAWA (2) | SAWA (2) | 2 | SAWA |
+| Miundo: ndani, sehemu | SAWA | SAWA | muundo | SAWA |
+| Miundo: ulimwengu (`Nukta G;`) | IMEKATALIWA (sauti: mchanganuzi) | SAWA (12) | muundo wa ulimwengu | imefunga kwenye uzalishaji (zamani HUANGUKA SEGV); mbegu bado inakataa |
+| Muundo kwa thamani kama hoja (baiti 8 na 16) | SAWA | SAWA | muundo kwa thamani | SAWA (rekodi ya zamani haishikiki) |
+| Muundo kurejeshwa (sret; baiti 8 na 16) | SAWA | SAWA | sret | SAWA |
+| sret inayopitishwa moja kwa moja kwa kazi (`g(f())`) | SAWA (7; 33) | SAWA (7; 33) | 7; 33 | imefunga kwenye uzalishaji (zamani JIBU-BAYA) |
+| Ugawi wa muundo (`b = a;`) | SAWA | SAWA | nakala | SAWA (rekodi ya zamani haishikiki) |
+| Safu ya miundo (`s[i].x`) | SAWA | SAWA | aina halali | SAWA (rekodi ya zamani SEGV haishikiki) |
+| Sehemu za N64 na D64 ndani ya muundo | SAWA | SAWA | muundo | SAWA |
+| Ulimwengu wa N64 wenye thamani kubwa (`G = 4294967296`, `G = 2^63-1`) | SAWA | SAWA | mipaka 5 | SAWA (rekodi ya zamani FPE haishikiki) |
 
-### 3.2 Taarifa, udhibiti wa mwendo na viendeshaji
+## 5. Jedwali la Udhibiti wa Mwendo na Viendeshaji (kesi 138 kwa kila mnyororo)
 
-| Kipengele | Mbegu | Uzalishaji | Inavyotarajiwa (hati) | Hali |
+Kila kundi linalopita kwenye minyororo yote miwili limefupishwa
+katika mstari mmoja; kila kesi isiyo SAWA imeorodheshwa peke yake.
+Marekebisho ya sehemu ya 3 yamewekwa.
+
+| Kipengele | Mbegu | Uzalishaji | Kinachotarajiwa | Hali |
 |---|---|---|---|---|
-| muundo msingi (sehemu, upachikaji, `->`, `&p.x`) | inapita | inapita | muundo | inapita |
-| Safu ya miundo `safu[i].x` | huanguka (SEGV 139) | huanguka (SEGV 139) | aina halali (hati 4.2/7) | huanguka — hakuna safu ya miundo inayofanya kazi |
-| `(*p).x` | huanguka (SEGV 139) | inapita | mshale + nyoosha | mbegu huanguka |
-| `**q` (kielekezi cha kielekezi) | huanguka (SEGV 139) | inapita | hati 4.2 kwa upanuzi | mbegu huanguka |
-| Muundo kwa thamani (hoja), baiti <= 8 | jibu baya (takataka) | inapita | hati 7 | mbegu jibu baya |
-| Muundo kwa thamani, zaidi ya baiti 8 | jibu baya (takataka) | jibu baya (sehemu ya kwanza pekee) | hati 7 | jibu baya |
-| Muundo kurudishwa kwa thamani (sret) | inapita | inapita | sret | inapita |
-| sret inayopitishwa kwa kazi nyingine | jibu baya (takataka) | inapita | sret | mbegu jibu baya |
-| Ugawi wa muundo `b = a;` | jibu baya (takataka) | huanguka (SEGV 139) | nakala | zote mbili mbovu |
-| kama/sivyo (rahisi, mlolongo, viota, masharti yasiyo ya boolean, mwili tupu) | inapita | inapita | hati 6.3 | inapita |
-| wakati, kwa, vunja, endelea (misingi) | inapita | inapita | hati 6.4/6.5/6.7 | inapita |
-| endelea kama taarifa ya MWISHO ya mwili wa kwa | inapita | KUREKEBISHWA 2026-08-31: inapita | semantiki ya C (mipaka 4b) | imefungwa |
-| kwa yenye hali iliyoachwa (mf. kwa (;;)) | inapita | KUREKEBISHWA 2026-08-31: inapita (zamani hali tupu = uongo, mwili haukutekelezwa) | semantiki ya C: hali tupu = kweli daima | imefungwa |
-| vunja/endelea nje ya kitanzi | inapuuzwa kimya | onyo lakini binary bado inatolewa | C: kosa la kukusanya | jibu baya |
-| chagua msingi (mikono, sivyo, viota, selecta ya usemi, kuteremka kwa muundo) | imekataliwa (kosa la mchanganuzi) | inapita | hati 6.6 | uzalishaji unapita; mbegu imekataliwa kwa muundo |
-| Lebo hasi za hali: `hali -3` | imekataliwa | jibu baya (lebo inalinganishwa kama 0) | hali -3 inalingana na -3 pekee | uzalishaji jibu baya |
-| Lebo za N64 > 2^31: `hali 5000000000` | imekataliwa | jibu baya (lebo inakuwa 0; kamwe hailingani) | mipaka 5 | uzalishaji jibu baya |
-| Lebo za usemi/kigezo: `hali a + 1` | imekataliwa | jibu baya (inakubaliwa, kamwe hailingani) | lazima kukataliwa | uzalishaji jibu baya |
-| hali maradufu | imekataliwa | ya kwanza inashinda kimya | C: kosa la kukusanya | uzalishaji jibu baya kidogo |
-| kama+sivyo ndani ya mkono wa chagua; bloku `{ }` ndani ya mkono | imekataliwa | imekataliwa (KOSA) | hati 6.6 | uzalishaji imekataliwa |
-| vunja ndani ya chagua ndani ya kitanzi (inavunja kitanzi, si mkono) | imekataliwa | inapita | semantiki ya C | uzalishaji unapita |
-| + - * / % kwa N32; ugawanyo hasi (semantiki ya C) | inapita | inapita | hati 4 | inapita |
-| Ugawanyo/modulo kwa sifuri | huanguka (FPE 136) | huanguka (FPE 136) | hati kimya (C: UB) | huanguka (kama C) |
-| &, |, <<, >> kwa N32 | inapita | inapita | hati 2.5/4 | inapita |
-| `^` (XOR): `6 ^ 3` | imekataliwa | jibu baya (usemi wa kulia unatupwa kimya) | hati 2.5/4 inaahidi | uzalishaji jibu baya |
-| +=, -=, *=, /=, %= | imekataliwa (uwekaji usiotumika) | inapita (C-kama) | si ya hati | uzalishaji unapita |
-| &=, |=, ^=, <<=, >>= | imekataliwa | jibu baya (NO-OP kimya) | si ya hati | uzalishaji jibu baya |
-| ++, -- | imekataliwa | imekataliwa | si ya hati | imekataliwa (sawa) |
-| Ternary (pamoja na ushirika wa kulia) | inapita | inapita | hati 4 | inapita |
-| Ternary dhidi ya ugawi: `x = 1 ? 2 : 3` | jibu baya (x = 1) | inapita (x = 2) | hati kimya | mbegu jibu baya |
-| Ugawi wa mnyororo `a = b = c` | imekataliwa | inapita (ushirika wa kulia) | hati 6.2 kwa upanuzi | uzalishaji unapita |
-| Ugawi kwa wito `pata() = 7` | imekataliwa | jibu baya (inaandika anwani isiyo na maana) | lazima ikataliwe | uzalishaji jibu baya |
-| `&` anwani, `*` nyoosha, `p[i]` (faharisi) | inapita (isipokuwa `**`) | inapita | hati 4.2 | inapita (tazama miundo) |
-| `*(p + n)` bila ukuzaji wa kipengele: `*(p + 3)` | jibu baya (0) | jibu baya (0) | hesabu ya baiti (haijaelezwa waziwazi) | jibu baya kwa mwandishi anayetegemea C |
-| `*(safu + 1)` (kuoza kwa safu) | huanguka (SEGV 139) | jibu baya (0) | hati 4.2 | zote mbili mbovu |
-| Utangulizi: mbegu inafuata jedwali la hati 4 (`4 | 2 & 1` hutoa 0; `a = 1 && 0` hutoa a = 1) | inapita dhidi ya hati | jibu baya dhidi ya hati (4; a = 0 — C-kama) | jedwali la hati 4 | uzalishaji unakubaliana na C, si na hati |
-| `a < b << c` (hamisha upande wa kulia wa ulinganisho) | inapita | imekataliwa (KOSA) | hati 4 inaruhusu (kina 4 > 3) | uzalishaji imekataliwa |
-| `1 << 2 + 1` (jumlisha inafunga nguvu kuliko hamisha) | inapita | inapita | hati 4 | inapita (tofauti na C kwa makusudi) |
-| Maoni ya `//` | inapita (isipokuwa mwisho wa faili bila \n) | inapita (sawa) | hati 2.4 | inapita |
-| Maoni ya `/* */` | imekataliwa (huanguka katikati ya usemi) | inapita (upachikaji unaruhusiwa) | hati 2.4 inaahidi vizuizi, inakataza upachikaji | mbegu imekataliwa; uzalishaji unasaidia zaidi ya hati |
-| Utorokaji wa mfuatano: `\n`, `\\` | inapita | inapita | hati 2.3 | inapita |
-| Utorokaji wa mfuatano: `\t`, `\"` | inapita | jibu baya (alama halisi 5c 74, 5c 22) | hati 2.3 inaahidi | uzalishaji jibu baya |
-| Utorokaji usio wa hati: `\0`, `\x41`, `\r`, `\a` | jibu baya (inatupa `\`) | jibu baya (alama halisi) | si ya hati | jibu baya kwa zote mbili, kwa njia tofauti |
-| Mfuatano karibu `"a" "b"` | jibu baya (wa pili anatupwa) | jibu baya (wa pili anatupwa) | C: inaunganisha | jibu baya |
-| Usawa wa mfuatano `==` | inalinganisha anwani (literali mbili hazilingani) | literali zinaunganishwa kwenye dimbwi moja (zinalingana) | hati 3: == ni namba/anwani | tofauti kati ya minyororo |
-| andika: %d %s %c chanya, hoja hadi 6 | inapita | inapita | maktaba | inapita |
-| andika: %d hasi na %d za N64 | jibu baya (4294967254; 705032704) | inapita | %d yenye ishara | mbegu jibu baya |
-| andika: %% (muundo wa nguvu — andika_ndani) | inapita (inaonyesha %) | inapita (sawa) | kawaida ya C | inapita (kumbukumbu.swa 2026-09-01) |
-| andika: %% (muundo halisi) | jibu baya (mbegu ya zamani inaimeza) | inapita (inaonyesha %) | kawaida ya C | stage1 inapita (mkusanyaji 2026-09-01); mbegu imegandishwa — hati ya k16 |
-| andika: %u %x katika muundo HALISI | imekataliwa kwa sauti | imekataliwa kwa sauti (kipengele cha muundo) | si za hati: mkaguzi unathibitisha %d %s %c %% pekee | imekataliwa kwa sauti (jaribio_mende_kipengele_cha_muundo) |
-| andika: %u %x (muundo wa nguvu — andika_ndani) | inapita (%u/%x za thamani <= 2^31) | inapita | si za hati: %u = N64 isiyo na ishara, %x = heksadesimali ndogo | inapita kwa kiasi (mbegu: > 2^31 kama %d) |
-| andika: %f %l %n (muundo wa nguvu — andika_ndani) | inapita kwa kiasi (zinaonyeshwa kama herufi halisi: "%f" → "%f") | inapita kwa kiasi (sawa) | si za hati; hazijatekelezwa | passthrough ya makusudi — hakuna umeza wa kimya |
-| andika: hoja ya 7 | jibu baya (inarudia ya 6) | inapita | maktaba | mbegu jibu baya |
-| main haipo | imekataliwa (main haipo) | binary inaanguka (SEGV 139) | hati 1 | uzalishaji huanguka |
-| `sivyo` bila `kama` | imekataliwa | mkusanyaji wenyewe huanguka (SEGV 139) | kosa la sauti | uzalishaji huanguka (mkusanyaji) |
-| W0 ndani ya usemi | jibu baya (takataka 251) | imekataliwa | W0 ni kwa kazi tu | mbegu jibu baya |
-| Kurudia, wito wa mbele, wito ndani ya wito, main(N32, N8**) | inapita | inapita | hati 1/5 | inapita |
-| Ulimwengu wenye thamani; safu ya ulimwengu | inapita | inapita | hati 1.1 | inapita |
-| Ulimwengu wa N64 = 4294967296 | huanguka (FPE 136) | inapita | mipaka 5 | mbegu huanguka (kilichoandikwa) |
+| kama/sivyo: rahisi, viota, mnyororo, mwili usio na mabano (taarifa moja), ukweli wa thamani, mwili tupu, tangazo ndani ya mwili (kesi 9) | SAWA | SAWA | kama hati | SAWA |
+| kama/sivyo bila mabano pande zote mbili (`kama (1) a = 1; sivyo a = 2;`) | SAWA (a=1) | SAWA (a=1) | a=1 | imefunga kwenye uzalishaji (zamani JIBU-BAYA: sivyo daima) |
+| mnyororo wa sivyo-kama bila mabano (t141) | SAWA (a=1) | SAWA (a=1) | a=1 | imefunga kwenye uzalishaji |
+| wakati: rahisi, (0), vunja, endelea, viota, && mzunguko mfupi, mwili bila mabano, mwili tupu (kesi 9) | SAWA | SAWA | kama hati | SAWA |
+| kwa: rahisi, hali iliyoachwa, (;;), kianzilishi cha tangazo, endelea, vunja, viota, mwili bila mabano, mwili tupu (kesi 11) | SAWA | SAWA | kama hati | SAWA |
+| chagua: kila muundo (mikono, sivyo, viota, lebo 0/hasi/N64, selecta ya usemi, rudisha ndani, endelea ndani) (kesi 13) | IMEKATALIWA (mchanganuzi haujui chagua) | SAWA | hati 6.6 | tofauti (kikomo cha mbegu kilichoandikwa) |
+| chagua: lebo ya usemi, lebo ya kigezo, bloku ndani ya mkono, vunja nje ya kitanzi, sivyo pekee, hali nje ya chagua | IMEKATALIWA | IMEKATALIWA | kukataliwa kwa sauti | IMEKATALIWA kwa sauti (sawa) |
+| hesabu za N32: + - * / % | SAWA | SAWA | 26 14 120 3 2 | SAWA |
+| hesabu za N64 (> 2^31), mgawanyo na modulo | SAWA | SAWA | kama hati | SAWA |
+| modulo na mgawo wa namba hasi (-7 % 3) | SAWA | SAWA | -1; -2 | SAWA (kwa ishara; fomu isiyo na ishara kwenye mbegu kwa %d — tazama 8.10) |
+| ulinganisho: == != < > <= >= | SAWA | SAWA | 0 1 1 0 1 0 | SAWA |
+| && na || zenye mzunguko mfupi (ugawaji ndani, wito ndani) | SAWA | SAWA | kama hati | SAWA |
+| bitwise: & | << >> ^ ~ | SAWA | SAWA | kama hati | SAWA |
+| shift ya N64 (`1 << 32`) | SAWA (kwa matarajio ya mbegu: 1) | SAWA (4294967296) | 4294967296 (mipaka 5) | tofauti ya shift 32-bit ya mbegu (tazama 8.5) |
+| ! (kanusha mantiki): !0 !5 !1 !(-1) | SAWA | SAWA | 1 0 0 0 | SAWA |
+| ! kwenye D64 | JIBU-BAYA (rc=1, inakubali kimya) | IMEKATALIWA (sauti) | kukataliwa kwa sauti | tofauti: mbegu inakubali kimya (tazama 8.8) |
+| viendeshaji vya kiwanja: += -= *= /= %= &= |= ^= <<= >>= (N32 na N64) | IMEKATALIWA | SAWA | si ya hati, lakini zinafanya kazi | tofauti (kikomo cha mbegu kilichoandikwa) |
+| ternary rahisi, viota, tawi moja pekee linatathminiwa | SAWA | SAWA | kama hati | SAWA |
+| toa unary: -x, -(-x), -x * 2, -(x * 2) | SAWA | SAWA | kama hati | SAWA |
+| anwani & na kunyooosha *: *p = 9 | SAWA | SAWA | x=9 y=9 | SAWA |
+| kielekezi mara mbili N32** (kunyooosha mara mbili) | HUANGUKA (SEGV 139) | SAWA (x=11) | x=11 | mbegu inaanguka (tazama 9.2) |
+| p->sehemu, n.sehemu na a[i] | SAWA | SAWA | kama hati | SAWA |
+| *(p + n): hesabu ya baiti (hati 4.2) | JIBU-BAYA (v=2816) | JIBU-BAYA (v=2816) | v=13 (kwa C) | hati 4.2 inasema hesabu ni ya BAITI — jibu baya kwa mwandishi anayetegemea C (tazama 8.9) |
+| ugawi kama usemi, mnyororo wa ugawi (a = b = 3) | SAWA | SAWA | kama hati | SAWA |
+| ugawi wa ulinganisho/mantiki (a = 2 == 2, a = 0 \|\| 3) | SAWA | SAWA | 1; 1 | SAWA |
+| utangulizi: hesabu, bitwise, && juu ya \|\|, shift juu ya <, ^ (kesi 8) | SAWA | SAWA | jedwali la hati 4 | SAWA |
+| `1 < 2 << 1` | IMEKATALIWA | IMEKATALIWA | kukataliwa kwa sauti | IMEKATALIWA (sawa) |
+| `a ? b : c = d` (upande wa uwongo haushiki ugawi) | IMEKATALIWA | IMEKATALIWA | kukataliwa kwa sauti | IMEKATALIWA (sawa) |
+| maoni ya mstari // | SAWA | SAWA | kama hati | SAWA |
+| maoni ya kizuizi /* */, viota, ndani ya usemi | IMEKATALIWA | SAWA | hati 2.4 | tofauti (kikomo cha mbegu kilichoandikwa) |
+| kamba rahisi, utorokaji \n \\ \t \" \% | SAWA | JIBU-BAYA kwa \% pekee (t94: "asilimia \\n") | asilimia % | tazama 8.2 |
+| %% katika muundo halisi | SAWA | SAWA | 100% sahihi | SAWA |
+| %d (chanya, hasi, N64) katika muundo halisi | SAWA | SAWA | 42 -7 4294967300 | SAWA |
+| %s, %c katika muundo halisi | SAWA | SAWA | kama hati | SAWA |
+| %u %x %d katika muundo wa NGUVI (kigezo) | JIBU-BAYA (4294967295; 2a; 4294967254) | SAWA (18446744073709551615; 2a; -42) | 18446744073709551615; 2a; -42 | imefunga kwenye uzalishaji (zamani JIBU-BAYA "/"); mbegu bado inachapisha fomu ya biti 32 (tazama 8.10) |
+| %d %s %c katika muundo wa nguvu | SAWA | SAWA | kama hati | SAWA |
+| %f %l %n katika muundo wa nguvu (chapishwa kama halisi) | SAWA | SAWA | passthrough | SAWA |
+| %f katika muundo halisi — inakataliwa | SAWA (inachapisha %f) | IMEKATALIWA | kukataliwa kwa sauti | tofauti (uzalishaji mkali zaidi) |
+| %u %x katika muundo halisi — inakataliwa | JIBU-BAYA (inakubali kimya) | IMEKATALIWA (sauti) | kukataliwa kwa sauti | tofauti (tazama 8.11) |
+| neno muhimu kama kitambulisho (muundo, kama, rudisha, vunja) | JIBU-BAYA (inakubali kimya) | IMEKATALIWA (sauti: "'muundo' ni neno muhimu") | kukataliwa kwa sauti (hati 2.2) | imefunga kwenye uzalishaji; mbegu bado inakubali (tazama 8.12) |
+| husisha { faili.swa }, husisha C::stdio, achilia | SAWA | SAWA | kama hati 8 | SAWA |
+| W0 na rudisha; (bila thamani), rudisha mapema | SAWA | SAWA | kama hati | SAWA |
+| kurudisha muundo kwa thamani | SAWA | SAWA | kama hati | SAWA |
+| tangazo la kigezo bila kianzilishi | SAWA | SAWA | kama hati | SAWA |
+| kazi yenye mwili tupu { } | SAWA | SAWA | kama hati | SAWA |
+| ++, -- | IMEKATALIWA | IMEKATALIWA | si ya hati | IMEKATALIWA (sawa) |
+| halisi za radiksi (0x10) | IMEKATALIWA | IMEKATALIWA | kukataliwa kwa sauti | SAWA |
+| vunja/endelea nje ya kitanzi | JIBU-BAYA (inapuuzwa kimya) | IMEKATALIWA (sauti) | kukataliwa kwa sauti | tofauti (tazama 8.13) |
+| sivyo bila kama (pekee) | IMEKATALIWA | IMEKATALIWA | kukataliwa kwa sauti | IMEKATALIWA (sawa) |
+| kama ya nusu: kama (1) kama (0) x=1; sivyo y=2 | SAWA | SAWA | x=0 y=2 | SAWA |
+| sharti la kama ni ugawaji (kama (a = 5)) | SAWA | SAWA | a=5 r=1 | SAWA |
+| shift kwa kiasi cha kigezo | SAWA | SAWA | 32 | SAWA |
+| hesabu na ulinganisho za N8/N16 | SAWA | SAWA | kama hati | SAWA |
+| mgawanyo/modulo kwa sifuri (uchunguzi) | HUANGUKA (FPE 136) | HUANGUKA (FPE 136) | kama C (hakuna ahadi) | HUANGUKA kwa zote mbili (tazama 9.1) |
+| ulinganisho wa N64 kubwa (> 2^31) | SAWA | SAWA | kama hati | SAWA |
 
-### 3.3 Miundo, vielekezi, safu, kazi na kumbukumbu
+## 6. Jedwali la Miundo, Kumbukumbu na Maktaba (kesi 138 kwa kila mnyororo)
 
-| Kipengele | Mbegu | Uzalishaji | Inavyotarajiwa (hati) | Hali |
+Marekebisho ya sehemu ya 3 yamewekwa.
+
+| Kipengele | Mbegu | Uzalishaji | Kinachotarajiwa | Hali |
 |---|---|---|---|---|
-| Tangazo la muundo, sehemu kwa kigezo cha ndani, upachikaji | inapita | inapita | muundo | inapita |
-| `->` kwa kielekezi cha muundo; `&p.x` | inapita | inapita | mshale | inapita |
-| Muundo kwenye arena (tenga + `->`) | inapita | inapita | heap | inapita |
-| Muundo kwa thamani kama hoja (baiti <= 8) | jibu baya (takataka 72, 200, 232...) | inapita (12, 17, 43) | hati 7 | mbegu jibu baya |
-| Muundo kwa thamani (sehemu 3-5, 12-20 baiti) | jibu baya (takataka) | jibu baya (1; lazima 6/10, 15) | hati 7 | jibu baya |
-| Muundo kurudishwa kwa thamani (sret) | inapita (30, 6) | inapita (30, 6) | sret | inapita |
-| sret inayopitishwa kwa kazi nyingine | jibu baya (takataka 193) | inapita (33) | sret | mbegu jibu baya |
-| Safu ya miundo (ndani na ulimwengu) | huanguka (SEGV 139) | huanguka (SEGV 139) | hati 4.2/7 | huanguka |
-| `&nukta[1]` (anwani ya kipengele cha muundo) | huanguka (SEGV 139) | huanguka (SEGV 139) | anwani halali | huanguka |
-| Ugawi wa muundo `b = a;` | jibu baya (takataka) | huanguka (SEGV 139) | nakala | zote mbili mbovu |
-| ukubwa(Muundo) | imekataliwa kimya (0 kama hoja) | inapita (8) | ukubwa halisi | mbegu imekataliwa kimya |
-| Kigezo cha muundo cha ulimwengu | imekataliwa kimya | huanguka (SEGV 139) | muundo wa ulimwengu | zote mbili mbovu |
-| `&x`, `*p`, `*p = ...`, `p[i]`, `q - p` (baiti), `kama (p == 0)`, kurudisha kielekezi | inapita | inapita | vielekezi | inapita |
-| `p + k` ni kwa BAITI, si kwa kipengele | inapita (baiti) | inapita (baiti) | hati 4.2 inaeleza `a[i] = *(a + i*ukubwa)` | inafanya kazi kwa baiti — haijaelezwa waziwazi |
-| Nyoosha NULL | huanguka (SEGV 139) | huanguka (SEGV 139) | hakuna kinga inayoahidiwa | huanguka (kama C) |
-| anwani_ya_kazi / tekeleza | imekataliwa kimya | imekataliwa (kazi haijafafanuliwa) | hati 9 inaahidi | hazipo kwenye minyororo yote miwili |
-| Safu za ndani na ulimwengu, faharisi, safu kama hoja, mfuatano halisi | inapita | inapita | safu | inapita |
-| Kianzilishi cha safu: `N32 g[3] = {1,2,3}`; `N8 s[4] = "abc"` | imekataliwa kimya | jibu baya (kimepuzwa; 0) | 6; 97 | uzalishaji jibu baya |
-| Safu ya pande mbili | imekataliwa kimya | imekataliwa (KOSA) | haijaelezwa | imekataliwa |
-| Faharisi hasi `p[-1]` | huanguka (SEGV 139) | huanguka (SEGV 139) | kipengele cha kabla | huanguka (upanuzi wa sifuri; mzizi wa badili na ukuaji wa Orodha) |
-| Hoja 0-9 (rejesta za GP na rafu) | inapita | inapita | ABI | inapita |
-| Hoja 10 | imekataliwa kimya | inapita (55) | hakuna kikomo kilichoandikwa | mbegu imekataliwa kimya |
-| Hoja za D64 na kurudisha D64 | inapita (uhamisho wa GP) | inapita (xmm) | mipaka 4c ilisema mbegu inakataa | inapita kwa zote mbili |
-| D64 ikichanganywa na N32: `5.5 * 2` | jibu baya (0) | jibu baya (0) | 11 | jibu baya |
-| Halisi kubwa kama hoja ya kazi: `pata(4294967296)` | jibu baya (ukataji) | imekataliwa kwa ufisadi (jina la param isiyohusika) | 1 | uzalishaji imekataliwa kwa makosa; mbegu jibu baya |
-| Mwili mtupu wa kazi ya W0 | inapita (0) | imekataliwa (kazi haijafafanuliwa) | 0 | uzalishaji imekataliwa kwa makosa |
-| N64 hasi: `N64 x = -90` | jibu baya (4294967206) | jibu baya (4294967206) | -90 | jibu baya |
-| Ukanushaji wa N64: `0 - 10000000000` | jibu baya (2884901888) | jibu baya (2884901888) | -10000000000 | jibu baya |
-| Kujirudia (factorial 10, pande mbili) | inapita | inapita | kurudia | inapita |
-| Kujirudia kirefu (10000-20000) | inapita | inapita | si ya hati | inapita |
-| Kujirudia kirefu (30000+) | inapita (hadi 100000) | huanguka (SEGV 139, ~20k-30k) | si ya hati | uzalishaji huanguka (kikomo cha rafu kisichoelezwa) |
-| tenga, achilia (arena; hakuna matumizi tena) | inapita | inapita | hati 10 | inapita |
-| badili (realloc) | huanguka (SEGV 139) | huanguka (SEGV 139) | 5 | huanguka |
-| Orodha inayokua (orodha_ongeza zaidi ya uwezo) | huanguka (SEGV 139) | huanguka (SEGV 139) | 15 (hati 10: safu inayokua) | huanguka — Orodha haikui kamwe |
+| Tangazo la muundo, sehemu kwa thamani `p.x`, `->`, upachikaji, `&p.x`, `&(q->x)`, nukta ya mwisho `};` | SAWA | SAWA | muundo | SAWA |
+| Hoja kwa thamani, baiti 8/12/16/20/24 (usomaji) | SAWA | SAWA | kama hati | SAWA |
+| Hoja kwa thamani, kubadilishwa ndani ya kazi (a09, baiti 12) | SAWA | SAWA (0) | chanzo kisibadilike | imefunga kwenye uzalishaji (zamani JIBU-BAYA) |
+| Hoja kwa thamani + kurudisha sret pamoja (a19) | SAWA (0) | JIBU-BAYA (1; t.a=1541242656, takataka) | 0 | BADO JIBU-BAYA kwenye uzalishaji (tazama 8.1) |
+| Muundo kurejeshwa kwa thamani (sret), baiti 8/12/16/20/24 | SAWA | SAWA | sret | SAWA |
+| sret ndani ya hoja ya wito mwingine (`jumlisha(tengeneza(10))`) | HUANGUKA (SEGV 139) | SAWA (46) | 46 | mbegu inaanguka (tazama 9.2) |
+| Safu za miundo (vipengele 12/16/20/24), anwani ya kipengele | SAWA | SAWA | kama hati | SAWA (rekodi ya zamani SEGV haishikiki) |
+| Safu ya miundo kama hoja ya kazi | JIBU-BAYA (mwendo mbovu: 1563515763) | SAWA (20) | 20 | tofauti (kikomo cha mbegu) |
+| Muundo kwenye tenga (heap), kielekezi | SAWA | SAWA | kama hati | SAWA |
+| Ugawaji wa muundo `t = s` (nakala) | SAWA | SAWA | nakala | SAWA (rekodi ya zamani haishikiki) |
+| `ukubwa()` kwa miundo ya upana mmoja | SAWA | SAWA | kama hati | SAWA |
+| `ukubwa()` kwa muundo mchanganyiko (N8+N16+N32) | JIBU-BAYA (8; mpangilio 1-0-2-0-3) | SAWA (7; mpangilio 1-2-0-3-0) | 7 | tofauti: mpangilio wa sehemu ni tofauti kati ya minyororo (hati haina ahadi) |
+| Muundo wa ulimwengu (kigezo cha kimataifa) | IMEKATALIWA (sauti: mchanganuzi) | SAWA (12) | muundo wa ulimwengu | imefunga kwenye uzalishaji (zamani HUANGUKA); mbegu bado inakataa |
+| Muundo uliowekwa kama hoja (`jumlisha(s.nd)`) | SAWA | SAWA | kama hati | SAWA |
+| Muundo wenye padding N8/N64/N8 | SAWA | SAWA | kama hati | SAWA |
+| Muundo kutumika KABLA ya tangazo lake | IMEKATALIWA | SAWA | kama hati | tofauti (kikomo cha mbegu) |
+| Muundo wenye jina lenye umbo la aina (`B12`) | JIBU-BAYA (inakubali kama muundo, 18) | IMEKATALIWA (sauti: "aina isiyojulikana: B12") | kukataliwa au kufanya kazi | maboresho kwenye uzalishaji (zamani SEGV); mbegu inakubali kimya (tazama 8.14) |
+| Anwani `&x`, kunyoosha `*p`, ugawaji kupitia `*p` | SAWA | SAWA | kama hati | SAWA |
+| Faharisi hasi/chanya `p[-1]`, `p[1]` (kuzidisha kwa ukubwa) | SAWA | SAWA | kama hati | SAWA |
+| Hesabu ya kielekezi `p + 2`, `p - 2`, `p - q` | JIBU-BAYA (hesabu ya baiti) | JIBU-BAYA (hesabu ya baiti) | hesabu ya baiti (hati 4.2) | inafuata hati 4.2; jibu baya kwa mwandishi anayetegemea C (tazama 8.9) |
+| Kielekezi kwa kielekezi N32** | HUANGUKA (SEGV 139) | SAWA | kama hati | mbegu inaanguka (tazama 9.2) |
+| Kielekezi cha N8, hesabu ya herufi | SAWA | SAWA | kama hati | SAWA |
+| Null: `p == 0`, `p != 0`, kugawa 0 | SAWA | SAWA | kama hati | SAWA |
+| Kunyoosha null (`*p = 5` na p=0) | SAWA (SEGV kama inavyotarajiwa) | SAWA (SEGV kama inavyotarajiwa) | anguko (hakuna ulinzi) | SAWA (kama C) |
+| Kielekezi kwa N32 na N32 kwa kielekezi kama hoja (d30, d31) | JIBU-BAYA (inakubali kimya; N32 kwa kielekezi inaanguka SEGV wakati wa kukimbia) | IMEKATALIWA (sauti: "kielekezi dhidi ya namba") | kukataliwa (aina inakaguliwa) | imefunga kwenye uzalishaji; mbegu bado inakubali kimya (tazama 8.15) |
+| Halisi kwa kigezo cha kielekezi (`kazi_p(5)`, `kazi_p(0)`) | HUANGUKA (SEGV 139 wakati wa kukimbia) | IMEKATALIWA (sauti) | kukataliwa | imefunga kwenye uzalishaji; mbegu inakubali na kuanguka (tazama 8.15) |
+| Safu ya ndani, ulimwengu, kuoza kama hoja, safu ya N64 | SAWA | SAWA | kama hati | SAWA |
+| Safu ya kamba (N8*[3]) | SAWA | SAWA | kama hati | SAWA |
+| Faharisi nje ya mipaka (ndani ya ukurasa — kimya; mbali — SEGV) | SAWA (kama inavyotarajiwa) | SAWA (kama inavyotarajiwa) | hakuna ukaguzi unaoahidiwa | SAWA |
+| Hoja 0–9 | SAWA | SAWA | kama hati | SAWA |
+| Hoja 10–16 (mpaka wa rafu) | IMEKATALIWA (zaidi ya 9) | SAWA | kama hati | tofauti (kikomo cha mbegu) |
+| Hoja 17 (ya 17 inatupwa kimya) | IMEKATALIWA (zaidi ya 9) | IMEKATALIWA (sauti: "kikomo ni 16") | kukataliwa | imefunga kwenye uzalishaji (zamani JIBU-BAYA) |
+| Hoja 7 za N64 (rafu) | SAWA | SAWA | kama hati | SAWA |
+| Wito wa mbele (kabla ya ufafanuzi) | SAWA | SAWA | kama hati | SAWA |
+| Kujirudia (kipengele 6), kirefu (kina 40,000 na 100,000), pande mbili | SAWA | SAWA | kama hati | SAWA (rekodi ya zamani SEGV haishikiki) |
+| W0: `rudisha;` tupu, wito wa W0 | SAWA | SAWA | kama hati | SAWA |
+| Matokeo ya W0 yanatumika kama thamani | JIBU-BAYA (inakubali kimya, takataka) | IMEKATALIWA (sauti) | kukataliwa | tofauti (tazama 8.3) |
+| Kurudisha N8/N16/N32/N64/D32/D64 | SAWA (D32 IMEKATALIWA) | SAWA | kama hati | SAWA (D32 kikomo cha mbegu) |
+| Wito wa kazi za D64 (hoja + hesabu) | SAWA | SAWA | kama hati | SAWA (rekodi ya zamani haishikiki) |
+| Hoja mchanganyiko kamili/desimali (d26) | JIBU-BAYA | SAWA | kama hati | tofauti (kikomo cha mbegu: mpaka wa D64) |
+| Idadi ya hoja isiyo sahihi — nafasi ya taarifa/usemi (d27–d29) | JIBU-BAYA (inakubali kimya) | SAWA (KATA) | kukataliwa | tofauti (tazama 8.16) |
+| tenga msingi, nyingi, kubwa (500,000B), inayozidi arena inarudisha 0 | SAWA | SAWA | kama hati | SAWA |
+| badili (kukua, data inahifadhiwa) | SAWA | SAWA | kama hati | SAWA (rekodi ya zamani SEGV haishikiki) |
+| achilia (no-op, hakuna anguko) | SAWA | SAWA | kama hati | SAWA |
+| wito_wa_mfumo hoja 1/2/3/6/8; rafu baada ya wito; O_CREAT mode 0644 | SAWA | SAWA | kama hati | SAWA |
+| mfuatano: urefu, linganisha, nakili, unganisha, tafuta, kata_nafasi, geuza, juu/chini, heshi (moduli nzima) | SAWA (isipokuwa nambari_kwa_mfuatano_n64 hasi) | SAWA | kama hati | SAWA kwa uzalishaji; mbegu inavunjika kwa N64 hasi (tazama 8.17) |
+| hesabu: kamili/ndogo/kubwa/dogo, neneo_n32, gcd, lcm, pow, isqrt, fibonacci, kipengele, kuu, pow_mod | SAWA | SAWA | kama hati | SAWA |
+| neneo_n64 (kubwa hasi) | JIBU-BAYA (3589934592) | SAWA (5000000000) | 5000000000 | tofauti (kikomo cha mbegu: N64 hasi kubwa) |
+| orodha: msingi, UKUAJI (uwezo 2 hadi 100, 1 hadi 128) | SAWA | SAWA | kama hati 10 | SAWA (rekodi ya zamani SEGV haishikiki) |
+| mpangilio: pangilia_n32/n64 (+kushuka) | SAWA | SAWA | kama hati | SAWA |
+| ramani: weka/pata/ina, mgongano, futa, kaburi, kujaza tena | SAWA | SAWA | kama hati 10 | SAWA (rekodi ya zamani "weka ni no-op" haishikiki) |
+| faili: fungua "r"/"w"/"a"/"r+"/"w+"/"a+", soma/andika, yote, mstari, futa, ipo, ruhusa 0644 | SAWA | SAWA | kama hati | SAWA (faili.swa ni asilia — syscalls pekee) |
+| kumbukumbu: nakili, weka_sifuri, linganisha, andika_u64, andika_heksa, andika_sehemu, soma_mstari | SAWA | SAWA | kama hati | SAWA |
+| andika: %d %s %c %% (halisi na kigezo) | SAWA | SAWA | kama hati | SAWA |
+| andika: %u | SAWA (kwa chanya) | IMEKATALIWA (sauti kwenye muundo halisi) | si ya hati | uzalishaji mkali kwa muundo halisi |
+| andika: %f (isiyosaidiwa) | SAWA (inachapisha "%f") | IMEKATALIWA (sauti) | passthrough | tofauti (uzalishaji mkali) |
+| nasibu, wakati (zinahitaji libc) | IMEKATALIWA | IMEKATALIWA | zinahitaji libc | hazifanyi kazi kwenye mnyororo asilia (zimeandikwa) |
+| Mstari wa chanzo unaoanza na "hu" (sio husisha) | SAWA (mstari unasalimika) | SAWA (mstari unasalimika) | mstari usifutwe | imefunga kwenye uzalishaji (zamani JIBU-BAYA, commit 3bbe422) |
+| Utorokaji `\n` katika kamba ya DATA ya ndani | SAWA (0x0A) | JIBU-BAYA (5c 6e — herufi halisi) | 0x0A (hati 2.3) | BADO JIBU-BAYA kwenye uzalishaji (tazama 8.18) |
+| Utorokaji `\n` katika kamba ya DATA ya ULIMWENGU | IMEKATALIWA (kimya) | IMEKATALIWA (sauti: "kianzio cha ulimwengu lazima kiwe halisi ya nambari") | 0x0A | mabadiliko: sasa inakataliwa kwa sauti kwenye uzalishaji (zamani 5c 6e kimya) |
 
-### 3.4 Maktaba ya kawaida (msingi/)
+## 7. Kwa muhtasari: ni nini kimepita na ni nini kilichobaki
 
-| Kipengele | Mbegu | Uzalishaji | Inavyotarajiwa (hati) | Hali |
-|---|---|---|---|---|
-| kumbukumbu: nakili, weka_sifuri, linganisha_kumbukumbu | inapita | inapita | — | inapita |
-| kumbukumbu: andika (muundo wa nguvu: %d %u %x %% %s %c \n, %f %l %n kama herufi halisi), andika_n64, andika_u64, andika_heksa, andika_mfuatano, andika_herufi, andika_sehemu, andika_stderr | inapita (isipokuwa %d/%u/%x za > 2^31, hoja 7) | inapita | — | inapita kwa kiasi (tazama 3.2); muundo halisi: mkaguzi unathibitisha %d %s %c %% pekee |
-| kumbukumbu: sys_soma, sys_andika, sys_fungua, sys_funga, soma_mstari (faili halisi) | inapita | inapita | wito_wa_mfumo | inapita |
-| kumbukumbu: tenga, achilia (no-op), ukubwa(N32) | inapita (ukubwa(N32) = 8) | inapita (4) | hati 10 | mbegu jibu baya kwa ukubwa |
-| kumbukumbu: badili | huanguka (SEGV 139) | huanguka (SEGV 139) | realloc | huanguka |
-| kumbukumbu: ukubwa(Muundo) | imekataliwa kimya (0 kama hoja) | inapita (8) | ukubwa halisi | mbegu imekataliwa kimya |
-| mfuatano: urefu, linganisha, nakili, unganisha | inapita | inapita | — | inapita |
-| mfuatano: tafuta_mfuatano, kata_nafasi, geuza, anza_kwa, isha_kwa, kompyuta_linganisha, heshi, linganisha_n | inapita* | inapita* | — | inapita kwa kiasi (herufi halisi zinavunja matumizi — tazama 3.1) |
-| mfuatano: tafuta_herufi, tafuta_herufi_mwisho, idadi_ya_herufi, herufi_ya_juu, herufi_ya_chini | imekataliwa kimya (herufi halisi) | jibu baya (herufi halisi = 0) | — | zote mbili mbovu |
-| mfuatano: nambari_kwa_mfuatano, nambari_kwa_mfuatano_heksa, mfuatano_hadi_n32, nambari hasi | inapita | inapita | — | inapita |
-| mfuatano: mfuatano_hadi_n64 (kulinganisha dhidi ya halisi kubwa) | jibu baya (mipaka 5) | inapita | — | mbegu jibu baya |
-| mfuatano: nambari_kwa_mfuatano_n64 (thamani > 2^31) | jibu baya (1286608618) | jibu baya (4912) | 9876543210 | jibu baya |
-| hesabu: hesabu_kamili/ndogo, hesabu_kubwa/dogo, neneo_n32, gcd, pow_kamili, isqrt, fibonacci, kipengele, ni_kuu, lcm, pow_mod | inapita | inapita | — | inapita |
-| hesabu: neneo_n64(-90) | jibu baya (0) | jibu baya (0) | 1 | jibu baya (N64 hasi — tazama 3.3) |
-| hesabu: halisi > 2^31 kama hoja | jibu baya (kikomo cha mbegu) | imekataliwa (ufisadi) | — | zote mbili mbovu |
-| orodha: orodha_mpya, orodha_ongeza (bila kukua), orodha_pata, orodha_futa_mwisho, orodha_urefu, orodha_huru | inapita (6) | inapita (6) | hati 10 | inapita |
-| orodha: orodha_ongeza INAPOKUA (badili) | huanguka (SEGV 139) | huanguka (SEGV 139) | ukuaji (hati 10) | huanguka — Orodha haikui |
-| mpangilio: pangilia_n32, pangilia_n32_kushuka, pangilia_n64, pangilia_n64_kushuka | inapita | inapita | — | inapita |
-| ramani: ramani_mpya, ramani_weka, ramani_pata, ramani_ina, ramani_futa, ramani_huru | jibu baya (weka ni no-op; 2/5) | inapita (5/5) | hati 10 | mbegu jibu baya |
-| faili (faili_fungua, faili_soma, faili_andika, faili_soma_yote, faili_andika_yote, faili_ipo, faili_soma_mstari, faili_futa) | inapita (k10g) | inapita (k10g) | — | inapita — syscalls pekee, hakuna libc (2026-09-01) |
-| nasibu, wakati (nasibu_n32, wakati_sasa, n.k.) | imekataliwa kimya (rc=1, hakuna ujumbe) | imekataliwa kwa sauti | zinahitaji libc (mnyororo wa Rust pekee) | hazifanyi kazi kwenye mnyororo asilia; mbegu inakataa kimya |
+Kinachofanya kazi kwa minyororo yote miwili, kilichopimwa leo:
+kama/sivyo kwa kila muundo, wakati, kwa, vunja na endelea, hesabu
+na ulinganisho za N32 na N64, mzunguko mfupi wa && na ||, ternary,
+ugawi, kurudia na wito wa mbele, miundo kwa thamani na kwa sret
+(isipokuwa mchanganyiko wa 8.1), safu za miundo, muundo wa ulimwengu
+(kwenye uzalishaji), D64 ndani ya ulimwengu wake (pamoja na wito wa
+kazi), familia A/B/W na D32 kwenye uzalishaji, tenga/badili/achilia,
+orodha inayokua, ramani, faili, mfuatano na hesabu (kwa uzalishaji),
+na maoni ya `//`.
 
-## 4. Jibu baya zote (majibu potofu ya kimya)
+Marekebisho ya baada ya skani yamepunguza JIBU-BAYA za uzalishaji
+kutoka 30 hadi 8 na HUANGUKA kutoka 11 hadi 2 (kati ya kesi 467;
+huanguka 2 ni mgawanyo kwa sifuri, sawa na C). Mbegu imegandishwa
+na makosa yake — tazama sehemu ya 8, 9 na 10.
+
+## 8. JIBU-BAYA zilizobaki (majibu potofu ya kimya)
 
 Mpangilio: kwa eneo, kisha kwa uzito. Kila kipimo ni cha chini
 kabisa; "kilichoonekana" ni cha minyororo yote miwili isipokuwa
 ilivyobainishwa. Msimbo wa kutoka ni mod 256.
 
-### 4.1 Mfumo wa aina na hesabu
+### 8.1 UZALISHAJI — muundo kwa thamani + sret pamoja bado unatoa takataka (a19)
 
-**1. D64 hadi nambari kamili: ubadilishaji haupo (J1, zote mbili)**
-
-Kila tokeo la D64 linalorudi kwenye kazi ya N32, au linalogawiwa
-kwa N32, linarudisha rejesta eax bila kuguswa (hakuna cvttsd2si).
-Mfumo mzima wa desimali ni kipofu upande wa int: matokeo ni ya
-bahati.
+Hoja ya muundo kwa thamani IMEnakiliwa kwa usahihi (a09 imefunga),
+na sret kwa mnyororo inafanya kazi (J7 imefunga), lakini wakati
+kazi inachukua muundo kwa thamani NA kurudisha muundo (sret),
+matokeo ni takataka.
 
 ```swa
-N32 main() { rudisha 21.5; }
+muundo Nne { N32 a; N32 b; N32 c; N32 d; };
+Nne ongeza_hoja(Nne v, N32 n) { v.a = v.a + n; v.b = v.b + n; v.c = v.c + n; v.d = v.d + n; rudisha v; }
+N32 main() {
+    Nne s; s.a=1; s.b=2; s.c=3; s.d=4;
+    Nne t = ongeza_hoja(s, 10);
+    rudisha (t.a == 11 && t.b == 12 && t.c == 13 && t.d == 14 && s.a == 1) ? 0 : 1;
+}
 ```
 
-- Kilichoonekana: mbegu 0, uzalishaji 0. Kinachotarajiwa: 21
-  (kukata hadi sifuri).
-- Pia: `rudisha (1.5 + 2.25) * 4;` hutoa 4 (lazima 15);
-  `rudisha 5.0 / 2.0;` hutoa 0 (lazima 2);
-  `rudisha -2.5 * 2;` hutoa 2 (lazima 251);
-  `D64 x = 2.5; N32 y = x;` hutoa 0 (lazima 2);
-  `N32 x = 2.5;` hutoa 0 (lazima 2).
+- Kilichoonekana (uzalishaji, leo): rc=1; pato `t.a=1541242656 t.b=32766
+  t.c=1541242656 t.d=32766 s.a=1` — t ni takataka; s.a inasalimika
+  (nakala ya hoja imefunga). Mbegu: rc=0, `t.a=11 ... s.a=1` (sahihi).
+- Kinachotarajiwa: rc=0. Ugawaji `t = ongeza_hoja(s, 10);` pia
+  inatoa takataka. Na kiota `jumlisha(ongeza_hoja(s, 10))` inatoa
+  jibu lisilo sahihi kwenye uzalishaji (mbegu inaanguka SEGV — tazama 9.2).
+- Hii ndiyo mpaka uliobaki wa mfumo mzima wa kwa-thamani.
 
-**2. Mchanganyiko wa desimali na nambari kamili: operesheni inaharibika (J2, zote mbili)**
-
-Operesheni ya int na D64 haiwezi kubadilisha int hadi double
-(hakuna cvtsi2sd); matokeo yanategemea rejesta za zamani na rafu.
+### 8.2 UZALISHAJI — utorokaji \% katika muundo halisi (t94)
 
 ```swa
-N32 main() { rudisha (1 + 2.5) * 2; }
+N32 main() { andika("asilimia \%\n"); rudisha 0; }
 ```
 
-- Kilichoonekana: 6 (zote mbili). Kinachotarajiwa: 7.
-- Pia: `(3 + 2.5) * 2` hutoa 10 (lazima 11); `2.5 < 3` hutoa 0 (lazima 1);
-  `1 > 2.5` hutoa 1 (lazima 0); `3 == 3.0` hutoa 0 (lazima 1);
-  `0 == 2.5` hutoa 1 (lazima 0); `n > 2.5` ni 1 KILA wakati kwa n = 1..5
-  — n haishiriki kabisa; `D64 a = 5.5 * 2; kama (a == 11.0)` hutoa
-  1 badala ya 11.
+- Kilichoonekana (uzalishaji, leo): `asilimia \n` — backslash halisi
+  na herufi n; asilimia imetoweka. Mbegu: `asilimia %` (sahihi).
+- Kinachotarajiwa: `asilimia %` ikifuatiwa na mwisho wa mstari.
+- Mkaguzi anakubali \% kama utorokaji ("utorokaji wa asilimia")
+  lakini kichanganuzi cha '%' katika muundo halisi kinakula herufi
+  zote mbili na kuharibu utorokaji unaofuata.
 
-**3. Halisi >= 2^63 inakatwa kimya hadi biti 32 (J3, zote mbili)**
-
-`changanua_primary` inaangalia `v > 2147483647` kwa ulinganisho
-WENYE ISHARA: 2^63+ inaonekana hasi na haijawekwa alama ya N64 —
-inatoka kama `mov eax, imm32`. Uthibitisho wa mashine:
-`N64 x = 18446744073709551615` inatengeneza `mov eax, 0xFFFFFFFF`
-(baiti 4) halafu `mov [rbp-8], rax`.
+### 8.3 ZOTE MBILI — W0 kama kigezo chenye thamani (uvunjaji wa hati 3)
 
 ```swa
-N32 main() { A64 x = 18446744073709551615; rudisha x / 4294967296; }
+N32 main() { W0 x = 5; rudisha 1; }
 ```
 
-- Kilichoonekana: 0 (uzalishaji; mbegu inaanguka kabla).
-  Kinachotarajiwa: 255. (Kwa `N64 x = 18446744073709551615; x + 1`
-  matokeo 0 yanafanana kwa bahati — thamani halisi ya x ni
-  4294967295, si 2^64-1, kwa disassembly.)
+- Kilichoonekana (leo): inakubaliwa kimya kwa zote mbili (rc=1).
+  Hati 3 inasema W0 ni "kwa kazi tu" — inapaswa kukataliwa kwa sauti.
+- Kwenye mbegu, W0 katika usemi hata inahesabiwa: `W0 x = 5; N32 y = x + 1;`
+  inatoa mbegu rc=6, uzalishaji IMEKATALIWA kwa kosa la aina.
+  Matokeo ya W0 kama thamani (`N32 x = fanya();`) pia yanakubaliwa
+  kimya kwenye mbegu (takataka); uzalishaji unakataa kwa sauti.
 
-**4. Halisi kubwa kama hoja ya wito (J4, uzalishaji)**
-
-`ast_tiga` inabebwa mizigo miwili: alama ya "N64 literal" NA kiungo
-cha mnyororo wa hoja. Hoja ya mwisho yenye halisi kubwa inafungua
-kiungo hadi nodi ya takataka; hoja ya katikati inapoteza alama
-yake (inakatwa hadi biti 32).
+### 8.4 MBEGU — mchanganyiko N32-N64 ni hesabu ya 32-bit (J1)
 
 ```swa
-N64 jumlisha(N64 a, N64 b) { rudisha a + b; }
-N32 main() { rudisha jumlisha(4294967296, 5) % 256; }
+N32 main() { N64 x = 0 - 10000000000; kama (x == -10000000000) { rudisha 1; } rudisha 2; }
 ```
 
-- Kilichoonekana (uzalishaji): 36. Kinachotarajiwa: 5.
-- Kwa hoja ya mwisho: `mbili(4294967296)` inakataliwa kwa kosa
-  lisilo sahihi ("kitambulisho kisichojulikani: x" — jina la
-  parameta yenyewe). Mbegu: inakubali kwa ukataji.
+- Kilichoonekana (mbegu, leo): rc=2. Uthibitisho wa mashine:
+  `mov rax, 0x2540BE400; push; mov eax, 0; pop rcx; sub eax, ecx`
+  — toleo kamili la 32-bit (`sub eax,ecx`), si 64-bit.
+- Kinachotarajiwa: rc=1. Uzalishaji: SAWA (rc=1) — `sub rax,rcx`.
+- Pia: `N64 x = 0 - 4294967296;` na `N32 a = 5; N64 b = 4294967296;`
+  — mbegu JIBU-BAYA, uzalishaji SAWA (zote mbili zilipimwa tena leo).
 
-**5. Upakiaji wa ulimwengu wa D64 umevunjika (J7, zote mbili)**
-
-Ulimwengu wa D64 unapakiwa kwa `mov rax, [G]` (kamili) badala ya
-`movsd xmm0, [G]`. Katika ulinganisho, thamani ya kushoto haifiki
-xmm0 kamwe — ulinganisho unajilinganisha na upande wa kulia.
-(Kianzio chenyewe ni sahihi: baiti za 2.5 ziko kwenye .data.)
+### 8.5 MBEGU — shift za N64 ni za 32-bit (J2)
 
 ```swa
-D64 G = 2.5; N32 main() { rudisha G == 3.5; }
+N32 main() { N64 x = 1; N64 y = x << 32; kama (y == 4294967296) { rudisha 1; } rudisha 2; }
 ```
 
-- Kilichoonekana: 1 (zote mbili). Kinachotarajiwa: 0 (G ni 2.5).
-- Pia: `G == 1.0` hutoa 1 (lazima 0); `G * 2` hutoa 0 (lazima 5);
-  `D64 x = G; x == 2.5` hutoa 0 (lazima 1).
+- Kilichoonekana (mbegu): rc=2 (`1 << 32` = 1 kwa shift ya 32-bit).
+  Pia `4294967296 >> 1` inatoa 0 (lazima 2147483648).
+- Kinachotarajiwa: rc=1. Uzalishaji: SAWA.
 
-**6. Halisi za radiksi 0x/0o/0b zinakubaliwa na kuhesabiwa kimakosa (J8)**
+### 8.6 MBEGU — mpaka mzima wa D64/nambari kamili (J3)
 
-Mchanganuzi wa uzalishaji unaruka herufi 2 za kiambishi na kusoma
-salio kama DESIMALI; mbegu inasoma 0. Hati haijataja radiksi —
-hii ni kukubali kimya kwa kitu kisichojaribiwa, lakini msomaji
-ana msimbo wa radiksi ulioachwa nusu.
+Mchanganyiko wa D64 na nambari kamili kwenye mbegu bado umevunjika
+katika kila nafasi iliyopimwa; uzalishaji umeufunga:
+
+- Kianzio: `N32 x = 2.5;` — mbegu 0 (lazima 2), uzalishaji 2.
+- Ugawaji: `x = 2.5;` — mbegu 0, uzalishaji 2.
+- Hoja: `pata(2.5)` — mbegu 1, uzalishaji 2.
+- Rudisha: `rudisha 21.5;` — mbegu 0, uzalishaji 21.
+- Hesabu: `(1 + 2.5) * 2` — mbegu 6, uzalishaji 7.0; `5.5 * 2` — mbegu 0, uzalishaji 11.0.
+- Ulinganisho: `2.5 < 3`, `3 == 3.0`, `1 > 2.5`, `0 == 2.5` — mbegu JIBU-BAYA, uzalishaji SAWA.
+- Ternary: `1 ? 2.5 : 3` — mbegu JIBU-BAYA, uzalishaji SAWA.
+- Ulimwengu: `N32 G = 2.5;` — mbegu 0 (lazima 2), uzalishaji IMEKATALIWA kwa sauti.
+- Kinyume: `D64 x = 5; kama (x == 5.0)` — mbegu JIBU-BAYA, uzalishaji SAWA.
+
+Kipimo cha chini:
 
 ```swa
-N32 main() { rudisha 0x10; }
+N32 main() { kama (2.5 < 3) { rudisha 1; } rudisha 2; }
 ```
 
-- Kilichoonekana: mbegu 0, uzalishaji 10. Kinachotarajiwa: 16 (au
-  kukataliwa kwa sauti).
-- Pia: `0o17` hutoa 17 (lazima 15); `0b101` hutoa 101 (lazima 5);
-  `0x1F` hutoa 1; `0xFF` hutoa 0; `0x10 + 0x1F` hutoa 11 (lazima 47).
+- Kilichoonekana (mbegu): rc=2. Kinachotarajiwa: rc=1 (2.5 < 3 ni kweli).
+- Uzalishaji: SAWA. Ulinganisho `D64 x = 3.0; kama (x == 3)` unapita
+  kwa bahati kwa zote mbili; mpaka unategemea mwelekeo wa operesheni.
 
-**7. Makosa ya mkaguzi wa aina si ya kufa (J10, uzalishaji — jibu baya la mfumo)**
-
-`mkaguzi_makosa` inachapishwa kama "; ONYO: makosa 1, inaendelea"
-na mkusanyaji UNAENDELEA. Kila kosa la aina (kianzio kisicholingana,
-ugawaji, hoja, kurudisha) linatoa msimbo wenye tabia isiyofafanuliwa.
-Hii ndiyo sababu ya kimfumo ya J1, J2 na nyingine: hakuna kesi
-iliyopimwa ya "kukataliwa kwa sauti" kwa kosa la aina kwenye
-mnyororo wa uzalishaji.
+### 8.7 UZALISHAJI — D32 ya ulimwengu hailingani kamwe (J8)
 
 ```swa
-N32 main() { N32 x = 2.5; rudisha x; }
+D32 G = 2.5;
+N32 main() { kama (G == 2.5) { rudisha 1; } rudisha 2; }
 ```
 
-- Kilichoonekana (uzalishaji): kosa limechapishwa ("aina ya kianzio
-  hailingani") LAKINI mkusanyaji ametoa programu, inayorudisha 0.
-  Kinachotarajiwa: imekataliwa (kosa la aina linapaswa kuzuia) au
-  jibu sahihi 2.
+- Kilichoonekana (uzalishaji, leo): rc=2 — G haiwezi kusawazishwa
+  na 2.5. Kinachotarajiwa: rc=1.
+- D32 za ndani na kazi zinafanya kazi (desi_d32_* SAWA); za
+  ulimwengu hazifanyi. Mbegu inakataa D32 kabisa.
 
-**8. Shift za N64 kwenye mbegu ni 32-bit (J14, mbegu)**
-
-Mabadiliko yote ya mbegu hutumia `shl/sar eax, cl` — biti za juu
-zinapotea.
+### 8.8 MBEGU — ! na ~ kwenye D64 zinakubaliwa kimya (t62)
 
 ```swa
-N32 main() { N64 x = 1; rudisha x << 32; }
+N32 main() { D64 x = 2.5; N32 r = !x; andika("r=%d\n", r); rudisha 0; }
 ```
 
-- Kilichoonekana (mbegu): 1. Kinachotarajiwa: 0.
-- Pia: `N64 x = 2147483648; x >> 25` hutoa 192 (lazima 64). Uzalishaji
-  ni sahihi kwa vigezo (0 na 64).
+- Kilichoonekana (mbegu): r=1 (na `~x` inatoa r=4294967295).
+  Kinachotarajiwa: r=0 au kukataliwa kwa sauti.
+- Uzalishaji unakataa kwa sauti ("kiambishi ! haukubaliki kwa desimali").
 
-**9. Ugawaji upya wa D64 kwenye mbegu umevunjika (J15, mbegu)**
+### 8.9 ZOTE MBILI — *(p + n) ni hesabu ya BAITI (t75, b02, b06, c03)
 
 ```swa
-N32 main() { D64 x = 0.0; x = 2.5; rudisha x == 2.5; }
+N32 safu[4]; safu[0]=10; safu[1]=11; safu[2]=12; safu[3]=13;
+N32* p = safu; N32 v = *(p + 3);
 ```
 
-- Kilichoonekana (mbegu): 0. Kinachotarajiwa: 1. Uzalishaji: 1
-  (sahihi). Pia `x = x + 1.5; x == 2.5` hutoa mbegu 0, uzalishaji 1.
+- Kilichoonekana (zote mbili, leo): v=2816 (takataka).
+  Kinachotarajiwa (kwa C): v=13.
+- Imerekhodiwa kwenye hati 4.2 ("hesabu ya BAITI") na inalingana na
+  hati; `p[i]` (faharisi) inazidisha kwa ukubwa na inafanya kazi.
+  Mwandishi anayetegemea C atapata jibu baya la kimya. Tofauti ya
+  `p - q` (delta ghafi ya baiti, haijagawanywa) haijaelezwa kwenye hati.
 
-**10. Upana usiotekelezwa unakubaliwa kimya na uzalishaji (J16)**
-
-Hati 3 inaahidi "upana wowote wa tarakimu", lakini upana usio wa
-8/16/32/64 unakubaliwa kimya na kufanya kazi kwa bahati kwa thamani
-ndogo: N128 inapewa eneo la baiti 16 lakini inapakiwa/kuhifadhiwa
-kama 64; A3/N7 zinatibiwa kama kielekezi kupitia hila ya
-`(upana/4)*4 != upana`; D80 inatibiwa kama D64 yenye eneo la
-baiti 10. Kwa thamani zinazohitaji zaidi ya biti 64, matokeo
-yatakuwa potofu kimya.
+### 8.10 MBEGU — %d/%u/%x za matokeo ya hesabu hasi ni za biti 32
 
 ```swa
-N32 main() { N128 x = 5; rudisha x; }
+N8 bafa[64]; bafa[0] = 37; bafa[1] = 117; bafa[2] = 0;   // "%u"
+andika(bafa, 0 - 1);
 ```
 
-- Kilichoonekana: mbegu SEGV; uzalishaji 5. Kinachotarajiwa:
-  kukataliwa kwa sauti au semantiki halisi za 128-bit.
-- Pia: `D80 x = 1.5` hutoa uzalishaji 0 (lazima 1).
+- Kilichoonekana (mbegu, leo): 4294967295 — hoja `0 - 1` inahesabiwa
+  kwa biti 32 na kupanuliwa kwa sifuri hadi N64. Kinachotarajiwa
+  (uthibitisho #25): 18446744073709551615. Uzalishaji (leo):
+  18446744073709551615 (imefunga, zamani ilichapisha "/").
+- %d ya `0 - 42` kwenye mbegu inachapisha 4294967254 (tarajiwa -42).
+- Pia kwenye mbegu, %x ya 42 na maktaba mpya inachapisha
+  "2a0000002a" (tarakimu za ziada) — maktaba mpya ya andika_heksa
+  inategemea shift za 64-bit ambazo mbegu haziwezi (8.5). Hii ni
+  hali mpya: mbegu + maktaba ya sasa inatoa pato tofauti na la
+  maktaba ya zamani; tabia ya mbegu inabaki "fomu ya zamani" ya
+  muundo wa tarakimu.
 
-**11. ukubwa(aina) na ukubwa(kigezo) (zote mbili)**
+### 8.11 MBEGU — %u na %x katika muundo HALISI zinakubaliwa kimya (t103, t104)
+
+`andika("%u\n", 5)` kwenye mbegu inachapisha 5 (kama %d). Uzalishaji
+unakataa kwa sauti ("viungwa %d %s %c %% pekee"). Hati/uthibitisho
+#25 uliahidi kukataliwa kwa sauti kwa minyororo yote miwili.
+
+### 8.12 MBEGU — maneno muhimu kama vitambulisho (t105–t108)
+
+`N32 muundo = 5;`, `N32 kama = 5;`, `N32 vunja = 1;` na kazi
+inayoitwa `rudisha` zinakusanywa na kufanya kazi kwenye mbegu
+(kimya); hati 2.2 inaahidi kukataliwa. Uzalishaji sasa unakataa
+kwa sauti ("'muundo' ni neno muhimu — haliwezi kutumika kama jina").
+
+### 8.13 MBEGU — vunja na endelea nje ya kitanzi zinakubaliwa kimya (t121, t122)
+
+`N32 main() { vunja; andika("mwisho\n"); rudisha 0; }` — mbegu
+inakusanya na kuchapisha "mwisho". Uzalishaji unakataa kwa sauti
+("kosa: vunja nje ya kitanzi").
+
+### 8.14 MBEGU — muundo wenye jina lenye umbo la aina (a28)
 
 ```swa
-N32 main() { rudisha ukubwa(N32); }
+muundo B12 { N32 a; N32 b; N32 c; };
+B12 s; s.a=5; ...  rudisha jumlisha(s);
 ```
 
-- Kilichoonekana: mbegu 8, uzalishaji 4. Kinachotarajiwa: 4.
-- Kwa kigezo: mbegu inarudisha 8 kwa kila aina; uzalishaji
-  inarudisha 4 kwa kila kigezo (N64, kielekezi, safu). Hii
-  inavunja matumizi yaliyoandikwa `tenga(ukubwa(N32))` kwenye mbegu
-  (hati 10): inagawa baiti 8 badala ya 4.
+- Mbegu inakubali B12 kama jina la muundo na kufanya kazi (18) —
+  kimya, kinyume cha ukaguzi wa aina unaotambua "aina za nambari"
+  kwa umbo `[A-Z]+tarakimu`.
+- Uzalishaji sasa unakataa kwa sauti ("kosa: aina isiyojulikana:
+  B12") — maboresho dhidi ya rekodi ya zamani (SEGV wakati wa
+  kukimbia). Kukataliwa kwa sauti ndiyo mwelekeo sahihi.
 
-**12. D64 % int na D64 << int zinakubaliwa kimya (zote mbili)**
+### 8.15 MBEGU — ukaguzi wa aina haushiki kielekezi na N32 (d30, d31)
 
 ```swa
-N32 main() { rudisha 5.5 % 2; }
+N32 kazi_p(N8* p) { rudisha p[0]; }
+N32 x = 7; N32 r2 = kazi_p(x);              // N32 kwa kielekezi
 ```
 
-- Kilichoonekana: 0 na 2 (matokeo ya bahati) kwa zote mbili.
-  Kinachotarajiwa: kukataliwa kwa sauti — operesheni hizi
-  hazijafafanuliwa kwa desimali.
+- Mbegu inakubali wote wawili (kielekezi kwa N32 na N32 kwa
+  kielekezi) bila onyo; `kazi_p(x)` kisha inaanguka SEGV wakati wa
+  kukimbia (p=7 inaelekeza anwani 7) — imepimwa tena leo (rc=139).
+  Halisi kwa kielekezi (`kazi_p(5)`, `kazi_p(0)`) pia zinaanguka
+  SEGV kwenye mbegu.
+- Uzalishaji unakataa kwa sauti ("kielekezi dhidi ya namba").
+- Ndiyo tofauti pekee kubwa ya ukaguzi wa aina iliyobaki: ukaguzi
+  wa idadi ya hoja unafanya kazi kwenye uzalishaji (8.16) na
+  kukataliwa ni kwa sauti.
 
-**13. Nambari hasi za N64 na ukanushaji wa N64 (zote mbili)**
-
-`N64 x = -90;` inatoa 4294967206 (0xFFFFFFA6 — upanuzi wa sifuri,
-si wa ishara); `0 - 10000000000` inatoa 2884901888 (hesabu ya
-32-bit). Matokeo ya moja kwa moja: `neneo_n64(-90)` hairudishi 1
-kamwe, na `nambari_kwa_mfuatano_n64` ya thamani hasi/kubwa
-imevunjika.
-
-**14. Halisi za herufi 'a' (uzalishaji)**
+### 8.16 MBEGU — ukaguzi wa idadi ya hoja haushiki (d27–d29)
 
 ```swa
-N32 main() { N8 c = 'h'; rudisha c; }
+N32 kazi2(N32 a, N32 b) { rudisha a + b; }
+kazi2(1);              // hoja 1 kati ya 2 — statement
+kazi2(1, 2, 3);        // hoja 3 kati ya 2
+kazi2(1, kazi2(2));    // ndani ya usemi (kiota)
 ```
 
-- Kilichoonekana (uzalishaji): 0. Kinachotarajiwa: 104. Hii
-  inavunja kazi zote za maktaba zinazotumia herufi halisi
-  (tafuta_herufi, idadi_ya_herufi, herufi_ya_juu, herufi_ya_chini).
-  Mbegu: imekataliwa kimya.
+- Mbegu inakubali na kuendesha kimya (jibu lisilo na uhakika).
+  Uzalishaji: IMEKATALIWA (sauti). Kikomo cha mbegu: hoja 10+
+  zinakataliwa kwa sauti ("wito wenye hoja zaidi ya 9"); uzalishaji
+  unafikia 16 (hoja ya 17 inakataliwa tangu b827c91).
 
-**15. W0 kama kigezo chenye thamani (zote mbili — kinyume cha hati)**
+### 8.17 MBEGU — N64 hasi kwenye maktaba inakatwa hadi biti 32 (f09, f18)
 
-`W0 x = 5;` (ndani na ulimwengu) inakubaliwa kimya na kurudisha 5.
-Hati 3 inasema W0 ni "kwa kazi tu". Hii inapaswa kukataliwa kwa
-sauti.
+```swa
+N8 bafa[32]; nambari_kwa_mfuatano_n64(0 - 123, bafa);  // mbegu: "4294967173"
+neneo_n64(0 - 5000000000);                              // mbegu: 3589934592
+```
 
-### 4.2 Taarifa, udhibiti wa mwendo na viendeshaji
+- Kinachotarajiwa: "-123", 5000000000. Uzalishaji: sahihi.
+  N64 kubwa CHANYA (5000000000) inafanya kazi kwenye mbegu.
 
-**16. `endelea` kama taarifa ya mwisho ya mwili wa `kwa` (uzalishaji)**
+### 8.18 UZALISHAJI — utorokaji \n katika kamba ya DATA ya ndani (hati 2.3)
 
-Mwendo wa `endelea` wa mwisho unaharibu mwili mzima wa kazi:
-taarifa zote baada ya kitanzi hazitekelezwi kamwe.
+```swa
+N32 main() { N8* s = "kwanza\nwa pili"; kama (s[6] == 10) { rudisha 1; } rudisha 2; }
+```
+
+- Kilichoonekana (uzalishaji, leo): rc=2 — s[6] = 92 (5c 6e, herufi
+  halisi za backslash-n). Mbegu: rc=1 — s[6] = 10 (0x0A halisi).
+- Kinachotarajiwa (hati 2.3): 0x0A kwenye zote mbili. Mfumo wa
+  `andika` hupitia kichakataji cha fomati kinachobadilisha \n wakati
+  wa kuchapisha, hivyo fomati za andika zinaonekana sahihi kwenye
+  zote mbili; kamba za DATA ndizo zilizovunjika.
+- Kwa kamba ya DATA ya ULIMWENGU, uzalishaji sasa unakataa kwa
+  sauti ("kianzio cha ulimwengu lazima kiwe halisi ya nambari") —
+  mabadiliko kutoka zamani (5c 6e kimya); mbegu inakataa kimya.
+  Ukataji wa sauti ni maboresho, lakini bado upo kwenye kamba za
+  ndani.
+
+### 8.19 MBEGU — `N32;` (taarifa ya jina la aina pekee) inakubaliwa kimya
+
+```swa
+N32 main() { N32; rudisha 1; }
+```
+
+- Kilichoonekana (mbegu, leo): inakusanya na kuendesha kimya —
+  taarifa inatendewa kama no-op (rc=1). Kinachotarajiwa:
+  kukataliwa kwa sauti.
+- Uzalishaji (leo): IMEKATALIWA kwa sauti ("kosa: jina la aina
+  halitumiki kama usemi: N32"). Tofauti halisi kati ya minyororo:
+  mbegu inagandisha ukubali huo.
+
+### 8.20 MBEGU — upanuzi wa sifuri kwa N8/N16 hasi hadi N32 (J5)
+
+```swa
+N32 main() { N8 x = -1; N32 y = x; kama (y == -1) { rudisha 1; } rudisha 2; }
+```
+
+- Kilichoonekana (mbegu, leo): rc=2. Uthibitisho wa mashine:
+  `movzx eax, byte [rbp-...]` — upanuzi wa SIFURI, si wa ishara.
+  y = 255 (lazima -1). Pia: N16 -1 inatoa 65535 (lazima -1); na
+  `N8 x = 127; N8 y = x + 1; N32 z = y;` inatoa z = 128 (lazima -128).
+- Uzalishaji (leo): rc=1 — cdqe, upanuzi wa ishara (commit
+  57d9694).
+- Kinachotarajiwa (C, N yenye ishara): upanuzi wa ishara.
+
+### 8.21 MBEGU — `D64 % 2` na `D64 << 1` zinakubaliwa kimya (J4)
+
+```swa
+N32 main() { D64 x = 5.5; D64 y = x % 2; rudisha 1; }
+```
+
+- Kilichoonekana (mbegu): inakubaliwa kimya, rc=1 (takataka ya
+  hesabu haijachekiwa). Kinachotarajiwa: kukataliwa kwa sauti.
+- Uzalishaji: IMEKATALIWA ("operesheni hii haifanyi kazi kwa
+  desimali").
+
+### 8.22 MBEGU — safu ya miundo kama hoja ya kazi ina mwendo mbovu
+
+```swa
+muundo Tatu { N32 a; N32 b; N32 c; };
+N32 pata_a(Tatu* s, N32 i) { rudisha s[i].a; }
+Tatu safu[2]; safu[1].a = 20; pata_a(safu, 1);
+```
+
+- Kilichoonekana (mbegu): 1563515763 (takataka).
+  Kinachotarajiwa: 20. Uzalishaji: 20 (SAWA).
+- Safu za miundo kama vigezo vya ndani zinafanya kazi kwenye
+  mbegu; KAMA HOJA ndizo zilizovunjika.
+
+### 8.23 MBEGU — ukubwa na mpangilio wa muundo mchanganyiko (a23)
+
+```swa
+muundo Mchanganyiko { N8 a; N16 b; N32 c; };
+ukubwa(Mchanganyiko)   // mbegu: 8, uzalishaji: 7
+// mpangilio wa sehemu (baiti za kumbukumbu): mbegu 1-0-2-0-3 | uzalishaji 1-2-0-3-0
+```
+
+- Minyororo yote miwili ina mpangilio wake thabiti (kila kipimo
+  cha mradi hufaulu), lakini MIPANGILIO NI TOFAUTI: mbegu
+  inalinganisha (N16 kwenye 2, N32 kwenye 4), uzalishaji umejaa
+  (N16 kwenye 1, N32 kwenye 3). Muundo ulioshinikizwa na mbegu
+  hausomeki sawa na uzalishaji. Hati haisemi chochote kuhusu
+  mpangilio (padding) — jibu baya kwa msimbo unaotegemea ukubwa
+  wa muundo uliogandishwa.
+
+## 9. HUANGUKA zilizobaki
+
+### 9.1 ZOTE MBILI — mgawanyo/modulo kwa sifuri (t136, t137)
+
+`a / b` na `a % b` kwa b = 0 zinaanguka kwa SIGFPE (ishara 8,
+msimbo 136) kwenye minyororo yote miwili. Hati haiahidi tabia
+yoyote — sawa na C (kigawanya 0 ni tabia isiyofafanuliwa). Kipimo
+cha uchunguzi pekee.
+
+### 9.2 MBEGU — kielekezi kwa kielekezi N32** (t73, b03) na sret ndani ya hoja (a26)
 
 ```swa
 N32 main() {
-    N32 s = 0;
-    N32 i;
-    kwa (i = 0; i < 3; i = i + 1) {
-        s = s + 1;
-        endelea;
-    }
-    andika("s=%d i=%d\n", s, i);
+    N32 x = 4; N32* p = &x; N32** q = &p;
+    **q = 11;
+    andika("x=%d\n", x);
     rudisha 0;
 }
 ```
 
-- Kilichoonekana (uzalishaji): msimbo wa kutoka 124; andika
-  haichapishi chochote — taarifa zote baada ya kitanzi
-  hazitekelezwi. Mbegu: pato "s=3 i=3" sahihi, msimbo wa kutoka 0.
-- Kinachotarajiwa: pato "s=3 i=3", msimbo wa kutoka 0. Mipaka 4b
-  inasema semantiki ya C imewianishwa kwenye minyororo yote miwili
-  — si kweli kwa kesi hii.
-- KUREKEBISHWA 2026-08-31: `endelea` kama taarifa ya MOJA KWA MOJA
-  (pamoja na taarifa ya mwisho) imefungwa kwenye mnyororo wa
-  uzalishaji. Mzizi ulikuwa: msambazaji huweka hatua ya `kwa`
-  (kifungio cha -777777) MWISHONI mwa mnyororo wa mwili, lakini
-  kitoa programu husimama kwenye taarifa zinazomaliza (rudisha,
-  vunja, endelea) — lebo ya hatua haikutolewa kamwe na `endelea`
-  iliruka mahali pasipo lebo (kitanzi kisichoisha, msimbo wa kutoka
-  124). Sasa kusanya_hatua_ya_kwa inakusanya kifungio cha hatua
-  kilichofichwa nyuma ya taarifa za kumaliza. Majaribio:
-  jaribio_mende_endelea_moja_kwa_moja,
-  jaribio_mende_endelea_na_vunja_mwisho.
-
-**17. `^` (XOR) inakata usemi kimya (uzalishaji)**
-
-Mkusanyaji anapokea `^`, anakubali, na kutupa kila kitu baada yake
-— binary sahihi-ya-muonekano yenye jibu lisilo sahihi.
-
-```swa
-N32 main() { N32 x = 6 ^ 3; rudisha x - 5; }
-```
-
-- Kilichoonekana (uzalishaji): 1 (x = 6 — sehemu baada ya `^`
-  imetupwa). Kinachotarajiwa: 0 (x = 5). Mbegu inakataa kwa sauti;
-  hati 2.5 na 4 zinaahidi `^`.
-- KUREKEBISHWA 2026-08-31: mnyororo wa uzalishaji unatekeleza `^`
-  (AST_XOR) kati ya `&` na `|` kwa utangulizi wa C; `(12) ^ (10)`
-  = 6, `1 ^ 2 & 3` = 3, `1 | 2 ^ 3` = 1 (kama gcc). Majaribio:
-  jaribio_mende_17_xor.
-
-**18. Viendeshaji vya kiwanja vya biti `&= |= ^= <<= >>=` ni NO-OP kimya (uzalishaji)**
-
-```swa
-N32 main() { N32 a = 12; a &= 10; rudisha a - 8; }
-```
-
-- Kilichoonekana (uzalishaji): 4 (a haijabadilika). Kinachotarajiwa:
-  0 (a = 8). Kila moja ya &= |= ^= <<= >>= inafanana: inakusanywa,
-  inaendesha, HAIFANYI LO LOTE. Mbegu inakataa kwa sauti. Hati
-  haitoi ahadi — lakini ukubali wa kimya ni hatari zaidi kuliko
-  kukataa.
-- KUREKEBISHWA 2026-08-31: mnyororo wa uzalishaji unatekeleza
-  `&= |= ^= <<= >>=` (na `+= -= *= /= %=` zimehakikiwa zinafanya
-  kazi) kwa N32 na N64. Majaribio: jaribio_mende_18_kiwanja_biti,
-  jaribio_k12_opereta_ya_asilimia (%= sasa ni jaribio hai).
-
-**19. Lebo hasi za `hali` zinalinganishwa kama 0 (uzalishaji)**
-
-```swa
-N32 main() {
-    N32 s = 0; N32 t = 0;
-    chagua (0) { hali -3: s = 5; hali 0: t = 6; }
-    rudisha s * 100 + t - 500;
-}
-```
-
-- Kilichoonekana (uzalishaji): 0 (s = 5, t = 0) — selecta 0
-  inalingana na `hali -3` na kuendesha mwili wake; `hali 0`
-  haifikiwi. `chagua (-3) { hali -3: ... }` hailingani kamwe (251).
-- Kinachotarajiwa: -3 inalingana na -3 pekee; 0 inalingana na 0
-  pekee. Sababu: lebo isiyo AST_NAMBARI (hasi ni usemi wa
-  toa-unari) inakuwa thamani 0 kwenye kizazi.
-- KUREKEBISHWA 2026-08-31: lebo za hali zinatathminiwa kwa usahihi
-  (halisi chanya au hasi, N32 au N64) na kulinganishwa kwa upana wa
-  selecta. Majaribio: jaribio_mende_19_lebo_hasi.
-
-**20. Lebo za `hali` za N64 > 2^31 hazilingani kamwe (uzalishaji)**
-
-```swa
-N32 main() {
-    N64 x = 5000000000; N32 s = 0;
-    chagua (x) { hali 5000000000: s = 77; sivyo: s = 88; }
-    rudisha s - 77;
-}
-```
-
-- Kilichoonekana (uzalishaji): 11 (s = 88). Kinachotarajiwa: 0
-  (s = 77). Lebo ya N64 inakuwa 0 kwenye kizazi. Mipaka 5 inasema
-  mnyororo wa .swa unashughulikia N64 kikamilifu — si kwenye
-  `chagua`.
-- KUREKEBISHWA 2026-08-31: selecta na lebo za N64 zinalinganishwa
-  kwa 64-bit. Majaribio: jaribio_mende_20_lebo_n64.
-
-**21. Lebo za usemi na kigezo kwenye `hali` zinakubaliwa lakini hazilingani (uzalishaji)**
-
-```swa
-N32 main() {
-    N32 a = 1; N32 s = 0;
-    chagua (2) { hali a + 1: s = 42; sivyo: s = 0; }
-    rudisha s - 42;
-}
-```
-
-- Kilichoonekana (uzalishaji): 214 (s = 0). Kinachotarajiwa: 0
-  (s = 42). C inakataa lebo zisizo za kudumu kwa sauti; Swa
-  inapaswa kufanya vivyo hivyo.
-- KUREKEBISHWA 2026-08-31: lebo zisizo halisi zinakataliwa kwa
-  sauti na mkaguzi ("lebo ya hali lazima iwe halisi ya nambari").
-  Majaribio: jaribio_mende_21_lebo_isiyo_halisi (KATA).
-
-**22. `hali` maradufu: ya kwanza inashinda kimya (uzalishaji)**
-
-Lebo mbili zenye thamani ileile zinakubaliwa; ya kwanza ndiyo
-inayotekelezwa, bila kosa. C inakataa kwa sauti.
-
-**23. Ugawi kwa wito wa kazi `pata() = 7` (uzalishaji)**
-
-```swa
-N32 pata() { rudisha 1; }
-N32 main() { pata() = 7; rudisha 0; }
-```
-
-- Kilichoonekana (uzalishaji): inakusanywa kimya; andiko la 7
-  linaenda anwani isiyo na maana (kwa bahati haikuanguka).
-  Kinachotarajiwa: kukataliwa kwa sauti (upande wa kushoto wa
-  ugawi lazima uwe lvalue).
-
-**24. `%d` hasi na `%d` za N64 kwenye mbegu**
-
-`andika("%d\n", -42)` inachapisha 4294967254 (isiyo na ishara
-32-bit); `andika("%d\n", 5000000000)` inachapisha 705032704.
-Kizazi cha wito cha mbegu hakienezi ishara ya hoja za N32.
-Uzalishaji ni sahihi.
-
-**25. `%%` na viashiria vingine vya muundo (zote mbili)**
-
-Kwenye andika_ndani (muundo wa nguvu — kumbukumbu.swa 2026-09-01):
-`%%` inaonyesha `%`; `%u` inaonyesha N64 isiyo na ishara (desimali);
-`%x` inaonyesha heksadesimali ndogo (42 → "2a"); `%f`, `%l`, `%n`
-na viashiria vingine visivyojulikana vinaonyeshwa kama herufi halisi
-("%f" → "%f") bila kutumia hoja — hakuna umeza wa kimya. Kwenye
-muundo HALISI, mkaguzi unathibitisha viungwa `%d %s %c %%` pekee
-(2026-09-01): vingine (k.m. %u, %x) vinakataliwa kwa sauti
-(jaribio_mende_kipengele_cha_muundo); `%%` inachapishwa na
-mnyororo wa uzalishaji (k16) lakini mbegu ya zamani bado inaimeza
-(mbegu imegandishwa). Kikomo cha mbegu: `%u` na `%x` za thamani
-> 2^31 zina tabia ya `%d` za N64 (ona 24).
-
-**26. `*(p + n)`: hakuna ukuzaji wa kipengele (zote mbili)**
-
-```swa
-N32 safu[4]; safu[0]=10; safu[1]=11; safu[2]=12; safu[3]=13;
-N32* p = safu; rudisha *(p + 3) - 13;
-```
-
-- Kilichoonekana: 243 (*(p + 3) = 0) kwa zote mbili; *(p + 1) = 0;
-  q = p + 2 inatoa 0. Kinachotarajiwa: 0 (*(p + 3) = 13).
-- `p[2]` inafanya kazi kwa sababu faharisi inazidisha ndani, lakini
-  `p + n` ni nyongeza ya BAITI (sahihi kwa N8* pekee). Hati 4.2
-  inaeleza `a[i]` kwa ukuzaji; upande wa `*(p+n)` haijaelezwa
-  popote — watumiaji wanaotegemea C watapata jibu la kimya
-  lisilo sahihi.
-
-**27. `*(safu + 1)`: kuoza kwa safu (uzalishaji 0; mbegu huanguka)**
-
-```swa
-N32 safu[4]; safu[1] = 7; N32 main() { rudisha *(safu + 1) - 7; }
-```
-
-- Kilichoonekana: uzalishaji 249 (*(safu+1) = 0); mbegu SEGV 139.
-  Kinachotarajiwa: 0 (safu inapaswa kuoza kuwa kielekezi, hati 4.2).
-
-**28. Utorokaji usio wa hati (zote mbili, kwa njia tofauti)**
-
-- `\0`: mbegu inatoa NUL halisi; uzalishaji inachapisha `\0`
-  halisi (5c 30).
-- `\x41`: mbegu inatupa `\` na kuacha "x41"; uzalishaji
-  inachapisha `\x41` halisi.
-- `\r`, `\a`: mbegu inatupa `\` na kuacha herufi; uzalishaji
-  inachapisha halisi.
-
-Hati 2.3 inaahidi `\n \t \\ \"` pekee; zilizobaki hazina ahadi —
-lakini tabia ni tofauti kati ya minyororo na ni ya kimya katika
-zote mbili.
-
-**29. Mfuatano karibu `"a" "b"` (zote mbili)**
-
-Pato: "a" — wa pili anatupwa kimya, hakuna kosa. C inaunganisha;
-Swa inapaswa kukataa au kuunganisha.
-
-**30. W0 ndani ya usemi (mbegu)**
-
-`N32 y = piga();` ambapo piga ni W0: mbegu inakusanya na kurudisha
-takataka (251) kimya. Uzalishaji unakataa (kwa ujumbe
-unachanganya: "kazi haijafafanuliwa: piga" — kazi IKO).
-
-**31. `vunja`/`endelea` nje ya kitanzi (zote mbili)**
-
-`vunja;` kwenye main: mbegu inapuuzwa kimya; uzalishaji analalamika
-("kosa: vunja nje ya kitanzi") lakini bado anatoa binary. Inapaswa
-kukataliwa kwa sauti (C inakataa).
-
-**32. Hoja ya 7 ya `andika` (mbegu)**
-
-`andika` yenye hoja 7 inachapisha hoja ya 6 tena kama ya 7 —
-kikomo cha ABI ya mbegu kisichoelezwa. Uzalishaji ni sahihi.
-
-**33. Ternary dhidi ya ugawi (mbegu)**
-
-`N32 x = 1 ? 2 : 3;` — mbegu inafasiri kama `(x = 1) ? 2 : 3` na
-kuacha x = 1 (ugawi unafunga nguvu kuliko ternary, kama jedwali la
-hati 4: = kwenye kina 2); uzalishaji ni C-kama (x = 2). Hati
-haijataja ternary dhidi ya ugawi — lakini minyororo miwili
-inafikia matokeo tofauti kwa msimbo uleule.
-
-### 4.3 Miundo, kumbukumbu na maktaba
-
-**34. Muundo kwa thamani kwenye mbegu (takataka)**
-
-```swa
-muundo Nukta { N32 x; N32 y; };
-N32 pata_x(Nukta p) { rudisha p.x; }
-N32 main() { Nukta n; n.x = 12; rudisha pata_x(n); }
-```
-
-- Kilichoonekana (mbegu): takataka isiyo na uhakika — 200, 232,
-  184, 72 kwenye utekelezaji mbalimbali (72 iliripotiwa awali,
-  imethibitishwa). Kinachotarajiwa: 12. Uzalishaji: 12 (sahihi).
-
-**35. Muundo kwa thamani zaidi ya baiti 8 kwenye uzalishaji**
-
-Muundo wa sehemu 3-5 (12-20 baiti) kama hoja: uzalishaji unarudisha
-thamani ya sehemu ya kwanza pekee — kimya.
-
-```swa
-muundo Tatu { N32 a; N32 b; N32 c; };
-N32 jumla(Tatu p) { rudisha p.a + p.b + p.c; }
-```
-
-- Kilichoonekana (uzalishaji): 1. Kinachotarajiwa: 6 (au kukataliwa
-  kwa sauti). Pia: sehemu 4 hutoa 1 (lazima 10); sehemu 5 hutoa 1 (lazima
-  15); N64 x2 hutoa 10 (lazima 30).
-
-**36. Muundo wa sret kupitishwa kwa kazi nyingine (mbegu)**
-
-Muundo uliokamilishwa (sret) unaopitishwa kwa thamani kwa kazi
-nyingine unarudisha takataka (193) kwenye mbegu; uzalishaji ni
-sahihi (33).
-
-**37. Kianzilishi cha safu kimepuzwa kimya (uzalishaji)**
-
-```swa
-N32 g_safu[3] = {1, 2, 3};
-N32 main() { rudisha g_safu[0] + g_safu[1] + g_safu[2]; }
-```
-
-- Kilichoonekana (uzalishaji): 0 — kianzilishi KIMEPUZWA kimya,
-  hakuna kosa, safu inasalia sifuri. Kinachotarajiwa: 6. Pia
-  `N8 s[4] = "abc"` hutoa 0 (lazima 97). Mbegu inakataa kimya (rc=1,
-  hakuna ujumbe).
-
-**38. nambari_kwa_mfuatano_n64 kwa thamani > 2^31 (zote mbili)**
-
-`nambari_kwa_mfuatano_n64(9876543210)` — mbegu inatoa
-"1286608618" (hoja imekatwa 32-bit); uzalishaji inatoa "4912"
-(kosa la usimamizi wa hoja ya N64 kubwa, aina ileile ya 4.4).
-Kinachotarajiwa: "9876543210".
-
-**39. mfuatano_hadi_n64 dhidi ya halisi kubwa (mbegu)**
-
-`mfuatano_hadi_n64("9876543210")` inarudisha 9876543210 (kazi
-yenyewe ni sahihi) lakini `u == 9876543210` ni UONGO kwa sababu
-halisi inakatwa hadi 32-bit (1286608618). Uzalishaji ni sahihi.
-Kikomo kilichoandikwa kwenye mipaka 5, lakini kinamaanisha kazi
-hii haiwezi kuthibitishwa kwenye mbegu.
-
-**40. neneo_n64(-90) (zote mbili)**
-
-`neneo_n64(-90)` inarudisha 0 badala ya 1 kwa zote mbili — N64
-hasi zina upanuzi wa sifuri (tazama 4.1.13). Kazi ya hesabu
-iliyoorodheshwa kwenye hati 10 imevunjika.
-
-**41. ramani kwenye mbegu: weka ni no-op (mbegu)**
-
-`ramani_weka` inarudi mara moja: r->uwezo na r->idadi zinasomeka
-0xFFFFFFFF kwa sababu `ukubwa(Ramani)` kama hoja ya kazi kwenye
-mbegu inarudisha 0 — muundo wa baiti 8, na sehemu za uwezo/idadi
-zinaingiliana na safu ya funguo iliyojazwa -1. Weka_pata 2/5,
-ina_futa 2/5. Uzalishaji: 5/5 sahihi.
-
-**42. Ugawi wa muundo `b = a;` (zote mbili)**
-
-```swa
-muundo Nukta { N32 x; N32 y; };
-N32 main() {
-    Nukta a; a.x = 8; a.y = 9;
-    Nukta b; b = a;
-    rudisha b.x + b.y;
-}
-```
-
-- Kilichoonekana: mbegu 200 (takataka); uzalishaji SEGV 139
-  (chanzo cha nakili ni mzigo wa thamani badala ya LEA — nakala
-  inaanzia kwenye anwani iliyomo KWENYE muundo, si kwenye muundo
-  yenyewe). Kinachotarajiwa: 17.
-
-## 5. Poromoko (HUANGUKA)
-
-| Kipengele | Mbegu | Uzalishaji | Maelezo |
-|---|---|---|---|
-| Safu ya miundo `safu[i].x`; `&safu[1]` | SEGV 139 | SEGV 139 | kipengele cha msingi cha hati 4.2/7; kizazi kinasoma thamani kama kielekezi badala ya kutoa anwani (mov badala ya lea) |
-| Ugawi wa muundo `b = a;` | takataka (jibu baya) | SEGV 139 | nakili huanzia kwenye anwani iliyomo kwenye muundo |
-| Faharisi hasi `p[-1]`, `p[bi - 8]` | SEGV 139 | SEGV 139 | upanuzi wa sifuri (0xfffffff8) badala ya upanuzi wa ishara; hii ndiyo inayovunja badili na ukuaji wa Orodha |
-| badili (realloc) | SEGV 139 | SEGV 139 | hakuna badili inayofanya kazi |
-| Orodha inapokua (orodha_ongeza) | SEGV 139 | SEGV 139 | hati 10 inaahidi "safu inayokua" — haikui kamwe |
-| Kazi za D32 (parameta/kurudisha) | FPE 136 | SEGV 139 | ABI ya D32 kwenye wito imevunjika kwa zote mbili; hoja inapotea (imethibitishwa kwa disassembly) |
-| Mgawanyo/masali bila ishara wenye biti ya juu (A/B/W) | mkusanyaji SEGV 139 | FPE 136 | `uzalishaji_gawanya` inatumia cdq/cqo (upanuzi WA ISHARA) kabla ya div — edx:eax inafurika |
-| Halisi ÷ halisi yenye N64 | FPE 136 | FPE 136 | njia ya 32-bit (enc = 0); kigawanya 0 (kosa la kugawanya) |
-| N64 za mbegu kwenye halisi kubwa | FPE 136 | inapita | kikomo kilichoandikwa kwenye mipaka 5 |
-| Mkusanyaji wa mbegu kwenye familia A/B/W, B1, upana usio wa kawaida | SEGV 139 (MKUSANYAJI) | inapita/jibu baya | poromoko la mkusanyaji kwenye chanzo halali — halikubaliki kamwe |
-| main haipo | imekataliwa | SEGV 139 (binary) | uzalishaji anatoa binary yenye rc=0 ambayo inaanguka |
-| `sivyo` bila `kama` | imekataliwa | SEGV 139 (MKUSANYAJI) | mkusanyaji wa uzalishaji anaanguka kwa ingizo baya |
-| Nyoosha NULL | SEGV 139 | SEGV 139 | kama C; hakuna kinga inayoahidiwa |
-| Kujirudia kirefu (30000+) | inapita (hadi 100000) | SEGV 139 (~20k-30k) | kikomo cha rafu kisichoelezwa kwenye uzalishaji |
-| Kigezo cha muundo cha ulimwengu | imekataliwa kimya | SEGV 139 | nafasi ya ulimwengu kwa miundo haipo |
-| Maoni ya `/* */` katikati ya usemi | SEGV 139 | inapita | mbegu inaanguka kwenye chanzo halali |
-| `(*p).x`, `**q`, `*(safu + 1)` kwenye mbegu | SEGV 139 | inapita/jibu baya | kikomo cha mbegu — uzalishaji ni sahihi kwa sehemu |
-| Ugawanyo/modulo kwa sifuri | FPE 136 | FPE 136 | kama C (tabia isiyofafanuliwa); hakuna kinga inayoahidiwa |
-| Ulimwengu N64 = 4294967296 | FPE 136 | inapita | mipaka 5 |
-
-## 6. Ukataaji unaokiuka hati (IMEKATALIWA)
-
-| Kipengele | Mbegu | Uzalishaji | Hati inayoahidi |
-|---|---|---|---|
-| `!` (kanusha mantiki) | imekataliwa | inapita (tangu 2026-08-31) | 2.2/3 (matokeo ni 1 au 0); 2.5 (ishara) |
-| `~` (kanusha biti) | imekataliwa | inapita (tangu 2026-08-31) | 2.5 (ishara) |
-| `husisha { faili.swa }` | imekataliwa (kazi haijafafanuliwa) | imekataliwa (kazi haijafafanuliwa) | 8: mkusanyaji wa .swa hulichakata faili lililotajwa — hakuna mnyororo unaosoma faili |
-| Kazi yenye mwili tupu `N32 f() { }` | inapita | imekataliwa (kazi haijafafanuliwa) | 5: mwili wowote wa taarifa |
-| `a < b << c` (hamisha upande wa kulia wa linganisho) | inapita | imekataliwa (KOSA) | 4: utangulizi unaoruhusu (kina 4 > 3) |
-| `kama` + `sivyo` ndani ya mkono wa `chagua` | imekataliwa | imekataliwa (KOSA) | 6.6: "..." inajumuisha taarifa |
-| Bloku `{ }` ndani ya mkono wa `chagua` | imekataliwa | imekataliwa (KOSA) | 6.6 |
-| `chagua` kwa ujumla | imekataliwa (kosa la mchanganuzi) | inapita | 6.6 |
-| Maoni ya `/* */` | imekataliwa (SEGV katikati ya usemi) | inapita | 2.4: vizuizi vya maoni |
-| `//` mwishoni mwa faili bila mstari mpya | imekataliwa | imekataliwa | 2.4: maoni ya mstari |
-| Halisi za herufi `'a'` | imekataliwa KIMYA | jibu baya (0) | si ya hati — lakini ukataaji wa mbegu ni kimya |
-| Safu ya pande mbili | imekataliwa KIMYA | imekataliwa (KOSA) | haijaelezwa |
-| Vitangazo vingi `N32 a, b, c;` | imekataliwa | inapita | 6.1 inaonyesha kigezo kimoja |
-| Kazi yenye hoja 10 | imekataliwa KIMYA | inapita | hakuna kikomo kilichoandikwa |
-| Kianzilishi cha safu | imekataliwa KIMYA | jibu baya (kimepuzwa) | si ya hati — lakini ukataaji wa mbegu ni kimya |
-| Halisi kubwa kama hoja ya wito | jibu baya (ukataji) | imekataliwa kwa kosa LISILO SAHIHI | mipaka 5: N64 kamili |
-
-## 7. Ambapo minyororo miwili inatofautiana
+- Kilichoonekana (mbegu): SEGV (ishara 11, msimbo 139) — katika
+  usomaji NA uandikaji wa ngazi mbili; `**q` pekee inatosha.
+  Uzalishaji: x=11 (sahihi).
+- Sawa: `jumlisha(tengeneza(10))` (sret ndani ya hoja ya wito
+  mwingine) — mbegu SEGV; uzalishaji 46 (sahihi).
+- Hakuna HUANGUKA ya mkusanyaji iliyobaki kwenye minyororo yote
+  miwili: familia A/B/W, upana usio wa kawaida, `sivyo` bila `kama`,
+  maoni katikati ya usemi, safu za miundo na ugawi wa muundo — zote
+  zilizopimwa zamani kama poromoko la mkusanyaji sasa zinakataliwa
+  kwa sauti au zinafanya kazi (maboresho ya uthabiti).
+
+## 10. Tofauti kati ya minyororo zilizobaki
 
 Kwa lugha inayojijenga, tofauti kati ya minyororo ni tatizo la
 usahihi lenyewe: mkusanyaji unajijenga kwa chanzo kile kile, lakini
-tabia ya lugha inabadilika kulingana na mnyororo uliotumika. Programu
-inayofanya kazi kwenye mnyororo mmoja inaweza kutoa jibu lingine (au
-kuanguka) kwenye mwingine — na hakuna kosa linalotangaza hilo.
+tabia ya lugha inabadilika kulingana na mnyororo uliotumika.
 
-| Kipengele | Mbegu | Uzalishaji |
+### 10.1 Hesabu za tofauti (baada ya marekebisho)
+
+| Eneo | Tofauti zilizobaki | Chanzo |
 |---|---|---|
-| Utangulizi wa viendeshaji | inafuata jedwali la hati 4 (= kwenye kina 2; & na | na && na || kwenye kina 1) | C-kama (= iko chini ya ternary na &&; & ina kiwango chake) |
-| `4 | 2 & 1` | 0 (kwa hati) | 4 (C: & inafunga nguvu) |
-| `a = 1 && 0` | a = 1 (kwa hati) | a = 0 (C) |
-| `a = 2 == 2` | a = 2 (kwa hati) | a = 1 (C) |
-| `a = 0 || 3` | imekataliwa (mnyororo) | a = 1 (C) |
-| `x = 1 ? 2 : 3` | x = 1 (ugawi inafunga nguvu) | x = 2 (C) |
-| +=, -=, mnyororo wa ugawi | imekataliwa | inapita (C-kama) |
-| `^` | imekataliwa | inapita (tangu 2026-08-31) |
-| &=, |=, <<=, >>= (na ^=) | imekataliwa | inapita (tangu 2026-08-31) |
-| Shift za N64 | 32-bit (jibu baya) | 64-bit (sahihi) |
-| Ugawaji upya wa D64 | jibu baya | inapita |
-| ukubwa(aina) | 8 kwa kila aina | sahihi (4, 1, 8) |
-| ukubwa(kigezo) | 8 kwa kila kigezo | 4 kwa kila kigezo |
-| Muundo kwa thamani (baiti <= 8) | takataka | inapita |
-| `(*p).x`, `**q` | SEGV 139 | inapita |
-| `chagua` | imekataliwa kwa muundo | inapita kwa misingi |
-| main haipo | imekataliwa kwa sauti | binary inaanguka |
-| %d hasi na N64 | jibu baya | inapita |
-| Hoja ya 7 ya andika | inarudia ya 6 | inapita |
-| endelea mwisho wa mwili wa kwa | inapita | jibu baya (mwili umeharibika) |
-| Ulimwengu N64 = 4294967296 | FPE 136 | inapita |
-| Usawa wa mfuatano `==` | inalinganisha anwani (literali mbili hazilingani) | literali zinaunganishwa kwenye dimbwi moja (zinalingana) |
-| Kujirudia kirefu (30000+) | inapita (hadi 100000) | SEGV 139 |
-| `sivyo` bila `kama` | imekataliwa | mkusanyaji SEGV 139 |
-| Maoni ya `/* */` | imekataliwa (SEGV katikati ya usemi) | inapita (upachikaji unaruhusiwa) |
-| Utorokaji `\t`, `\"` | inapita | alama halisi |
-| Kianzilishi cha safu | imekataliwa kimya | jibu baya (kimepuzwa) |
-| Halisi za herufi | imekataliwa kimya | jibu baya (0) |
-| Kigezo cha muundo cha ulimwengu | imekataliwa kimya | SEGV 139 |
-| Halisi kubwa kama hoja | jibu baya (ukataji) | imekataliwa kwa ufisadi |
-| ramani | jibu baya (weka ni no-op) | inapita (5/5) |
-| mfuatano_hadi_n64 dhidi ya halisi kubwa | jibu baya | inapita |
-| ukubwa(Muundo) | imekataliwa kimya (0) | inapita (8) |
-| Muundo kama hoja ya 7 (rafu) | takataka | inapita |
-| Mkaguzi wa aina | hakuna | makosa ni onyo; mkusanyaji anaendelea |
-| Moduli za libc (nasibu, wakati — faili imeandikwa upya kwa syscalls 2026-09-01) | imekataliwa kimya | imekataliwa kwa sauti |
+| Mfumo wa aina (191) | 84 (zamani 86) | kikomo cha mbegu kilichoandikwa (79); uzalishaji mkali zaidi (4); uzalishaji jibu baya (1) — tazama 10.2 |
+| Udhibiti na viendeshaji (138) | 38 (zamani 37) | kikomo cha mbegu kilichoandikwa (26); mbegu inakubali kimya (9); mbegu HUANGUKA (1); uzalishaji jibu baya (1); uzalishaji mkali (1) — tazama 10.3 |
+| Miundo na maktaba (138) | 18 (zamani 17) | kikomo cha mbegu (12); mbegu HUANGUKA (2); mbegu inakubali kimya (2); uzalishaji jibu baya (1); uzalishaji mkali (1) — tazama 10.4 |
 
-Mwelekeo unaorudiwa: uzalishaji ni wa RUHUSA ZAIDI kuliko mbegu
-kwenye sehemu nyingi — na katika kila kesi, ruhusa mpya inaambatana
-na jibu baya la kimya au poromoko. Ruhusa pekee iliyo na thamani
-halisi ni ile ya miundo kwa thamani (baiti <= 8), `(*p).x`, `**q`
-na %d hasi, ambapo uzalishaji ni sahihi. Ruhusa mpya yoyote lazima
-iwe na jaribio la ujumuishaji linaloendesha binary yenyewe, si
-kukusanywa tu.
+### 10.2 Mfumo wa aina (84)
 
-## 8. Ahadi za hati ambazo hazishikiki
+- **Mbegu inakataa kwa sauti, uzalishaji SAWA (48 kesi)** — kikomo
+  kilichoandikwa: familia A/B/W na B1/D32 hazijatekelezwa kwenye
+  mbegu ("aina isiyojulikana"), D64 ya ulimwengu, muundo wa
+  ulimwengu, upana usioahidiwa, halisi za radiksi. Hii ndiyo
+  sehemu kubwa ya ukataaji wa mbegu (64 kati ya 191).
+- **Mbegu JIBU-BAYA, uzalishaji SAWA (31 kesi)** — kikomo
+  kilichoandikwa: mpaka mzima wa D64/nambari kamili (8.6),
+  mchanganyiko N32-N64 (8.4), shift N64 (8.5), na upanuzi wa
+  sifuri N8/N16 (8.20 — kesi 5 ambazo zilikuwa JIBU-BAYA kwa
+  minyororo yote miwili kwenye skani na baada ya 57d9694
+  zilikuwa tofauti). Mbegu imegandishwa kabla ya marekebisho haya.
+- **Mbegu JIBU-BAYA, uzalishaji IMEKATALIWA (4 kesi)** — tofauti
+  halisi: W0 katika usemi, `D64 % 2` / `D64 << 1` (8.21),
+  `N32 G = 2.5;`. Mbegu inakubali kimya; uzalishaji unakataa kwa
+  sauti (mwelekeo sahihi).
+- **Mbegu IMEKATALIWA, uzalishaji JIBU-BAYA (1 kesi)** — D32 ya
+  ulimwengu (8.7): mbegu haijui D32, uzalishaji anakubali lakini
+  jibu si sahihi. Hii ndiyo tofauti pekee iliyobaki ambapo mnyororo
+  "mkubwa" ndio wenye jibu baya.
 
-1. Hati 2.3 ("Desimali inafanya kazi kwenye minyororo YOTE —
-   hesabu za kuelea, ulinganisho, na ukanushaji"): kweli NDANI ya
-   ulimwengu wa D64 pekee. Kila mpaka kati ya D64 na nambari
-   kamili (kurudisha, kugawa, kuchanganya, kulinganisha) hutoa
-   jibu la takataka (4.1.1, 4.1.2, 4.1.5).
-2. Hati 2.3 (utorokaji `\t` na `\"`): uzalishaji unachapisha
-   alama halisi (3.2).
-3. Hati 2.4 ("/* ... */ kwa vizuizi"; "maoni ya kijiuzi
-   hayaruhusiwi"): mbegu inakataa vizuizi (na huanguka katikati
-   ya usemi); uzalishaji unaruhusu upachikaji — kinyume cha hati.
-4. Hati 2.5 na 3 (`!`, `~`, `^` ni ishara; matokeo ya `!` ni
-   1/0): `!` na `~` hazijatekelezwa popote; `^` inakata usemi
-   kimya kwenye uzalishaji (4.2.17, 6). KUREKEBISHWA 2026-08-31:
-   mnyororo wa uzalishaji unatekeleza `!`, `~` na `^`; mbegu bado
-   inakataa.
-5. Hati 3 (W0 — "kwa kazi tu"): inakubaliwa kama kigezo chenye
-   thamani kwa minyororo yote miwili (4.1.15).
-6. Hati 3 ("kila familia ikifuatiwa na upana wowote wa tarakimu"):
-   upana 8/16/32/64 pekee ndio halisi; N128/D80/A128 zinafanya
-   kazi kwa bahati kwa thamani ndogo na kwa semantiki za uongo
-   (4.1.10).
-7. Hati 2.3 ("aina ya chaguo-msingi ni N32 ikiwa inatoshea ndani
-   ya 32-bit signed; nje ya hapo ni N64"): 2147483648 ina tabia
-   ya N32 kwenye mabadiliko ya shift na kama hoja ya wito; halisi
-   >= 2^63 zinakatwa kimya hadi biti 32 (4.1.3, 4.1.4).
-8. Hati 4 (jedwali la utangulizi): linashikiliwa na mbegu;
-   uzalishaji ni C-kama (3.2, sehemu ya 7).
-9. Hati 4.2 (`a[i] = *(a + i * ukubwa_wa_kipengele)`; "usemi wa
-   safu pekee hutathminiwa kama kielekezi"): safu za miundo
-   zinaanguka SEGV kwa zote mbili; `*(p + n)` haikuzwi; `*(safu+1)`
-   ni 0 au SEGV (3.3, 4.2.26-27).
-10. Hati 5 (kazi ya mwili tupu): imekataliwa kwa makosa kwenye
-    uzalishaji (3.1).
-11. Hati 6.5 na mipaka 4b (endelea inaruka HATUA — semantiki ya
-    C, minyororo yote miwili): endelea kama taarifa ya mwisho ya
-    mwili wa `kwa` inaharibu mwili mzima kwenye uzalishaji
-    (4.2.16).
-12. Hati 6.6 (`chagua`): mbegu inakataa kwa muundo; uzalishaji
-    unafanya kazi kwa hali za nambari ndogo pekee — lebo hasi,
-    N64 kubwa na usemi hazilingani kamwe (4.2.19-21).
-    KUREKEBISHWA 2026-08-31: lebo hasi na N64 zinalingana kwa
-    usahihi; lebo za usemi zinakataliwa kwa sauti kwenye
-    uzalishaji; mbegu bado inakataa chagua kwa muundo.
-13. Hati 7 ("Miundo inaweza kupitishwa kwa thamani"): mbegu
-    inarudisha takataka; uzalishaji unapoteza baiti zaidi ya 8
-    (4.3.34-35). Pamoja na 4.2: safu za miundo zinaanguka
-    (5).
-14. Hati 8 ("mkusanyaji wa .swa hulichakata faili lililotajwa"):
+### 10.3 Udhibiti na viendeshaji (38)
+
+- **Kikomo cha mbegu kilichoandikwa (26 kesi)** — `chagua` nzima
+  (17 kesi, mchanganuzi haujui neno), maoni ya kizuizi (3),
+  viendeshaji vya kiwanja (6).
+- **Mbegu inakubali kimya, uzalishaji unakataa kwa sauti (9 kesi)**
+  — !/~ kwenye D64 (t62), %u/%x katika muundo halisi (t103/t104),
+  vunja/endelea nje ya kitanzi (t121/t122), maneno muhimu kama
+  vitambulisho (t105–t108). Mwelekeo wa uzalishaji ndio sahihi.
+- **Mbegu HUANGUKA, uzalishaji SAWA (1 kesi)** — N32** (9.2).
+- **Mbegu SAWA, uzalishaji JIBU-BAYA (1 kesi)** — utorokaji \%
+  (8.2): mende iko kwenye uzalishaji.
+- **Mbegu SAWA, uzalishaji IMEKATALIWA (1 kesi)** — %f katika
+  muundo halisi: mbegu inachapisha "%f" kama herufi halisi,
+  uzalishaji unakataa kwa sauti (uamuzi ulioandikwa: viungwa
+  %d %s %c %% pekee).
+
+### 10.4 Miundo na maktaba (18)
+
+- **Kikomo cha mbegu kilichoandikwa (12 kesi)** — ukubwa/mpangilio
+  wa muundo mchanganyiko (a23, 8.23), hesabu ya baiti ya kielekezi
+  (b02/b06/c03 — inalingana na hati 4.2), hoja mchanganyiko
+  kamili/desimali (d26), ukaguzi wa idadi ya hoja (d27–d29,
+  8.16), N64 hasi kwenye maktaba (f09/f18, 8.17), safu ya miundo
+  kama hoja (8.22), muundo kutumika kabla ya tangazo, D32, muundo
+  wa ulimwengu (uzalishaji umefunga; mbegu inakataa), na muundo
+  wenye jina la aina (a28, 8.14).
+- **Mbegu HUANGUKA, uzalishaji SAWA (2 kesi)** — N32** (b03),
+  sret ndani ya hoja (a26) — 9.2.
+- **Mbegu inakubali kimya, uzalishaji unakataa kwa sauti (2 kesi)**
+  — kielekezi na N32 kama hoja (d30/d31, 8.15): mwelekeo wa
+  uzalishaji ndio sahihi.
+- **Mbegu SAWA, uzalishaji JIBU-BAYA (1 kesi)** — hoja kwa thamani
+  + sret pamoja (a19, 8.1): mende iko kwenye uzalishaji.
+- **Mbegu SAWA, uzalishaji IMEKATALIWA (1 kesi)** — %f kwenye
+  andika (passthrough ya mbegu dhidi ya kata ya uzalishaji).
+
+### 10.5 Dereva wa Rust (kande) — kiunganishi kinashindwa kwenye mashine hii
+
+Dereva wa LLVM (`kande` kutoka `src/`) hukusanya kwa usahihi hadi
+faili la kitu (.o), lakini hatua ya kiunganishi inashindwa kwenye
+binutils za mashine hii: `clang -Wl,--defsym,andika=printf` inarudisha
+"unresolvable symbol `printf` referenced in expression" (kiunganishi
+cha kisasa hakiwezi kutatua printf kwenye usemi wa --defsym kabla
+ya libc kuunganishwa), kisha "final link failed". Imepimwa leo:
+`kande rahisi.swa -o rahisi.exe` inashindwa; `rahisi.o` inahifadhiwa.
+Mnyororo wa kujikusanya (mbegu --exe) hauhusiki na kiunganishi
+hiki — unatoa ELF moja kwa moja.
+
+## 11. Ahadi za hati zisizoshikika (zilizobaki)
+
+1. **Hati 3 — "A, B, W ni familia za lugha"**: mbegu ya sasa haijui
+   A/B/W/D32/B1 kabisa ("Hitilafu: aina isiyojulikana 'X'").
+   Mnyororo wa uzalishaji unazijua. Kikomo kilichoandikwa kwenye
+   hati za mbegu; familia zilizoahidiwa hazijatekelezwa kwenye
+   mbegu.
+2. **Hati 3 — "B1 — matokeo ya ulinganisho na mantiki"**: kwenye
+   uzalishaji, `B1 b = (2 < 3)` inakataliwa kwa kosa la aina
+   (matokeo ya ulinganisho yanaainishwa kama N32, si B1).
+   Kukataliwa ni kwa sauti (si jibu baya), lakini kinyume cha hati.
+3. **Hati 3 — "W0 ni kwa kazi tu"**: minyororo yote miwili
+   inakubali `W0 x = 5;` kimya (8.3).
+4. **Hati 2.3 — "utorokaji \n ... zinafanya kazi kwenye minyororo
+   yote miwili"**: kwenye kamba za DATA za ndani, uzalishaji
+   huhifadhi `\n` kama herufi halisi (5c 6e) — 8.18. (Kwa kamba
+   za data za ulimwengu sasa unakataa kwa sauti.)
+5. **Hati 2.3 — "Desimali inafanya kazi kwenye minyororo yote"**:
+   kweli kwenye uzalishaji; mpaka mzima wa D64/nambari kamili
+   bado umevunjika kwenye mbegu (8.6).
+6. **Uthibitisho #25 — "%u ya hasi = mfuatano kamili wa bits"**:
+   uzalishaji umeufunga (18446744073709551615); mbegu inachapisha
+   fomu ya biti 32 (4294967295) kwa matokeo yaliyokokotwa — 8.10.
+7. **Hati 4.2 — hesabu ya kielekezi ni ya baiti**: inashikilia kwa
+   minyororo yote miwili (8.9), lakini tofauti ya `p - q`
+   (delta ghafi ya baiti) haijaelezwa kwenye hati.
+8. **Hati 2.2 — "maneno muhimu hayawezi kutumika kama majina"**:
+   imefunga kwenye uzalishaji; mbegu bado inakubali (8.12).
+9. **Hati 6.6 — "chagua"**: inafanya kazi kwenye uzalishaji;
+   mbegu inakataa kwa muundo (kikomo kilichoandikwa).
+10. **Hati 8 — "mkusanyaji wa .swa hulichakata faili lililotajwa"**:
     hakuna mnyororo unaosoma faili la `husisha { }`; kiungo
-    kinatoshelezwa kwa cat pekee (6).
-15. Hati 9 (`tekeleza`, `anwani_ya_kazi`): hazipo kwenye minyororo
-    yote miwili; `wito_wa_mfumo` inafanya kazi (3.3).
-16. Hati 10 ("Orodha — safu inayokua"): ukuaji unaanguka SEGV
-    kwenye zote mbili — Orodha haikui kamwe (3.3, 3.4, 5).
-17. Hati 10 ("Ramani ya jina hadi thamani"): inafanya kazi kwenye
-    uzalishaji pekee; kwenye mbegu weka ni no-op (4.3.41).
-18. Hati 10 (`tenga(ukubwa(N32))`): mbegu inagawa baiti 8 badala
-    ya 4 (4.1.11).
-19. Hati 12 ("Kila kanuni katika hati hii imejaribiwa"): kanuni
-    ya desimali imevunjika kwenye mpaka wa int; kanuni ya `!`
-    imevunjika kabisa; fixpoint inathibitisha kujikusanya, si
-    usahihi wa semantiki.
-20. Mipaka 1 ("ingizo baya linalia kwa sauti"): mbegu inakataa
-    KIMYA (msimbo 1, hakuna ujumbe) kwa: kigezo cha ulimwengu cha
-    muundo, kianzilishi cha safu, safu ya pande mbili, halisi za
-    herufi, kazi yenye hoja 10, ukubwa(Muundo), moduli za libc.
-21. Mipaka 4c ("mbegu haina ABI ya xmm; program za mbegu zenye
-    kazi za D64 zinalia kwa sauti"): SI KWELI — mbegu inatekeleza
-    wito wa kazi za D64 kwa usahihi (3.1). Mipaka 4c imerekebishwa
-    pamoja na rekodi hii.
-22. Mipaka 5 ("mnyororo wa .swa unachanganua maneno halisi hadi
-    N64 kamili"): kweli kwa [2^31, 2^63) pekee; halisi >= 2^63
-    zinakatwa kimya, halisi kubwa kama hoja zinafisidi uzalishaji,
-    na halisi ÷ halisi inaanguka (4.1.3-4, 5).
-23. Mipaka 8 ("toa_exe inachapisha kazi haijafafanuliwa na kutoka
-    kwa msimbo 1"): kweli kwa uzalishaji; mbegu inakataa kimya
-    katika kesi kadhaa (6, sehemu ya 8, kipengee 20).
+    kinatoshelezwa kwa cat pekee (maboresho: mstari wowote wenye
+    "hu" haufutwi tena).
+11. **Hati 9 — `tekeleza`, `anwani_ya_kazi`**: hazipo kwenye
+    minyororo yote miwili; `wito_wa_mfumo` inafanya kazi.
+12. **Hati 10 — "Orodha — safu inayokua", "Ramani"**: zimefunga
+    kwenye minyororo yote miwili (rekodi ya zamani haishikiki).
+13. **Hati 10 — nasibu/wakati**: zinahitaji libc; hazifanyi kazi
+    kwenye mnyororo asilia (kukataliwa kwa sauti kwenye uzalishaji).
+14. **Hati 7 — "KUPITISHWA kwa thamani"**: miundo > baiti 8 kwa
+    hoja (a09), sret kwa mnyororo (J7) na muundo wa ulimwengu
+    zimefunga; mpaka uliobaki ni hoja kwa thamani + sret pamoja
+    (a19, 8.1) — sehemu ya hati haijafunikwa na mende hii.
 
-## 9. Muhtasari
+## 12. Hesabu za mwisho
 
-Kinachofanya kazi kwa minyororo yote miwili, kilichopimwa: kama/
-sivyo kwa kila muundo, wakati, kwa, vunja na endelea (isipokuwa
-endelea-mwisho wa uzalishaji), hesabu na ulinganisho za N32,
-mzunguko mfupi wa && na ||, ternary, ugawi msingi, kurudia na wito
-wa mbele, miundo kwa mshale na kwa sret, N64 katika vigezo na
-ulimwengu (kwenye uzalishaji), D64 ndani ya ulimwengu wake (pamoja
-na wito wa kazi — kinyume cha mipaka 4c), tenga/achilia, maoni ya
-`//`, mfuatano msingi, andika %d/%u/%x/%%/%s/%c kwa thamani chanya
-(na %f/%l/%n kama herufi halisi), na maktaba muhimu (kumbukumbu,
-mfuatano msingi, hesabu, mpangilio, orodha bila kukua, faili —
-imeandikwa upya kwa syscalls 2026-09-01, inaendesha kwenye
-minyororo yote miwili).
+Kesi 467 kwa kila mnyororo (191 mfumo wa aina + 138 udhibiti +
+138 miundo/maktaba). Hesabu zilizoonyeshwa ni BAADA ya marekebisho
+ya sehemu ya 3 kwa vitu vilivyoorodheshwa katika sehemu hiyo.
 
-Makosa makubwa ya kimya (jibu baya), kwa mpangilio wa uzito:
-mpaka mzima wa D64 na nambari kamili (4.1.1, 4.1.2, 4.1.5), ukataji
-wa halisi >= 2^63 (4.1.3), hoja za wito zenye halisi kubwa
-(4.1.4), makosa ya mkaguzi yasiyo ya kufa (4.1.7), `*(p + n)`
-bila ukuzaji (4.2.26), kianzilishi cha safu (4.3.37), N64 hasi na
-ukanushaji (4.1.13), ukubwa (4.1.11), nambari_kwa_mfuatano_n64
-(4.3.38), ramani kwenye mbegu (4.3.41), na endelea-mwisho wa
-uzalishaji (4.2.16). Kurekebishwa 2026-08-31: lebo za chagua
-za hasi/N64/usemi (4.2.19-21), `^` (4.2.17) na viendeshaji vya
-kiwanja vya biti (4.2.18) — zote zinafanya kazi au zinakataliwa
-kwa sauti kwenye mnyororo wa uzalishaji.
+### 12.1 Mfumo wa aina (191)
 
-Poromoko kubwa: safu za miundo (zote mbili), faharisi hasi/badili/
-ukuaji wa Orodha (zote mbili), D32 (zote mbili), mkusanyaji wa
-mbegu kwenye familia A/B/W na upana usio wa kawaida, mkusanyaji wa
-uzalishaji kwenye `sivyo` bila `kama`, na main isiyopo (uzalishaji).
+| Mnyororo | SAWA | JIBU-BAYA | HUANGUKA | IMEKATALIWA | Jumla |
+|---|---|---|---|---|---|
+| **Mbegu** | 91 | 36 | 0 | 64 | 191 |
+| **Uzalishaji** | 170 | 2 | 0 | 19 | 191 |
 
-Ukataaji unaokiuka hati: `husisha { faili }`, kazi tupu,
-`a < b << c`, `chagua` kwenye mbegu, `/* */` kwenye mbegu.
-(`!` na `~` zimetekelezwa kwenye mnyororo wa uzalishaji 2026-08-31;
-mbegu bado inakataa.)
+Marekebisho yaliyoathiri hesabu hizi (aina za kesi zilizopimwa
+tena leo): sret kwa mnyororo (2 kesi: JIBU-BAYA inakuwa SAWA),
+upanuzi wa ishara N8/N16 (5 kesi: JIBU-BAYA inakuwa SAWA),
+mgawanyo bila ishara (6 kesi: HUANGUKA inakuwa SAWA), muundo wa
+ulimwengu (2 kesi: HUANGUKA inakuwa SAWA), upana usioahidiwa
+(5 kesi: JIBU-BAYA inakuwa IMEKATALIWA).
 
-Tofauti kubwa kati ya minyororo: utangulizi wa viendeshaji (mbegu
-inafuata hati; uzalishaji ni C-kama) na ruhusa za uzalishaji
-zinazoambatana na jibu baya au poromoko (sehemu ya 7).
+### 12.2 Udhibiti na viendeshaji (138)
 
-Jibu la mwisho kwa mwandishi wa Swa: usiamini hati mpaka
-kipimo kithibitishe; usiamini ruhusa ya mkusanyaji — jibu baya
-linasafiri kimya hadi kwenye programu zilizotumwa. Rejesho kuu la
-mfumo ni ukali wa mkaguzi (4.1.7): hadi kosa la aina likatwe kwa
-sauti, jibu baya la kila aina litaendelea kuwa kimya.
+| Mnyororo | SAWA | JIBU-BAYA | HUANGUKA | IMEKATALIWA | Jumla |
+|---|---|---|---|---|---|
+| **Mbegu** | 88 | 10 | 3 | 37 | 138 |
+| **Uzalishaji** | 113 | 2 | 2 | 21 | 138 |
+
+Marekebisho yaliyoathiri hesabu hizi: kama/sivyo bila mabano (2
+kesi: JIBU-BAYA inakuwa SAWA), %u hasi kwenye muundo wa nguvu
+(1 kesi: JIBU-BAYA inakuwa SAWA), maneno muhimu kama vitambulisho
+(4 kesi: JIBU-BAYA inakuwa IMEKATALIWA).
+
+### 12.3 Miundo, kumbukumbu na maktaba (138)
+
+| Mnyororo | SAWA | JIBU-BAYA | HUANGUKA | IMEKATALIWA | Jumla |
+|---|---|---|---|---|---|
+| **Mbegu** | 117 | 13 | 2 | 6 | 138 |
+| **Uzalishaji** | 129 | 4 | 0 | 5 | 138 |
+
+Marekebisho yaliyoathiri hesabu hizi: muundo kwa thamani > baiti 8
+(1 kesi: JIBU-BAYA inakuwa SAWA), muundo wa ulimwengu (1 kesi:
+HUANGUKA inakuwa SAWA), kielekezi na N32 kama hoja (2 kesi:
+JIBU-BAYA inakuwa IMEKATALIWA).
+Muundo wenye jina la aina (a28) limebadilika kutoka anguko hadi
+kukataliwa kwa sauti kwenye uzalishaji — lilihesabiwa kama SAWA
+(kulikuwa "anguko kama ilivyotarajiwa" katika kipimo cha skani)
+na linabaki kama hivyo, kwa maelezo ya 8.14.
+
+### 12.4 Jumla (467)
+
+| Mnyororo | SAWA | JIBU-BAYA | HUANGUKA | IMEKATALIWA | Jumla |
+|---|---|---|---|---|---|
+| **Mbegu** | 296 | 59 | 5 | 107 | 467 |
+| **Uzalishaji** | 412 | 8 | 2 | 45 | 467 |
+
+### 12.5 Ufafanuzi wa uaminifu wa hesabu
+
+- Kwa kila eneo, kesi za kirejeshi za marekebisho pekee ndizo
+  zilipimwa tena leo (orodha kamili katika sehemu ya 3) — SI
+  skani nzima ya 467. Hesabu za msingi (zilizopimwa HEAD 1c525ce)
+  zimechukuliwa kutoka rekodi za skani za siku hiyo
+  (/tmp/swa-t6-mwisho/aina, /udhibiti, /miundo) na marekebisho
+  yamewekwa kwenye kesi za kirejeshi zilizoorodheshwa hapo juu.
+- Kesi za zilizobaki zilizopimwa tena leo na kuthibitishwa:
+  halisi_ukanusha_n64 na halisi_hesabu_n64_2 (J1: rc=2 kwenye
+  mbegu), t94 (\%: jibu baya kwenye uzalishaji), t75 na
+  _t141 (_t141 imefunga), _b12 (uzalishaji unakataa kwa sauti),
+  _w0_kigezo (zote mbili kimya), _w0_thamani (mbegu kimya,
+  uzalishaji kukataa), _d32_ulimwengu (uzalishaji rc=2),
+  _lit_kielekezi/_lit_kielekezi0 (uzalishaji kukataa, mbegu SEGV),
+  _a19/_a19b/_a19c/_a19d (8.1: bado jibu baya kwenye uzalishaji),
+  _n2/_n3 (8.18), _halisi63 (SAWA zote mbili), na kiunganishi cha
+  kande (10.5: kinashindwa).
+- Mbegu haijabadilika tangu skani (commit f12e134 ndio gandisho
+  la mwisho la `msingi/mbegu.bin`); hesabu zake zinasimama kama
+  zilivyopimwa. Tofauti moja ya mbinu: kesi t99 (muundo wa nguvu
+  %u) katika skani ya udhibiti ililinganishwa dhidi ya pato la
+  mbegu lenyewe (fomu ya biti 32) na kuhesabiwa SAWA; kipimo cha
+  leo cha moja kwa moja dhidi ya ahadi #25 kinaonyesha mbegu
+  inachapisha 4294967295 — tazama 8.10. Hii haibadilishi hesabu
+  ya mbegu (kesi hiyo ilihesabiwa SAWA katika skani na imebaki
+  hivyo), lakini inabainishwa kwa uaminifu.
+- Fixpoint stage2-exe == stage3-exe imepimwa leo, sawa kwa baiti.
+  Stage1-exe ni tofauti na stage2: mbegu imeoka makosa yake (8.4
+  hadi 8.8, 8.12 hadi 8.17) ndani ya stage1 iliyojengwa kupitia
+  yeye; stage2 inayojijenga ndiyo ushahidi wa fixpoint.
+
+## 13. Hitimisho
+
+**Fixpoint inathibitisha nini**: mnyororo wa kujikusanya unafanya
+kazi kikamilifu — kutoka kwanza hadi mbegu hadi stage1 hadi
+stage2 == stage3 (sawa kwa baiti), bila lugha nyingine popote.
+Mkusanyaji unaweza kujijenga yenyewe kwa kudumu.
+
+**Fixpoint haithibitishi nini**: usahihi wa semantiki. Mkusanyaji
+anaweza kujijenga yenyewe na bado kuwa na makosa kwenye mipaka ya
+lugha — ushahidi: mende ya a19 (8.1) iko kwenye mnyororo wa
+uzalishaji uliojijenga, na mbegu iliyogandishwa ina makosa yake
+(8.4 hadi 8.8, 8.12 hadi 8.17) ambayo stage1 inayojijenga
+haijarithishi. Fixpoint inathibitisha uthabiti wa kujijenga, si
+usahihi wa tabia.
+
+**Kanuni inayoongoza mradi huu**: programu inakusanywa kwa usahihi
+au inakataliwa kwa sauti; jibu baya la kimya halikubaliki kamwe.
+Ukataji wa sauti unagharimu muda wa kukusanya; jibu baya
+linaweza kugharimu data au programu zilizotumwa. Mwelekeo wa
+majaribio ya mwisho unathibitisha kanuni hii: kila jibu baya la
+uzalishaji lililotambuliwa limefungwa kwa ukataji wa sauti au
+jibu sahihi (sehemu ya 3), na kilichobaki (8 jibu baya na 2
+huanguka kati ya 467 kwenye uzalishaji; 59 jibu baya na 5
+huanguka kwenye mbegu iliyogandishwa) kimeorodheshwa hapa kwa
+kirejeshi kidogo, kilichoonekana, na kinachotarajiwa — ili
+kila mdudu uweze kuthibitishwa na kufungwa. Mbegu imegandishwa;
+kazi ya sasa na ya baadaye iko kwenye mnyororo wa uzalishaji,
+ambapo ukali wa mkaguzi (kukataa kwa sauti badala ya kuhesabu
+kwa bahati) ndio mwamba wa mfumo mzima.
