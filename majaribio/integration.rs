@@ -334,23 +334,23 @@ fn compile_file(path: &str) -> Result<String, Vec<String>> {
 
 #[test]
 fn jaribio_msingi_kumbukumbu() {
-    let ir = compile_file("msingi/kumbukumbu.swa").expect("kumbukumbu.swa inapaswa kukusanyika");
+    let ir = compile_file("msingi/maktaba/kumbukumbu.swa").expect("kumbukumbu.swa inapaswa kukusanyika");
     assert!(ir.contains("nakili"));
 }
 
 #[test]
 fn jaribio_msingi_mfuatano() {
-    let ir = compile_file("msingi/mfuatano.swa").expect("mfuatano.swa inapaswa kukusanyika");
+    let ir = compile_file("msingi/maktaba/mfuatano.swa").expect("mfuatano.swa inapaswa kukusanyika");
     assert!(ir.contains("urefu_wa_mfuatano"));
 }
 
 #[test]
 fn jaribio_msingi_orodha() {
     // orodha.swa uses husisha — test that it parses and lowers successfully.
-    let src = std::fs::read_to_string("msingi/orodha.swa")
+    let src = std::fs::read_to_string("msingi/maktaba/orodha.swa")
         .expect("inapaswa kusoma faili");
     let mut driver = Driver::new();
-    let result = driver.compile_to_ir(&src, PathBuf::from("msingi/orodha.swa"));
+    let result = driver.compile_to_ir(&src, PathBuf::from("msingi/maktaba/orodha.swa"));
     assert!(result.is_ok(), "orodha.swa inapaswa kuchanganua: {:?}", result.err());
     let ir_module = result.unwrap();
     assert!(!ir_module.functions.is_empty(), "orodha.swa inapaswa kuwa na kazi");
@@ -360,10 +360,10 @@ fn jaribio_msingi_orodha() {
 #[test]
 fn jaribio_msingi_ramani() {
     // ramani.swa uses husisha — test that it parses and lowers successfully.
-    let src = std::fs::read_to_string("msingi/ramani.swa")
+    let src = std::fs::read_to_string("msingi/maktaba/ramani.swa")
         .expect("inapaswa kusoma faili");
     let mut driver = Driver::new();
-    let result = driver.compile_to_ir(&src, PathBuf::from("msingi/ramani.swa"));
+    let result = driver.compile_to_ir(&src, PathBuf::from("msingi/maktaba/ramani.swa"));
     assert!(result.is_ok(), "ramani.swa inapaswa kuchanganua: {:?}", result.err());
     let ir_module = result.unwrap();
     assert!(!ir_module.functions.is_empty(), "ramani.swa inapaswa kuwa na kazi");
@@ -375,31 +375,31 @@ fn jaribio_msingi_ramani() {
 
 #[test]
 fn jaribio_msingi_msomaji() {
-    let ir = compile_file("msingi/msomaji.swa").expect("msomaji.swa inapaswa kukusanyika");
+    let ir = compile_file("msingi/mkusanyaji/msomaji.swa").expect("msomaji.swa inapaswa kukusanyika");
     assert!(ir.contains("msomaji_imeisha"));
 }
 
 #[test]
 fn jaribio_msingi_msambazaji() {
-    let ir = compile_file("msingi/msambazaji.swa").expect("msambazaji.swa inapaswa kukusanyika");
+    let ir = compile_file("msingi/mkusanyaji/msambazaji.swa").expect("msambazaji.swa inapaswa kukusanyika");
     assert!(ir.contains("AST_PROGRAMU"));
 }
 
 #[test]
 fn jaribio_msingi_uzalishaji() {
-    let ir = compile_file("msingi/uzalishaji.swa").expect("uzalishaji.swa inapaswa kukusanyika");
+    let ir = compile_file("msingi/mkusanyaji/uzalishaji.swa").expect("uzalishaji.swa inapaswa kukusanyika");
     assert!(ir.contains("andika_baiti"));
 }
 
 #[test]
 fn jaribio_msingi_mkaguzi() {
-    let ir = compile_file("msingi/mkaguzi.swa").expect("mkaguzi.swa inapaswa kukusanyika");
+    let ir = compile_file("msingi/mkusanyaji/mkaguzi.swa").expect("mkaguzi.swa inapaswa kukusanyika");
     assert!(ir.contains("mkaguzi_angalia"));
 }
 
 #[test]
 fn jaribio_msingi_stage1() {
-    let ir = compile_file("msingi/stage1.swa").expect("stage1.swa inapaswa kukusanyika");
+    let ir = compile_file("msingi/mkusanyaji/stage1.swa").expect("stage1.swa inapaswa kukusanyika");
     assert!(ir.contains("tatua_husisha"));
     assert!(ir.contains("main"));
 }
@@ -407,11 +407,14 @@ fn jaribio_msingi_stage1() {
 #[test]
 fn jaribio_stage1_hifadhi_chanzo_yatosha_kwa_msingi_wote() {
     let faili = [
-        "kumbukumbu.swa", "mfuatano.swa", "msomaji.swa", "msambazaji.swa",
-        "mteremko.swa", "mkaguzi.swa", "uzalishaji.swa", "orodha.swa", "ramani.swa",
+        "msingi/maktaba/kumbukumbu.swa", "msingi/maktaba/mfuatano.swa",
+        "msingi/mkusanyaji/msomaji.swa", "msingi/mkusanyaji/msambazaji.swa",
+        "msingi/mkusanyaji/mteremko.swa", "msingi/mkusanyaji/mkaguzi.swa",
+        "msingi/mkusanyaji/uzalishaji.swa", "msingi/maktaba/orodha.swa",
+        "msingi/maktaba/ramani.swa",
     ];
     let jumla: u64 = faili.iter()
-        .map(|jina| std::fs::metadata(format!("msingi/{jina}"))
+        .map(|njia| std::fs::metadata(njia)
             .expect("faili ya msingi inapaswa kuwepo").len())
         .sum();
 
@@ -425,7 +428,7 @@ fn jaribio_stage1_hifadhi_chanzo_yatosha_kwa_msingi_wote() {
 
 #[test]
 fn jaribio_stage1() {
-    let src = std::fs::read_to_string("msingi/stage1.swa")
+    let src = std::fs::read_to_string("msingi/mkusanyaji/stage1.swa")
         .expect("inapaswa kusoma faili");
     let ir = compile_and_verify(&src).expect("stage1.swa inapaswa kukusanyika");
     assert!(ir.contains("tatua_husisha"), "IR inapaswa kuwa na tatua_husisha");
@@ -452,11 +455,11 @@ fn jaribio_k6_kujikusanya_kamili() {
     // Hitilafu ya LLVM 22 trunc-to-ptr imerekebishwa (StoreTyped sasa inatumia
     // IntToPtr badala ya IntCast2 kwa vielekezi). Tunarudi kwenye njia ya moja
     // kwa moja ya compile_to_ir + compile_to_file.
-    let src = std::fs::read_to_string("msingi/stage1.swa")
+    let src = std::fs::read_to_string("msingi/mkusanyaji/stage1.swa")
         .expect("inapaswa kusoma faili");
     let mut driver = Driver::new();
     let ir_module = driver
-        .compile_to_ir(&src, PathBuf::from("msingi/stage1.swa"))
+        .compile_to_ir(&src, PathBuf::from("msingi/mkusanyaji/stage1.swa"))
         .expect("stage1.swa inapaswa kuchanganua na kuteremsha");
 
     let dir = tempfile::tempdir().expect("inapaswa kuunda saraka ya muda");
@@ -564,10 +567,10 @@ fn jaribio_exe_kujijenga() {
     let dir = tempfile::tempdir().expect("inapaswa kuunda saraka ya muda");
     let zima = dir.path().join("zima.swa");
     let faili_za_msingi = [
-        "msingi/kumbukumbu.swa", "msingi/mfuatano.swa", "msingi/msomaji.swa",
-        "msingi/msambazaji.swa", "msingi/mteremko.swa", "msingi/mkaguzi.swa",
-        "msingi/uzalishaji.swa", "msingi/orodha.swa", "msingi/ramani.swa",
-        "msingi/stage1.swa",
+        "msingi/maktaba/kumbukumbu.swa", "msingi/maktaba/mfuatano.swa", "msingi/mkusanyaji/msomaji.swa",
+        "msingi/mkusanyaji/msambazaji.swa", "msingi/mkusanyaji/mteremko.swa", "msingi/mkusanyaji/mkaguzi.swa",
+        "msingi/mkusanyaji/uzalishaji.swa", "msingi/maktaba/orodha.swa", "msingi/maktaba/ramani.swa",
+        "msingi/mkusanyaji/stage1.swa",
     ];
     let mut chanzo = String::new();
     for f in faili_za_msingi {
@@ -595,7 +598,8 @@ fn jaribio_exe_kujijenga() {
         std::fs::set_permissions(&stage1_exe, ruhusa_mpya).expect("inapaswa kuweka ruhusa");
     }
 
-    // 4. stage1-exe --exe → stage2-exe (CWD = mzizi wa repo — inasoma msingi/)
+    // 4. stage1-exe --exe → stage2-exe (CWD = mzizi wa repo — inasoma
+    //    msingi/maktaba/ na msingi/mkusanyaji/ kwa kujikusanya)
     let exe1 = dir.path().join("stage2-exe");
     let nje1 = std::process::Command::new(&stage1_exe)
         .arg("--exe")
@@ -921,10 +925,10 @@ fn jaribio_o_kujijenga() {
     let dir = tempfile::tempdir().expect("inapaswa kuunda saraka ya muda");
     let zima = dir.path().join("zima.swa");
     let faili_za_msingi = [
-        "msingi/kumbukumbu.swa", "msingi/mfuatano.swa", "msingi/msomaji.swa",
-        "msingi/msambazaji.swa", "msingi/mteremko.swa", "msingi/mkaguzi.swa",
-        "msingi/uzalishaji.swa", "msingi/orodha.swa", "msingi/ramani.swa",
-        "msingi/stage1.swa",
+        "msingi/maktaba/kumbukumbu.swa", "msingi/maktaba/mfuatano.swa", "msingi/mkusanyaji/msomaji.swa",
+        "msingi/mkusanyaji/msambazaji.swa", "msingi/mkusanyaji/mteremko.swa", "msingi/mkusanyaji/mkaguzi.swa",
+        "msingi/mkusanyaji/uzalishaji.swa", "msingi/maktaba/orodha.swa", "msingi/maktaba/ramani.swa",
+        "msingi/mkusanyaji/stage1.swa",
     ];
     let mut chanzo = String::new();
     for f in faili_za_msingi {
@@ -993,11 +997,11 @@ fn run_k6_test(test_chanzo: &str, matarajio_ya_kutoka: i32) {
     }
     let clang = clang.unwrap();
 
-    let src = std::fs::read_to_string("msingi/stage1.swa")
+    let src = std::fs::read_to_string("msingi/mkusanyaji/stage1.swa")
         .expect("inapaswa kusoma faili");
     let mut driver = Driver::new();
     let ir_module = driver
-        .compile_to_ir(&src, PathBuf::from("msingi/stage1.swa"))
+        .compile_to_ir(&src, PathBuf::from("msingi/mkusanyaji/stage1.swa"))
         .expect("stage1.swa inapaswa kuchanganua na kuteremsha");
 
     let dir = tempfile::tempdir().expect("inapaswa kuunda saraka ya muda");
@@ -1170,8 +1174,9 @@ N32 main() {
 // K10 — Msaidizi wa majaribio ya maktaba ya kawaida
 // ============================================================================
 
-/// Kusanya chanzo cha jaribio kinachotumia `husisha` kutoka saraka ya `msingi/`,
-/// unganisha na clang, endesha, na thibitisha msimbo wa kutoka.
+/// Kusanya chanzo cha jaribio kinachotumia `husisha` kutoka rafu za
+/// `msingi/maktaba/` na `msingi/mkusanyaji/`, unganisha na clang,
+/// endesha, na thibitisha msimbo wa kutoka.
 ///
 /// `path_hint` hutumiwa kwa azimio la `husisha` — saraka yake mzazi
 /// ndiyo msingi wa utafutaji wa moduli zilizohusishwa.
@@ -1184,11 +1189,14 @@ fn run_msingi_test(test_source: &str, expected_exit: i32) {
     let clang = clang.unwrap();
 
     // Tumia dereva wa Rust moja kwa moja kwa kasi.
-    // PathBuf ya "msingi/jaribio_k10.swa" ina maana parent_dir = "msingi/"
-    // hivyo husisha { kumbukumbu.swa } hutafutwa kwenye msingi/kumbukumbu.swa.
+    // PathBuf ya "msingi/maktaba/jaribio_k10.swa" ina maana
+    // parent_dir = "msingi/maktaba/" hivyo husisha { kumbukumbu.swa }
+    // hutafutwa kwenye msingi/maktaba/kumbukumbu.swa (kando ya chanzo),
+    // kisha msingi/, msingi/maktaba/, na saraka ya sasa kwa njia ya
+    // utafutaji wa dereva.
     let mut driver = Driver::new();
     let ir_module = driver
-        .compile_to_ir(test_source, PathBuf::from("msingi/jaribio_k10.swa"))
+        .compile_to_ir(test_source, PathBuf::from("msingi/maktaba/jaribio_k10.swa"))
         .expect("inapaswa kuchanganua na kuteremsha");
 
     let dir = tempfile::tempdir().expect("inapaswa kuunda saraka ya muda");
@@ -1679,12 +1687,12 @@ N32 main() {
     rudisha 0;
 }
 ";
-    // Jenga stage1 kutoka msingi/stage1.swa kupitia dereva wa Rust.
-    let src = std::fs::read_to_string("msingi/stage1.swa")
+    // Jenga stage1 kutoka msingi/mkusanyaji/stage1.swa kupitia dereva wa Rust.
+    let src = std::fs::read_to_string("msingi/mkusanyaji/stage1.swa")
         .expect("inapaswa kusoma faili");
     let mut driver = Driver::new();
     let ir_module = driver
-        .compile_to_ir(&src, PathBuf::from("msingi/stage1.swa"))
+        .compile_to_ir(&src, PathBuf::from("msingi/mkusanyaji/stage1.swa"))
         .expect("stage1.swa inapaswa kuchanganua na kuteremsha");
 
     let dir = tempfile::tempdir().expect("inapaswa kuunda saraka ya muda");
@@ -2195,7 +2203,7 @@ N32 main() {
 ";
     // Unganisha faili za maktaba (mbegu haiwii husisha)
     let mut chanzo = String::new();
-    for f in ["msingi/hesabu.swa", "msingi/mfuatano.swa", "msingi/kumbukumbu.swa", "msingi/mpangilio.swa"] {
+    for f in ["msingi/maktaba/hesabu.swa", "msingi/maktaba/mfuatano.swa", "msingi/maktaba/kumbukumbu.swa", "msingi/maktaba/mpangilio.swa"] {
         chanzo.push_str(&std::fs::read_to_string(f).expect("inapaswa kusoma faili la maktaba"));
     }
     chanzo.push_str(main_chanzo);
@@ -2411,7 +2419,7 @@ fn jaribio_zana_umbizaji_kujijenga() {
 
     // Unganisha maktaba + umbizaji (mbegu haiwi husisha { })
     let mut chanzo = String::new();
-    for f in ["msingi/kumbukumbu.swa", "msingi/mfuatano.swa", "zana/umbizaji.swa"] {
+    for f in ["msingi/maktaba/kumbukumbu.swa", "msingi/maktaba/mfuatano.swa", "zana/umbizaji.swa"] {
         chanzo.push_str(&std::fs::read_to_string(f).expect("inapaswa kusoma faili"));
     }
     let zima = dir.path().join("umbizaji-zima.swa");

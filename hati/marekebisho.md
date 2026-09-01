@@ -193,7 +193,7 @@ Chanzo cha msingi: Kila mzunguko wa kitanzi cha `wakati` katika `changanua()` ul
 
 ## 10. Tamko la Mbele Halikutumia Nukta Mkato (Semicolon Leak)
 
-**Faili:** `msingi/msambazaji.swa`
+**Faili:** `msingi/mkusanyaji/msambazaji.swa`
 
 **Hitilafu.** Kazi ya `changanua_kazi` katika mchanganuzi wa kujikusanya haikutumia `;` iliyofuata matamko ya mbele (forward declarations / prototypes). Nukta mkato ilivuja hadi kiwango cha juu cha mchanganuzi, na kusababisha hitilafu ya "unexpected element" wakati wa kuchanganua faili kama `msomaji.swa` zilizokuwa na matamko ya mbele:
 
@@ -207,7 +207,7 @@ W0 ruka_nafasi_na_maelezo(Msomaji* m);
 
 ## 11. Kitanzi cha `kwa` (For) Kinashindwa Kuchanganua Kiiniti
 
-**Faili:** `msingi/msambazaji.swa`
+**Faili:** `msingi/mkusanyaji/msambazaji.swa`
 
 **Hitilafu.** Mchanganuzi wa kitanzi cha `kwa` ulijaribu kuchanganua kiiniti kama usemi kupitia `changanua_usemi`. Lakini `N32 i = 0` ni tamko la ndani, si usemi. Mchanganuzi ulichanganua `N32` kama kitambulisho na kuacha `i = 0;` bila kutumiwa.
 
@@ -217,7 +217,7 @@ W0 ruka_nafasi_na_maelezo(Msomaji* m);
 
 ## 12. Hitilafu Mbalimbali za Mchanganuzi wa Kujikusanya
 
-**Faili:** `msingi/msambazaji.swa`, `msingi/msomaji.swa`
+**Faili:** `msingi/mkusanyaji/msambazaji.swa`, `msingi/mkusanyaji/msomaji.swa`
 
 ### 12.1 `sogeza()` Inakosa Sehemu za Tokeni
 
@@ -258,9 +258,9 @@ Safu ya AST (AST_SAFU) yenye elementi 4096 haikutosha kwa faili zote za maktaba 
 | 7 | Opaque pointer inaharibu usawazishaji wa hifadhi | `src/codegen/llvm/mod.rs`, `src/ir/lower.rs`, `src/ir/mod.rs` | Hitilafu za sehemu nasibu, ulinganifu wa tokeni unashindwa | LLVMGetElementType haiaminiki na opaque pointers |
 | 8 | Msimbo baada ya kama hauwiani kwenye CFG | `src/ir/lower.rs` | Taarifa baada ya kama ni msimbo uliokufa, vitanzi vya kujirudia | actual_prev haikufuatilia BrCond; self-loop haikurekebishwa |
 | 9 | Alloca-in-loop inamaliza rafu | `src/ir/lower.rs` | SIGSEGV kwenye kitanzi cha wakati (rafu inaisha) | Alloca za vigeu vya ndani zinatolewa kwenye block ya sasa badala ya block ya kuingia |
-| 10 | Tamko la mbele halitumii `;` | `msingi/msambazaji.swa` | Hitilafu ya "unexpected element" | Nukta mkato inavuja hadi kiwango cha juu |
-| 11 | Kitanzi cha `kwa` kinashindwa | `msingi/msambazaji.swa` | `N32 i = 0` haichanganuliwi | Mchanganuzi unatumia usemi badala ya tamko |
-| 12a | `sogeza()` inakosa sehemu za tokeni | `msingi/msambazaji.swa`, `msingi/msomaji.swa` | Nambari za mistari ni 1 kila wakati | Kunakili sehemu 3 kati ya 5 tu |
-| 12b | Matumizi maradufu ya `{` | `msingi/msambazaji.swa` | Mwili wa kazi hauchanganuliwi | `{` inatumiwa katika vigezo |
-| 12c | Hakuna unary minus | `msingi/msambazaji.swa` | `rudisha -1` haichanganuliwi | Alama ya `-` inaachwa |
-| 12d | Kufurika kwa safu ya AST | `msingi/msambazaji.swa` | Kufurika kwa safu kwenye faili nyingi | AST_SAFU (4096) ni ndogo sana |
+| 10 | Tamko la mbele halitumii `;` | `msingi/mkusanyaji/msambazaji.swa` | Hitilafu ya "unexpected element" | Nukta mkato inavuja hadi kiwango cha juu |
+| 11 | Kitanzi cha `kwa` kinashindwa | `msingi/mkusanyaji/msambazaji.swa` | `N32 i = 0` haichanganuliwi | Mchanganuzi unatumia usemi badala ya tamko |
+| 12a | `sogeza()` inakosa sehemu za tokeni | `msingi/mkusanyaji/msambazaji.swa`, `msingi/mkusanyaji/msomaji.swa` | Nambari za mistari ni 1 kila wakati | Kunakili sehemu 3 kati ya 5 tu |
+| 12b | Matumizi maradufu ya `{` | `msingi/mkusanyaji/msambazaji.swa` | Mwili wa kazi hauchanganuliwi | `{` inatumiwa katika vigezo |
+| 12c | Hakuna unary minus | `msingi/mkusanyaji/msambazaji.swa` | `rudisha -1` haichanganuliwi | Alama ya `-` inaachwa |
+| 12d | Kufurika kwa safu ya AST | `msingi/mkusanyaji/msambazaji.swa` | Kufurika kwa safu kwenye faili nyingi | AST_SAFU (4096) ni ndogo sana |

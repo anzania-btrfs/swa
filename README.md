@@ -156,16 +156,17 @@ N32 kitanzi(N32 n) {
 | Njia | Maelezo |
 |---|---|
 | `src/` | Mkusanyaji wa Rust (msomaji, mchanganuzi, IR, LLVM backend) |
-| `msingi/` | Maktaba ya msingi ya kujitegemea kwa Swa — bomba zima |
-| `msingi/msomaji.swa` | Msomaji (lexer) — kamili |
-| `msingi/msambazaji.swa` | Mchanganuzi (parser) — kamili, nodi 48 za AST |
-| `msingi/mkaguzi.swa` | Mkaguzi wa kisemantiki — kamili (aina, hoja, ugawaji) |
-| `msingi/mteremko.swa` | Kiteremshi cha AST→IR — huitwa kwa uthibitishaji wa muundo; codegen asilia hutumia AST moja kwa moja |
-| `msingi/uzalishaji.swa` | Kizalishe asilia cha x86-64 — kamili (aina zote, sret, alloca) |
-| `msingi/ramani.swa` | Jedwali la hashi |
-| `msingi/orodha.swa` | Safu inayobadilika |
-| `msingi/mfuatano.swa` | Shughuli za mifuatano |
-| `msingi/kumbukumbu.swa` | Shughuli za kumbukumbu |
+| `msingi/maktaba/` | Maktaba ya msingi ya kujitegemea kwa Swa |
+| `msingi/maktaba/kumbukumbu.swa` | Shughuli za kumbukumbu |
+| `msingi/maktaba/mfuatano.swa` | Shughuli za mifuatano |
+| `msingi/maktaba/orodha.swa` | Safu inayobadilika |
+| `msingi/maktaba/ramani.swa` | Jedwali la hashi |
+| `msingi/mkusanyaji/` | Mkusanyaji wa kujitegemea wa Swa — bomba zima |
+| `msingi/mkusanyaji/msomaji.swa` | Msomaji (lexer) — kamili |
+| `msingi/mkusanyaji/msambazaji.swa` | Mchanganuzi (parser) — kamili, nodi 48 za AST |
+| `msingi/mkusanyaji/mkaguzi.swa` | Mkaguzi wa kisemantiki — kamili (aina, hoja, ugawaji) |
+| `msingi/mkusanyaji/mteremko.swa` | Kiteremshi cha AST→IR — huitwa kwa uthibitishaji wa muundo; codegen asilia hutumia AST moja kwa moja |
+| `msingi/mkusanyaji/uzalishaji.swa` | Kizalishe asilia cha x86-64 — kamili (aina zote, sret, alloca) |
 | `gharama/` | Zana za ujenzi na majaribio |
 
 ## Kujenga
@@ -191,7 +192,7 @@ cargo test          # Majaribio 227: 146 ya maktaba + 80 ya ujumuishaji + 1 wa n
 cargo run -- programu.swa
 
 # Kutumia stage1 ya kujitegemea
-./stage1 msingi/msomaji.swa
+./stage1 msingi/mkusanyaji/msomaji.swa
 ```
 
 ## Hatua ya Bootstrap

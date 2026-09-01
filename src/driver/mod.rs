@@ -41,7 +41,9 @@ impl Driver {
 
     /// Chakia maelekezo ya `husisha` kwa kusoma na kupachika faili zilizojumuishwa.
     /// Hushughulikia `husisha C::stdio` (imechukuliwa — vichwa vya C) na
-    /// `husisha { njia }` (iliyopachikwa).
+    /// `husisha { njia }` (iliyopachikwa). Utafutaji unafuata mpangilio
+    /// wa `pata_njia` ya stage1: kando ya chanzo, kisha `msingi/`,
+    /// kisha `msingi/maktaba/`, kisha saraka ya sasa.
     fn resolve_husisha(
         &mut self,
         source: &str,
@@ -88,8 +90,20 @@ impl Driver {
                     }
 
                     if !rel_path.is_empty() {
+                        // Tafuta kwa mpangilio wa utafutaji: kando ya chanzo,
+                        // kisha msingi/, msingi/maktaba/, na saraka ya sasa.
                         let include_path = parent_dir.join(rel_path);
-                        let canon = include_path.canonicalize().unwrap_or(include_path.clone());
+                        let mut njia = include_path.clone();
+                        if !njia.exists() {
+                            njia = PathBuf::from("msingi").join(rel_path);
+                        }
+                        if !njia.exists() {
+                            njia = PathBuf::from("msingi/maktaba").join(rel_path);
+                        }
+                        if !njia.exists() {
+                            njia = PathBuf::from(rel_path);
+                        }
+                        let canon = njia.canonicalize().unwrap_or(njia.clone());
                         let canon_str = canon.to_string_lossy().to_string();
 
                         if !already_included.contains(&canon_str) && canon.exists() {
