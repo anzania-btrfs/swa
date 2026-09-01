@@ -1,0 +1,15 @@
+// Mende 19: lebo hasi (hali -3) ililinganishwa kama 0 — selecta 0
+// iliendesha mwili wa hali -3. Sasa lebo hasi inalingana na thamani
+// hasi pekee.
+N32 main() {
+    N32 s = 0;
+    chagua (-3) { hali -3: s = 77; sivyo: s = 88; }
+    kama (s != 77) { rudisha 1; }
+    s = 0;
+    chagua (0) { hali -3: s = 5; hali 0: s = 6; }
+    kama (s != 6) { rudisha 2; }
+    s = 0;
+    chagua (-4) { hali -3: s = 77; sivyo: s = 88; }
+    kama (s != 88) { rudisha 3; }
+    rudisha 0;
+}

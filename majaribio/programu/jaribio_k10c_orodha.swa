@@ -113,6 +113,15 @@ W0 andika_sehemu(N32 faili, N8* s, N64 urefu) {
 // Muundo ni mfuatano PAMOJA na nukuu, viashiria: %d, %s, %c, \n.
 // ==========================================================
 
+// Kielekezi kutoka hoja ya N64: mkia wa andika (a1..a6) hupita kwa
+// rejesta za N64 kwa ABI, iwe thamani au kielekezi. %s huhitaji
+// kielekezi — ubadilishaji wazi (ukaguzi wa hoja unakataa N64 kwa
+// kigezo cha N8* tangu 2026-09-01).
+N8* kielekezi_kutoka_hoja(N64 v) {
+    N8* p = v;
+    rudisha p;
+}
+
 W0 andika_ndani(N32 faili, N8* f, N64 a1, N64 a2, N64 a3, N64 a4, N64 a5, N64 a6) {
     N32 p = 0;  // mfuatano hauna nukuu (kumbukumbu hutoa bila nukuu)
     N32 na = 0;  // faharisi ya hoja inayofuata
@@ -127,9 +136,9 @@ W0 andika_ndani(N32 faili, N8* f, N64 a1, N64 a2, N64 a3, N64 a4, N64 a5, N64 a6
                             sivyo { kama (na == 4) { andika_n64(faili, a5); } sivyo { andika_n64(faili, a6); } } } } }
                 na = na + 1;
             } sivyo { kama (sp == 115) {  // %s
-                    kama (na == 0) { andika_mfuatano(faili, a1); } sivyo { kama (na == 1) { andika_mfuatano(faili, a2); }
-                        sivyo { kama (na == 2) { andika_mfuatano(faili, a3); } sivyo { kama (na == 3) { andika_mfuatano(faili, a4); }
-                                sivyo { kama (na == 4) { andika_mfuatano(faili, a5); } sivyo { andika_mfuatano(faili, a6); } } } } }
+                    kama (na == 0) { andika_mfuatano(faili, kielekezi_kutoka_hoja(a1)); } sivyo { kama (na == 1) { andika_mfuatano(faili, kielekezi_kutoka_hoja(a2)); }
+                        sivyo { kama (na == 2) { andika_mfuatano(faili, kielekezi_kutoka_hoja(a3)); } sivyo { kama (na == 3) { andika_mfuatano(faili, kielekezi_kutoka_hoja(a4)); }
+                                sivyo { kama (na == 4) { andika_mfuatano(faili, kielekezi_kutoka_hoja(a5)); } sivyo { andika_mfuatano(faili, kielekezi_kutoka_hoja(a6)); } } } } }
                     na = na + 1;
                 } sivyo { kama (sp == 99) {  // %c
                         kama (na == 0) { andika_herufi(faili, a1); } sivyo { kama (na == 1) { andika_herufi(faili, a2); }
@@ -176,7 +185,11 @@ N64 arena_nafasi = 0;
 
 N8* tenga(N64 ukubwa) {
     kama (arena_anwani == 0) {
-        arena_anwani = sys_mmap(0, 1048576, 3, 34, 0 - 1);
+        // Anwani sifuri = "popote" (kama mmap(NULL, ...) ya C).
+        // Halisi 0 kwa kigezo cha kielekezi inakataliwa na ukaguzi
+        // wa 2026-09-01 — tumia kielekezi cha sifuri wazi.
+        N8* anwani_sifuri = 0;
+        arena_anwani = sys_mmap(anwani_sifuri, 1048576, 3, 34, 0 - 1);
         kama (arena_anwani == 0 - 1) { rudisha 0; }
     }
     kama (ukubwa == 0) { ukubwa = 8; }
@@ -194,7 +207,7 @@ N8* tenga(N64 ukubwa) {
     rudisha r + 8;
 }
 
-W0 achilia(N8* p) {
+W0 achilia_arena(N8* p) {
     // Arena haiwezi kufungua vipande — hakuna kitu
 }
 
@@ -386,7 +399,7 @@ N32 orodha_urefu(Orodha* o) {
 }
 
 W0 orodha_huru(Orodha* o) {
-    achilia(o->data);
+    achilia_arena(o->data);
     o->data = 0;
     o->idadi = 0;
     o->uwezo = 0;

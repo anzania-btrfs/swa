@@ -1301,7 +1301,7 @@ N32 main() {
 
     // tafuta_herufi — inatafuta herufi kwenye mfuatano
     N8 s4[] = \"habari\";
-    kama (tafuta_herufi(s4, 98) != 1) rudisha 9;   // 'b' iko kwenye faharisi 1
+    kama (tafuta_herufi(s4, 98) != 2) rudisha 9;   // 'b' iko kwenye faharisi 2 (h-a-b-a-r-i)
     kama (tafuta_herufi(s4, 122) != -1) rudisha 10;  // 'z' haipo
 
     rudisha 0;
@@ -1451,6 +1451,93 @@ N32 main() {
 }
 
 // ============================================================================
+// K10e2 — Skrutini ya chagua yenye wito wenye athari inapaswa kutathminiwa
+// ============================================================================
+
+#[test]
+fn jaribio_k10e2_chagua_skrutini_athari() {
+    let test_source = "\
+N32 hesabu_kutoka(N32* kumbukumbu) {
+    *kumbukumbu = *kumbukumbu + 10;
+    rudisha *kumbukumbu;
+}
+
+N32 main() {
+    N32 thamani = 1;
+    N32 matokeo = 0;
+    // Skrutini ni wito wenye athari — lazima utekelezwe mara moja.
+    chagua (hesabu_kutoka(&thamani)) {
+        hali 11: matokeo = 100;
+        hali 21: matokeo = 200;
+        sivyo: matokeo = 999;
+    }
+    kama (thamani != 11) rudisha 1;
+    kama (matokeo != 100) rudisha 2;
+    rudisha 0;
+}
+";
+    run_msingi_test(test_source, 0);
+}
+
+// ============================================================================
+// K10e3 — Kianzisha cha kwa kina wito wenye athari — lazima kitekelezwe
+// ============================================================================
+
+#[test]
+fn jaribio_k10e3_kwa_kianzisha_athari() {
+    let test_source = "\
+N32 hesabu() {
+    rudisha 1;
+}
+
+N32 main() {
+    N32 j = 0;
+    N32 hesabu_zaidi = 0;
+    // Kianzisha kina wito wenye athari ya thamani — lazima kitekelezwe
+    // mara moja kabla ya mzunguko.
+    kwa (j = hesabu(); j < 3; j = j + 1) {
+        hesabu_zaidi = hesabu_zaidi + j;
+    }
+    kama (j != 3) rudisha 1;
+    kama (hesabu_zaidi != 3) rudisha 2;
+
+    // Tangazo la ndani kama kianzisha.
+    N32 hesabu_zaidi2 = 0;
+    kwa (N32 i = hesabu(); i < 3; i = i + 1) {
+        hesabu_zaidi2 = hesabu_zaidi2 + i;
+    }
+    kama (hesabu_zaidi2 != 3) rudisha 3;
+    rudisha 0;
+}
+";
+    run_msingi_test(test_source, 0);
+}
+
+// ============================================================================
+// K10e4 — Endelea katika kwa yenye hatua inaruka kwenye HATUA (semantiki ya C)
+// ============================================================================
+
+#[test]
+fn jaribio_k10e4_kwa_endelea_hatua() {
+    let test_source = "\
+N32 main() {
+    N32 jumla = 0;
+    N32 i = 0;
+    kwa (i = 0; i < 5; i = i + 1) {
+        kama (i == 2) {
+            endelea;
+        }
+        jumla = jumla + i;
+    }
+    kama (jumla != 8) rudisha 1;
+    kama (i != 5) rudisha 2;
+    rudisha 0;
+}
+";
+    run_msingi_test(test_source, 0);
+}
+
+// ============================================================================
 // K10f — Jaribio la hesabu.swa (hisabati)
 // ============================================================================
 
@@ -1574,8 +1661,11 @@ N32 main() {
 }
 
 /// K11b: Nambari za heksadesimali (0x), oktali (0o), na binary (0b).
-/// Thamani hazijabadilishwa kwa usahihi na mchanganuzi wa .swa bado,
-/// lakini msomaji unatambua tokeni hizo bila kuanguka.
+/// Hati 2.3 inaahidi "mfuatano wa tarakimu" pekee kwa nambari kamili —
+/// radiksi si lugha, na kuzikubali kimya kama desimali ni jibu baya.
+/// Mnyororo wa .swa (mbegu + uzalishaji) unazikataa kwa sauti; jaribio
+/// hili linajenga stage1 (dereva wa Rust) na kuthibitisha kukataa huko.
+/// (Angalia pia MANIFEST: jaribio_k11b_nambari_za_radiksi ni KATA.)
 #[test]
 fn jaribio_k11b_nambari_za_radiksi() {
     let test_chanzo = "\
@@ -1589,24 +1679,70 @@ N32 main() {
     rudisha 0;
 }
 ";
-    run_k6_test(test_chanzo, 0);
+    // Jenga stage1 kutoka msingi/stage1.swa kupitia dereva wa Rust.
+    let src = std::fs::read_to_string("msingi/stage1.swa")
+        .expect("inapaswa kusoma faili");
+    let mut driver = Driver::new();
+    let ir_module = driver
+        .compile_to_ir(&src, PathBuf::from("msingi/stage1.swa"))
+        .expect("stage1.swa inapaswa kuchanganua na kuteremsha");
+
+    let dir = tempfile::tempdir().expect("inapaswa kuunda saraka ya muda");
+    let obj_path = dir.path().join("stage1.o");
+    let exe_path = dir.path().join("stage1");
+
+    let backend = LlvmBackend::new()
+        .with_opt_level(kande_lib::codegen::llvm::ffi::LLVMCodeGenOptLevel::Less);
+    backend
+        .compile_to_file(&ir_module, &obj_path)
+        .expect("inapaswa kutoa faili la kitu");
+
+    // Unganisha kwa njia ya trampoline ya C (kama run_k6_test).
+    let clang = which_clang().expect("clang inapaswa kupatikana");
+    let trampoline_c = dir.path().join("trampoline.c");
+    std::fs::write(&trampoline_c,
+        "#include <stdio.h>\n#include <stdarg.h>\nint andika(const char* f, ...) { va_list a; va_start(a,f); int r=vfprintf(stdout,f,a); va_end(a); fflush(stdout); return r; }\nint andika_stderr(const char* f, ...) { va_list a; va_start(a,f); int r=vfprintf(stderr,f,a); va_end(a); fflush(stderr); return r; }\nint tekeleza(void* kazi, int argc, void* argv, int ofseti) { int (*f)(int, void*) = (int (*)(int, void*))kazi; return f(argc, (void*)((char**)argv + ofseti)); }\nvoid* anwani_ya_kazi(const char* jina) { extern void* dlsym(void*, const char*); return dlsym((void*)0, jina); }\nlong wito_wa_mfumo(long n, long a1, long a2, long a3, long a4, long a5) { extern long syscall(long, long, long, long, long, long, long); return syscall(n, a1, a2, a3, a4, a5, 0); }\n"
+    ).expect("inapaswa kuandika trampoline.c");
+    let trampoline_o = dir.path().join("trampoline.o");
+    let compile_status = std::process::Command::new(&clang)
+        .arg("-c").arg(&trampoline_c).arg("-o").arg(&trampoline_o)
+        .status().expect("inapaswa kuendesha clang kwa trampoline");
+    assert!(compile_status.success(), "clang inapaswa kukusanya trampoline");
+    let link_status = std::process::Command::new(&clang)
+        .arg(&obj_path).arg(&trampoline_o).arg("-o").arg(&exe_path).arg("-no-pie")
+        .status().expect("inapaswa kuendesha clang");
+    assert!(link_status.success(), "clang inapaswa kuunganisha kwa mafanikio");
+
+    // Endesha stage1 dhidi ya chanzo chenye radiksi — lazima kikataliwe.
+    let test_input = dir.path().join("jaribio.swa");
+    std::fs::write(&test_input, test_chanzo).expect("inapaswa kuandika faili la jaribio");
+    let output = std::process::Command::new(&exe_path)
+        .arg(&test_input)
+        .output()
+        .expect("inapaswa kuendesha binary iliyounganishwa");
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(!output.status.success(),
+        "radiksi lazima zikataliwe kwa sauti (msimbo si 0)\nstderr: {stderr}");
+    assert!(stderr.contains("halisi za radiksi hazijaungwa mkono"),
+        "kosa la radiksi linapaswa kutajwa\nstderr: {stderr}");
 }
 
 /// K11c: Mfuatano wa utorokaji katika herufi (\n, \t, \\\\, \\xNN).
 /// Huhakikisha msomaji wa .swa unashughulikia tokeni za utorokaji
-/// katika herufi bila kuanguka. (Mifuatano ina mdudu wa awali kwenye stage1
-/// inayozuia majaribio kupitia njia ya kujikusanya.)
+/// bila kuanguka. Halisi za herufi ('a') zimekataliwa kwa sauti
+/// (hati 2.3 haijaahidi) — utorokaji hujaribiwa kupitia mifuatano,
+/// ndio njia iliyoahidiwa.
 #[test]
 fn jaribio_k11c_mfuatano_wa_utorokaji() {
     let test_chanzo = "\
 N32 main() {
-    N8 a = '\\n';
-    N8 b = '\\t';
-    N8 c = '\\r';
-    N8 d = '\\\\';
-    N8 e = '\\0';
-    N8 f = '\\x41';
-    N8 g = '\\x5A';
+    N8* a = \"\\n\";
+    N8* b = \"\\t\";
+    N8* c = \"\\r\";
+    N8* d = \"\\\\\";
+    N8* e = \"\\0\";
+    N8* f = \"\\x41\";
+    N8* g = \"\\x5A\";
     rudisha 0;
 }
 ";
@@ -2043,7 +2179,7 @@ N32 main() {
     pangilia_n32(data, 5);
     kama (data[0] != 1) rudisha 9;
     kama (data[4] != 5) rudisha 10;
-    N64 fd = sys_fungua(\"mstari-jaribio.txt\", 0);
+    N64 fd = sys_fungua(\"mstari-jaribio.txt\", 0, 0);
     kama (fd < 0) rudisha 11;
     N8 bafa[64];
     N64 n = soma_mstari(fd, bafa, 64);
@@ -2309,4 +2445,51 @@ fn jaribio_zana_umbizaji_kujijenga() {
     let chanzo_awali = std::fs::read("zana/umbizaji.swa").expect("inapaswa kusoma chanzo");
     assert_eq!(towe.stdout, chanzo_awali,
         "formatter inapaswa kuwa fixpoint: kuumbiza yenyewe = baiti sawa");
+}
+
+/// #139: kianzilishi cha tangazo chenye NA/AU (fupi-hali) kilivunja LLVM
+/// ya dereva — kizuizi cha muunganiko kilipata Br cha kujizungusha na phi
+/// bila kuingia kwa watangulizi wake ("PHINode should have one entry for
+/// each predecessor").  lower_decl na lower_return zilirudisha kizuizi cha
+/// MWISHO badala ya kizuizi cha KUINGIA, kikiruka tathmini ya upande wa
+/// kushoto.  Hapa: `N32 a = (x && y);`, `N32 b = (a || x);` na
+/// `rudisha (a || b);` zote lazima zithibitike (LLVM verification).
+#[test]
+fn jaribio_mende_139_kianzilishi_fupi_hali() {
+    let chanzo = "\
+N32 tathmini(N32 x, N32 y) {
+    N32 a = (x && y);
+    N32 b = (a || x);
+    kama (a == 0 && b == 1) { rudisha 1; }
+    rudisha (a || b);
+}
+N32 main() { rudisha tathmini(0, 1); }
+";
+    let ir = compile_and_verify(chanzo).expect("inapaswa kukusanyika");
+    assert!(ir.contains("phi"), "IR inapaswa kuwa na nodi za phi");
+}
+
+/// #140: kuanzisha kigezo cha muundo kutoka sehemu ya muundo
+/// (`Ndani x = p->sasa;`) kilichukua thamani ya sehemu ya kwanza kama
+/// anwani ya chanzo ya memcpy.  Sehemu ya muundo inawakilishwa kama
+/// kielekezi (sawa na vitambulisho na wito wa sret), na ufutaji wa
+/// sehemu za muundo wa ndani unalingana na mpangilio wa LLVM
+/// (upatanisho wa sehemu zake, si upana wake kamili).
+#[test]
+fn jaribio_mende_140_nakili_sehemu_muundo() {
+    let chanzo = "\
+muundo Ndani { N32 a; N32 b; }
+muundo Nje { N32 alama; Ndani sasa; N32 mwisho; }
+N32 main() {
+    Nje p;
+    p.sasa.a = 11;
+    p.sasa.b = 13;
+    Nje* ptr = &p;
+    Ndani x = ptr->sasa;
+    Ndani y = p.sasa;
+    rudisha x.a + y.b;
+}
+";
+    let ir = compile_and_verify(chanzo).expect("inapaswa kukusanyika");
+    assert!(ir.contains("memcpy"), "IR inapaswa kuwa na wito wa memcpy");
 }

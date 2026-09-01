@@ -322,6 +322,10 @@ N32 teremsha_taarifa(Mteremshi* t, N32 node) {
         rudisha teremsha_usemi(t, node);
     }
 
+    // Kifungio tupu (mwili tupu wa kazi { } au taarifa tupu ';') —
+    // hakuna msimbo wa IR; ruka kimya bila kosa.
+    kama (aina == AST_BLOCK) { rudisha -1; }
+
     // Usemi kama taarifa (mf. wito wa kazi;)
     N32 ir_expr = teremsha_usemi(t, node);
     kama (ir_expr != -1) { rudisha ir_expr; }
@@ -489,6 +493,17 @@ N32 teremsha_usemi(Mteremshi* t, N32 node) {
         N32 l = teremsha_usemi(t, kushoto);
         N32 r = teremsha_usemi(t, kulia);
         rudisha ir_node_mpya(IR_BIT_AU, 0, 0, l, r);
+    }
+
+    kama (aina == AST_XOR) {
+        N32 l = teremsha_usemi(t, kushoto);
+        N32 r = teremsha_usemi(t, kulia);
+        rudisha ir_node_mpya(AST_XOR, 0, 0, l, r);
+    }
+
+    kama (aina == AST_KINYUME) {
+        N32 expr = teremsha_usemi(t, kushoto);
+        rudisha ir_node_mpya(AST_KINYUME, 0, 0, expr, -1);
     }
 
     // Ternary

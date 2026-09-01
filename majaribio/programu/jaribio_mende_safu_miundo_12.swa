@@ -1,0 +1,20 @@
+// Mende: safu ya miundo ilitumia mwendo wa baiti 8 kwa kila kipengele
+// (shl 3) badala ya ukubwa wa muundo — s[1].b na ndugu zake
+// ziliingiliana kimya. Muundo huu ni baiti 12.
+muundo P { N32 a; N32 b; N32 c; }
+N32 main() {
+    P s[3];
+    s[0].a = 11; s[0].b = 21; s[0].c = 31;
+    s[1].a = 12; s[1].b = 22; s[1].c = 32;
+    s[2].a = 13; s[2].b = 23; s[2].c = 33;
+    kama (s[0].a != 11) rudisha 101;
+    kama (s[0].b != 21) rudisha 102;
+    kama (s[0].c != 31) rudisha 103;
+    kama (s[1].a != 12) rudisha 111;
+    kama (s[1].b != 22) rudisha 112;
+    kama (s[1].c != 32) rudisha 113;
+    kama (s[2].a != 13) rudisha 121;
+    kama (s[2].b != 23) rudisha 122;
+    kama (s[2].c != 33) rudisha 123;
+    rudisha 0;
+}

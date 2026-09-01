@@ -10,7 +10,7 @@ N8 chanzo_buf[1048576];
 N32 chanzo_urefu = 0;
 
 W0 ongeza_faili(N8* njia) {
-    N64 f = sys_fungua(njia, 0);
+    N64 f = sys_fungua(njia, 0, 0);
     kama (f < 0) {
         andika_stderr("; KOSA: faili halifunguki: %s\n", njia);
         rudisha;
@@ -37,9 +37,31 @@ W0 ondoa_husisha() {
             kama (chanzo_buf[i-1] == 10) { ni_mwanzo_mstari = 1; }
         }
         kama (ni_mwanzo_mstari == 1) {
+            // Neno KAMILI "husisha" tu (si kiambishi "hu"): mstari unaoanza
+            // na "hu" uliofuata na chochote lazima UPITIE bila kufutwa.
+            // Neno kuu linakubaliwa likifuatiwa tu na nafasi, tabo, mwisho
+            // wa mstari, au mwisho wa bafa — ndipo ndio maelekezo halali
+            // (husisha { faili.swa } na husisha C::jina).
             kama (chanzo_buf[i] == 104) {
                 kama (chanzo_buf[i+1] == 117) {
-                    ni_husisha = 1;
+                    kama (chanzo_buf[i+2] == 115) {
+                        kama (chanzo_buf[i+3] == 104) {
+                            kama (chanzo_buf[i+4] == 105) {
+                                kama (chanzo_buf[i+5] == 115) {
+                                    kama (chanzo_buf[i+6] == 104) {
+                                        kama (chanzo_buf[i+7] == 97) {
+                                            N8 baada = chanzo_buf[i+8];
+                                            kama (baada == 32) { ni_husisha = 1; }
+                                            kama (baada == 9) { ni_husisha = 1; }
+                                            kama (baada == 10) { ni_husisha = 1; }
+                                            kama (baada == 13) { ni_husisha = 1; }
+                                            kama (baada == 0) { ni_husisha = 1; }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -108,8 +130,14 @@ N32 main(N32 argc, N8** argv) {
 
 
     // 2. Ukaguzi wa kisemantiki
+    // Makosa ya aina ni ya kufa: programu iliyokataliwa haipaswi
+    // kutoa msimbo wowote. Kosa lolote la mkaguzi linazuia mkusanyaji
+    // (ona hati/uthibitisho-wa-lugha.md, kipengele J10).
     N32 makosa = mkaguzi_angalia(mzizi);
-    kama (makosa != 0) { andika_stderr("; ONYO: makosa %d, inaendelea\n", makosa); }
+    kama (makosa != 0) {
+        andika_stderr("Hitilafu: makosa %d ya aina yalipatikana; hakuna msimbo uliotolewa\n", makosa);
+        rudisha 1;
+    }
 
     // 3. Teremsha AST hadi IR (uthibitishaji wa muundo)
     Mteremshi t;

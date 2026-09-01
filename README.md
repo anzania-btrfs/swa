@@ -36,9 +36,9 @@ hesabu_na_onyesha(15, 7);
 ```swa
 N32 umri = 25;
 N64 idadi_ya_watu = 8000000000;
-D32 wastani = 3.14;
+D64 wastani = 3.14;
 B1 imewashwa = 1;
-N8 herufi = 'A';
+N8 herufi = 65;             // halisi za herufi ('A') hazijatekelezwa bado
 ```
 
 ### Mtiririko wa Udhibiti
@@ -85,8 +85,8 @@ muundo Nukta {
     N32 y;
 };
 
-N32 pata_x(Nukta p) {
-    rudisha p.x;
+N32 pata_x(Nukta* p) {      // muundo kwa thamani: mbegu inarudisha
+    rudisha p->x;           // takataka (uthibitisho 2026-08-27)
 }
 
 W0 weka_x(Nukta* p, N32 v) {
@@ -98,10 +98,11 @@ W0 weka_x(Nukta* p, N32 v) {
 
 ```swa
 N8 bafa[1024];              // safu ya ulimwengu
-N32 namba[5] = {1, 2, 3, 4, 5};
+N32 namba[5];               // vianzilishi vya safu bado havijatekelezwa
 
 W0 andika_bafa() {
     bafa[0] = 65;           // andika kwenye safu
+    namba[0] = 7;
     N32 ya_kwanza = namba[0];
 }
 
@@ -142,10 +143,13 @@ N32 kitanzi(N32 n) {
   (mnyororo wa uzalishaji; uthabiti wa makosa ni mhimili tofauti —
   angalia hati/mipaka.md)
 - **Vizalishe viwili**: asilia (x86-64 ELF moja kwa moja — mnyororo wa uzalishaji) + LLVM (ya majaribio pekee)
-- **Familia 5 za nambari** — N, A, D, B, W (upana wowote: N8–N128,
-  D16–D80, B1–B64, W0–W64, n.k.)
+- **Familia 5 za nambari** — N, A, D, B, W (upana halisi 8/16/32/64;
+  upana mwingine haujaungwa mkono — angalia hati/uthibitisho-wa-lugha.md)
 - **Kumbukumbu ya moja kwa moja** -- tenga, achilia, hakuna ukusanyaji taka
 - **Majaribio**: 227 yanapita (146 maktaba + 80 ujumuishaji + 1 nyaraka). K6 bootstrap inafanya kazi.
+  Uthibitisho kamili wa lugha (2026-08-27, kesi ~487 kwenye minyororo
+  yote miwili): **hati/uthibitisho-wa-lugha.md** — jedwali za
+  uzingatiaji, jibu baya zote kwa kipimo chake, na poromoko zote.
 
 ## Muundo wa Mradi
 
@@ -204,14 +208,14 @@ za mkono hadi mkusanyaji kamili wa Swa, bila lugha nyingine popote.
 
 | Kipimo | Thamani |
 |--------|---------|
-| **Majaribio** | 227/227 [PASS] |
+| **Majaribio** | 227/227 [PASS] (dereva wa Rust); uthibitisho kamili wa lugha 2026-08-27: hati/uthibitisho-wa-lugha.md |
 | **Kujikusanya (K6)** | Inapita [PASS] |
 | **Mchanganuzi wa Swa** | Kamili [DONE] |
-| **Mkaguzi wa Swa** | Kamili [DONE] |
+| **Mkaguzi wa Swa** | Aina [DONE]; lakini makosa ya aina ni ONYO — mkusanyaji anaendelea na kutoa binary (jibu baya la mfumo, kilichopimwa 2026-08-27) |
 | **Kiteremshi cha Swa** | Kamili [DONE] |
 | **Kizalishe asilia cha x86-64** | Kamili [DONE] |
-| **Usambazaji wa aina** | Familia 5 (N/A/D/B/W) [DONE] |
-| **Urejeshaji wa makosa** | Kamili [DONE] |
+| **Usambazaji wa aina** | Familia 5 (N/A/D/B/W); upana halisi 8/16/32/64 pekee |
+| **Urejeshaji wa makosa** | Sehemu: mbegu inakataa kimya katika kesi kadhaa; uzalishaji huanguka kwa `sivyo` bila `kama` (kilichopimwa 2026-08-27) |
 | **Alloca-in-loop** | Imerekebishwa [DONE] |
 | **Sret (struct return)** | Imetekelezwa [DONE] |
 | **`--opt` (LLVM passes)** | Inafanya kazi [DONE] |

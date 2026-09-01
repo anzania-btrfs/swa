@@ -11,19 +11,19 @@ kikomo kimeandikwa na kikomo chake.
 |---|---|
 | Kama/sivyo (if/else) | majaribio ya K-series, jaribio_kama_sivyo |
 | Wakati (while) | jaribio_wakati, mnyororo mzima wa kujikusanya |
-| Chagua (switch) | jaribio_chagua_* |
+| Chagua (switch) — kwenye uzalishaji PEKEE; mbegu inakataa kwa muundo (uthibitisho 2026-08-27); lebo hasi/N64 kubwa/usemi zinatoa jibu baya kwenye uzalishaji | jaribio_chagua_*; hati/uthibitisho-wa-lugha.md |
 | Urejeshaji (kujirudia, wito wa mbele, pande mbili) | jaribio_mwito_wa_*, mkazo wa RELA (fibonacci=55) |
 | kwa (for) — KAMILI kwenye mbegu; `endelea` inaruka HATUA (semantiki ya C) kwenye minyororo yote miwili | mkazo wa RELA (s=125), jaribio la CI; mipaka.md 4b |
-| Miundo, kielekezi, &, nyoosha | jaribio_k13_* |
+| Miundo, kielekezi, &, nyoosha (sehemu, `->`, sret) | jaribio_k13_*; kikomo kilichopimwa 2026-08-27: safu za miundo zinaanguka SEGV kwa zote mbili, muundo kwa thamani ni takataka kwenye mbegu na unapoteza baiti > 8 kwenye uzalishaji |
 | JIT (--jit) NDANI ya exe | jaribio la CI: '; JIT: matokeo=42'; UND=0 kwenye exe |
 | Kujikusanya (0% bootstrap gap) | stage2 == stage3 sawa kwa baiti; kwanza → mbegu → stage1-exe |
 | Uthibitisho wa nje wa RELA | GNU ld inakubaliana na toa_exe sawa kwa baiti |
 | Ukaguzi wa bafa (mbegu) | hati/ukaguzi-bafa.md — kila mpaka unalia kwa sauti |
 | Mzunguko mfupi wa && na || KATIKA MBEGU (sawa na uzalishaji.swa) | jaribio_mbegu_mzunguko_mfupi (SEGV ya zamani) |
 | Usomaji wa stdin hadi EOF (bomba) — matokeo yana uhakika | jaribio_mbegu_stdin_bomba_kubwa (mkato wa zamani) |
-| Kazi isiyofafanuliwa inalia kwa sauti (si SEGV) | jaribio_mbegu_kazi_kukosa |
-| Maktaba ya kawaida kamili (hesabu, mifuatano, I/O, sort) | jaribio_maktaba_mbegu_exe |
-| Desimali (D64) — hesabu, ulinganisho, na ukanushaji kwenye minyororo YOTE (mbegu, .swa, dereva wa Rust); ABI kamili ya xmm0-xmm7 kwenye mnyororo wa .swa | jaribio_mende_60_desimali_mbegu, jaribio_mende_135_desimali; mipaka.md 4c |
+| Kazi isiyofafanuliwa inalia kwa sauti kwenye uzalishaji (si SEGV); mbegu inakataa kimya katika kesi kadhaa | jaribio_mbegu_kazi_kukosa; hati/uthibitisho-wa-lugha.md |
+| Maktaba ya kawaida (hesabu, mifuatano, I/O, sort) — kwa kiasi: badili na ukuaji wa Orodha zinaanguka (SEGV), ramani ni no-op kwenye mbegu, nambari_kwa_mfuatano_n64 imevunjika (uthibitisho 2026-08-27) | jaribio_maktaba_mbegu_exe; hati/uthibitisho-wa-lugha.md |
+| Desimali (D64) — hesabu, ulinganisho, ukanushaji NA WITO WA KAZI kwenye minyororo yote miwili (mbegu inatumia ABI ya uhamisho wa GP; kilichopimwa 2026-08-27 — mipaka.md 4c imerekebishwa). Kikomo: kila mpaka kati ya D64 na nambari kamili umevunjika (jibu baya); D32 imevunjika | jaribio_mende_60_desimali_mbegu, jaribio_mende_135_desimali; hati/uthibitisho-wa-lugha.md |
 | Vipimo rasmi vya lugha | hati/vipimo-vya-lugha.md |
 
 ## Kilicho na kikomo (kilichoandikwa kwa ukali)
@@ -32,22 +32,33 @@ kikomo kimeandikwa na kikomo chake.
 |---|---|---|
 | Dereva wa Rust/LLVM: MAJARIBIO; O0 inakataa kwa kosa lauti kazi >40 ya vizuizi; majaribio yote kwa O1 (ISel kamili) | CHINI (njia ya kupita ipo; mnyororo wa uzalishaji ni mbegu/exe) | hati/mipaka.md #6 |
 | Upeo wa tokeni 262,144 — inalia kwa sauti | CHINI | hati/mipaka.md #3 |
-| Maneno halisi 32-bit signed kwenye mbegu na dereva wa Rust (2147483648 → -2147483648; mnyororo wa .swa umerekebishwa hadi N64 2026-08-25) | CHINI | hati/mipaka.md #5 |
-| ABI ya xmm (xmm0-xmm7) kwenye wito wa kazi wa mbegu — haijatekelezwa; inalia kwa sauti | CHINI | hati/mipaka.md 4c |
+| Maneno halisi kwenye mbegu na dereva wa Rust ni 32-bit signed (2147483648 hutoa -2147483648); mnyororo wa .swa umerekebishwa hadi N64 2026-08-25 — kwa [2^31, 2^63) pekee: halisi >= 2^63 zinakatwa kimya kwa minyororo yote miwili, na halisi kubwa kama hoja ya wito zinavunjika (uthibitisho 2026-08-27) | CHINI | hati/mipaka.md #5 |
+| Mpaka wa D64 na nambari kamili (kurudisha, ugawaji, operesheni mchanganyiko, ulinganisho mchanganyiko, upakiaji wa ulimwengu wa D64) — jibu baya kwa minyororo yote miwili; D32 imevunjika (poromoko) | JUU | hati/uthibitisho-wa-lugha.md (J1, J2, J7, J9) |
+| Upana usio wa 8/16/32/64 (N128, D80, A128, n.k.) — unakubaliwa kimya kwa semantiki za uongo kwenye uzalishaji; mkusanyaji wa mbegu unaanguka | CHINI | hati/uthibitisho-wa-lugha.md (J16, J12) |
 
 ## Kinachokosekana kabla ya 1.0
 
 - Majukwaa ya asilia zaidi ya x86-64 Linux
 - Zana (LSP, debugger, formatter, package manager)
-- Bomba la desimali — LIMEFUNGWA 2026-08-20 (mipaka.md 4c; kikomo
-  cha CHINI cha mbegu kwenye wito wa D64 kinaelekeza kwa .swa)
+- Bomba la desimali — limefungwa 2026-08-20; kikomo cha mbegu kwenye
+  wito wa D64 KIMEONDOKA (kilichopimwa 2026-08-27, mipaka.md 4c).
+  Kilichobaki: mpaka wa D64 na nambari kamili (jibu baya) na D32
+  (poromoko)
 
-Kinachokamilika kwa 1.0 (2026-08): maktaba ya kawaida kamili,
-vipimo rasmi vya lugha, na uamuzi wa mwisho wa LLVM (MAJARIBIO —
-mnyororo wa uzalishaji ni mbegu/exe pekee).
+Kinachokamilika kwa 1.0 (2026-08): maktaba ya kawaida (kwa kiasi
+kilichoorodheshwa hapo juu), vipimo rasmi vya lugha, na uamuzi wa
+mwisho wa LLVM (MAJARIBIO — mnyororo wa uzalishaji ni mbegu/exe
+pekee).
 
 ## Uthibitisho wa jumla
 
 Majaribio 227/227 (146 maktaba + 80 ujumuishaji + 1 nyaraka).
 Fixpoint: stage2-exe == stage3-exe sawa kwa baiti baada ya kila
 mchanganyiko. Alama za nje za exe: SIFURI.
+
+Kumbuka: fixpoint inathibitisha kujikusanya, si usahihi wa
+semantiki. Uthibitisho kamili wa lugha (2026-08-27, kesi ~487
+zilizokusanywa na kuendeshwa kwenye minyororo yote miwili)
+umeandikwa kwenye `hati/uthibitisho-wa-lugha.md` — pamoja na
+jibu baya zote kwa kipimo chake, poromoko, na ambapo minyororo
+miwili inatofautiana.

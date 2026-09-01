@@ -65,7 +65,7 @@ mpaka unaolia, au sababu ya uthibitisho iliyoandikwa.**
 | mzunguko_lebo_*[16] | 16 | ulinzi mpya → KOSA kwa sauti | SALAMA KWA SAUTI (ilirekebishwa) |
 | var_pool[1024] | 1,024 | ulinzi mpya → KOSA kwa sauti | SALAMA KWA SAUTI (ilirekebishwa) |
 | nje_pool/str_buf (uzalishaji) | 32 KB/16 KB | nje_idadi < 2048; str kwa lebo | SALAMA KWA UTHIBITISHO (nje ~50) |
-| Orodha/Ramani (orodha/ramani.swa) | dinamiki | kukua kunakagua idadi >= uwezo | SALAMA KWA UTHIBITISHO (uwezo unakua ×2; OOM ni kikomo cha jumla) |
+| Orodha/Ramani (orodha/ramani.swa) | dinamiki | ukuaji unakagua idadi >= uwezo lakini UNAANGUKA KWA VITENDO | PENGO — orodha_ongeza zaidi ya uwezo inaanguka SEGV 139 kwa minyororo yote miwili (badili inatumia faharisi hasi yenye upanuzi wa sifuri; uthibitisho 2026-08-27, hati/uthibitisho-wa-lugha.md) |
 
 ## Hitimisho
 

@@ -1,0 +1,9 @@
+// KATA: aina ya kurudi isiyolingana na tangazo inazuia mkusanyaji.
+// Kazi ya N32 haipaswi kurudisha muundo; hakuna msimbo unaotolewa.
+muundo Nukta { N32 x; }
+
+N32 main() {
+    Nukta n;
+    n.x = 1;
+    rudisha n;
+}
