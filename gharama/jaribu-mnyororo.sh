@@ -29,13 +29,19 @@ bash gharama/jenga-kwanza.sh > /dev/null || { echo "SHINDWA: jenga-kwanza"; exit
 MBEGU="/tmp/mbegu2.bin"
 
 # ============ 2. Jenga mkusanyaji wa .swa (stage1) ============
+# Msuluhishi wa husisha (gharama/msuluhishi.swa) hujengwa kwanza na
+# mbegu, kisha hutatua mnyororo wa msingi/stage1.swa: utegemezi
+# hufuatwa kwa mpangilio wa topolojia, marudio yanaondolewa, na
+# mistari ya husisha yanafutwa. ZIMA linalotokana ndilo linalojengwa.
 ZIMA="$TMP/zima.swa"
-for f in msingi/kumbukumbu.swa msingi/mfuatano.swa msingi/msomaji.swa \
-         msingi/msambazaji.swa msingi/mteremko.swa msingi/mkaguzi.swa \
-         msingi/uzalishaji.swa msingi/orodha.swa msingi/ramani.swa \
-         msingi/stage1.swa; do
-    cat "$f" >> "$ZIMA"
-done
+MSULU="$TMP/zima-msuluhishi.swa"
+cat msingi/kumbukumbu.swa msingi/mfuatano.swa msingi/faili.swa \
+    gharama/msuluhishi.swa > "$MSULU"
+"$MBEGU" --exe "$MSULU" > "$TMP/msuluhishi" 2> "$TMP/msuluhishi.err" || {
+    echo "SHINDWA: mbegu --exe msuluhishi"; cat "$TMP/msuluhishi.err"; exit 1; }
+chmod +x "$TMP/msuluhishi"
+"$TMP/msuluhishi" msingi/stage1.swa > "$ZIMA" || {
+    echo "SHINDWA: kutatua msingi/stage1.swa"; exit 1; }
 "$MBEGU" --exe "$ZIMA" > "$TMP/stage1" 2> "$TMP/stage1.err" || {
     echo "SHINDWA: mbegu --exe zima.swa"; cat "$TMP/stage1.err"; exit 1; }
 chmod +x "$TMP/stage1"
