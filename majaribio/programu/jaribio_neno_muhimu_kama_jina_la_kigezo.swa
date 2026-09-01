@@ -1,10 +1,6 @@
-// Maneno muhimu kama majina ya vigezo (hali, wakati).
-W0 fanya() {
-    N32 hali = 42;
-    N32 wakati = hali + 1;
-}
-
+// Maneno muhimu kama majina ya vigezo — hati 2.2 inakataa.
+// Zamani ilikubaliwa kimya na kuleta msimbo wenye maana ya takataka.
 N32 main() {
-    fanya();
-    rudisha 0;
+    N32 kama = 5;
+    rudisha kama;
 }

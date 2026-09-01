@@ -1,0 +1,12 @@
+// Halisi kamili kwa kigezo cha kielekezi — lazima ikataliwe (mdudu
+// wa 2026-09-01: f(5) ilipita kwa sababu halisi hubeba enc 0
+// "aina yoyote" na ukaguzi mkali uliiruka — SEGV wakati wa
+// kukimbia). 0 pia ni halisi — f(0) inakataliwa vilevile.
+// Stage1 pekee: mbegu ya zamani bado inakubali.
+N32 f(N32* x) { rudisha *x; }
+N32 main() {
+    N32 a = 5;
+    N32 r = f(5);
+    r = r + f(0);
+    rudisha r;
+}
