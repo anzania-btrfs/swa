@@ -2497,28 +2497,28 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
         // bila maktaba), angukia kwenye wito wa nje wa C (andika ya muda).
         kama (kazi_nafasi_kwa_jina("andika_sehemu") < 0) { ni_andika_nje = 1; }
         kama (a0 != -1 && ast_aina[a0] == 5 && ni_andika_nje == 0) {
-            N8* muundo = ast_pool + ast_jina_off[a0];
+            N8* umbo = ast_pool + ast_jina_off[a0];
             // Njia ya kukusanya-wakati inatumika kwa halisi ya kamba
-            // PEKEE (mwanzo wake ni nukuu ya mwanzo). Kigeu kama muundo
+            // PEKEE (mwanzo wake ni nukuu ya mwanzo). Kigeu kama umbo
             // (mf. andika(bafa)) kinapaswa kuingia kwenye wito wa
-            // kawaida — andika_ndani huchakata muundo wakati wa
+            // kawaida — andika_ndani huchakata umbo wakati wa
             // kukimbia. Zamani jina la kigeu lenyewe lilitumiwa kama
-            // muundo (herufi ya kwanza na ya mwisho zikipotea kimya,
+            // umbo (herufi ya kwanza na ya mwisho zikipotea kimya,
             // mf. bafa ikichapishwa "af").
-            kama (muundo[0] == 34) {
+            kama (umbo[0] == 34) {
                 N32 fd = 1;
                 kama (jina_linganisha(callee, "andika_stderr")) { fd = 2; }
-                N32 urefu_m = jina_urefu(muundo);
+                N32 urefu_m = jina_urefu(umbo);
                 N32 h = ast_tiga[a0];
                 N32 p = 1;  // baada ya nukuu ya mwanzo
                 N32 mwanzo_sehemu = 1;
                 wakati (p < urefu_m) {
-                    kama (muundo[p] == 37) {  // '%'
+                    kama (umbo[p] == 37) {  // '%'
                         kama (p > mwanzo_sehemu) {
-                            N32 lebo = sehemu_tungo_hifadhi(muundo + mwanzo_sehemu, p - mwanzo_sehemu);
+                            N32 lebo = sehemu_tungo_hifadhi(umbo + mwanzo_sehemu, p - mwanzo_sehemu);
                             kama (lebo >= 0) { andika_wito_sehemu(fd, lebo, sehemu_len[sehemu_idadi - 1]); }
                         }
-                        N8 sp = muundo[p + 1];
+                        N8 sp = umbo[p + 1];
                         kama (sp == 37) {  // %% — asilimia halisi (hatumii hoja)
                             andika_mov_eax(37);
                             andika_wito_baiti(fd);
@@ -2545,7 +2545,7 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
                     }
                 }
                 kama (urefu_m - 1 > mwanzo_sehemu) {
-                    N32 lebo = sehemu_tungo_hifadhi(muundo + mwanzo_sehemu, urefu_m - 1 - mwanzo_sehemu);
+                    N32 lebo = sehemu_tungo_hifadhi(umbo + mwanzo_sehemu, urefu_m - 1 - mwanzo_sehemu);
                     kama (lebo >= 0) { andika_wito_sehemu(fd, lebo, sehemu_len[sehemu_idadi - 1]); }
                 }
                 rudisha;
@@ -5533,7 +5533,10 @@ W0 uzalishaji_jit(N32 mzizi, N32 argc_jit, N8** argv_jit, N32 ofseti_jit) {
     // haiwezi kufika. Thunk inaruka kwa anwani kamili kutoka slot.
     N32 slots_off = ukubwa;
     N32 jumla = ukubwa + rela_idadi * 14;
-    N8* kumbukumbu = sys_mmap(0, jumla, 7, 34, 0 - 1);
+    // Anwani sifuri = "popote" (kama mmap(NULL, ...) ya C). Halisi
+    // 0 kwa kigezo cha kielekezi inakataliwa na ukaguzi wa 2026-09-01.
+    N8* anwani_sifuri = 0;
+    N8* kumbukumbu = sys_mmap(anwani_sifuri, jumla, 7, 34, 0 - 1);
     kama (kumbukumbu == 0 - 1) {
         andika_stderr("; KOSA: mmap imeshindwa\n");
         rudisha;

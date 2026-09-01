@@ -227,6 +227,15 @@ safu) inatoa 0 kwenye uzalishaji na inaanguka kwenye mbegu.
   thamani).
 - `rudisha <usemi>;` kwa kazi yenye thamani; `rudisha;` kwa W0.
 - Wito wa kujirudia na wito wa mbele unasaidiwa.
+- Kikomo cha hoja: 16. Wito wa hoja zaidi ya 16 unakataliwa kwa
+  sauti (mdudu wa 2026-09-01: hoja zaidi zilitupwa kimya na
+  mzalishaji).
+- Kielekezi na namba hazichanganyiki kwenye hoja: kielekezi kwa
+  kigezo cha namba — au namba kwa kigezo cha kielekezi — ni kosa
+  la aina (mdudu wa 2026-09-01: kilikubaliwa kimya na kuanguka
+  SEGV wakati wa kukimbia). `andika`/`andika_stderr` na mkia wao
+  (pamoja na `andika_ndani` a1..a6) ni za kutofautiana: mkia hupita
+  kwa rejesta za N64 iwe thamani au kielekezi.
 
 ## 6. Taarifa
 
@@ -254,6 +263,12 @@ sivyo {
     sivyo { ... }
 }
 ```
+
+Mwili wa `kama` NA wa `sivyo` unaweza kuwa taarifa MOJA bila
+mabano (semantiki ya C): `kama (1) a = 1; sivyo a = 2;` huweka
+a = 1. Kilichopimwa 2026-09-01: mwili wa `sivyo` bila mabano
+ulitekelezwa KILA mara (taarifa iliyotiririka nje kama taarifa
+isiyo na masharti) — sasa ni taarifa moja, sawa na `kama`.
 
 ### 6.4 Wakati
 
