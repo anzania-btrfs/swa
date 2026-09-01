@@ -228,6 +228,46 @@ N32 neno_ni(Tokeni * t, N8* neno) {
 }
 
 // -------------------------------------------------------
+// Neno muhimu? Hati 2.2: maneno muhimu hayawezi kutumika kama
+// majina ya vitambulisho. Orodha kamili ya maneno 12: muundo,
+// rudisha, kama, sivyo, wakati, kwa, vunja, endelea, chagua,
+// hali, husisha, achilia. Rudisha 1 ikiwa tokeni ni neno muhimu.
+// -------------------------------------------------------
+N32 tokeni_ni_muhimu(Tokeni* t) {
+    kama (t->urefu < 3) { rudisha 0; }  // maneno muhimu yote yana angalau herufi 3
+    kama (neno_ni(t, "muundo")) { rudisha 1; }
+    kama (neno_ni(t, "rudisha")) { rudisha 1; }
+    kama (neno_ni(t, "kama")) { rudisha 1; }
+    kama (neno_ni(t, "sivyo")) { rudisha 1; }
+    kama (neno_ni(t, "wakati")) { rudisha 1; }
+    kama (neno_ni(t, "kwa")) { rudisha 1; }
+    kama (neno_ni(t, "vunja")) { rudisha 1; }
+    kama (neno_ni(t, "endelea")) { rudisha 1; }
+    kama (neno_ni(t, "chagua")) { rudisha 1; }
+    kama (neno_ni(t, "hali")) { rudisha 1; }
+    kama (neno_ni(t, "husisha")) { rudisha 1; }
+    kama (neno_ni(t, "achilia")) { rudisha 1; }
+    rudisha 0;
+}
+
+// Kataa tokeni iliyopo ikiwa ni neno muhimu linalotumiwa kama
+// jina (hati 2.2) — kosa la sauti lenye ujumbe wa Kiswahili.
+// Rudisha 1 ikiwa ilikataliwa (p->kosa imewekwa), 0 ikiwa halali.
+N32 kataa_neno_muhimu(Msambazaji* p) {
+    kama (tokeni_ni_muhimu(&p->sasa) == 0) { rudisha 0; }
+    N8 bafa_muhimu[64];
+    N32 bi = 0;
+    wakati (bi < p->sasa.urefu && bi < 63) {
+        bafa_muhimu[bi] = p->sasa.mwanzo[bi];
+        bi = bi + 1;
+    }
+    bafa_muhimu[bi] = 0;
+    andika_stderr("kosa: '%s' ni neno muhimu — haliwezi kutumika kama jina\n", bafa_muhimu);
+    p->kosa = 1;
+    rudisha 1;
+}
+
+// -------------------------------------------------------
 // Badilisha tokeni ya nambari kuwa thamani N32
 // -------------------------------------------------------
 N32 tokeni_kwa_nambari(N8* mwanzo, N64 urefu) {
@@ -460,14 +500,24 @@ N32 changanua_taarifa_kama(Msambazaji* p) {
                 then_body = changanua_taarifa(p);
             }
 
-            // Kifungu cha sivyo cha hiari (else) — lazima iwe bloku { }.
+            // Kifungu cha sivyo cha hiari (else) — bloku { } au taarifa
+            // moja (semantiki ya C, sawa na mwili wa kama). Zamani
+            // mwili bila mabano ulirudi -1 kimya na taarifa ilielea
+            // nje kama taarifa isiyo na masharti (mdudu wa 2026-09-01).
             // Tawi-jingine huandikwa kwa kuingiza kama ndani ya sivyo
             // (hakuna "sivyo kama").
             N32 else_body = -1;
             kama (p->sasa.urefu >= 2 && p->sasa.mwanzo[0] >= 97) {
                 kama (neno_ni(&p->sasa, "sivyo")) {
                     sogeza(p);
-                    else_body = changanua_bloku(p);
+                    kama (p->sasa.mwanzo[0] == 123) {
+                        else_body = changanua_bloku(p);
+                    } sivyo {
+                        else_body = changanua_taarifa(p);
+                        // Mwili usio halali (si bloku wala taarifa) —
+                        // kosa la sauti badala ya kumeza kimya.
+                        kama (else_body == -1) { p->kosa = 1; }
+                    }
                 }
             }
 
@@ -745,6 +795,8 @@ N32 changanua_taarifa_tangazo(Msambazaji* p) {
                 safu_ukubwa = 0;
                 N32 safu_ilipo = 0;
                 kama ((p->sasa.mwanzo[0] >= 65 && p->sasa.mwanzo[0] != 91 && p->sasa.mwanzo[0] != 93 && p->sasa.mwanzo[0] != 123 && p->sasa.mwanzo[0] != 125)) {
+                    // Neno muhimu kama jina la kigeu — kosa la sauti (hati 2.2)
+                    kama (kataa_neno_muhimu(p)) { rudisha -1; }
                     N32 var_name = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
                     hifadhi_jina(var_name, p->sasa.mwanzo, p->sasa.urefu);
                     ast_thamani[var_name] = decl_type;
@@ -940,6 +992,8 @@ N32 changanua_kazi_vigezo(Msambazaji* p) {
         N32 pnode = -1;
         N8 nc0 = p->sasa.mwanzo[0];
         kama ((nc0 >= 65 && nc0 != 123 && nc0 != 125)) {
+            // Neno muhimu kama jina la kigezo — kosa la sauti (hati 2.2)
+            kama (kataa_neno_muhimu(p)) { rudisha -1; }
             pnode = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
             hifadhi_jina(pnode, p->sasa.mwanzo, p->sasa.urefu);
             ast_thamani[pnode] = param_aina;
@@ -1806,6 +1860,8 @@ N32 changanua_kazi(Msambazaji* p) {
 
     N32 ret_aina = changanua_aina_tokeni(p);
 
+    // Neno muhimu kama jina la kazi au kigezo cha kimataifa — kosa la sauti (hati 2.2)
+    kama (kataa_neno_muhimu(p)) { rudisha -1; }
 
     N32 name_node = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
     hifadhi_jina(name_node, p->sasa.mwanzo, p->sasa.urefu);
@@ -1964,6 +2020,9 @@ N32 changanua_muundo(Msambazaji* p) {
         rudisha -1;
     }
 
+    // Neno muhimu kama jina la muundo — kosa la sauti (hati 2.2)
+    kama (kataa_neno_muhimu(p)) { rudisha -1; }
+
     N32 name = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
     hifadhi_jina(name, p->sasa.mwanzo, p->sasa.urefu);
     sogeza(p);  // tumia jina la muundo
@@ -1993,6 +2052,9 @@ N32 changanua_muundo(Msambazaji* p) {
             kama (fika == 2) { vunja; }  // '}' — kitanzi kitaiona juu
             vunja;  // EOF
         }
+
+        // Neno muhimu kama jina la shamba — kosa la sauti (hati 2.2)
+        kama (kataa_neno_muhimu(p)) { rudisha -1; }
 
         N32 fname = node_mpya(AST_KITAMBULISHO, 0, -1, -1);
         hifadhi_jina(fname, p->sasa.mwanzo, p->sasa.urefu);
