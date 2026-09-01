@@ -204,6 +204,25 @@ msg_genlabel_full: db "Hitilafu: jedwali la lebo-za-gen limejaa", 10, 0
 msg_strpool_full: db "Hitilafu: bwawa la herufi limejaa", 10, 0
 msg_textbuf_full: db "Hitilafu: bafa la .text limejaa", 10, 0
 msg_breakfix_full: db "Hitilafu: jedwali la fixup-za-vunja limejaa", 10, 0
+msg_desi_op:      db "Hitilafu: operesheni hii haifanyi kazi kwa desimali", 10, 0
+msg_desi_kielekezi: db "Hitilafu: kielekezi kwenye operesheni ya desimali", 10, 0
+msg_kiambishi_1:  db "Hitilafu: kiambishi ", 0
+msg_kiambishi_si: db "!", 0
+msg_kiambishi_tilde: db "~", 0
+msg_kiambishi_2:  db " hakikubaliki kwa desimali", 10, 0
+msg_muhimu_1:     db "Hitilafu: '", 0
+msg_muhimu_2:     db "' ni neno muhimu — haliwezi kutumika kama jina", 10, 0
+msg_vunja_nje:    db "Hitilafu: vunja nje ya kitanzi", 10, 0
+msg_endelea_nje:  db "Hitilafu: endelea nje ya kitanzi", 10, 0
+msg_idadi_hoja_1: db "Hitilafu: idadi ya hoja kwa '", 0
+msg_idadi_hoja_2: db "' si sahihi (", 0
+msg_idadi_hoja_3: db " badala ya ", 0
+msg_idadi_hoja_4: db ")", 10, 0
+msg_kielekezi_namba_1: db "Hitilafu: aina ya hoja kwa '", 0
+msg_kielekezi_namba_2: db "' hailingani (kielekezi dhidi ya namba)", 10, 0
+msg_ulimwengu_d64: db "Hitilafu: kianzio cha ulimwengu wa D64 lazima kiwe halisi ya desimali", 10, 0
+msg_umbo_1:       db "Hitilafu: kipengele cha umbo ", 0
+msg_umbo_2:       db " hakitumiki (viungwa: asilimia, d, s, c)", 10, 0
 
 ; ---------- Majina maalum kwa hali ya exe ----------
 jina_exe_flag:  db "--exe", 0
@@ -211,6 +230,9 @@ jina_wito_mfumo: db "wito_wa_mfumo", 0
 jina_tekeleza:  db "tekeleza", 0
 jina_ukubwa:    db "ukubwa", 0
 jina_main:      db "main", 0
+jina_andika:    db "andika", 0
+jina_andika_stderr: db "andika_stderr", 0
+jina_andika_ndani: db "andika_ndani", 0
 
 ; ---------- Vifunguo vya maneno muhimu ----------
 
@@ -228,6 +250,9 @@ kw_husisha:     db "husisha", 0
 kw_endelea:     db "endelea", 0
 kw_ukubwa:      db "ukubwa", 0
 kw_kama_sivyo:  db "kamasivyo", 0
+kw_chagua:      db "chagua", 0
+kw_hali:        db "hali", 0
+kw_achilia:     db "achilia", 0
 
 ; ---------- Majina ya aina ----------
 
@@ -379,6 +404,7 @@ muundo_jina:     resd 1                 ; ofseti ya jina la muundo (kwa aina za 
 exe_mode:        resb 1                 ; 1 = toa ET_EXEC badala ya .o
 tmp_argc:        resq 1                 ; hifadhi ya argc wakati wa kuchanganua hoja
 gen_op_64bit:    resd 1                 ; 1 = operesheni binary ya baiti 8 (N64/kielekezi)
+kianzio_lengo64: resd 1                 ; 1 = kianzilishi cha tangazo la N64 (uhamishaji wa baiti 8)
 
 ; ---------- Jedwali la miundo ----------
 muundo_count:    resq 1                 ; idadi ya miundo
@@ -419,6 +445,9 @@ kazi_ret_idadi:  resq 1                 ; idadi ya kazi zinazorudisha muundo
 func_ret_name:   resq MAX_GLOBALS       ; anwani ya jina la kazi (kwenye str_pool)
 func_ret_base:   resd MAX_GLOBALS       ; aina msingi ya kurudi
 func_ret_star:   resd MAX_GLOBALS       ; idadi ya nyota ya aina ya kurudi
+func_ret_params: resd MAX_GLOBALS       ; idadi ya vigezo (kwa ukaguzi wa idadi — 8.16)
+func_ret_paina:  resb MAX_GLOBALS*9     ; aina msingi ya kila kigezo (upeo wa hoja 9)
+func_ret_pnyota: resb MAX_GLOBALS*9     ; nyota za kila kigezo
 func_ret_count:  resq 1                 ; idadi ya kazi zilizosajiliwa
 
 ; ---------- Marekebisho ya endelea ----------
@@ -523,6 +552,180 @@ linganisha_neno_muhimu:
         pop     rcx
         pop     rsi
         pop     rdi
+        ret
+
+; -------------------------------------------------------
+; ni_neno_muhimu: je, tokeni ya sasa ni neno muhimu (hati 2.2)?
+;   Orodha kamili ya maneno 12 ya mnyororo wa .swa: muundo,
+;   rudisha, kama, sivyo, wakati, kwa, vunja, endelea, chagua,
+;   hali, husisha, achilia.
+;   rax = 1 ikiwa ni neno muhimu, 0 vinginevyo.
+;   Huharibu rax, rcx, rdx, rsi, rdi; huhifadhi r12-r15.
+; -------------------------------------------------------
+ni_neno_muhimu:
+        push    r12
+        push    r13
+        push    r14
+        push    r15
+        mov     rdi, [token_pos]
+        mov     rsi, [token_text + rdi*8]
+        movzx   ecx, word [token_len + rdi*2]
+        cmp     ecx, 3                  ; maneno yote yana angalau herufi 3
+        jl      .nnm_hapana
+        lea     rdx, [kw_muundo]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_rudisha]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_kama]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_sivyo]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_wakati]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_kwa]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_vunja]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_endelea]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_chagua]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_hali]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_husisha]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_achilia]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+.nnm_hapana:
+        xor     eax, eax
+        jmp     .nnm_mwisho
+.nnm_ndiyo:
+        mov     eax, 1
+.nnm_mwisho:
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+        ret
+
+; -------------------------------------------------------
+; kataa_neno_muhimu: kataa tokeni ya sasa ikiwa ni neno muhimu
+;   linalotumiwa kama jina (hati 2.2) — kosa la sauti lenye
+;   ujumbe; hakuna kurudi ikiwa imekataliwa.
+;   Huharibu rax, rcx, rdx, rsi, rdi, r12-r15.
+; -------------------------------------------------------
+kataa_neno_muhimu:
+        call    ni_neno_muhimu
+        cmp     eax, 0
+        je      .knm_mwisho
+        lea     rdi, [msg_muhimu_1]
+        call    andika_mfuatano
+        mov     rdi, [token_pos]
+        mov     rsi, [token_text + rdi*8]
+        movzx   ecx, word [token_len + rdi*2]
+        call    hifadhi_jina
+        lea     rdi, [str_pool + rax]
+        call    andika_mfuatano
+        lea     rdi, [msg_muhimu_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.knm_mwisho:
+        ret
+
+; -------------------------------------------------------
+; kagua_muundo_wa_kamba: kagua muundo wa KAMBA HALISI (hoja ya
+; kwanza ya andika/andika_stderr) — viungwa %d %s %c %% pekee
+; (8.11: %u na %x katika muundo halisi zilikubaliwa kimya).
+; Bwawa lina mfuatano ULIOTOROKISHWA (hakuna nukuu za mipaka) —
+; sawa na mkaguzi wa mnyororo: jozi ya backslash (k.m. kutoka
+; "\\") hurukwa zima kabla ya kuangalia '%', na jozi halali %X
+; hurukwa kwa herufi MBILI (%% ikifuatwa na \n haionekani kama
+; '%' isiyotumika; mwisho ni 0, si nukuu).
+;   edi = nodi ya hoja (halisi ya kamba)
+;   Hakuna kurudi ikiwa kipengele kisichotumika kinapatikana.
+;   Huharibu rax, rcx, rdx, rsi, rdi, r8-r11; huhifadhi r12-r15.
+; -------------------------------------------------------
+kagua_muundo_wa_kamba:
+        push    r12
+        push    r13
+        push    r14
+        push    r15
+        mov     r12d, edi
+        cmp     r12d, -1
+        je      .kmk_mwisho
+        ; Halisi ya kamba: KAULI yenye kushoto = -1
+        cmp     dword [ast_aina + r12*4], AST_KAULI
+        jne     .kmk_mwisho
+        cmp     dword [ast_kushoto + r12*4], -1
+        jne     .kmk_mwisho
+        mov     r13d, [ast_jina_off + r12*4]
+        lea     r13, [str_pool + r13]
+.kmk_loop:
+        mov     al, [r13]
+        cmp     al, 0
+        je      .kmk_mwisho
+        cmp     al, 92                  ; backslash — ruka jozi ya utorokaji
+        jne     .kmk_sio_backslash
+        add     r13, 2
+        jmp     .kmk_loop
+.kmk_sio_backslash:
+        cmp     al, 37                  ; '%'
+        jne     .kmk_ruka_herufi
+        movzx   eax, byte [r13 + 1]
+        cmp     al, 37                  ; %%
+        je      .kmk_jozi_halali
+        cmp     al, 100                 ; %d
+        je      .kmk_jozi_halali
+        cmp     al, 115                 ; %s
+        je      .kmk_jozi_halali
+        cmp     al, 99                  ; %c
+        je      .kmk_jozi_halali
+        ; Kipengele kisichotumika — kosa la sauti (8.11)
+        mov     r14d, eax               ; msimbo wa herufi
+        lea     rdi, [msg_umbo_1]
+        call    andika_mfuatano
+        mov     edi, r14d
+        call    andika_nambari
+        lea     rdi, [msg_umbo_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.kmk_jozi_halali:
+        add     r13, 2
+        jmp     .kmk_loop
+.kmk_ruka_herufi:
+        inc     r13
+        jmp     .kmk_loop
+.kmk_mwisho:
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
         ret
 
 ; -------------------------------------------------------
@@ -764,6 +967,45 @@ andika_mfuatano:
         mov     rdx, rax
         call    sys_write_buf
         pop     rdi
+        ret
+
+; -------------------------------------------------------
+; andika_nambari: andika nambari kamili ya desimali (yenye ishara)
+;   edi = nambari
+;   Huharibu rax, rcx, rdx, rsi, rdi; huhifadhi rbx, r12, r13
+; -------------------------------------------------------
+andika_nambari:
+        push    rbx
+        push    r12
+        push    r13
+        mov     r13d, edi               ; nambari asili (kwa ishara)
+        mov     ebx, edi
+        test    ebx, ebx
+        jns     .an_sio_hasi
+        neg     ebx
+.an_sio_hasi:
+        lea     r12, [tmp_buf + 32]
+        mov     byte [r12], 0
+        mov     eax, ebx
+.an_loop:
+        xor     edx, edx
+        mov     ecx, 10
+        div     ecx
+        add     edx, 48
+        dec     r12
+        mov     [r12], dl
+        test    eax, eax
+        jnz     .an_loop
+        test    r13d, r13d
+        jns     .an_chapisha
+        dec     r12
+        mov     byte [r12], '-'
+.an_chapisha:
+        mov     rdi, r12
+        call    andika_mfuatano
+        pop     r13
+        pop     r12
+        pop     rbx
         ret
 
 ; -------------------------------------------------------
@@ -2980,7 +3222,9 @@ changanua_taarifa:
         mov     r12d, eax
         mov     edi, TOK_MABANO_FUNGA
         call    tarajia_ishara
+        inc     qword [loop_depth]      ; kitanzi kimefunguka (8.13)
         call    changanua_block
+        dec     qword [loop_depth]
         mov     r13d, eax
         mov     r8d, AST_WAKATI
         mov     r9d, r12d
@@ -3038,7 +3282,9 @@ changanua_taarifa:
         mov     r15d, -1
 
 .kwa_mwili:
+        inc     qword [loop_depth]      ; kitanzi kimefunguka (8.13)
         call    changanua_block
+        dec     qword [loop_depth]
         mov     r9d, eax                ; mwili asili (au -1)
 
         ; Funga mwili kwenye AST_BLOCK (mnyororo uko kwenye ast_kushoto)
@@ -3099,6 +3345,15 @@ changanua_taarifa:
         jne     .not_break
 
         inc     qword [token_pos]       ; tumia "vunja"
+        ; vunja nje ya kitanzi ni kosa la sauti (8.13) — zamani
+        ; ilikubaliwa kimya na kuwa no-op
+        cmp     qword [loop_depth], 0
+        jne     .vunja_ndani
+        lea     rdi, [msg_vunja_nje]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.vunja_ndani:
         mov     r8d, AST_VUNJA
         mov     r9d, -1
         mov     r10d, -1
@@ -3114,6 +3369,14 @@ changanua_taarifa:
         jne     .not_endelea
 
         inc     qword [token_pos]       ; tumia "endelea"
+        ; endelea nje ya kitanzi ni kosa la sauti (8.13)
+        cmp     qword [loop_depth], 0
+        jne     .endelea_ndani
+        lea     rdi, [msg_endelea_nje]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.endelea_ndani:
         mov     r8d, AST_ENDELEA
         mov     r9d, -1
         mov     r10d, -1
@@ -3143,10 +3406,12 @@ changanua_taarifa:
         mov     [rsp], rax
 .tangazo_sio_muundo:
 
-        ; Soma jina la kigezo
+        ; Soma jina la kigezo — neno muhimu halikubaliki (8.12, hati 2.2)
         mov     rdi, [token_pos]
         cmp     dword [token_ty + rdi*4], TOK_NENO
         jne     .decl_error
+        call    kataa_neno_muhimu
+        mov     rdi, [token_pos]        ; soma upya (kataa inaharibu rejesta)
         mov     rsi, [token_text + rdi*8]
         movzx   ecx, word [token_len + rdi*2]
         inc     qword [token_pos]       ; tumia jina
@@ -3241,6 +3506,8 @@ changanua_taarifa:
 
 .decl_error:
         ; Sio tangazo — rejesha nafasi ya token na jaribu kama usemi
+        ; (8.19 IMEACHWA: ukataji mkali unavunja ugawaji wa
+        ; taarifa-usemi kama "s[0].a = 11")
         pop     rax                     ; toa ofseti ya muundo
         pop     rax
         mov     [token_pos], rax
@@ -3405,10 +3672,13 @@ changanua_vigezo:
         mov     [rsp], rax
 .param_sio_muundo:
 
-        ; Changanua jina la kigezo
+        ; Changanua jina la kigezo — neno muhimu halikubaliki
+        ; (8.12, hati 2.2)
         mov     rdi, [token_pos]
         cmp     dword [token_ty + rdi*4], TOK_NENO
         jne     .param_jina_hapana
+        call    kataa_neno_muhimu
+        mov     rdi, [token_pos]        ; soma upya (kataa inaharibu rejesta)
         mov     rsi, [token_text + rdi*8]
         movzx   ecx, word [token_len + rdi*2]
         inc     qword [token_pos]
@@ -3527,10 +3797,13 @@ changanua_kazi:
         mov     [rsp], rax
 .kazi_sio_muundo_ret:
 
-        ; Changanua jina la kazi
+        ; Changanua jina la kazi — neno muhimu halikubaliki (8.12,
+        ; hati 2.2: kazi inayoitwa 'rudisha' ilikubaliwa kimya)
         mov     rdi, [token_pos]
         cmp     dword [token_ty + rdi*4], TOK_NENO
         jne     .fail_name
+        call    kataa_neno_muhimu
+        mov     rdi, [token_pos]        ; soma upya (kataa inaharibu rejesta)
         mov     rsi, [token_text + rdi*8]
         movzx   ecx, word [token_len + rdi*2]
         inc     qword [token_pos]
@@ -3564,6 +3837,38 @@ changanua_kazi:
         ; Changanua vigezo
         call    changanua_vigezo
         mov     r13d, eax               ; orodha ya vigezo
+
+        ; Rekodi vigezo kwenye jedwali la func_ret_* (8.15/8.16):
+        ; idadi na aina za vigezo kwa ukaguzi wa wito. Kila kazi
+        ; iliyosajiliwa hapo juu inapata mlango wake; kigezo kina
+        ; aina msingi kwenye ast_thamani na nyota kwenye ast_tiga.
+        mov     rcx, [func_ret_count]
+        dec     rcx                     ; faharisi ya kazi hii
+        xor     r8d, r8d
+        mov     r9d, r13d
+.param_hesabu:
+        cmp     r9d, -1
+        je      .param_hesabu_iko
+        inc     r8d
+        mov     r9d, [ast_nne + r9*4]
+        jmp     .param_hesabu
+.param_hesabu_iko:
+        mov     [func_ret_params + rcx*4], r8d
+        mov     r9d, r13d
+        xor     r10d, r10d
+.param_nakili:
+        cmp     r9d, -1
+        je      .param_nakili_iko
+        lea     r11, [rcx + rcx*8]      ; rcx * 9
+        add     r11, r10
+        mov     r8d, [ast_thamani + r9*4]
+        mov     [func_ret_paina + r11], r8b
+        mov     r8d, [ast_tiga + r9*4]
+        mov     [func_ret_pnyota + r11], r8b
+        inc     r10d
+        mov     r9d, [ast_nne + r9*4]
+        jmp     .param_nakili
+.param_nakili_iko:
 
         ; Tarajia mabano ya kufunga
         mov     edi, TOK_MABANO_FUNGA
@@ -3670,10 +3975,58 @@ changanua_muundo:
         ; Tumia neno "muundo"
         inc     qword [token_pos]
 
-        ; Jina la muundo lazima liwe TOK_NENO
+        ; Jina la muundo lazima liwe TOK_NENO — neno muhimu halikubaliki
+        ; (8.12, hati 2.2)
         mov     rdi, [token_pos]
         cmp     dword [token_ty + rdi*4], TOK_NENO
         jne     .fail
+        call    kataa_neno_muhimu
+        mov     rdi, [token_pos]        ; soma upya (kataa inaharibu rejesta)
+        mov     rsi, [token_text + rdi*8]
+        movzx   ecx, word [token_len + rdi*2]
+
+        ; Jina lenye umbo la aina ([A-Z]+tarakimu, kama B12, N32) ni
+        ; kosa la sauti (8.14): mbegu ilikubali "muundo B12" kimya
+        ; huku ukaguzi wa aina unatambua umbo hilo kama aina ya
+        ; nambari. Kosa la aina isiyojulikana linatosha — sawa na
+        ; mnyororo wa .swa.
+        push    r12
+        push    r13
+        push    r14
+        push    r15
+        mov     r12d, ecx               ; urefu
+        cmp     r12d, 2
+        jl      .muundo_jina_sawa
+        mov     r13, rsi                ; mwanzo wa jina
+        mov     al, [r13]
+        cmp     al, 'A'
+        jl      .muundo_jina_sawa
+        cmp     al, 'Z'
+        jg      .muundo_jina_sawa
+        mov     r14d, 1
+.muundo_jina_loop:
+        cmp     r14d, r12d
+        jge     .muundo_jina_aina       ; herufi zote baada ya kwanza ni tarakimu
+        mov     al, [r13 + r14]
+        cmp     al, '0'
+        jl      .muundo_jina_sawa
+        cmp     al, '9'
+        jg      .muundo_jina_sawa
+        inc     r14d
+        jmp     .muundo_jina_loop
+.muundo_jina_aina:
+        ; Ina umbo la aina — kataa kwa sauti (kosa la aina isiyojulikana)
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+        jmp     kosa_aina_isiyojulikana
+.muundo_jina_sawa:
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+        mov     rdi, [token_pos]        ; soma upya (kaguzi ziliharibu rejesta)
         mov     rsi, [token_text + rdi*8]
         movzx   ecx, word [token_len + rdi*2]
         inc     qword [token_pos]
@@ -3794,10 +4147,13 @@ changanua_muundo:
         mov     [rsp], rax
 .nyuga_sio_muundo:
 
-        ; Jina la nyuga lazima liwe TOK_NENO
+        ; Jina la nyuga lazima liwe TOK_NENO — neno muhimu halikubaliki
+        ; (8.12, hati 2.2)
         mov     rdi, [token_pos]
         cmp     dword [token_ty + rdi*4], TOK_NENO
         jne     .fail_pop
+        call    kataa_neno_muhimu
+        mov     rdi, [token_pos]        ; soma upya (kataa inaharibu rejesta)
         mov     rsi, [token_text + rdi*8]
         movzx   ecx, word [token_len + rdi*2]
         inc     qword [token_pos]
@@ -3863,14 +4219,11 @@ changanua_muundo:
         mov     r8d, 8
         mov     r9d, 8
 .nyuga_panga:
-        ; Pangilia ofseti inayoendelea kwa pangilio la nyuga
-        mov     eax, r13d
-        mov     ecx, r9d
-        dec     ecx
-        add     eax, ecx
-        not     ecx
-        and     eax, ecx
-        mov     r13d, eax
+        ; MPANGILIO UMEJAA (8.23): ofseti inayoendelea haina kipanga
+        ; kimoja — sawa na mnyororo wa .swa (muundo wa N8+N16+N32 ni
+        ; baiti 7, si 8). Zamani mbegu ilipanga na kutoa miundo
+        ; isiyosomika sawa na uzalishaji.
+        ; (hakuna kipanga — r13d inasalia kama ilivyo)
 
         ; Rekodi nyuga kwenye jedwali (upeo: 512)
         mov     rax, [nyuga_count]
@@ -3922,14 +4275,8 @@ changanua_muundo:
         mov     r15d, 1
 .pangilio_ok:
 
-        ; Pangilia ukubwa wa mwisho kwa pangilio la juu
-        mov     eax, r13d
-        mov     ecx, r15d
-        dec     ecx
-        add     eax, ecx
-        not     ecx
-        and     eax, ecx
-        mov     r13d, eax
+        ; Ukubwa wa mwisho: hakuna kuzungusha (mpangilio umejaa —
+        ; 8.23); sloti za rafu huzungushwa hadi 8 katika uzalishaji.
 
         ; Rekodi ukubwa, pangilio, na mwisho wa nyuga
         mov     rax, [muundo_count]
@@ -4106,16 +4453,20 @@ changanua_programu:
         cmp     eax, 0
         je      .angalia_aina_ngazi     ; haikujulikana, haikutumia tokeni
         cmp     eax, 6
-        jae     .skip_token             ; muundo — hatuutegemezi kama kigeu cha ulimwengu
+                jae     .global_d64_kosa        ; D64 ya ulimwengu haisaidiwi na mbegu
+                                        ; (kikomo kilichoandikwa) — kosa la sauti
 
         ; Hifadhi aina na nyota kwenye stack: [rsp] = aina, [rsp+8] = nyota
         push    rbx
         push    rax
 
-        ; Jina la kigeu lazima liwe TOK_NENO
+        ; Jina la kigeu lazima liwe TOK_NENO — neno muhimu halikubaliki
+        ; (8.12, hati 2.2)
         mov     rdi, [token_pos]
         cmp     dword [token_ty + rdi*4], TOK_NENO
         jne     .global_parse_fail
+        call    kataa_neno_muhimu
+        mov     rdi, [token_pos]        ; soma upya (kataa inaharibu rejesta)
         mov     rsi, [token_text + rdi*8]
         movzx   ecx, word [token_len + rdi*2]
         call    hifadhi_jina
@@ -4179,6 +4530,10 @@ changanua_programu:
         mov     rdi, [token_pos]
         cmp     dword [token_ty + rdi*4], TOK_NAMBARI
         jne     .global_parse_fail
+        ; Kianzio cha desimali (D64) — kosa la sauti (8.6): halisi
+        ; ya nambari pekee inakubalika kwenye ulimwengu
+        cmp     byte [token_desimali + rdi], 0
+        jne     .global_d64_kosa
         mov     r9, [token_val + rdi*8]
         neg     r9                       ; hasi
         inc     qword [token_pos]
@@ -4186,8 +4541,17 @@ changanua_programu:
 .global_init_num:
         cmp     dword [token_ty + rdi*4], TOK_NAMBARI
         jne     .global_parse_fail
+        ; Kianzio cha desimali (D64) — kosa la sauti (8.6)
+        cmp     byte [token_desimali + rdi], 0
+        jne     .global_d64_kosa
         mov     r9, [token_val + rdi*8]
         inc     qword [token_pos]
+        jmp     .global_init_end
+.global_d64_kosa:
+        lea     rdi, [msg_ulimwengu_d64]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
 .global_init_end:
         mov     rdi, [token_pos]
         cmp     dword [token_ty + rdi*4], TOK_NUKTA_MKATO
@@ -4730,6 +5094,21 @@ uzalishaji_tangazo:
         ; Thamani ya kianzilishi (ikiwa ipo)
         cmp     r13d, -1
         je      .no_init
+        ; Kianzilishi cha tangazo la N64: uhamishaji << >> huhesabiwa
+        ; kwa baiti 8 hata kama operanda zote ni ndogo (8.5):
+        ; "N64 x = 1 << 32" lazima itoe 4294967296, si 1 (1 << (32 & 31)).
+        ; Alama inasomwa na uzalishaji_kauli_ya_binary (upana wa
+        ; uhamishaji) na panua_ishara_ya_kauli (usitoe cdqe kwenye
+        ; matokeo ya baiti 8). Inafutwa katika .bmd_kianzio_isha.
+        mov     dword [kianzio_lengo64], 0
+        mov     r8d, [local_base_type + rcx*4]
+        cmp     r8d, 4
+        jne     .kianzio_64_isha
+        mov     r10d, [local_star_count + rcx*4]
+        test    r10d, r10d
+        jnz     .kianzio_64_isha
+        mov     dword [kianzio_lengo64], 1
+.kianzio_64_isha:
         push    r12
         mov     r12d, r13d
         call    uzalishaji_ast
@@ -4742,9 +5121,62 @@ uzalishaji_tangazo:
         ; (.do_assign); anwani (kielekezi, jina la safu) hazipanuliwi.
         mov     edi, r13d
         call    panua_ishara_ya_kauli
+        ; Mpaka wa kamili/desimali kwenye kianzio (8.6): D64 → kamili
+        ; (kukata hadi sifuri) na kamili → D64 (pandisha).
+        mov     rcx, [local_count]
+        dec     rcx
+        mov     r8d, [local_base_type + rcx*4]
+        mov     r10d, [local_star_count + rcx*4]
+        test    r10d, r10d
+        jnz     .bmd_kianzio_isha        ; kielekezi — hakuna ubadilishaji
+        cmp     r8d, 7
+        je      .bmd_kianzio_d64
+        cmp     r8d, 4
+        je      .bmd_kianzio_64
+        cmp     r8d, 1
+        je      .bmd_kianzio_32
+        cmp     r8d, 2
+        je      .bmd_kianzio_32
+        cmp     r8d, 3
+        je      .bmd_kianzio_32
+        jmp     .bmd_kianzio_isha
+.bmd_kianzio_d64:
+        mov     esi, 7
+        mov     edx, 8
+        mov     edi, r13d
+        call    badilisha_mpaka_wa_desimali
+        jmp     .bmd_kianzio_isha
+.bmd_kianzio_64:
+        mov     esi, 4
+        mov     edx, 8
+        mov     edi, r13d
+        call    badilisha_mpaka_wa_desimali
+        jmp     .bmd_kianzio_isha
+.bmd_kianzio_32:
+        mov     esi, 3
+        mov     edx, 4
+        mov     edi, r13d
+        call    badilisha_mpaka_wa_desimali
+.bmd_kianzio_isha:
+        mov     dword [kianzio_lengo64], 0
         jmp     .store_value
 .no_init:
         xor     eax, eax                ; hakuna kianzilishi, thamani = 0
+        ; D64 bila kianzilishi: sifuri kwenye xmm0 (pxor xmm0, xmm0
+        ; → 66 0F EF C0), si takataka kutoka kwa eax.
+        mov     rcx, [local_count]
+        dec     rcx
+        cmp     dword [local_base_type + rcx*4], 7
+        jne     .store_value
+        mov     al, 0x66
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0xEF
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .store_value
 .store_value:
         ; Rejesha faharisi ya usajili na ofseti baada ya tathmini
         mov     rcx, [local_count]
@@ -4997,9 +5429,11 @@ uzalishaji_jina:
         jmp     .load_done
 
 .load_n8:
-        mov     al, 0x0F                    ; movzx eax, byte [rbp+disp32]
+        ; movsx eax, byte [rbp+disp32] — upanuzi wa ISHARA (8.20):
+        ; N8 hasi (-1) inapakiwa kama -1, si 255.
+        mov     al, 0x0F
         call    gen_baiti
-        mov     al, 0xB6
+        mov     al, 0xBE
         call    gen_baiti
         mov     al, 0x85
         call    gen_baiti
@@ -5007,9 +5441,10 @@ uzalishaji_jina:
         jmp     .load_done
 
 .load_n16:
-        mov     al, 0x0F                    ; movzx eax, word [rbp+disp32]
+        ; movsx eax, word [rbp+disp32] — upanuzi wa ISHARA (8.20)
+        mov     al, 0x0F
         call    gen_baiti
-        mov     al, 0xB7
+        mov     al, 0xBF
         call    gen_baiti
         mov     al, 0x85
         call    gen_baiti
@@ -5094,17 +5529,19 @@ uzalishaji_jina:
         call    gen_baiti
         jmp     .load_ulimwengu_reloc
 .load_ulimwengu_n8:
-        mov     al, 0x0F                    ; movzx eax, byte [rip+disp32]
+        ; movsx eax, byte [rip+disp32] — upanuzi wa ISHARA (8.20)
+        mov     al, 0x0F
         call    gen_baiti
-        mov     al, 0xB6
+        mov     al, 0xBE
         call    gen_baiti
         mov     al, 0x05
         call    gen_baiti
         jmp     .load_ulimwengu_reloc
 .load_ulimwengu_n16:
-        mov     al, 0x0F                    ; movzx eax, word [rip+disp32]
+        ; movsx eax, word [rip+disp32] — upanuzi wa ISHARA (8.20)
+        mov     al, 0x0F
         call    gen_baiti
-        mov     al, 0xB7
+        mov     al, 0xBF
         call    gen_baiti
         mov     al, 0x05
         call    gen_baiti
@@ -5330,6 +5767,11 @@ uzalishaji_nyota_ya:
         mov     r14d, [local_star_count + r13*4]
         cmp     r14d, 0
         je      .deref_n32                     ; sio pointer
+        ; Kielekezi kwa kielekezi (N32** q; *q) — matokeo ni KIELEKEZI:
+        ; pakia baiti 8 (9.2 — zamani *q ilipakia baiti 4 na SEGV
+        ; kwenye **q)
+        cmp     r14d, 1
+        ja      .deref_n64
 
         ; Ni pointer — tumia aina msingi kujua ukubwa wa kupakia
         mov     r14d, [local_base_type + r13*4]
@@ -5352,20 +5794,20 @@ uzalishaji_nyota_ya:
         jmp     .deref_done
 
 .deref_n8:
-        ; movzx eax, byte [rax]  →  0F B6 00
+        ; movsx eax, byte [rax]  →  0F BE 00 — upanuzi wa ISHARA (8.20)
         mov     al, 0x0F
         call    gen_baiti
-        mov     al, 0xB6
+        mov     al, 0xBE
         call    gen_baiti
         mov     al, 0x00
         call    gen_baiti
         jmp     .deref_done
 
 .deref_n16:
-        ; movzx eax, word [rax]  →  0F B7 00
+        ; movsx eax, word [rax]  →  0F BF 00 — upanuzi wa ISHARA (8.20)
         mov     al, 0x0F
         call    gen_baiti
-        mov     al, 0xB7
+        mov     al, 0xBF
         call    gen_baiti
         mov     al, 0x00
         call    gen_baiti
@@ -5680,7 +6122,11 @@ gen_kielelezo:
         call    gen_baiti
         jmp     .mwisho
 .pakia_8:
-        ; movzx eax, byte [rax] -> 0F B6 00
+        ; movzx eax, byte [rax] -> 0F B6 00 — upanuzi wa SIFURI.
+        ; Kielezo cha safu ya N8 husoma BAITI GHAFI (ast_pool[of],
+        ; chanzo[i]) — baiti >= 128 lazima zibaki 0..255 kwa kujenga
+        ; bits64 (d64_bits_hadi_d32); ishara ingeharibu D32 (8.20
+        ; inashughulikiwa na mnyororo kwenye upakiaji wa vigeu).
         mov     al, 0x0F
         call    gen_baiti
         mov     al, 0xB6
@@ -5689,7 +6135,7 @@ gen_kielelezo:
         call    gen_baiti
         jmp     .mwisho
 .pakia_16:
-        ; movzx eax, word [rax] -> 0F B7 00
+        ; movzx eax, word [rax] -> 0F B7 00 — upanuzi wa SIFURI (sawia)
         mov     al, 0x0F
         call    gen_baiti
         mov     al, 0xB7
@@ -5811,6 +6257,15 @@ fumbua_aina:
         je      .fa_kauli
         cmp     r13d, AST_WAMBILE
         je      .fa_wambile
+        ; Unari: -x, !x, ~x — aina ya matokeo ni aina ya operanda
+        ; (8.4/8.6: -10000000000 ni N64; -2.5 ni D64; operesheni
+        ; mchanganyiko na hasili lazima ijue upana).
+        cmp     r13d, AST_HASILI
+        je      .fa_unari
+        cmp     r13d, AST_MAKOSA
+        je      .fa_unari
+        cmp     r13d, AST_MAKOSA_BITI
+        je      .fa_unari
         jmp     .fa_sio
 
 .fa_halisi_d:
@@ -5818,6 +6273,10 @@ fumbua_aina:
         xor     ebx, ebx
         mov     edx, -1
         jmp     .fa_mwisho
+
+.fa_unari:
+        mov     r12d, [ast_kushoto + r12*4]
+        jmp     .fa_anza_tena
 
 .fa_jina:
         ; Tafuta kati ya vigezo vya ndani
@@ -5936,6 +6395,45 @@ fumbua_aina:
         mov     edx, [local_muundo_id + r10*4]
         jmp     .fa_mwisho
 .fk_punguza:
+        ; Safu ya ULIMWENGU (sawa na ya ndani): kipengele ni aina
+        ; msingi na NYOTA zake — si punguzo (safu ya kielekezi kama
+        ; muundo_ukubwa_jina[mi] ina kipengele cha kielekezi).
+        cmp     dword [ast_aina + r15*4], AST_JINA
+        jne     .fk_punguza_halisi
+        push    r12
+        push    r13
+        push    r14
+        push    r15
+        mov     r13d, [ast_jina_off + r15*4]
+        lea     r13, [str_pool + r13]
+        xor     r10d, r10d
+.fk_saka_ulimwengu:
+        cmp     r10, [global_count]
+        jae     .fk_sio_safu_ulimwengu
+        mov     rdi, [global_name + r10*8]
+        mov     rsi, r13
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        je      .fk_ulimwengu_iko
+        inc     r10
+        jmp     .fk_saka_ulimwengu
+.fk_ulimwengu_iko:
+        cmp     dword [global_is_array + r10*4], 0
+        je      .fk_sio_safu_ulimwengu
+        mov     eax, [global_base_type + r10*4]
+        mov     ebx, [global_star_count + r10*4]
+        mov     edx, -1
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+        jmp     .fa_mwisho
+.fk_sio_safu_ulimwengu:
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+.fk_punguza_halisi:
         push    r12
         mov     r12d, r15d
         call    fumbua_aina
@@ -5987,13 +6485,122 @@ fumbua_aina:
         jmp     .fa_mwisho
 
 .fa_kauli:
-        ; Kauli ya binary: aina ya operanda ya KUSHOTO huenea —
-        ; hii inaruhusu minyororo kama (pi * r) * r kubaki D64
-        ; (suala #135 lilikuwa na hitilafu sawa kwenye dereva wa Rust).
-        ; Rudi kwenye kichwa cha fumbua_aina BAADA ya pushes —
-        ; .fa_anza_tena iko mara moja baada ya kuzihifadhi.
-        mov     r12d, [ast_kushoto + r12*4]
-        jmp     .fa_anza_tena
+        ; Ulinganisho (== != < > <= >=) unarudisha 0/1 kwenye eax —
+        ; aina yake ni N32 hata kama operanda ni D64 (8.6/8.21:
+        ; "d > 1.99 && d < 2.01" ni halali — && ya matokeo ya
+        ; ulinganisho wa D64 haikataliwi). TAHADHARI: mfuatano wa
+        ; herufi ni KAULI yenye kushoto=-1 na thamani=urefu wake —
+        ; usiuchukulie kama ulinganisho (urefu unaweza kuwa sawa na
+        ; msimbo wa ishara).
+        mov     r15d, [ast_kushoto + r12*4]
+        cmp     r15d, -1
+        je      .fa_sio
+        mov     r15d, [ast_thamani + r12*4]
+        cmp     r15d, OP_SAWA_SAWA
+        je      .fa_kauli_linganisho
+        cmp     r15d, OP_SIO_SAWA
+        je      .fa_kauli_linganisho
+        cmp     r15d, OP_KIDOGO
+        je      .fa_kauli_linganisho
+        cmp     r15d, OP_KUBWA
+        je      .fa_kauli_linganisho
+        cmp     r15d, OP_KIDOGO_SAWA
+        je      .fa_kauli_linganisho
+        cmp     r15d, OP_KUBWA_SAWA
+        je      .fa_kauli_linganisho
+        ; ?: — aina ya matokeo ni ya tawi la kweli (pandisha C:
+        ; tawi la uwongo la D64 linafanya matokeo yawe D64).
+        cmp     r15d, OP_HUU
+        jne     .fa_kauli_binary
+        jmp     .fa_kauli_huu
+.fa_kauli_linganisho:
+        mov     eax, 3                  ; N32 (matokeo ya 0/1 kwenye eax)
+        xor     ebx, ebx
+        mov     edx, -1
+        jmp     .fa_mwisho
+.fa_kauli_huu:
+        mov     r15d, [ast_kulia + r12*4]   ; mfuatano (kweli, uwongo)
+        cmp     r15d, -1
+        je      .fa_kauli_binary
+        push    r12
+        mov     r12d, [ast_kushoto + r15*4]
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        je      .fa_kauli_d64
+        push    r12
+        mov     r12d, [ast_kulia + r15*4]
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        je      .fa_kauli_d64
+        jmp     .fa_kauli_binary
+.fa_kauli_d64:
+        mov     eax, 7                  ; D64
+        xor     ebx, ebx
+        mov     edx, -1
+        jmp     .fa_mwisho
+.fa_kauli_binary:
+        ; Kauli ya binary: PANDISHA C — D64/N64/kielekezi kwenye
+        ; upande wowote inafanya operesheni nzima iwe ya upana huo.
+        ; (8.4: 0 - 10000000000 ni N64 hata kama kushoto ni N32;
+        ; 8.6: 1 + 2.5 ni D64; minyororo kama (pi * r) * r kubaki
+        ; D64.) Hesabu ya anwani (8.15): safu + ofseti ni KIELEKEZI —
+        ; jina la safu linaharibika hadi kielekezi (lea), kama
+        ; mnyororo wa .swa ("safu ya ndani: usemi wa jina unaharibika
+        ; hadi kielekezi (mshale +1)"). Rudi kwenye kichwa cha
+        ; fumbua_aina BAADA ya pushes — .fa_anza_tena iko mara moja
+        ; baada ya kuzihifadhi.
+        mov     r15d, [ast_kushoto + r12*4]
+        cmp     r15d, -1
+        je      .fa_sio
+        push    r12
+        mov     r12d, r15d
+        call    fumbua_aina
+        pop     r12
+        mov     r13d, eax               ; aina ya kushoto
+        mov     r14d, ebx               ; nyota za kushoto
+        cmp     eax, 7
+        je      .fa_mwisho              ; D64
+        cmp     eax, 4
+        je      .fa_mwisho              ; N64
+        test    ebx, ebx
+        jg      .fa_mwisho              ; kielekezi
+        ; Kushoto ni jina la safu — anwani (kielekezi)
+        mov     edi, r15d
+        call    ni_jina_la_safu         ; huhifadhi r12-r15
+        test    eax, eax
+        jz      .fa_kauli_left_sio_safu
+        mov     eax, r13d
+        mov     ebx, 1                  ; nyota = 1 (kielekezi)
+        jmp     .fa_mwisho
+.fa_kauli_left_sio_safu:
+        mov     r15d, [ast_kulia + r12*4]
+        cmp     r15d, -1
+        je      .fa_sio
+        push    r12
+        mov     r12d, r15d
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        je      .fa_kauli_d64
+        cmp     eax, 4
+        je      .fa_mwisho
+        test    ebx, ebx
+        jg      .fa_mwisho
+        ; Kulia ni jina la safu — anwani (kielekezi)
+        mov     edi, r15d
+        call    ni_jina_la_safu
+        test    eax, eax
+        jz      .fa_kauli_right_sio_safu
+        mov     eax, r13d               ; aina ya kushoto (msingi wa anwani)
+        mov     ebx, 1
+        jmp     .fa_mwisho
+.fa_kauli_right_sio_safu:
+        ; Vyote viwili ni vidogo — aina ya kushoto ndiyo inashinda
+        mov     eax, r13d
+        mov     ebx, r14d
+        jmp     .fa_mwisho
 
 .fa_wambile:
         ; Wito wa kazi: aina yake ni aina ya KURUDI ya kazi, si aina
@@ -6124,6 +6731,17 @@ panua_ishara_ya_kauli:
         mov     r14d, [ast_thamani + r13*4]
         cmp     r14d, OP_HUU
         je      .pik_mwisho
+        ; Uhamishaji wa kianzilishi cha N64 (8.5) ni wa baiti 8 —
+        ; matokeo tayari ni ya baiti 8; cdqe ungefuta biti 32 za juu
+        ; (mfano: "N64 x = 1 << 32" -> 4294967296 kwenye rax).
+        cmp     r14d, OP_HAMISHA_KUSHOTO
+        je      .pik_shift_lengo64
+        cmp     r14d, OP_HAMISHA_KULIA
+        jne     .pik_sio_shift64
+.pik_shift_lengo64:
+        cmp     dword [kianzio_lengo64], 0
+        jne     .pik_mwisho
+.pik_sio_shift64:
         ; Operanda za anwani: jina la safu (kushoto au kulia) — matokeo
         ; ni anwani (iliyopunguzwa), si thamani ya hesabu; usipanue.
         mov     r15d, [ast_kushoto + r13*4]
@@ -6151,6 +6769,114 @@ panua_ishara_ya_kauli:
         mov     al, 0x98
         call    gen_baiti
 .pik_mwisho:
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+        ret
+
+; -------------------------------------------------------
+; badilisha_mpaka_wa_desimali: badilisha thamani (kwenye eax/rax au
+; xmm0) hadi aina ya lengwa kwenye mpaka wa kamili/desimali —
+; C-semantiki ya pandisha (8.6): nambari kamili inabadilishwa hadi
+; D64 (cvtsi2sd); D64 inakatwa hadi sifuri ikiwa lengwa ni kamili
+; (cvttsd2si). Kielekezi au muundo kwenye desimali ni kosa la sauti.
+;   edi = nodi ya usemi
+;   esi = aina ya lengwa (1-4 kamili, 7 D64)
+;   edx = ukubwa wa lengwa kwa baiti (4 au 8)
+; Matokeo: thamani inabaki eax/rax (kamili) au xmm0 (D64).
+; Huhifadhi r12-r15; r8-r11, rdi, rsi zinaweza kuharibiwa.
+; -------------------------------------------------------
+badilisha_mpaka_wa_desimali:
+        push    r12
+        push    r13
+        push    r14
+        push    r15
+        mov     r13d, edi               ; nodi
+        mov     r14d, esi               ; aina ya lengwa
+        mov     r15d, edx               ; ukubwa wa lengwa
+        cmp     r13d, -1
+        je      .bmd_mwisho
+        mov     r12d, r13d
+        call    fumbua_aina             ; eax = aina, ebx = nyota
+        cmp     eax, 0
+        je      .bmd_mwisho             ; isiyojulikana — hakuna ubadilishaji
+        ; Lengwa ni D64: badilisha kamili hadi xmm0
+        cmp     r14d, 7
+        jne     .bmd_lengwa_kamili
+        cmp     eax, 7
+        je      .bmd_mwisho             ; tayari D64
+        cmp     eax, 4
+        je      .bmd_cvtsi2sd_rax
+        cmp     eax, 5
+        je      .bmd_cvtsi2sd_rax       ; W0 — baiti 8
+        cmp     eax, 1
+        je      .bmd_cvtsi2sd_eax
+        cmp     eax, 2
+        je      .bmd_cvtsi2sd_eax
+        cmp     eax, 3
+        je      .bmd_cvtsi2sd_eax
+        ; kielekezi au muundo kwenye desimali — kosa la sauti
+        jmp     .bmd_kielekezi_kosa
+.bmd_lengwa_kamili:
+        ; Lengwa ni kamili: badilisha D64 hadi eax/rax
+        cmp     eax, 7
+        jne     .bmd_mwisho             ; sio D64 — hakuna ubadilishaji
+        cmp     r15d, 8
+        je      .bmd_cvttsd2si_rax
+        ; cvttsd2si eax, xmm0 → F2 0F 2C C0 (kukata hadi sifuri)
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2C
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .bmd_mwisho
+.bmd_cvttsd2si_rax:
+        ; cvttsd2si rax, xmm0 → F2 48 0F 2C C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2C
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .bmd_mwisho
+.bmd_cvtsi2sd_eax:
+        ; cvtsi2sd xmm0, eax → F2 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .bmd_mwisho
+.bmd_cvtsi2sd_rax:
+        ; cvtsi2sd xmm0, rax → F2 48 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .bmd_mwisho
+.bmd_kielekezi_kosa:
+        lea     rdi, [msg_desi_kielekezi]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.bmd_mwisho:
         pop     r15
         pop     r14
         pop     r13
@@ -6397,19 +7123,19 @@ uzalishaji_mwanachama:
         call    gen_baiti
         jmp     .um_mwisho
 .um_pakia_8:
-        ; movzx eax, byte [rax] -> 0F B6 00
+        ; movsx eax, byte [rax] -> 0F BE 00 — upanuzi wa ISHARA (8.20)
         mov     al, 0x0F
         call    gen_baiti
-        mov     al, 0xB6
+        mov     al, 0xBE
         call    gen_baiti
         mov     al, 0x00
         call    gen_baiti
         jmp     .um_mwisho
 .um_pakia_16:
-        ; movzx eax, word [rax] -> 0F B7 00
+        ; movsx eax, word [rax] -> 0F BF 00 — upanuzi wa ISHARA (8.20)
         mov     al, 0x0F
         call    gen_baiti
-        mov     al, 0xB7
+        mov     al, 0xBF
         call    gen_baiti
         mov     al, 0x00
         call    gen_baiti
@@ -6455,7 +7181,46 @@ uzalishaji_rudisha:
         call    uzalishaji_ast
         pop     r13
         pop     r12
-        ; Thamani iko kwenye eax
+        ; Thamani iko kwenye eax (au xmm0 kwa D64)
+
+        ; Mpaka wa kamili/desimali kwenye kurudi (8.6): rudisha 21.5
+        ; kutoka kwa kazi ya N32 inakata hadi 21; rudisha 5 kutoka
+        ; kwa kazi ya D64 inapandisha hadi 5.0.
+        cmp     dword [kazi_ret_aina], 7
+        je      .rudisha_bmd_d64
+        cmp     dword [kazi_ret_aina], 4
+        je      .rudisha_bmd_64
+        cmp     dword [kazi_ret_aina], 6
+        je      .rudisha_bmd_isha       ; sret — hakuna ubadilishaji
+        cmp     dword [kazi_ret_aina], 5
+        je      .rudisha_bmd_isha       ; W0 — hakuna
+        jmp     .rudisha_bmd_32
+.rudisha_bmd_d64:
+        mov     esi, 7
+        mov     edx, 8
+        mov     edi, r13d
+        call    badilisha_mpaka_wa_desimali
+        jmp     .rudisha_bmd_isha
+.rudisha_bmd_64:
+        mov     esi, 4
+        mov     edx, 8
+        mov     edi, r13d
+        call    badilisha_mpaka_wa_desimali
+        jmp     .rudisha_bmd_isha
+.rudisha_bmd_32:
+        mov     esi, 3
+        mov     edx, 4
+        mov     edi, r13d
+        call    badilisha_mpaka_wa_desimali
+.rudisha_bmd_isha:
+        ; Panua ishara ya matokeo ya N32 kwa kazi ya N64 (sawia na
+        ; panua_ishara_ya_kauli kwenye kianzio na uwekaji).
+        push    r12
+        push    r13
+        mov     edi, r13d
+        call    panua_ishara_ya_kauli
+        pop     r13
+        pop     r12
 
         ; Kwa sret, nakili muundo hadi eneo la kurudia
         cmp     dword [kazi_ret_muundo_id], 0
@@ -6545,6 +7310,46 @@ uzalishaji_kauli_ya_binary:
         cmp     r15d, OP_HUU
         je      .do_huu
 
+        ; Kataa operesheni zisizofanya kazi kwa desimali (8.21):
+        ; modulo, uhamishaji, NA/AU za biti na mantiki — ikiwa
+        ; operanda yoyote ni D64. Jibu baya la kimya halikubaliki.
+        cmp     r15d, OP_MODULO
+        je      .desi_operesheni_kagua
+        cmp     r15d, OP_HAMISHA_KUSHOTO
+        je      .desi_operesheni_kagua
+        cmp     r15d, OP_HAMISHA_KULIA
+        je      .desi_operesheni_kagua
+        cmp     r15d, OP_NA
+        je      .desi_operesheni_kagua
+        cmp     r15d, OP_AU
+        je      .desi_operesheni_kagua
+        cmp     r15d, OP_NA_BITI
+        je      .desi_operesheni_kagua
+        cmp     r15d, OP_AU_BITI
+        je      .desi_operesheni_kagua
+        cmp     r15d, OP_XOR_BITI
+        je      .desi_operesheni_kagua
+        jmp     .desi_operesheni_sawa
+.desi_operesheni_kagua:
+        push    r12
+        mov     r12d, r13d
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        je      .desi_operesheni_kosa
+        push    r12
+        mov     r12d, r14d
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        jne     .desi_operesheni_sawa
+.desi_operesheni_kosa:
+        lea     rdi, [msg_desi_op]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.desi_operesheni_sawa:
+
         ; && na || zinahitaji mzunguko mfupi (short-circuit), sawa na
         ; uzalishaji_na/uzalishaji_au kwenye msingi/uzalishaji.swa.
         ; Bila hii, upande wa kulia unatathminiwa hata wakati kushoto
@@ -6555,16 +7360,27 @@ uzalishaji_kauli_ya_binary:
         cmp     r15d, OP_AU
         je      .do_or_sc
 
-        ; Hesabu za kuelea (D64): kama operanda ya kushoto ni ya
-        ; kuelea, chukua njia ya SSE — thamani husafiri kupitia rafu
-        ; kama baiti 8 (movq) na oparesheni hutumia xmm0/xmm1.
+        ; Hesabu za kuelea (D64): kama operanda yoyote (kushoto AU
+        ; kulia) ni ya kuelea, chukua njia ya SSE — thamani husafiri
+        ; kupitia rafu kama baiti 8 (movq) na oparesheni hutumia
+        ; xmm0/xmm1 (8.6: 2.5 < 3 na 3 == 3.0 ni za kuelea).
+        ; Upana: operesheni ni ya baiti 8 (N64 au kielekezi) kwenye
+        ; PANDE ZOTE MBILI — ili ugawanyo utumie cqo/idiv rcx badala
+        ; ya cdq/idiv ecx (8.4: N32 + N64 = N64, hata kama kushoto
+        ; ni N32).
+        mov     dword [gen_op_64bit], 0
         push    r12
         mov     r12d, r13d
         call    fumbua_aina
         pop     r12
-        ; Hesabu ikiwa operesheni ni ya baiti 8 (N64 au kielekezi)
-        ; ili ugawanyo utumie cqo/idiv rcx badala ya cdq/idiv ecx.
-        mov     dword [gen_op_64bit], 0
+        cmp     eax, 4
+        je      .op64_ndiyo
+        test    ebx, ebx
+        jg      .op64_ndiyo
+        push    r12
+        mov     r12d, r14d
+        call    fumbua_aina
+        pop     r12
         cmp     eax, 4
         je      .op64_ndiyo
         test    ebx, ebx
@@ -6573,8 +7389,44 @@ uzalishaji_kauli_ya_binary:
 .op64_ndiyo:
         mov     dword [gen_op_64bit], 1
 .op64_mwisho:
+
+        ; Kuelea: kushoto ni D64, au kulia ni D64 (8.6).
+        ; Kielekezi au muundo pamoja na D64 ni kosa la sauti.
+        push    r12
+        mov     r12d, r13d
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        jne     .sio_kuelea_kushoto_d
+        mov     r9d, 1                  ; alama: operesheni ya kuelea
+        jmp     .kuelea_imepatikana
+.sio_kuelea_kushoto_d:
+        mov     r9d, 0
+        push    r12
+        mov     r12d, r14d
+        call    fumbua_aina
+        pop     r12
         cmp     eax, 7
         jne     .sio_kuelea
+        mov     r9d, 1
+.kuelea_imepatikana:
+        ; Kielekezi au muundo kwenye operesheni ya kuelea — kosa
+        push    r12
+        mov     r12d, r13d
+        call    fumbua_aina
+        pop     r12
+        test    ebx, ebx
+        jg      .desi_kielekezi_kosa
+        cmp     eax, 6
+        je      .desi_kielekezi_kosa
+        push    r12
+        mov     r12d, r14d
+        call    fumbua_aina
+        pop     r12
+        test    ebx, ebx
+        jg      .desi_kielekezi_kosa
+        cmp     eax, 6
+        je      .desi_kielekezi_kosa
         cmp     r15d, OP_JUMLISHA
         je      .fl_add
         cmp     r15d, OP_TOA
@@ -6595,8 +7447,13 @@ uzalishaji_kauli_ya_binary:
         je      .fl_gt
         cmp     r15d, OP_KUBWA_SAWA
         je      .fl_ge
-        ; Kuelea na ishara isiyojulikana — njia kamili itaanguka kwa
-        ; sauti (k.m. % ya desimali haisaidiwi).
+        ; Kuelea na ishara isiyojulikana — njia kamili itaanguka
+        jmp     .sio_kuelea
+.desi_kielekezi_kosa:
+        lea     rdi, [msg_desi_kielekezi]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
 .sio_kuelea:
 
         ; Hifadhi upana wa operesheni (baiti 4 au 8) kwenye rafu kabla ya
@@ -7064,67 +7921,157 @@ uzalishaji_kauli_ya_binary:
         ; wakati wa kukusanya: and eax, ecx
         and     eax, ecx
         push    rax                     ; hifadhi CT kabla ya kutoa
+        ; NA ya biti kwa N64 ni ya baiti 8 (8.4): and rax, rcx -> 48 21 c8
+        cmp     dword [gen_op_64bit], 0
+        je      .and_emit32
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x21
+        call    gen_baiti
+        mov     al, 0xc8
+        call    gen_baiti
+        jmp     .and_emit_mwisho
+.and_emit32:
         ; and eax, ecx -> 21 c8
         mov     al, 0x21
         call    gen_baiti
         mov     al, 0xc8
         call    gen_baiti
+.and_emit_mwisho:
         pop     rax
         jmp     .done
 .do_or:
         ; wakati wa kukusanya: or eax, ecx
         or      eax, ecx
         push    rax                     ; hifadhi CT kabla ya kutoa
+        ; AU ya biti kwa N64 ni ya baiti 8: or rax, rcx -> 48 09 c8
+        cmp     dword [gen_op_64bit], 0
+        je      .or_emit32
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x09
+        call    gen_baiti
+        mov     al, 0xc8
+        call    gen_baiti
+        jmp     .or_emit_mwisho
+.or_emit32:
         ; or eax, ecx -> 09 c8
         mov     al, 0x09
         call    gen_baiti
         mov     al, 0xc8
         call    gen_baiti
+.or_emit_mwisho:
         pop     rax
         jmp     .done
 .do_xor:
         ; wakati wa kukusanya: xor eax, ecx
         xor     eax, ecx
         push    rax                     ; hifadhi CT kabla ya kutoa
+        ; XOR ya biti kwa N64 ni ya baiti 8: xor rax, rcx -> 48 31 c8
+        cmp     dword [gen_op_64bit], 0
+        je      .xor_emit32
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x31
+        call    gen_baiti
+        mov     al, 0xc8
+        call    gen_baiti
+        jmp     .xor_emit_mwisho
+.xor_emit32:
         ; xor eax, ecx -> 31 c8
         mov     al, 0x31
         call    gen_baiti
         mov     al, 0xc8
         call    gen_baiti
+.xor_emit_mwisho:
         pop     rax
         jmp     .done
 .do_shl:
-        ; shl eax, cl -> d3 e0
         ; Hifadhi operesheni kabla ya kutoa (al itaharibiwa na mwito)
         mov     r8d, eax                ; kushoto (wakati wa kukusanya)
         mov     r9d, ecx                ; kulia (wakati wa kukusanya)
+        ; Uhamishaji wa N64 ni wa baiti 8 (8.5): shl rax, cl -> 48 d3 e0
+        cmp     dword [gen_op_64bit], 0
+        jne     .shl_emit64
+        ; Kianzilishi cha N64: uhamishaji ni wa baiti 8 hata kama
+        ; operanda zote ni N32 (mfano: "N64 x = 1 << 32").
+        cmp     dword [kianzio_lengo64], 0
+        je      .shl_emit32
+.shl_emit64:
+        mov     al, 0x48
+        call    gen_baiti
         mov     al, 0xd3
         call    gen_baiti
         mov     al, 0xe0
         call    gen_baiti
+        jmp     .shl_ct
+.shl_emit32:
+        ; shl eax, cl -> d3 e0
+        mov     al, 0xd3
+        call    gen_baiti
+        mov     al, 0xe0
+        call    gen_baiti
+.shl_ct:
         ; wakati wa kukusanya — operesheni halisi baada ya kutoa
         cmp     r8d, -1
         je      .shift_isiyojulikana
         cmp     r9d, -1
         je      .shift_isiyojulikana
+        cmp     dword [gen_op_64bit], 0
+        jne     .shl_ct64
+        cmp     dword [kianzio_lengo64], 0
+        je      .shl_ct32
+.shl_ct64:
+        mov     rax, r8
+        mov     rcx, r9
+        shl     rax, cl
+        jmp     .done
+.shl_ct32:
         mov     eax, r8d
         mov     ecx, r9d
         shl     eax, cl
         jmp     .done
 .do_shr:
-        ; sar eax, cl -> d3 f8
         ; Hifadhi operesheni kabla ya kutoa (al itaharibiwa na mwito)
         mov     r8d, eax                ; kushoto (wakati wa kukusanya)
         mov     r9d, ecx                ; kulia (wakati wa kukusanya)
+        ; Uhamishaji wa N64 ni wa baiti 8 (8.5): sar rax, cl -> 48 d3 f8
+        cmp     dword [gen_op_64bit], 0
+        jne     .shr_emit64
+        ; Kianzilishi cha N64: uhamishaji ni wa baiti 8 hata kama
+        ; operanda zote ni N32 (mfano: "N64 x = 1 << 32").
+        cmp     dword [kianzio_lengo64], 0
+        je      .shr_emit32
+.shr_emit64:
+        mov     al, 0x48
+        call    gen_baiti
         mov     al, 0xd3
         call    gen_baiti
         mov     al, 0xf8
         call    gen_baiti
+        jmp     .shr_ct
+.shr_emit32:
+        ; sar eax, cl -> d3 f8
+        mov     al, 0xd3
+        call    gen_baiti
+        mov     al, 0xf8
+        call    gen_baiti
+.shr_ct:
         ; wakati wa kukusanya — operesheni halisi baada ya kutoa
         cmp     r8d, -1
         je      .shift_isiyojulikana
         cmp     r9d, -1
         je      .shift_isiyojulikana
+        cmp     dword [gen_op_64bit], 0
+        jne     .shr_ct64
+        cmp     dword [kianzio_lengo64], 0
+        je      .shr_ct32
+.shr_ct64:
+        mov     rax, r8
+        mov     rcx, r9
+        sar     rax, cl
+        jmp     .done
+.shr_ct32:
         mov     eax, r8d
         mov     ecx, r9d
         sar     eax, cl
@@ -7134,6 +8081,27 @@ uzalishaji_kauli_ya_binary:
         jmp     .done
 .do_huu:
         ; Uchaguzi ?: — r13d = sharti, r14d = mfuatano (kweli, uwongo)
+        ; Aina ya matokeo (8.6): D64 ikiwa tawi lolote ni D64 —
+        ; hifadhi alama kwenye rafu kwa matawi yote mawili.
+        push    r12
+        mov     r12d, [ast_kushoto + r14*4]
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        je      .huu_alama_d64
+        push    r12
+        mov     r12d, [ast_kulia + r14*4]
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        je      .huu_alama_d64
+        xor     eax, eax                ; 0 = kamili
+        jmp     .huu_alama_iko
+.huu_alama_d64:
+        mov     eax, 1                  ; 1 = D64
+.huu_alama_iko:
+        push    rax                     ; [rsp] = alama ya D64
+
         ; Zalisha sharti
         push    r12
         mov     r12d, r13d
@@ -7167,6 +8135,61 @@ uzalishaji_kauli_ya_binary:
         pop     r12
         mov     r10d, eax               ; CT ya kweli
 
+        ; Mpaka wa kamili/desimali kwenye tawi la kweli (8.6):
+        ; 1 ? 2.5 : 3 — matokeo D64, tawi la kamili linapandishwa.
+        push    r12
+        push    r8
+        push    r9
+        push    r10
+        mov     r12d, [ast_kushoto + r14*4]
+        call    fumbua_aina
+        pop     r10
+        pop     r9
+        pop     r8
+        pop     r12
+        cmp     qword [rsp], 0          ; alama ya D64
+        je      .huu_kweli_kamili
+        cmp     eax, 7
+        je      .huu_kweli_iko
+        cmp     eax, 4
+        je      .huu_kweli_64
+        ; cvtsi2sd xmm0, eax → F2 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .huu_kweli_iko
+.huu_kweli_64:
+        ; cvtsi2sd xmm0, rax → F2 48 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .huu_kweli_iko
+.huu_kweli_kamili:
+        cmp     eax, 7
+        jne     .huu_kweli_iko
+        ; cvttsd2si eax, xmm0 → F2 0F 2C C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2C
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+.huu_kweli_iko:
+
         ; jmp — ruka juu ya tawi la uwongo -> e9
         mov     al, 0xe9
         call    gen_baiti
@@ -7196,6 +8219,62 @@ uzalishaji_kauli_ya_binary:
         pop     r12
         mov     ecx, eax                ; CT ya uwongo
 
+        ; Mpaka wa kamili/desimali kwenye tawi la uwongo (8.6)
+        push    r12
+        push    r8
+        push    r10
+        push    r11
+        push    rcx
+        mov     r12d, [ast_kulia + r14*4]
+        call    fumbua_aina
+        pop     rcx
+        pop     r11
+        pop     r10
+        pop     r8
+        pop     r12
+        cmp     qword [rsp], 0          ; alama ya D64
+        je      .huu_uwongo_kamili
+        cmp     eax, 7
+        je      .huu_uwongo_iko
+        cmp     eax, 4
+        je      .huu_uwongo_64
+        ; cvtsi2sd xmm0, eax → F2 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .huu_uwongo_iko
+.huu_uwongo_64:
+        ; cvtsi2sd xmm0, rax → F2 48 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .huu_uwongo_iko
+.huu_uwongo_kamili:
+        cmp     eax, 7
+        jne     .huu_uwongo_iko
+        ; cvttsd2si eax, xmm0 → F2 0F 2C C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2C
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+.huu_uwongo_iko:
+
         ; Rekebisha jmp: elekeza baada ya tawi la uwongo
         mov     edi, [text_buf_pos]
         sub     edi, r11d
@@ -7211,17 +8290,19 @@ uzalishaji_kauli_ya_binary:
         test    r8d, r8d
         jz      .huu_chagua_uwongo
         mov     eax, r10d
-        jmp     .done
+        jmp     .huu_mwisho
 .huu_chagua_uwongo:
         mov     eax, ecx
-        jmp     .done
+        jmp     .huu_mwisho
 .huu_isiyojulikana:
         cmp     r10d, ecx
         jne     .huu_tofauti
         mov     eax, r10d
-        jmp     .done
+        jmp     .huu_mwisho
 .huu_tofauti:
         mov     eax, -1
+.huu_mwisho:
+        add     rsp, 8                  ; toa alama ya D64
         jmp     .done
 .do_assign:
         ; Assignment: tathmini kulia, hifadhi kwa upande wa kushoto
@@ -7244,6 +8325,44 @@ uzalishaji_kauli_ya_binary:
         mov     edi, r14d
         call    panua_ishara_ya_kauli
         pop     r8
+
+        ; Mpaka wa kamili/desimali kwenye ugawaji (8.6): D64 → kamili
+        ; na kamili → D64, kulingana na aina ya lengwa (kushoto).
+        push    r12
+        mov     r12d, r13d              ; nodi ya lengwa
+        call    fumbua_aina             ; eax = aina, ebx = nyota
+        pop     r12
+        test    ebx, ebx
+        jnz     .as_bmd_isha            ; kielekezi — hakuna ubadilishaji
+        cmp     eax, 7
+        je      .as_bmd_d64
+        cmp     eax, 4
+        je      .as_bmd_64
+        cmp     eax, 1
+        je      .as_bmd_32
+        cmp     eax, 2
+        je      .as_bmd_32
+        cmp     eax, 3
+        je      .as_bmd_32
+        jmp     .as_bmd_isha
+.as_bmd_d64:
+        mov     esi, 7
+        mov     edx, 8
+        mov     edi, r14d
+        call    badilisha_mpaka_wa_desimali
+        jmp     .as_bmd_isha
+.as_bmd_64:
+        mov     esi, 4
+        mov     edx, 8
+        mov     edi, r14d
+        call    badilisha_mpaka_wa_desimali
+        jmp     .as_bmd_isha
+.as_bmd_32:
+        mov     esi, 3
+        mov     edx, 4
+        mov     edi, r14d
+        call    badilisha_mpaka_wa_desimali
+.as_bmd_isha:
 
         ; Upande wa kushoto: jina la kigezo, faharisi ya safu, dereferensi
         ; au mwanachama wa muundo
@@ -7950,6 +9069,9 @@ uzalishaji_kauli_ya_binary:
         mov     r11d, [local_star_count + r10*4]
         cmp     r11d, 0
         je      .an_size_done                   ; sio pointer — chaguo-msingi N32
+        ; Kielekezi-kiwili (*q = ...): lengwa ni kielekezi — baiti 8
+        cmp     r11d, 1
+        ja      .an_set_size_8
         mov     r11d, [local_base_type + r10*4]
         cmp     r11d, 1
         je      .an_set_size_1
@@ -7991,6 +9113,14 @@ uzalishaji_kauli_ya_binary:
         mov     r11d, [global_star_count + r10*4]
         cmp     r11d, 0
         jg      .an_global_base                 ; pointer — tumia aina msingi
+        ; Kielekezi-kiwili cha ulimwengu (*gq = ...): baiti 8 (9.2)
+        ; — angalia tena kabla ya .an_global_base kutumia aina msingi
+        cmp     r11d, 1
+        ja      .an_global_kielekezi_kiwili
+        jmp     .an_size_done
+.an_global_kielekezi_kiwili:
+        mov     r11d, [global_star_count + r10*4]
+        jmp     .an_set_size_8
         cmp     dword [global_is_array + r10*4], 0
         jne     .an_global_base                 ; safu — anwani, tumia aina msingi
         mov     r15d, 4
@@ -8567,6 +9697,39 @@ uzalishaji_kauli_ya_binary:
         call    uzalishaji_ast
         pop     r15
         pop     r12
+        ; Kamili → D64 (8.6): cvtsi2sd kabla ya movq — operesheni
+        ; mchanganyiko kama 5.5 * 2 inapandisha 2 hadi 2.0.
+        push    r12
+        mov     r12d, r14d
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        je      .fl_rhs_kulia_d64
+        cmp     eax, 4
+        je      .fl_rhs_kulia_64
+        ; cvtsi2sd xmm0, eax → F2 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .fl_rhs_kulia_iko
+.fl_rhs_kulia_64:
+        ; cvtsi2sd xmm0, rax → F2 48 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+.fl_rhs_kulia_iko:
         ; movq rax, xmm0 -> 66 48 0F 7E C0 ; push rax -> 50
         mov     al, 0x66
         call    gen_baiti
@@ -8587,6 +9750,93 @@ uzalishaji_kauli_ya_binary:
         call    uzalishaji_ast
         pop     r15
         pop     r12
+        ; Kamili → D64 kwa kushoto (8.6)
+        push    r12
+        mov     r12d, r13d
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        je      .fl_rhs_kushoto_d64
+        cmp     eax, 4
+        je      .fl_rhs_kushoto_64
+        ; cvtsi2sd xmm0, eax → F2 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .fl_rhs_kushoto_iko
+.fl_rhs_kushoto_64:
+        ; cvtsi2sd xmm0, rax → F2 48 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+.fl_rhs_kushoto_iko:
+        ; pop rcx -> 59 ; movq xmm1, rcx -> 66 48 0F 6E C9
+        mov     al, 0x59
+        call    gen_baiti
+        mov     al, 0x66
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x6E
+        call    gen_baiti
+        mov     al, 0xC9
+        call    gen_baiti
+        ret
+.fl_rhs_kulia_d64:
+        ; movq rax, xmm0 -> 66 48 0F 7E C0 ; push rax -> 50
+        mov     al, 0x66
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x7E
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        mov     al, 0x50
+        call    gen_baiti
+        ; Tathmini kushoto → xmm0.
+        push    r12
+        push    r15
+        mov     r12d, r13d
+        call    uzalishaji_ast
+        pop     r15
+        pop     r12
+        ; Kamili → D64 kwa kushoto (8.6)
+        push    r12
+        mov     r12d, r13d
+        call    fumbua_aina
+        pop     r12
+        cmp     eax, 7
+        je      .fl_rhs_kushoto_d64
+        cmp     eax, 4
+        je      .fl_rhs_kushoto_64
+        ; cvtsi2sd xmm0, eax → F2 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .fl_rhs_kushoto_iko
+.fl_rhs_kushoto_d64:
         ; pop rcx -> 59 ; movq xmm1, rcx -> 66 48 0F 6E C9
         mov     al, 0x59
         call    gen_baiti
@@ -8836,11 +10086,88 @@ uzalishaji_wambile:
         mov     r8d, r14d
 .count_args:
         cmp     r8d, -1
-        je      .eval_args
+        je      .count_iko
         inc     r15d
         mov     r8d, [ast_nne + r8*4]
         jmp     .count_args
 
+.count_iko:
+        ; --- Ukaguzi wa idadi ya hoja (8.16) ---
+        ; Tafuta kazi kwenye jedwali la func_ret_* (r13 = jina).
+        ; Faharisi inahifadhiwa kwenye rafu kwa ukaguzi wa vigezo
+        ; (8.15) na mpaka wa D64 kwenye hoja (8.6); -1 ikiwa kazi
+        ; haijulikani (nje au builtin).
+        xor     r8d, r8d
+        mov     r9d, -1
+.hoja_idadi_skan:
+        cmp     r8, [func_ret_count]
+        jae     .hoja_idadi_acha
+        mov     rdi, [func_ret_name + r8*8]
+        mov     rsi, r13
+        push    r8
+        push    r9
+        push    r10
+        push    r11
+        push    r12
+        push    r13
+        push    r14
+        push    r15
+        call    linganisha_mfuatano
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+        pop     r11
+        pop     r10
+        pop     r9
+        pop     r8
+        cmp     eax, 0
+        je      .hoja_idadi_iko
+        inc     r8
+        jmp     .hoja_idadi_skan
+.hoja_idadi_iko:
+        mov     r9d, r8d               ; faharisi ya kazi
+        ; andika/andika_stderr ni za kutofautiana — ruka ukaguzi
+        ; (mkia wao hupokea aina yoyote kwa ABI)
+        mov     rsi, r13
+        lea     rdi, [jina_andika]
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        je      .hoja_idadi_acha_var
+        mov     rsi, r13
+        lea     rdi, [jina_andika_stderr]
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        je      .hoja_idadi_acha_var
+        mov     edx, [func_ret_params + r9*4]
+        cmp     edx, r15d
+        je      .hoja_idadi_sawa
+        ; Kosa: idadi si sahihi — "Hitilafu: idadi ya hoja kwa 'f' si
+        ; sahihi (N badala ya M)"
+        push    r9
+        lea     rdi, [msg_idadi_hoja_1]
+        call    andika_mfuatano
+        mov     rdi, r13
+        call    andika_mfuatano
+        lea     rdi, [msg_idadi_hoja_2]
+        call    andika_mfuatano
+        mov     edi, r15d
+        call    andika_nambari
+        lea     rdi, [msg_idadi_hoja_3]
+        call    andika_mfuatano
+        mov     edi, edx
+        call    andika_nambari
+        lea     rdi, [msg_idadi_hoja_4]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.hoja_idadi_sawa:
+        push    r9                      ; faharisi (inatolewa .baada_ya_wito)
+        jmp     .eval_args
+.hoja_idadi_acha_var:
+        mov     r9d, -1                 ; mkia wa kutofautiana — hakuna ukaguzi
+.hoja_idadi_acha:
+        push    r9                      ; faharisi au -1
 .eval_args:
         ; Tathmini kila hoja na kusukuma matokeo kwenye rafu
         mov     r8d, r14d
@@ -8867,6 +10194,210 @@ uzalishaji_wambile:
         mov     r12d, [rsp+8]          ; nodi ya hoja (r8 iliyohifadhiwa)
         call    fumbua_aina            ; eax = aina msingi
         mov     r10, [rsp]             ; faharisi ya hoja (r9 iliyohifadhiwa)
+        ; Panua ishara ya hoja ndogo (N8/N16/N32) — 8.10: andika("%u",
+        ; 0 - 1) lazima ichapishe 18446744073709551615, si 4294967295
+        ; (cdqe hupanua -1 hadi biti 64 zote).
+        cmp     eax, 3
+        ja      .hoja_cdqe_isha
+        test    ebx, ebx
+        jnz     .hoja_cdqe_isha
+        ; Safu kama hoja hutoa ANWANI (lea) — sio thamani ya hesabu:
+        ; cdqe kwenye biti 32 za chini za anwani ingeharibu anwani.
+        push    rax
+        push    rbx
+        mov     edi, [rsp + 24]         ; nodi ya hoja ([rsp]=rbx, [rsp+8]=rax, [rsp+16]=r9)
+        call    ni_jina_la_safu
+        test    eax, eax
+        jnz     .hoja_cdqe_safu
+        pop     rbx
+        pop     rax
+        push    rax
+        push    rbx
+        mov     al, 0x48                ; cdqe → 48 98
+        call    gen_baiti
+        mov     al, 0x98
+        call    gen_baiti
+        pop     rbx
+        pop     rax
+        jmp     .hoja_cdqe_isha
+.hoja_cdqe_safu:
+        pop     rbx
+        pop     rax
+.hoja_cdqe_isha:
+        ; --- Ukaguzi wa aina ya hoja (8.15) na mpaka wa D64 (8.6) ---
+        ; Rafu: [rsp]=aina hoja, [rsp+8]=nyota hoja, [rsp+16]=r9,
+        ; [rsp+24]=r8 (nodi), ... [rsp+64]=faharisi ya kazi (au -1)
+        push    rbx                     ; nyota ya hoja
+        push    rax                     ; aina ya hoja
+        ; 8.11: muundo wa kamba halisi (hoja ya KWANZA ya andika/
+        ; andika_stderr) — viungwa %d %s %c %% pekee; %u/%x vya
+        ; halisi vinakataliwa kwa sauti
+        cmp     dword [rsp + 16], 0     ; faharisi ya hoja
+        jne     .hoja_sio_kwanza
+        mov     rsi, r13
+        lea     rdi, [jina_andika]
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        je      .hoja_kamba_kagua
+        mov     rsi, r13
+        lea     rdi, [jina_andika_stderr]
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        jne     .hoja_sio_kwanza
+.hoja_kamba_kagua:
+        mov     edi, [rsp + 24]         ; nodi ya hoja
+        call    kagua_muundo_wa_kamba
+.hoja_sio_kwanza:
+        mov     r8d, [rsp + 64]         ; faharisi ya kazi
+        cmp     r8d, 0
+        jl      .hoja_param_acha
+        ; Mkia wa kutofautiana: andika/andika_stderr (hoja 2+),
+        ; andika_ndani (hoja 3+) — ruka ukaguzi (ABI hupitisha
+        ; mkia kwa rejesta za N64 bila kukagua aina).
+        mov     r9d, [rsp + 16]         ; faharisi ya hoja
+        test    r9d, r9d
+        jz      .hoja_param_sio_mkia
+        mov     rsi, r13
+        lea     rdi, [jina_andika]
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        je      .hoja_param_acha
+        mov     rsi, r13
+        lea     rdi, [jina_andika_stderr]
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        je      .hoja_param_acha
+        cmp     r9d, 2
+        jl      .hoja_param_sio_mkia
+        mov     rsi, r13
+        lea     rdi, [jina_andika_ndani]
+        call    linganisha_mfuatano
+        cmp     eax, 0
+        je      .hoja_param_acha
+.hoja_param_sio_mkia:
+        ; param_aina/param_nyota kutoka kwenye jedwali (kigezo cha
+        ; faharisi ya hoja ndani ya mlango wa kazi)
+        lea     r11, [r8 + r8*8]        ; r8 * 9
+        add     r11, [rsp + 16]         ; + faharisi ya hoja
+        movzx   r8d, byte [func_ret_paina + r11]
+        movzx   r11d, byte [func_ret_pnyota + r11]
+        push    r11                     ; [rsp] = param_nyota
+        push    r8                      ; [rsp+8] = param_aina
+        ; --- 8.15: kielekezi dhidi ya namba ---
+        ; Aina ya hoja isiyojulikana — ruka (halisi za kamba n.k.)
+        cmp     dword [rsp + 16], 0
+        je      .hoja_kagua_isha
+        mov     r9d, 0                  ; arg_ptr
+        cmp     dword [rsp + 24], 0     ; nyota ya hoja
+        jg      .hoja_arg_ptr_ndiyo
+        mov     edi, [rsp + 40]         ; nodi ya hoja (r12-r15 huhifadhiwa)
+        call    ni_jina_la_safu
+        test    eax, eax
+        jz      .hoja_arg_ptr_hapana
+.hoja_arg_ptr_ndiyo:
+        mov     r9d, 1
+.hoja_arg_ptr_hapana:
+        mov     r11d, 0                 ; param_ptr
+        cmp     dword [rsp + 8], 0      ; param_nyota
+        jg      .hoja_param_ptr_ndiyo
+        jmp     .hoja_param_ptr_iko
+.hoja_param_ptr_ndiyo:
+        mov     r11d, 1
+.hoja_param_ptr_iko:
+        cmp     r9d, r11d
+        je      .hoja_kagua_isha
+        ; Kosa la sauti: kielekezi dhidi ya namba (mdudu wa 2026-09-01:
+        ; N32 kwa kigezo cha kielekezi ilianguka SEGV wakati wa kukimbia)
+        lea     rdi, [msg_kielekezi_namba_1]
+        call    andika_mfuatano
+        mov     rdi, r13
+        call    andika_mfuatano
+        lea     rdi, [msg_kielekezi_namba_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+.hoja_kagua_isha:
+        ; --- Mpaka wa kamili/desimali kwenye hoja (8.6) ---
+        cmp     dword [rsp], 7          ; param_aina == D64
+        je      .hoja_bmd_d64
+        cmp     dword [rsp], 4          ; param_aina == N64
+        je      .hoja_bmd_kamili64
+        cmp     dword [rsp], 1
+        je      .hoja_bmd_kamili32
+        cmp     dword [rsp], 2
+        je      .hoja_bmd_kamili32
+        cmp     dword [rsp], 3
+        je      .hoja_bmd_kamili32
+        jmp     .hoja_bmd_isha
+.hoja_bmd_d64:
+        ; Hoja ya kamili → D64 (cvtsi2sd) — thamani huenda kwenye xmm0
+        cmp     dword [rsp + 16], 7     ; tayari D64
+        je      .hoja_bmd_isha
+        cmp     dword [rsp + 16], 4     ; N64 → cvtsi2sd rax
+        je      .hoja_bmd_d64_rax
+        cmp     dword [rsp + 16], 5     ; W0 → cvtsi2sd rax
+        je      .hoja_bmd_d64_rax
+        ; cvtsi2sd xmm0, eax → F2 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        jmp     .hoja_bmd_d64_iko
+.hoja_bmd_d64_rax:
+        ; cvtsi2sd xmm0, rax → F2 48 0F 2A C0
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2A
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+.hoja_bmd_d64_iko:
+        mov     dword [rsp + 16], 7     ; aina inayofaa: D64
+        jmp     .hoja_bmd_isha
+.hoja_bmd_kamili32:
+        ; Hoja ya D64 → kamili (cvttsd2si eax)
+        cmp     dword [rsp + 16], 7
+        jne     .hoja_bmd_isha
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2C
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        mov     dword [rsp + 16], 3     ; aina inayofaa: N32
+        jmp     .hoja_bmd_isha
+.hoja_bmd_kamili64:
+        ; Hoja ya D64 → N64 (cvttsd2si rax)
+        cmp     dword [rsp + 16], 7
+        jne     .hoja_bmd_isha
+        mov     al, 0xF2
+        call    gen_baiti
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x0F
+        call    gen_baiti
+        mov     al, 0x2C
+        call    gen_baiti
+        mov     al, 0xC0
+        call    gen_baiti
+        mov     dword [rsp + 16], 4     ; aina inayofaa: N64
+.hoja_bmd_isha:
+        add     rsp, 16                 ; toa param_aina na param_nyota
+.hoja_param_acha:
+        ; Hakuna ukaguzi (kazi isiyojulikana, mkia wa kutofautiana)
+        ; — rejesha aina na nyota za hoja (rafu: [rsp]=aina, [rsp+8]=nyota)
+        pop     rax                     ; aina ya hoja (inayofaa)
+        pop     rbx                     ; nyota ya hoja
         mov     byte [hoja_d64 + r10], 0
         cmp     eax, 7
         jne     .hoja_sio_d64
@@ -8889,6 +10420,29 @@ uzalishaji_wambile:
         call    gen_baiti
         jmp     .hoja_sukumwa
 .hoja_sio_d64:
+        ; Safu kama hoja (8.22): thamani yake ni ANWANI (lea), si
+        ; muundo — pata_a(safu, 1) hupitisha msingi wa safu kama
+        ; kielekezi. Zamani safu ya miundo ilinakiliwa kama muundo
+        ; mmoja (kipengele cha kwanza pekee) na mwendo ukaharibika.
+        ; TAHADHARI: ni_jina_la_safu inaharibu rax na rbx — zihifadhi.
+        push    rax                     ; aina ya hoja
+        push    rbx                     ; nyota za hoja
+        mov     r12d, [rsp + 24]        ; nodi ya hoja ([rsp]=rbx, [rsp+8]=rax, [rsp+16]=r9)
+        mov     edi, r12d
+        call    ni_jina_la_safu
+        test    eax, eax
+        jz      .hoja_sio_safu
+        pop     rbx
+        pop     rax
+        mov     r11, [hoja_gp]
+        mov     byte [hoja_reg + r10], r11b
+        inc     qword [hoja_gp]
+        mov     al, 0x50                ; push rax — anwani ya msingi
+        call    gen_baiti
+        jmp     .hoja_sukumwa
+.hoja_sio_safu:
+        pop     rbx
+        pop     rax
         ; Muundo kwa thamani: usemi wa muundo hutoa ANWANI. Hoja ndogo
         ; (<=8B) hupakiwa kwa thamani; hoja kubwa (>8B) hupitishwa kwa
         ; rejea — nakala kwenye bafa ya data (kama sret) na kielekezi.
@@ -9571,6 +11125,7 @@ uzalishaji_wambile:
 
         ; Matokeo yatakuwa kwenye eax baada ya wito
 .baada_ya_wito:
+        add     rsp, 8                  ; toa faharisi ya kazi (kutoka .count_iko)
         pop     qword [hoja_xmm]
         pop     qword [hoja_gp]
         pop     qword [hoja_reg + 8]
@@ -10902,13 +12457,35 @@ uzalishaji_ast:
         jmp     .done
 
 .call_makosa:
-        mov     r12d, [ast_kushoto + r12*4]
+        ; r13 huwekwa kwa operanda: uzalishaji_ast na fumbua_aina
+        ; huhifadhi r13 (zote mbili hupushia r13-r15)
+        mov     r13d, [ast_kushoto + r12*4]   ; operanda
+        mov     r12d, r13d
         call    uzalishaji_ast
+        ; ! kwenye D64 haikubaliki (8.8) — thamani iko xmm0, si eax
+        mov     r12d, r13d
+        call    fumbua_aina
+        cmp     eax, 7
+        je      .makosa_d64_kosa
+        ; N64 (au kielekezi): test rax, rax → 48 85 c0
+        cmp     eax, 4
+        je      .makosa_test64
+        test    ebx, ebx
+        jg      .makosa_test64
         ; test eax,eax → 85 c0
         mov     al, 0x85
         call    gen_baiti
         mov     al, 0xc0
         call    gen_baiti
+        jmp     .makosa_test_iko
+.makosa_test64:
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x85
+        call    gen_baiti
+        mov     al, 0xc0
+        call    gen_baiti
+.makosa_test_iko:
         ; sete al → 0f 94 c0
         mov     al, 0x0f
         call    gen_baiti
@@ -10927,17 +12504,61 @@ uzalishaji_ast:
         sete    al
         movzx   eax, al
         jmp     .done
+.makosa_d64_kosa:
+        lea     rdi, [msg_kiambishi_1]
+        call    andika_mfuatano
+        lea     rdi, [msg_kiambishi_si]
+        call    andika_mfuatano
+        lea     rdi, [msg_kiambishi_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
 
 .call_makosa_biti:
-        mov     r12d, [ast_kushoto + r12*4]
+        mov     r13d, [ast_kushoto + r12*4]   ; operanda (r13 huhifadhiwa na zote mbili)
+        mov     r12d, r13d
         call    uzalishaji_ast
+        ; ~ kwenye D64 haikubaliki (8.8)
+        mov     r12d, r13d
+        call    fumbua_aina
+        cmp     eax, 7
+        je      .makosa_biti_d64_kosa
+        ; N64 (au kielekezi): not rax → 48 f7 d0
+        cmp     eax, 4
+        je      .makosa_biti_not64
+        test    ebx, ebx
+        jg      .makosa_biti_not64
         ; not eax → f7 d0
+        mov     al, 0xf7
+        call    gen_baiti
+        mov     al, 0xd0
+        call    gen_baiti
+        ; cdqe → 48 98: N64 d = ~0 lazima iwe -1, si 4294967295
+        ; (upanuzi wa ishara baada ya kukanusha kwa biti 32).
+        mov     al, 0x48
+        call    gen_baiti
+        mov     al, 0x98
+        call    gen_baiti
+        not     eax
+        jmp     .done
+.makosa_biti_not64:
+        mov     al, 0x48
+        call    gen_baiti
         mov     al, 0xf7
         call    gen_baiti
         mov     al, 0xd0
         call    gen_baiti
         not     eax
         jmp     .done
+.makosa_biti_d64_kosa:
+        lea     rdi, [msg_kiambishi_1]
+        call    andika_mfuatano
+        lea     rdi, [msg_kiambishi_tilde]
+        call    andika_mfuatano
+        lea     rdi, [msg_kiambishi_2]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
 
 .return_neg1:
         mov     eax, -1
