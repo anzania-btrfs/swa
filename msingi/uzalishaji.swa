@@ -178,6 +178,9 @@ W0 andika_movzx_eax_al() {
 // neg eax (F7 D8)
 W0 andika_neg_eax() { andika_baiti(247); andika_baiti(216); }
 W0 andika_cdq() { andika_baiti(153); }
+// xor edx, edx (31 D2) — panua kwa sifuri kabla ya div (bila ishara);
+// edx lazima iwe 0, si ishara ya eax/rax kama cdq/cqo inavyofanya.
+W0 andika_xor_edx_edx() { andika_baiti(49); andika_baiti(210); }
 W0 andika_idiv_ecx() { andika_baiti(247); andika_baiti(249); }
 W0 andika_and_eax_ecx() { andika_baiti(33); andika_baiti(200); }
 W0 andika_or_eax_ecx() { andika_baiti(9); andika_baiti(200); }
@@ -636,11 +639,39 @@ W0 andika_movzx_eax_neno_rbp_off(N32 off) {
     }
 }
 
+// movsx eax, byte [rbp+disp8] (0F BE 45 xx) au [rbp+disp32] (0F BE 85 xxxx)
+// — pakia baiti 1 kwa upanuzi wa ishara (N8 zenye ishara)
+W0 andika_movsx_eax_baiti_rbp_off(N32 off) {
+    kama (off < 128) {
+        andika_baiti(15); andika_baiti(190); andika_baiti(69); andika_baiti((256 - off) & 255);
+    } sivyo {
+        andika_baiti(15); andika_baiti(190); andika_baiti(133);
+        andika_disp32_ya_off(off);
+    }
+}
+
+// movsx eax, word [rbp+disp8] (0F BF 45 xx) au [rbp+disp32] (0F BF 85 xxxx)
+// — pakia baiti 2 kwa upanuzi wa ishara (N16 zenye ishara)
+W0 andika_movsx_eax_neno_rbp_off(N32 off) {
+    kama (off < 128) {
+        andika_baiti(15); andika_baiti(191); andika_baiti(69); andika_baiti((256 - off) & 255);
+    } sivyo {
+        andika_baiti(15); andika_baiti(191); andika_baiti(133);
+        andika_disp32_ya_off(off);
+    }
+}
+
 // movzx eax, byte [rax] (0F B6 00)
 W0 andika_movzx_eax_baiti_anwani() { andika_baiti(15); andika_baiti(182); andika_baiti(0); }
 
 // movzx eax, word [rax] (0F B7 00)
 W0 andika_movzx_eax_neno_anwani() { andika_baiti(15); andika_baiti(183); andika_baiti(0); }
+
+// movsx eax, byte [rax] (0F BE 00) — upanuzi wa ishara kwa N8
+W0 andika_movsx_eax_baiti_anwani() { andika_baiti(15); andika_baiti(190); andika_baiti(0); }
+
+// movsx eax, word [rax] (0F BF 00) — upanuzi wa ishara kwa N16
+W0 andika_movsx_eax_neno_anwani() { andika_baiti(15); andika_baiti(191); andika_baiti(0); }
 
 // mov [rcx], al (88 01) — hifadhi ya baiti 1 kwa anwani ya rcx
 W0 andika_mov_anwani_ecx_al() { andika_baiti(136); andika_baiti(1); }
@@ -648,7 +679,9 @@ W0 andika_mov_anwani_ecx_al() { andika_baiti(136); andika_baiti(1); }
 // mov [rcx], ax (66 89 01) — hifadhi ya baiti 2 kwa anwani ya rcx
 W0 andika_mov_anwani_ecx_ax16() { andika_baiti(102); andika_baiti(137); andika_baiti(1); }
 
-// Pakia kigeu kutoka rafu kwa upana wa enc (movzx kwa N8/N16)
+// Pakia kigeu kutoka rafu kwa upana wa enc.
+// N8/N16: movsx kwa aina zenye ishara, movzx kwa aina bila ishara
+// (upanuzi wa ishara hulinda N8 hasi zinapopakiwa kwenye N32/N64).
 W0 andika_pakia_kigeu_kwa_enc(N32 enc, N32 off) {
     kama (ni_desimali_enc(enc)) {
         // Desimali: pakia kwenye xmm0
@@ -658,8 +691,14 @@ W0 andika_pakia_kigeu_kwa_enc(N32 enc, N32 off) {
         rudisha;
     }
     N32 sz = ukubwa_kutoka_enc(enc);
-    kama (sz == 1) { andika_movzx_eax_baiti_rbp_off(off); }
-    sivyo { kama (sz == 2) { andika_movzx_eax_neno_rbp_off(off); }
+    kama (sz == 1) {
+        kama (ni_bila_ishara_enc(enc)) { andika_movzx_eax_baiti_rbp_off(off); }
+        sivyo { andika_movsx_eax_baiti_rbp_off(off); }
+    }
+    sivyo { kama (sz == 2) {
+            kama (ni_bila_ishara_enc(enc)) { andika_movzx_eax_neno_rbp_off(off); }
+            sivyo { andika_movsx_eax_neno_rbp_off(off); }
+        }
         sivyo { kama (sz == 8) { andika_mov_rax_rbp_off(off); }
             sivyo { andika_mov_eax_rbp_off(off); } } }
 }
@@ -1464,8 +1503,8 @@ W0 andika_mov_eax_anwani_eax() { andika_baiti(139); andika_baiti(0); }
 W0 andika_mov_rax_anwani_eax() { andika_baiti(72); andika_baiti(139); andika_baiti(0); }
 
 // Pakia thamani kutoka [rax] kwa upana wa enc (64-bit kwa kielekezi/N64)
-// N8 hutumia movzx ya baiti 1, N16 ya baiti 2 — vinginevyo upakiaji wa
-// baiti 4 ungesoma zaidi ya kipengele.
+// N8/N16: movsx kwa aina zenye ishara, movzx kwa aina bila ishara —
+// vinginevyo upakiaji wa baiti 4 ungesoma zaidi ya kipengele.
 // Kwa sehemu ya muundo wa ndani (enc hasi), matokeo ni anwani ya sehemu —
 // rax tayari ina anwani, hakuna upakiaji unaofanyika.
 W0 andika_pakia_anwani_kwa_enc(N32 enc) {
@@ -1480,9 +1519,11 @@ W0 andika_pakia_anwani_kwa_enc(N32 enc) {
         } sivyo {
             N32 sz = ukubwa_kutoka_enc(enc);
             kama (sz == 1) {
-                andika_movzx_eax_baiti_anwani();
+                kama (ni_bila_ishara_enc(enc)) { andika_movzx_eax_baiti_anwani(); }
+                sivyo { andika_movsx_eax_baiti_anwani(); }
             } sivyo { kama (sz == 2) {
-                    andika_movzx_eax_neno_anwani();
+                    kama (ni_bila_ishara_enc(enc)) { andika_movzx_eax_neno_anwani(); }
+                    sivyo { andika_movsx_eax_neno_anwani(); }
                 } sivyo { kama (sz == 8) {
                         andika_mov_rax_anwani_eax();
                     } sivyo {
@@ -3125,11 +3166,12 @@ W0 uzalishaji_kitambulisho(N32 node, N32 kazi_node) {
             } sivyo { kama (ni_desimali_enc(enc)) {
                     // Desimali: movsd/movss xmm0, [rip+disp32] — si mov rax
                     andika_mov_ax_rip_rel(enc, gi);
-                } sivyo { kama (ni_aina_ya_64bit(enc)) {
-                    andika_mov_rax_rip_rel(gi);
                 } sivyo {
-                    andika_mov_eax_rip_rel(gi);
-                } } }
+                    // Kamili: movsx/movzx kwa N8/N16 (upana + ishara),
+                    // mov eax/rax kwa upana zaidi — si mov eax tu,
+                    // uliosoma baiti 4 kwa kigeu cha baiti 1/2.
+                    andika_mov_ax_rip_rel(enc, gi);
+                } }
             rudisha;
         }
         gi = gi + 1;
@@ -3506,8 +3548,14 @@ W0 uzalishaji_gawanya(N32 node, N32 kazi_node) {
     } sivyo {
         uzalishaji_usemi(ast_kulia[node], kazi_node); andika_push_rax();
         uzalishaji_usemi(ast_kushoto[node], kazi_node);
-        kama (saizi >= 8) { andika_cqo(); }
-        sivyo { andika_cdq(); }
+        // Bila ishara: edx lazima iwe 0 (xor edx,edx) — cdq/cqo
+        // inaongeza ishara na kufurika (SIGFPE) kwa thamani yenye
+        // biti ya juu. Zenye ishara: cdq/cqo kama kawaida.
+        kama (ni_b) { andika_xor_edx_edx(); }
+        sivyo {
+            kama (saizi >= 8) { andika_cqo(); }
+            sivyo { andika_cdq(); }
+        }
         andika_pop_rcx();
         kama (saizi >= 8) {
             kama (ni_b) { andika_div_rcx_rax(); }
@@ -3531,8 +3579,13 @@ W0 uzalishaji_modulo(N32 node, N32 kazi_node) {
     // kwa sasa tunaishia tu na nambari kamili.
     uzalishaji_usemi(ast_kulia[node], kazi_node); andika_push_rax();
     uzalishaji_usemi(ast_kushoto[node], kazi_node);
-    kama (saizi >= 8) { andika_cqo(); }
-    sivyo { andika_cdq(); }
+    // Bila ishara: edx lazima iwe 0 — cdq/cqo inaongeza ishara
+    // na kufurika (SIGFPE) kwa thamani yenye biti ya juu.
+    kama (ni_b) { andika_xor_edx_edx(); }
+    sivyo {
+        kama (saizi >= 8) { andika_cqo(); }
+        sivyo { andika_cdq(); }
+    }
     andika_pop_rcx();
     kama (saizi >= 8) {
         kama (ni_b) { andika_div_rcx_rax(); }
@@ -4001,24 +4054,9 @@ W0 uzalishaji_nyoosha(N32 node, N32 kazi_node) {
         uzalishaji_usemi(ptr_node, kazi_node);  // eax = msingi
         andika_pop_rcx();  // ecx = ofseti
         andika_add_rax_rcx();  // eax = msingi + ofseti
-        kama (ast_thamani[node] < 0) {
-            // Kipengele cha muundo: anwani ndiyo thamani — hakuna upakiaji
-            // (sehemu ya nukta inaongeza ofseti na kupakia yenyewe)
-        } sivyo { kama (ni_desimali_enc(ast_thamani[node])) {
-                // Desimali: movsd/movss xmm0, [rax] — si mov rax
-                kama (saizi >= 8) { andika_baiti(242); andika_baiti(15); andika_baiti(16); andika_baiti(0); }
-                sivyo { andika_baiti(243); andika_baiti(15); andika_baiti(16); andika_baiti(0); }
-            } sivyo { kama (saizi >= 8) {
-                andika_mov_rax_anwani_eax();  // rax = [rax] (kielekezi/N64)
-            } sivyo { kama (saizi == 2) {
-                    andika_movzx_eax_neno_anwani();  // movzx eax, word [rax]
-                } sivyo { kama (saizi == 1) {
-                        andika_movzx_eax_baiti_anwani();  // movzx eax, byte [rax]
-                    } sivyo {
-                        andika_mov_eax_anwani_eax();  // eax = [eax]
-                    } } }
-            }
-        }
+        // Pakia kipengele: movsx/movzx kwa N8/N16, upana mwingine kama
+        // kawaida; kipengele cha muundo (enc hasi) hubakia anwani.
+        andika_pakia_anwani_kwa_enc(ast_thamani[node]);
     } sivyo {
         // Nyoosha tu: *ptr
         uzalishaji_usemi(ptr_node, kazi_node);
