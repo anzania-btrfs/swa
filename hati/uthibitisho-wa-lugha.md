@@ -193,8 +193,11 @@ Jumla ya kesi zilizopimwa: 195 (mfumo wa aina) + ~130 (udhibiti) +
 | Usawa wa mfuatano `==` | inalinganisha anwani (literali mbili hazilingani) | literali zinaunganishwa kwenye dimbwi moja (zinalingana) | hati 3: == ni namba/anwani | tofauti kati ya minyororo |
 | andika: %d %s %c chanya, hoja hadi 6 | inapita | inapita | maktaba | inapita |
 | andika: %d hasi na %d za N64 | jibu baya (4294967254; 705032704) | inapita | %d yenye ishara | mbegu jibu baya |
-| andika: %% | jibu baya (imemezwa) | jibu baya (imemezwa) | kawaida ya C: inaonyesha % | jibu baya |
-| andika: %u %x %f %l %n | jibu baya (zimemezwa kimya) | jibu baya (zimemezwa kimya) | si za hati | jibu baya |
+| andika: %% (muundo wa nguvu — andika_ndani) | inapita (inaonyesha %) | inapita (sawa) | kawaida ya C | inapita (kumbukumbu.swa 2026-09-01) |
+| andika: %% (muundo halisi) | jibu baya (mbegu ya zamani inaimeza) | inapita (inaonyesha %) | kawaida ya C | stage1 inapita (mkusanyaji 2026-09-01); mbegu imegandishwa — hati ya k16 |
+| andika: %u %x katika muundo HALISI | imekataliwa kwa sauti | imekataliwa kwa sauti (kipengele cha muundo) | si za hati: mkaguzi unathibitisha %d %s %c %% pekee | imekataliwa kwa sauti (jaribio_mende_kipengele_cha_muundo) |
+| andika: %u %x (muundo wa nguvu — andika_ndani) | inapita (%u/%x za thamani <= 2^31) | inapita | si za hati: %u = N64 isiyo na ishara, %x = heksadesimali ndogo | inapita kwa kiasi (mbegu: > 2^31 kama %d) |
+| andika: %f %l %n (muundo wa nguvu — andika_ndani) | inapita kwa kiasi (zinaonyeshwa kama herufi halisi: "%f" → "%f") | inapita kwa kiasi (sawa) | si za hati; hazijatekelezwa | passthrough ya makusudi — hakuna umeza wa kimya |
 | andika: hoja ya 7 | jibu baya (inarudia ya 6) | inapita | maktaba | mbegu jibu baya |
 | main haipo | imekataliwa (main haipo) | binary inaanguka (SEGV 139) | hati 1 | uzalishaji huanguka |
 | `sivyo` bila `kama` | imekataliwa | mkusanyaji wenyewe huanguka (SEGV 139) | kosa la sauti | uzalishaji huanguka (mkusanyaji) |
@@ -247,7 +250,7 @@ Jumla ya kesi zilizopimwa: 195 (mfumo wa aina) + ~130 (udhibiti) +
 | Kipengele | Mbegu | Uzalishaji | Inavyotarajiwa (hati) | Hali |
 |---|---|---|---|---|
 | kumbukumbu: nakili, weka_sifuri, linganisha_kumbukumbu | inapita | inapita | — | inapita |
-| kumbukumbu: andika (%d %s %c \n), andika_n64, andika_mfuatano, andika_herufi, andika_sehemu, andika_stderr | inapita (isipokuwa %d hasi, %%, hoja 7) | inapita (isipokuwa %%) | — | inapita kwa kiasi (tazama 3.2) |
+| kumbukumbu: andika (muundo wa nguvu: %d %u %x %% %s %c \n, %f %l %n kama herufi halisi), andika_n64, andika_u64, andika_heksa, andika_mfuatano, andika_herufi, andika_sehemu, andika_stderr | inapita (isipokuwa %d/%u/%x za > 2^31, hoja 7) | inapita | — | inapita kwa kiasi (tazama 3.2); muundo halisi: mkaguzi unathibitisha %d %s %c %% pekee |
 | kumbukumbu: sys_soma, sys_andika, sys_fungua, sys_funga, soma_mstari (faili halisi) | inapita | inapita | wito_wa_mfumo | inapita |
 | kumbukumbu: tenga, achilia (no-op), ukubwa(N32) | inapita (ukubwa(N32) = 8) | inapita (4) | hati 10 | mbegu jibu baya kwa ukubwa |
 | kumbukumbu: badili | huanguka (SEGV 139) | huanguka (SEGV 139) | realloc | huanguka |
@@ -265,7 +268,8 @@ Jumla ya kesi zilizopimwa: 195 (mfumo wa aina) + ~130 (udhibiti) +
 | orodha: orodha_ongeza INAPOKUA (badili) | huanguka (SEGV 139) | huanguka (SEGV 139) | ukuaji (hati 10) | huanguka — Orodha haikui |
 | mpangilio: pangilia_n32, pangilia_n32_kushuka, pangilia_n64, pangilia_n64_kushuka | inapita | inapita | — | inapita |
 | ramani: ramani_mpya, ramani_weka, ramani_pata, ramani_ina, ramani_futa, ramani_huru | jibu baya (weka ni no-op; 2/5) | inapita (5/5) | hati 10 | mbegu jibu baya |
-| faili, nasibu, wakati (faili_fungua, nasibu_n32, wakati_sasa, n.k.) | imekataliwa kimya (rc=1, hakuna ujumbe) | imekataliwa kwa sauti | zinahitaji libc (mnyororo wa Rust pekee) | hazifanyi kazi kwenye mnyororo asilia; mbegu inakataa kimya |
+| faili (faili_fungua, faili_soma, faili_andika, faili_soma_yote, faili_andika_yote, faili_ipo, faili_soma_mstari, faili_futa) | inapita (k10g) | inapita (k10g) | — | inapita — syscalls pekee, hakuna libc (2026-09-01) |
+| nasibu, wakati (nasibu_n32, wakati_sasa, n.k.) | imekataliwa kimya (rc=1, hakuna ujumbe) | imekataliwa kwa sauti | zinahitaji libc (mnyororo wa Rust pekee) | hazifanyi kazi kwenye mnyororo asilia; mbegu inakataa kimya |
 
 ## 4. Jibu baya zote (majibu potofu ya kimya)
 
@@ -629,12 +633,19 @@ N32 main() { pata() = 7; rudisha 0; }
 Kizazi cha wito cha mbegu hakienezi ishara ya hoja za N32.
 Uzalishaji ni sahihi.
 
-**25. `%%` na viashiria visivyojulikana vya muundo (zote mbili)**
+**25. `%%` na viashiria vingine vya muundo (zote mbili)**
 
-`andika("asilimia:%% mwisho\n")` inachapisha "asilimia: mwisho"
-(%% imemezwa, hakuna %). `%u %x %f %l %n` zote zinamezwa kimya
-bila pato. Hati haitoi ahadi — lakini umeza wa kimya unaficha
-makosa ya muundo.
+Kwenye andika_ndani (muundo wa nguvu — kumbukumbu.swa 2026-09-01):
+`%%` inaonyesha `%`; `%u` inaonyesha N64 isiyo na ishara (desimali);
+`%x` inaonyesha heksadesimali ndogo (42 → "2a"); `%f`, `%l`, `%n`
+na viashiria vingine visivyojulikana vinaonyeshwa kama herufi halisi
+("%f" → "%f") bila kutumia hoja — hakuna umeza wa kimya. Kwenye
+muundo HALISI, mkaguzi unathibitisha viungwa `%d %s %c %%` pekee
+(2026-09-01): vingine (k.m. %u, %x) vinakataliwa kwa sauti
+(jaribio_mende_kipengele_cha_muundo); `%%` inachapishwa na
+mnyororo wa uzalishaji (k16) lakini mbegu ya zamani bado inaimeza
+(mbegu imegandishwa). Kikomo cha mbegu: `%u` na `%x` za thamani
+> 2^31 zina tabia ya `%d` za N64 (ona 24).
 
 **26. `*(p + n)`: hakuna ukuzaji wa kipengele (zote mbili)**
 
@@ -884,7 +895,7 @@ kuanguka) kwenye mwingine — na hakuna kosa linalotangaza hilo.
 | ukubwa(Muundo) | imekataliwa kimya (0) | inapita (8) |
 | Muundo kama hoja ya 7 (rafu) | takataka | inapita |
 | Mkaguzi wa aina | hakuna | makosa ni onyo; mkusanyaji anaendelea |
-| Moduli za libc (faili, nasibu, wakati) | imekataliwa kimya | imekataliwa kwa sauti |
+| Moduli za libc (nasibu, wakati — faili imeandikwa upya kwa syscalls 2026-09-01) | imekataliwa kimya | imekataliwa kwa sauti |
 
 Mwelekeo unaorudiwa: uzalishaji ni wa RUHUSA ZAIDI kuliko mbegu
 kwenye sehemu nyingi — na katika kila kesi, ruhusa mpya inaambatana
@@ -983,9 +994,11 @@ mzunguko mfupi wa && na ||, ternary, ugawi msingi, kurudia na wito
 wa mbele, miundo kwa mshale na kwa sret, N64 katika vigezo na
 ulimwengu (kwenye uzalishaji), D64 ndani ya ulimwengu wake (pamoja
 na wito wa kazi — kinyume cha mipaka 4c), tenga/achilia, maoni ya
-`//`, mfuatano msingi, andika %d/%s/%c kwa thamani chanya, na
-maktaba muhimu (kumbukumbu, mfuatano msingi, hesabu, mpangilio,
-orodha bila kukua).
+`//`, mfuatano msingi, andika %d/%u/%x/%%/%s/%c kwa thamani chanya
+(na %f/%l/%n kama herufi halisi), na maktaba muhimu (kumbukumbu,
+mfuatano msingi, hesabu, mpangilio, orodha bila kukua, faili —
+imeandikwa upya kwa syscalls 2026-09-01, inaendesha kwenye
+minyororo yote miwili).
 
 Makosa makubwa ya kimya (jibu baya), kwa mpangilio wa uzito:
 mpaka mzima wa D64 na nambari kamili (4.1.1, 4.1.2, 4.1.5), ukataji
