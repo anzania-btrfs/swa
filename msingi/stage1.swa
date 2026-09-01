@@ -37,9 +37,31 @@ W0 ondoa_husisha() {
             kama (chanzo_buf[i-1] == 10) { ni_mwanzo_mstari = 1; }
         }
         kama (ni_mwanzo_mstari == 1) {
+            // Neno KAMILI "husisha" tu (si kiambishi "hu"): mstari unaoanza
+            // na "hu" uliofuata na chochote lazima UPITIE bila kufutwa.
+            // Neno kuu linakubaliwa likifuatiwa tu na nafasi, tabo, mwisho
+            // wa mstari, au mwisho wa bafa — ndipo ndio maelekezo halali
+            // (husisha { faili.swa } na husisha C::jina).
             kama (chanzo_buf[i] == 104) {
                 kama (chanzo_buf[i+1] == 117) {
-                    ni_husisha = 1;
+                    kama (chanzo_buf[i+2] == 115) {
+                        kama (chanzo_buf[i+3] == 104) {
+                            kama (chanzo_buf[i+4] == 105) {
+                                kama (chanzo_buf[i+5] == 115) {
+                                    kama (chanzo_buf[i+6] == 104) {
+                                        kama (chanzo_buf[i+7] == 97) {
+                                            N8 baada = chanzo_buf[i+8];
+                                            kama (baada == 32) { ni_husisha = 1; }
+                                            kama (baada == 9) { ni_husisha = 1; }
+                                            kama (baada == 10) { ni_husisha = 1; }
+                                            kama (baada == 13) { ni_husisha = 1; }
+                                            kama (baada == 0) { ni_husisha = 1; }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
