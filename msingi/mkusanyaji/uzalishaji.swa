@@ -1,4 +1,4 @@
-husisha { msambazaji.swa }
+husisha { mkusanyaji/msambazaji.swa }
 
 // ==========================================================
 // uzalishaji.swa :: Kizalishe cha machine code asilia
@@ -2167,24 +2167,33 @@ N32 pata_au_unda_nje(N8* jina) {
 
 // -------------------------------------------------------
 // Kusanya herufi halisi (string literals) kwenye bafa
+// Utorokaji hubadilishwa wakati wa kunakili (8.18: kamba za DATA
+// za ndani zilibaki na baiti ghafi za "\n" badala ya 0x0A).
+// Jedwali: \n → 10, \t → 9, \0 → 0; vingine (\\, \", \%, n.k.)
+// hudondosha kufyeka — sawa na mbegu.
 // -------------------------------------------------------
 N32 kusanya_herufi(N8* raw) {
     // Ruka nukuu ya kufungua
     N32 start = 1;
-    // Tafuta nukuu ya kufunga
+    // Tafuta nukuu ya kufunga (ruka utorokaji wa \" kama jozi)
     N32 end_ = start;
-    wakati (raw[end_] != 0 && raw[end_] != 34) { end_ = end_ + 1; }
-    N32 len = end_ - start + 1;  // +1 kwa null terminator
+    wakati (raw[end_] != 0) {
+        kama (raw[end_] == 92) { end_ = end_ + 2; endelea; }
+        kama (raw[end_] == 34) { vunja; }
+        end_ = end_ + 1;
+    }
+    N32 len = end_ - start;  // urefu wa mfuatano ghafi (bila nukuu)
 
-    // Angalia kama tayari imekusanywa
+    // Angalia kama tayari imekusanywa (ulinganisho kwa baiti ghafi —
+    // kamba yenye utorokaji huwa na toleo lake mwenyewe)
     N32 i = 0;
     wakati (i < str_idadi) {
         N32 o = str_off[i];
         N32 l = str_len[i];
-        kama (l == len) {
+        kama (l == len + 1) {  // +1 kwa null terminator
             N32 j = 0;
             N32 sawa = 1;
-            wakati (j < len - 1) {
+            wakati (j < len) {
                 kama (str_buf[o + j] != raw[start + j]) { sawa = 0; vunja; }
                 j = j + 1;
             }
@@ -2193,19 +2202,28 @@ N32 kusanya_herufi(N8* raw) {
         i = i + 1;
     }
 
-    // Ongeza mpya
-    kama (str_idadi < 1024 && str_buf_wapi + len < 16384) {
+    // Ongeza mpya — badilisha utorokaji wakati wa kunakili
+    kama (str_idadi < 1024 && str_buf_wapi + len + 1 < 16384) {
         N32 o = str_buf_wapi;
-        str_off[str_idadi] = o;
-        str_len[str_idadi] = len;
-        // Nakili herufi (bila nukuu, na null terminator)
-        N32 j = 0;
-        wakati (j < len - 1) {
-            str_buf[o + j] = raw[start + j];
+        N32 j = 0;  // faharisi ya chanzo
+        N32 w = 0;  // faharisi ya lengwa (baada ya utorokaji)
+        wakati (j < len) {
+            N8 ch = raw[start + j];
+            kama (ch == 92 && j + 1 < len) {
+                N8 e = raw[start + j + 1];
+                kama (e == 110) { ch = 10; j = j + 1; }  // \n
+                sivyo { kama (e == 116) { ch = 9; j = j + 1; }  // \t
+                    sivyo { kama (e == 48) { ch = 0; j = j + 1; }  // \0
+                        sivyo { ch = e; j = j + 1; } } }  // \\ \" \% \x ...
+            }
+            str_buf[o + w] = ch;
+            w = w + 1;
             j = j + 1;
         }
-        str_buf[o + len - 1] = 0;  // null terminator
-        str_buf_wapi = str_buf_wapi + len;
+        str_buf[o + w] = 0;  // null terminator
+        str_off[str_idadi] = o;
+        str_len[str_idadi] = w + 1;
+        str_buf_wapi = o + w + 1;
         str_idadi = str_idadi + 1;
         rudisha str_idadi - 1;
     }
@@ -2513,7 +2531,13 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
                 N32 p = 1;  // baada ya nukuu ya mwanzo
                 N32 mwanzo_sehemu = 1;
                 wakati (p < urefu_m) {
-                    kama (umbo[p] == 37) {  // '%'
+                    // Utorokaji (\n, \\, \%, ...): ruka jozi nzima ili
+                    // ibaki kwenye sehemu — sehemu_tungo_hifadhi huitafsiri
+                    // (8.2: \% lilionekana kama direktiba ya '%' na kula
+                    // herufi iliyofuata; \% sasa inachapisha asilimia).
+                    kama (umbo[p] == 92) {
+                        kama (p + 1 < urefu_m) { p = p + 2; } sivyo { p = p + 1; }
+                    } sivyo { kama (umbo[p] == 37) {  // '%'
                         kama (p > mwanzo_sehemu) {
                             N32 lebo = sehemu_tungo_hifadhi(umbo + mwanzo_sehemu, p - mwanzo_sehemu);
                             kama (lebo >= 0) { andika_wito_sehemu(fd, lebo, sehemu_len[sehemu_idadi - 1]); }
@@ -2542,7 +2566,7 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
                         mwanzo_sehemu = p;
                     } sivyo {
                         p = p + 1;
-                    }
+                    } }
                 }
                 kama (urefu_m - 1 > mwanzo_sehemu) {
                     N32 lebo = sehemu_tungo_hifadhi(umbo + mwanzo_sehemu, urefu_m - 1 - mwanzo_sehemu);
@@ -4984,13 +5008,17 @@ W0 hakiki_marudio_ya_ngazi_ya_juu(N32 mzizi) {
 // D64 subnormal na NaN huhifadhiwa kama sifuri/inf mtawalia.
 // Inatumiwa na vianzio vya ulimwengu wa D32 (baiti 8 → 4).
 // -------------------------------------------------------
-N32 d64_bits_hadi_d32(N64 d64) {
-    N64 alama = d64 & 9223372036854775808;  // biti 63 (2^63)
-    N64 kielelezo = (d64 >> 52) & 2047;      // biti 52-62
-    N64 kiga = d64 & 4503599627370495;       // biti 0-51 (2^52 - 1)
+N64 d64_bits_hadi_d32(N64 d64) {
+    // TAHADHARI: mbegu ina hitilafu katika & na >> za N64 (zinakata
+    // kwa biti 32) — kila operesheni hapa ni /, %, au * kwa N64
+    // (zilizothibitishwa kwenye mbegu na kwenye mnyororo).
+    N64 alama = 0;
+    kama (d64 < 0) { alama = 1; }  // biti 63 (2^63)
+    N64 kielelezo = (d64 / 4503599627370496) % 2048;  // biti 52-62
+    N64 kiga = d64 % 4503599627370496;                // biti 0-51
     kama (kielelezo == 2047) {
         // inf/NaN → inf (D32 haina NaN sahili)
-        rudisha 2139095040 + (alama != 0) * 2147483648;
+        rudisha 2139095040 + alama * 2147483648;
     }
     kama (kielelezo == 0) {
         // D64 sifuri au subnormal — chini ya uwezo wa D32; zungusha hadi sifuri
@@ -5000,23 +5028,23 @@ N32 d64_bits_hadi_d32(N64 d64) {
     N64 e32 = kielelezo - 896;
     kama (e32 >= 255) {
         // kufurika kwa kielelezo → inf
-        rudisha 2139095040 + (alama != 0) * 2147483648;
+        rudisha 2139095040 + alama * 2147483648;
     }
     kama (e32 <= 0) {
         // < 2^-126 → sifuri (subnormal ya D32 haijatengenezwa)
         rudisha 0;
     }
     // Kigawanyo: biti 52 hadi 23 (ondoa 29), kisha zungusha
-    N64 kiga32 = kiga >> 29;
-    N64 salio = kiga & 536870911;  // biti 29 za chini (2^29 - 1)
+    N64 kiga32 = kiga / 536870912;
+    N64 salio = kiga % 536870912;  // biti 29 za chini (2^29 - 1)
     N64 nusu = 268435456;          // 2^28
     kama (salio > nusu) { kiga32 = kiga32 + 1; }
-    sivyo { kama (salio == nusu && (kiga32 & 1) == 1) { kiga32 = kiga32 + 1; } }
+    sivyo { kama (salio == nusu && kiga32 - (kiga32 / 2) * 2 == 1) { kiga32 = kiga32 + 1; } }
     kama (kiga32 >= 8388608) { kiga32 = 0; e32 = e32 + 1; }  // kufurika → pandisha
     kama (e32 >= 255) {
-        rudisha 2139095040 + (alama != 0) * 2147483648;
+        rudisha 2139095040 + alama * 2147483648;
     }
-    rudisha (alama != 0) * 2147483648 + (e32 << 23) + kiga32;
+    rudisha alama * 2147483648 + e32 * 8388608 + kiga32;
 }
 
 // -------------------------------------------------------
@@ -5133,21 +5161,26 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
                             k = k + 1;
                         }
                     } sivyo {
+                        // Ujenzi wa bits64 bila kuhama kwa N64 (mbegu
+                        // ina hitilafu katika >> za N64) — kuzidisha kwa
+                        // 256 kwa kila baiti, kuanzia b7 (mdogo-wa-kwanza
+                        // ni b0) (8.7: D32 ya ulimwengu ilipata bits za
+                        // ugeuzaji zilizopotoka).
                         N64 bits64 = 0;
-                        wakati (k < 8) {
-                            // N64 baiti: hamisha ya 64-bit (shl rax, cl) —
-                            // N32 ingekata kwa mod 32
+                        k = 7;
+                        wakati (k >= 0) {
                             N64 baiti = ast_pool[off8 + k];
-                            bits64 = bits64 + (baiti << (k * 8));
-                            k = k + 1;
+                            bits64 = bits64 * 256 + baiti;
+                            k = k - 1;
                         }
-                        N32 bits32 = d64_bits_hadi_d32(bits64);
+                        N64 bits32 = d64_bits_hadi_d32(bits64);
                         k = 0;
                         wakati (k < 4) {
                             kama (bafa_data_wapi < 262144) {
-                                bafa_data[bafa_data_wapi] = (bits32 >> (k * 8)) & 255;
+                                bafa_data[bafa_data_wapi] = bits32 % 256;
                                 bafa_data_wapi = bafa_data_wapi + 1;
                             }
+                            bits32 = bits32 / 256;
                             k = k + 1;
                         }
                     }

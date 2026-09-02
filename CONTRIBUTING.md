@@ -71,7 +71,8 @@ cargo run --release -- mfano.swa -o mfano.o
 | Saraka | Maelezo |
 |--------|---------|
 | `src/` | Mkusanyaji wa bootstrap wa Rust (lexer, parser, sema, ir, codegen, driver) |
-| `msingi/` | Maktaba ya kujikusanya ya Swa (msomaji, msambazaji, mteremko, mkaguzi, kumbukumbu, mfuatano, orodha) |
+| `msingi/maktaba/` | Maktaba ya kawaida ya Swa (kumbukumbu, mfuatano, orodha, ramani, hesabu, faili) |
+| `msingi/mkusanyaji/` | Mkusanyaji wa kujikusanya wa Swa (msomaji, msambazaji, mteremko, mkaguzi, uzalishaji, stage1) |
 | `majaribio/` | Majaribio ya Rust na Swa |
 | `hati/` | Nyaraka za mradi |
 

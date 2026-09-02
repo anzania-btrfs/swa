@@ -201,7 +201,7 @@ inayoganda mbegu.
 Hakuna mkusanyaji (mbegu WALA mnyororo wa .swa) anayechambua faili
 lililotajwa na `husisha { faili.swa }` — mstari unarukwa na
 mchanganuzi. Hii ni kwa makusudi: mkusanyaji wa .swa unajijenga kwa
-chanzo KILICHOUNGANISHWA (cat msingi/*.swa), na husisha C::xxx
+chanzo KILICHOUNGANISHWA (cat msingi/maktaba/*.swa na msingi/mkusanyaji/*.swa), na husisha C::xxx
 bado inachakatwa kwa usahihi.
 
 Hatari ya zamani: wito wa kazi kutoka faili "lililoingizwa" bila
@@ -222,7 +222,7 @@ miwili. Ahadi ya vipimo-vya-lugha.md sehemu ya 8 ("mkusanyaji wa
 hii.
 
 Kanuni kwa watumiaji: faili lazima ziunganishwe kwanza
-(`cat msingi/mfuatano.swa msingi/hesabu.swa program.swa`) —
+(`cat msingi/maktaba/mfuatano.swa msingi/maktaba/hesabu.swa program.swa`) —
 hakuna mnyororo unaoingiza faili kwa sasa.
 
 ## 9. Rekodi ya uzingatiaji (2026-08-27)

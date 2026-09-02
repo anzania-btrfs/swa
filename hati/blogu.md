@@ -77,7 +77,7 @@ Hata baada ya marekebisho ya 5, `patch_br_if_needed` ilifuata block za `endelea`
 
 ---
 
-**Hitilafu 7: Kuvuja kwa Nukta Mkato ya Tamko la Mbele** (`msingi/msambazaji.swa`)
+**Hitilafu 7: Kuvuja kwa Nukta Mkato ya Tamko la Mbele** (`msingi/mkusanyaji/msambazaji.swa`)
 Kazi ya `changanua_kazi` katika mchanganuzi wa kujikusanya haikutumia `;` iliyofuata matamko ya mbele (prototypes za kazi). Nukta mkato ilivuja hadi kiwango cha juu cha mchanganuzi, na kusababisha hitilafu za "unexpected element". Hii ilizuia kuchanganua faili kama `msomaji.swa` zilizokuwa na matamko ya mbele:
 ```swa
 W0 ruka_nafasi_na_maelezo(Msomaji* m);
@@ -87,7 +87,7 @@ W0 ruka_nafasi_na_maelezo(Msomaji* m);
 
 ---
 
-**Hitilafu 8: Uchanganuzi wa Kiiniti cha Kitanzi cha `kwa`** (`msingi/msambazaji.swa`)
+**Hitilafu 8: Uchanganuzi wa Kiiniti cha Kitanzi cha `kwa`** (`msingi/mkusanyaji/msambazaji.swa`)
 Mchanganuzi wa kitanzi cha `kwa` ulijaribu kuchanganua kiiniti kama usemi kupitia `changanua_usemi`. Lakini `N32 i = 0` ni tamko la ndani, si usemi. Ulichanganua `N32` kama kitambulisho na kuacha `i = 0;` bila kutumiwa.
 
 **Marekebisho:** Jaribu `changanua_taarifa_tangazo` (mchanganuzi wa matamko) kwanza kwa kiiniti cha `kwa`. Rudia kwa uchanganuzi wa usemi ikiwa mchanganuzi wa matamko unarudisha -1.
@@ -134,7 +134,7 @@ Binary ya kujikusanya:
 
 ### Faili Zilizobadilishwa
 - `src/ir/lower.rs` -- mistari 150+ iliyobadilishwa (kiini cha marekebisho ya codegen)
-- `msingi/msambazaji.swa` -- mistari 40+ iliyobadilishwa (marekebisho ya mchanganuzi)
+- `msingi/mkusanyaji/msambazaji.swa` -- mistari 40+ iliyobadilishwa (marekebisho ya mchanganuzi)
 - `stage1.swa` -- mistari 20 iliyobadilishwa (uboreshaji wa kasi)
 - `src/parser/mod.rs` -- mistari 2 (mpangilio wa AST ya kitanzi cha kwa)
 - `hati/*.md` -- masasisho ya nyaraka

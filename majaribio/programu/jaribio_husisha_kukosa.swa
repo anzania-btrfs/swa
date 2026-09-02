@@ -1,0 +1,5 @@
+// jaribio_husisha_kukosa.swa — faili lisilopo katika "husisha { }"
+// linalia kwa sauti: ujumbe unataja jina na njia za utafutaji, na
+// hakuna faili la tokeo. (Stage1 pekee: mbegu hupuuza mstari kimya.)
+husisha { hamna.swa }
+N32 main() { rudisha 0; }
