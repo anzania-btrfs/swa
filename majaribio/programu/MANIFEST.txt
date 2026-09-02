@@ -138,6 +138,9 @@ KATA	jaribio_mende_ugawaji_wito (ugawaji unahitaji kihifadhi; matokeo ya wito si
 KATA	jaribio_mende_ugawaji_ternary (ugawaji unahitaji kihifadhi; matokeo ya ternary si lvalue — zamani x ? y : z = 5 ilikubaliwa kimya kama no-op; stage1 pekee)	majaribio/programu/jaribio_mende_ugawaji_ternary.swa	stage1	unahitaji kihifadhi
 0	jaribio_k16_mbumo_asilimia (%% inachapisha asilimia halisi kwenye mnyororo wa uzalishaji; mbegu ya zamani bado inaimeza — kugandisha upya ni uamuzi wa msimamizi)	majaribio/programu/jaribio_k16_mbumo_asilimia.swa
 0	jaribio_husisha_hu (mistari ya "hu" haifutwi; maelekezo kamili ya husisha ndiyo pekee yanayoondolewa)	majaribio/programu/jaribio_husisha_hu.swa
+0	jaribio_husisha_tatua (mkusanyaji anatatua husisha { mfuatano.swa } mwenyewe — stage1 pekee: mbegu inasoma kwenye saraka ya faili pekee)	majaribio/programu/jaribio_husisha_tatua.swa	stage1
+KATA	jaribio_husisha_kukosa (faili lisilopo katika husisha linalia kwa sauti — stage1 pekee: mbegu hupuuza kimya)	majaribio/programu/jaribio_husisha_kukosa.swa	stage1	halipatikani
+KATA	jaribio_husisha_mzunguko (mzunguko wa husisha unakataliwa kwa sauti, mnyororo kamili unatajwa — stage1 pekee)	majaribio/programu/jaribio_husisha_mzunguko.swa	stage1	mzunguko wa husisha
 6	jaribio_mende_muundo_thamani_12 (muundo wa baiti 12 kwa thamani: mabadiliko ya kigezo ndani ya kazi hayagusi kigeu cha mpigaji — bafa ya nakala ilihifadhi anwani ya chanzo badala ya lengwa)	majaribio/programu/jaribio_mende_muundo_thamani_12.swa
 10	jaribio_mende_muundo_thamani_16 (muundo wa baiti 16 kwa thamani: mabadiliko ya kigezo ndani ya kazi hayagusi kigeu cha mpigaji)	majaribio/programu/jaribio_mende_muundo_thamani_16.swa
 21	jaribio_mende_sret_mlolongo_8 (mlolongo wa sret wa baiti 8: jumlisha(tengeneza(10)) — kielekezi cha bafa ya sret kilipitishwa kwa thamani, takataka isiyo na uhakika)	majaribio/programu/jaribio_mende_sret_mlolongo_8.swa
@@ -161,3 +164,6 @@ KATA	jaribio_neno_muhimu_muundo_kata (neno muhimu kama jina la muundo/shamba kin
 0	jaribio_umbizo_hasi (%x/%u za hasi: kukamilisha mbili — ffffffffffffffff kwa -1; mdudu wa 2026-09-01: takataka; stage1 pekee)	majaribio/programu/jaribio_umbizo_hasi.swa	stage1
 KATA	jaribio_hoja_halisi_kwa_kielekezi_kata (halisi kamili kwa kigezo cha kielekezi inakataliwa — f(5) na f(0): enc 0 ya halisi ilikwepa ukaguzi mkali na kuleta SEGV (mdudu wa 2026-09-01); stage1 pekee)	majaribio/programu/jaribio_hoja_halisi_kwa_kielekezi_kata.swa	stage1	kielekezi dhidi ya namba
 0	jaribio_mende_sret_kwa_thamani (kazi inayochukua muundo mkubwa kwa thamani NA kurudisha muundo — njia ya kurudi kwa sret ilipakua sloti (kielekezi) badala ya muundo; sasa kielekezi kinanyooshewa kabla ya nakili)	majaribio/programu/jaribio_mende_sret_kwa_thamani.swa
+1	jaribio_t94_asilimia_utorokaji (utorokaji wa \% unabadilishwa kuwa asilimia na \n kuwa mstari mpya katika kamba ya DATA — 8.2)	majaribio/programu/jaribio_t94_asilimia_utorokaji.swa
+1	jaribio_j8_d32_ulimwengu (D32 ya ulimwengu inalingana na halisi ya desimali — 8.7; mbegu haijui D32)	majaribio/programu/jaribio_j8_d32_ulimwengu.swa	stage1
+1	jaribio_d18_kamba_ndani_n (\n katika kamba ya DATA ya ndani inabadilishwa kuwa 0x0A — 8.18, hati 2.3)	majaribio/programu/jaribio_d18_kamba_ndani_n.swa

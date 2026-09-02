@@ -13,7 +13,7 @@ Minyororo iliyopimwa:
 
 - **mbegu** — `msingi/mbegu.bin`, mkusanyaji wa bootstrap. Iliyogandishwa
   commit f12e134 (2026-09-01 12:03); haijabadilika tangu hapo.
-- **uzalishaji** — stage1 iliyojengwa leo kutoka `msingi/*.swa` kupitia
+- **uzalishaji** — stage1 iliyojengwa leo kutoka `msingi/maktaba/*.swa na msingi/mkusanyaji/*.swa` kupitia
   mbegu (`--exe`, chmod +x). Mnyororo wa kujikusanya: fixpoint
   stage2-exe == stage3-exe imepimwa leo, sawa kwa baiti.
 
@@ -64,7 +64,7 @@ mbegu (mnyororo wa kujikusanya):
 
 ```bash
 cd /home/kandemark/Projects/compilers/swa
-cat msingi/{kumbukumbu,mfuatano,msomaji,msambazaji,mteremko,mkaguzi,uzalishaji,orodha,ramani,stage1}.swa > /tmp/zima.swa
+cat msingi/maktaba/{kumbukumbu,mfuatano}.swa msingi/mkusanyaji/{msomaji,msambazaji,mteremko,mkaguzi,uzalishaji}.swa msingi/maktaba/{orodha,ramani}.swa msingi/mkusanyaji/stage1.swa > /tmp/zima.swa
 msingi/mbegu.bin --exe /tmp/zima.swa > /tmp/stage1.bin
 chmod +x /tmp/stage1.bin
 ```
@@ -81,11 +81,11 @@ chmod +x matokeo.bin
 ./matokeo.bin; echo $?
 ```
 
-Kesi zinazotumia `andika` zinaunganishwa na `msingi/kumbukumbu.swa`
+Kesi zinazotumia `andika` zinaunganishwa na `msingi/maktaba/kumbukumbu.swa`
 (njia ya `cat`, kama hati 8). Kipimo kwenye mnyororo wa mbegu
 kinatumia binary iliyogandishwa; kipimo kwenye mnyororo wa
 uzalishaji kinatumia stage1 iliyojengwa siku ya kipimo kutoka
-`msingi/*.swa` vya sasa.
+`msingi/maktaba/*.swa na msingi/mkusanyaji/*.swa` vya sasa.
 
 Uthibitisho wa papo hapo ulifanyika leo kwa kesi za kirejeshi za
 marekebisho yote yaliyoorodheshwa katika sehemu ya 3 na kwa kesi
