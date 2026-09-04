@@ -96,6 +96,8 @@ Hali ya Agosti 2026 (kuelekea 1.0):
 3. **Vipimo rasmi vya lugha — IMEKAMILIKA** — hati/vipimo-vya-lugha.md.
 4. **Uamuzi wa mteremko.swa/LLVM — IMEFANYIKA** — mwisho wa LLVM ni
    wa MAJARIBIO; mnyororo wa uzalishaji ni mbegu/exe pekee (mipaka.md 6).
+   Dereva wa Rust/LLVM umehamishiwa hazina ya kumbukumbu
+   lugha-swa/swa-dereva (2026-09-05); hazina kuu ina Swa pekee.
 5. **ABI ya wito wa kazi za D64** — IMEFANYIKA kwenye minyororo
    yote miwili (mbegu inatumia uhamisho wa GP; kilichopimwa
    2026-08-27 — mipaka.md 4c imerekebishwa). Mpaka wa D64 na

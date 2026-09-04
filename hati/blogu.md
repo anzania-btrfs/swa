@@ -1,5 +1,9 @@
 # Mkusanyaji wa Kujikusanya wa Swa: Hatua Muhimu Ilifikiwa Baada ya Saa 18 za Kurekebisha Hitilafu
 
+KUMBUKA (2026-09-05): makala hii ni rekodi ya kihistoria — dereva wa
+Rust/LLVM (kande) unaoelezwa hapa umehamishiwa hazina ya kumbukumbu
+lugha-swa/swa-dereva.
+
 ## Muhtasari wa Utendaji
 
 **Swa**, lugha ya kwanza duniani ya programu za mifumo kwa Kiswahili, imefikia hatua muhimu: mkusanyaji wake wa kujikusanya unajikusanya yenyewe. Baada ya saa 18 za kurekebisha hitilafu kwa kina katika commits 10, hitilafu 12 muhimu ziligunduliwa na kurekebishwa. Mkusanyaji sasa unapita majaribio 174/174, ikiwa ni pamoja na jaribio kamili la kujikusanya (K6) ambalo lilikuwa limezimwa tangu ilipoanzishwa.
