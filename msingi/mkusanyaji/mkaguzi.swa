@@ -311,6 +311,66 @@ W0 mkaguzi_kataa_d64_kutoka_wito_wa_kigezo(N32 node, N32 enc_lengwa) {
     mkaguzi_makosa = mkaguzi_makosa + 1;
 }
 
+// Kataa kigeu cha ndani cha W0 chenye kianzio. W0 (familia 5,
+// upana 0) ni aina ya kazi pekee — hati 3: "W0 ni kwa kazi tu".
+// Kianzio cha thamani kwa W0 kilikubaliwa kimya zamani (kigeu cha
+// ukubwa 0 — thamani ikimezwa); kataa kwa sauti, kama kigezo cha
+// W0 kinavyokataliwa. W0 bila kianzio inabaki halali (tangazo
+// halina thamani ya kuhifadhi) — kama vile W0* yenye kianzio
+// (kielekezi cha kazi kinachoshika anwani).
+W0 mkaguzi_kataa_w0_chenye_kianzio(N32 enc, N8* jina_kigeu) {
+    N32 w0_fam = (enc / 256) % 256;
+    N32 w0_upana = enc - (w0_fam * 256);
+    kama (w0_fam == 5) {
+        kama (w0_upana == 0) {
+            andika_stderr("kosa [%s]: kigeu '%s' cha W0 chenye kianzio — W0 ni kwa kazi tu\n", mkaguzi_kazi_sasa, jina_kigeu);
+            mkaguzi_makosa = mkaguzi_makosa + 1;
+        }
+    }
+}
+
+// Kataa modulo (%) ya kielekezi. % si hesabu ya anwani — jumlisha
+// na toa ndizo pekee (p + n na p - n); zamani p % n ilikubaliwa
+// kimya na kupiga modulo ya anwani yenyewe (rekodi 8.9). Kataa
+// kwa sauti, kama p+p na n-p zinavyokataliwa.
+W0 mkaguzi_kataa_modulo_ya_kielekezi(N32 aina, N32 lhs_enc, N32 rhs_enc) {
+    kama (aina == 49) {  // AST_MODULO
+        N32 modulo_kushoto = mkaguzi_ni_kielekezi(lhs_enc);
+        N32 modulo_kulia = mkaguzi_ni_kielekezi(rhs_enc);
+        kama (modulo_kushoto == 1) {
+            andika_stderr("kosa [%s]: kielekezi kwenye modulo haina maana (l=%d, r=%d)\n", mkaguzi_kazi_sasa, lhs_enc, rhs_enc);
+            mkaguzi_makosa = mkaguzi_makosa + 1;
+        } sivyo {
+            kama (modulo_kulia == 1) {
+                andika_stderr("kosa [%s]: kielekezi kwenye modulo haina maana (l=%d, r=%d)\n", mkaguzi_kazi_sasa, lhs_enc, rhs_enc);
+                mkaguzi_makosa = mkaguzi_makosa + 1;
+            }
+        }
+    }
+}
+
+// Kataa hoja nyingi kwa kazi za pekee zisizosajiliwa (wito_wa_mfumo,
+// tekeleza, ukubwa, anwani_ya_kazi) — mzalishaji huzitambua kwa jina
+// na hoja zaidi ya kiwango cha kila moja zilimezwa kimya (mdudu wa
+// 2026-09-04). Kiwango: wito_wa_mfumo 7 (namba ya mfumo + hoja 6 za GP),
+// tekeleza 4 (kazi, argc, argv, ofseti), ukubwa 1 (jina la aina),
+// anwani_ya_kazi 1 (jina la kazi). Idadi ndogo inabaki halali
+// (wito_wa_mfumo(60, 0) n.k. — mzalishaji hutoa sifuri kwa
+// zilizokosekana).
+W0 mkaguzi_kagua_kiwango_cha_huduma(N8* jina, N32 hoja_idadi) {
+    N32 kiwango_hoja = 0;
+    kama (jina_linganisha(jina, "wito_wa_mfumo")) { kiwango_hoja = 7; }
+    sivyo { kama (jina_linganisha(jina, "tekeleza")) { kiwango_hoja = 4; }
+        sivyo { kama (jina_linganisha(jina, "ukubwa")) { kiwango_hoja = 1; }
+            sivyo { kama (jina_linganisha(jina, "anwani_ya_kazi")) { kiwango_hoja = 1; } } } }
+    kama (kiwango_hoja > 0) {
+        kama (hoja_idadi > kiwango_hoja) {
+            andika_stderr("kosa [%s]: idadi ya hoja kwa '%s' si sahihi (kikomo ni %d, imepokea %d)\n", mkaguzi_kazi_sasa, jina, kiwango_hoja, hoja_idadi);
+            mkaguzi_makosa = mkaguzi_makosa + 1;
+        }
+    }
+}
+
 // Usemi wa anwani ya kazi (&jina_la_kazi) kwa paramu ya namba ya
 // upana 64 (N64/A64)? Rudisha 1 kwa KUMBUKA (&) juu ya kitambulisho
 // ambacho SI kigeu cha ndani/paramu (wigo) wala cha ulimwengu —
@@ -431,6 +491,9 @@ N32 mkaguzi_kagua_wito(N32 node) {
             hoja_idadi = hoja_idadi + 1;
             a = ijayo;
         }
+        // Kazi za pekee zisizosajiliwa (wito_wa_mfumo, tekeleza,
+        // ukubwa, anwani_ya_kazi) — angalia kikomo cha hoja zao.
+        mkaguzi_kagua_kiwango_cha_huduma(jina, hoja_idadi);
         // Angalia idadi ya hoja dhidi ya tangazo la kazi.
         N32 inatarajiwa = mkaguzi_tafuta_kazi(jina);
         kama (inatarajiwa >= 0) {
@@ -708,6 +771,8 @@ W0 mkaguzi_kagua_taarifa(N32 node) {
         wigo_ongeza(var_jina, var_enc);
         N32 init_node = ast_kulia[node];
         kama (init_node != -1) {
+            // W0 chenye kianzio kinakataliwa kwa sauti (hati 3)
+            mkaguzi_kataa_w0_chenye_kianzio(var_enc, var_jina);
             N32 init_enc = mkaguzi_kagua_usemi(init_node);
             // Wito kupitia kielekezi kama kianzio cha D64 — kataa (hati 4.3)
             mkaguzi_kataa_d64_kutoka_wito_wa_kigezo(init_node, var_enc);
@@ -988,6 +1053,8 @@ N32 mkaguzi_kagua_usemi(N32 node) {
                 }
             }
         }
+        // Modulo ya kielekezi inakataliwa kwa sauti (rekodi 8.9)
+        mkaguzi_kataa_modulo_ya_kielekezi(aina, lhs_enc, rhs_enc);
         ast_thamani[node] = enc_ya_op;
         rudisha enc_ya_op;
     }

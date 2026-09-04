@@ -5093,16 +5093,69 @@ W0 andika_desimali_halisi() {
     }
 }
 
-// Tathmini kianzio cha ulimwengu kisichobadilika (kwa .data)
-N32 thamani_isiyobadilika(N32 node) {
+// Tathmini kianzio cha ulimwengu kisichobadilika (kwa .data).
+// Inarudisha N64 — toa-unari wa halisi kubwa (biti 32+) ulikokotolewa
+// kwa N32 zamani na kutoa takataka kwenye kihifadhi cha N64
+// (mdudu wa 2026-09-04: N64 g = -2147483648 ilihifadhi -30 — ofseti
+// ya dimbwi ikihesabiwa kama thamani).
+N64 thamani_isiyobadilika(N32 node) {
     kama (node == -1) { rudisha 0; }
     N32 aina = ast_aina[node];
-    kama (aina == 4) { rudisha ast_thamani[node]; }  // AST_NAMBARI
+    kama (aina == 4) {  // AST_NAMBARI
+        // N64 halisi: baiti 8 zimehifadhiwa kwenye dimbwi la AST
+        // (ast_thamani = ofseti, si thamani — thamani yenyewe
+        // haiingii kwenye N32). Jenga N64 kwa kuzidisha kwa 256
+        // (mbegu ina hitilafu katika >> za N64).
+        kama (ast_kulia[node] == 1) {
+            N32 off_n = ast_thamani[node];
+            N64 th_n = 0;
+            N32 bvi_n = 7;
+            wakati (bvi_n >= 0) {
+                // Usomaji bila ishara: N8 ni yenye ishara — kipande
+                // cha 255 kinahakikisha baiti ya 0x80+ ni 128..255,
+                // si hasi, kabla ya hesabu.
+                N32 bv_n = ast_pool[off_n + bvi_n] & 255;
+                th_n = th_n * 256 + bv_n;
+                bvi_n = bvi_n - 1;
+            }
+            rudisha th_n;
+        }
+        rudisha ast_thamani[node];
+    }
     kama (aina == 7) {  // AST_TOFAUTI: pamoja na unari minus
         kama (ast_kushoto[node] == -1) { rudisha 0 - thamani_isiyobadilika(ast_kulia[node]); }
         rudisha thamani_isiyobadilika(ast_kushoto[node]) - thamani_isiyobadilika(ast_kulia[node]);
     }
     rudisha 0;
+}
+
+// Andika baiti za thamani ya ulimwengu kwenye .data (sz za kwanza,
+// ndogo kwanza). Bila kuhama kwa N64 (mbegu ina hitilafu katika
+// >> za N64) wala kugawanya hasi (C inakata kuelekea sifuri — si
+// kutoa baiti): hasi hubadilishwa kuwa chanya kwa p = -1 - val
+// (val = ~p), kisha kila baiti inapunguzwa (255 - b). Kumbuka:
+// "0 - 1 - val" kwa hatua moja huanzisha -1 ya N32 inayoendelea
+// kwa sifuri kwenye kutoa kwa N64 — gawa kwa hatua mbili
+// (0 - val kwanza, toa 1 baadaye).
+W0 andika_thamani_ya_data(N64 val, N32 sz) {
+    N32 ni_has = 0;
+    kama (val < 0) { ni_has = 1; }
+    N64 chanya = val;
+    kama (val < 0) {
+        chanya = 0 - val;
+        chanya = chanya - 1;
+    }
+    N32 k = 0;
+    wakati (k < sz) {
+        N32 baiti = chanya % 256;
+        kama (ni_has) { baiti = 255 - baiti; }
+        kama (bafa_data_wapi < 262144) {
+            bafa_data[bafa_data_wapi] = baiti;
+            bafa_data_wapi = bafa_data_wapi + 1;
+        }
+        chanya = chanya / 256;
+        k = k + 1;
+    }
 }
 
 // -------------------------------------------------------
@@ -5414,10 +5467,15 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
                         // 256 kwa kila baiti, kuanzia b7 (mdogo-wa-kwanza
                         // ni b0) (8.7: D32 ya ulimwengu ilipata bits za
                         // ugeuzaji zilizopotoka).
+                        // Usomaji bila ishara: N8 ni yenye ishara — bila
+                        // kipande cha 255, baiti ya 0x80+ (kama 0xF8 ya
+                        // 1.5) inaenea kwa ishara na bits64 zinaharibika
+                        // (mende: jaribio_mende_d32_hesabu lilirudisha 202
+                        // badala ya 178 kwenye mbegu ya movsx).
                         N64 bits64 = 0;
                         k = 7;
                         wakati (k >= 0) {
-                            N64 baiti = ast_pool[off8 + k];
+                            N64 baiti = ast_pool[off8 + k] & 255;
                             bits64 = bits64 * 256 + baiti;
                             k = k - 1;
                         }
@@ -5508,22 +5566,10 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
                         andika_stderr("Hitilafu: kianzio cha ulimwengu lazima kiwe halisi ya nambari (toa-unari wa hiari pekee)\n");
                         wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
                     }
-                    N32 val = thamani_isiyobadilika(init_node);
-                    N32 k = 0;
-                    wakati (k < sz) {
-                        // N32 inakata kwa mod 32 kwenye k*8 >= 32 — nusu
-                        // ya juu inapanuliwa kwa ishara badala ya kuandika
-                        // val mara mbili (N64 g = 5 ilikuwa ikihifadhi
-                        // 0x0000000500000005).
-                        N32 baiti = 0;
-                        kama (k < 4) { baiti = (val >> (k * 8)) & 255; }
-                        sivyo { kama (val < 0) { baiti = 255; } }
-                        kama (bafa_data_wapi < 262144) {
-                            bafa_data[bafa_data_wapi] = baiti;
-                            bafa_data_wapi = bafa_data_wapi + 1;
-                        }
-                        k = k + 1;
-                    }
+                    // Andika baiti za thamani (andika_thamani_ya_data
+                    // hutoa sz za kwanza — N32 ya zamani iliandika nusu
+                    // ya juu kwa ishara; sasa thamani yenyewe ni N64).
+                    andika_thamani_ya_data(thamani_isiyobadilika(init_node), sz);
                 }
                 }
                 }
