@@ -831,8 +831,9 @@ N32 changanua_taarifa_tangazo(Msambazaji* p) {
         // Tazama mbele kwa tokeni inayofuata jina la aina na nyota
         // zake — hakuna urejeshaji wa vitenzi; rejesha hali kamili.
         // Hifadhi sehemu moja-moja: kianzio cha kigeu cha muundo
-        // kutoka kwa sehemu haijulikani kwa dereva wa Rust (memcpy
-        // inachukua thamani ya kwanza kama anwani na kuanguka).
+        // kutoka kwa sehemu haijulikani zamani kwa dereva wa Rust
+        // (memcpy inachukua thamani ya kwanza kama anwani na kuanguka).
+        // Dereva umehamishiwa lugha-swa/swa-dereva (kumbukumbu).
         N32 ni_tangazo = 0;
         N64 nafasi_iliyohifadhiwa = p->msomaji.nafasi;
         N32 mstari_uliohifadhiwa = p->msomaji.mstari;
@@ -1511,8 +1512,9 @@ N32 changanua_usemi_jumlisha(Msambazaji* p) {
         sogeza(p);
         // Rekodi ikiwa tokeni inayofuata ni kiendeshi kingine cha +/-
         // (kwa utambuzi wa '++' na '--' baada ya kujaribu operanda).
-        // KUMBUKA: kianzilishi chenye '&&' kinavunja LLVM ya dereva wa
+        // KUMBUKA: kianzilishi chenye '&&' kilivunja LLVM ya dereva wa
         // Rust (phi ya kujizungusha) — tumia kama/ugawaji badala yake.
+        // Dereva umehamishiwa lugha-swa/swa-dereva (kumbukumbu).
         N32 inayofuata_plus = 0;
         N32 inayofuata_minus = 0;
         kama (p->sasa.urefu == 1) {
