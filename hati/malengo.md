@@ -109,3 +109,15 @@ Hali ya Agosti 2026 (kuelekea 1.0):
    uthibitisho-wa-lugha.md) inahesabu kila kipengele kilichojaribiwa;
    majibu mabaya ya kimya ya uzalishaji yamepungua kutoka 96 hadi
    wachache walioorodheshwa na kirejeshi chao.
+
+## Kuhusu Toleo la 1.0
+
+1.0 si mwisho wa mende. Ni AHADI: kuanzia siku hiyo, program
+zilizoandikwa dhidi ya vipimo hivi zinaendelea kufanya kazi.
+Ahadi hiyo haifanywi kwa skani safi — inafanywa wakati kuna watumiaji
+wanaostahili kupewa ahadi. V (vlang) bado ni 0.4 baada ya miaka sita,
+na ahadi za mapema za 1.0 ziliumiza sifa yake kuliko mende zozote.
+
+Njia ya Swa: 0.0.x kwa marekebisho, 0.1.0 kuanzia mfumo wa moduli na
+vielekezi vya kazi, na 1.0.0 siku ambayo watumiaji wa kweli
+wameandika program za kweli — si mapema.
