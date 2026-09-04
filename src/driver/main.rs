@@ -15,6 +15,71 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::process;
 
+/// Chanzo cha trampoline ya C inayounganishwa na kila programu ya dereva
+/// kwenye Linux. Inawiana na gharama/trampoline.c: inafafanua andika,
+/// andika_stderr, tekeleza, anwani_ya_kazi, na wito_wa_mfumo kwa njia ya libc.
+/// (Imepachikwa hapa ili dereva asitegemee eneo la kazi la sasa.)
+const TRAMPOLINE_C: &str = r#"// trampoline.c — Kiunganishi cha wakati wa utekelezaji cha Swa
+//
+// Hutoa utekelezaji wa kazi za nje za mfumo wa Swa
+// ambazo hazipatikani moja kwa moja kwenye libc.
+// Inaunganishwa pamoja na faili la kitu lililotolewa na
+// mkusanyaji wa Swa (kande au stage1).
+//
+// Maelezo ya kazi:
+//   andika/andika_stderr -> vfprintf (kwa program bila maktaba;
+//       kumbukumbu.swa ina utekelezaji wake wa ndani kwa mbegu/exe)
+//   tekeleza/anwani_ya_kazi -> daraja za JIT
+//   wito_wa_mfumo -> kwa mkusanyaji wa LLVM; mbegu ina builtin yake
+
+#include <dlfcn.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int andika(const char* muundo, ...) {
+    va_list hoja;
+    va_start(hoja, muundo);
+    int matokeo = vfprintf(stdout, muundo, hoja);
+    va_end(hoja);
+    fflush(stdout);
+    return matokeo;
+}
+
+int andika_stderr(const char* muundo, ...) {
+    va_list hoja;
+    va_start(hoja, muundo);
+    int matokeo = vfprintf(stderr, muundo, hoja);
+    va_end(hoja);
+    fflush(stderr);
+    return matokeo;
+}
+
+// tekeleza — ita bafa ya JIT kama kazi N32(N32, N8**) (daraja kwa JIT)
+int tekeleza(void* kazi, int argc, void* argv, int ofseti) {
+    int (*f)(int, void*) = (int (*)(int, void*))kazi;
+    return f(argc, (void*)((char**)argv + ofseti));
+}
+
+// anwani_ya_kazi — tafuta anwani ya kazi ya nje kwa jina (kwa JIT)
+void* anwani_ya_kazi(const char* jina) {
+    return dlsym(RTLD_DEFAULT, jina);
+}
+
+/* wito_wa_mfumo — daraja la syscall kwa mbegu (codegen ya Swa ni builtin) */
+long wito_wa_mfumo(long namba, long a1, long a2, long a3, long a4, long a5) {
+    register long r10 __asm__("r10") = a4;
+    register long r8 __asm__("r8") = a5;
+    register long r9 __asm__("r9") = 0;
+    __asm__ volatile(
+        "syscall"
+        : "+a"(namba)
+        : "D"(a1), "S"(a2), "d"(a3), "r"(r10), "r"(r8), "r"(r9)
+        : "rcx", "r11", "memory");
+    return namba;
+}
+"#;
+
 /// Jaribu kuunganisha faili la kitu hadi faili linaloweza kutekelezwa kupitia clang.
 /// Hurejesha hali ya kutoka ya clang kwenye mafanikio, None kama clang haipatikani.
 fn try_link(obj: &Path, exe: &Path, target: &str) -> Option<i32> {
@@ -30,38 +95,46 @@ fn try_link(obj: &Path, exe: &Path, target: &str) -> Option<i32> {
         Some(c) => c,
         None => return None,
     };
-    // Tafuta libgcc kwa __chkstk (mfumo mkubwa wa rafu kutoka safu kubwa).
-    let gcc_base = if target.starts_with("aarch64") {
-        std::path::PathBuf::from("/usr/lib/gcc/aarch64-linux-gnu")
-    } else if cfg!(windows) {
-        std::path::PathBuf::from("C:\\ProgramData\\mingw64\\mingw64\\lib\\gcc\\x86_64-w64-mingw32")
-    } else {
-        std::path::PathBuf::from("/usr/lib/gcc/x86_64-linux-gnu")
-    };
-    let gcc_lib = if gcc_base.exists() {
-        std::fs::read_dir(&gcc_base).ok()
-            .and_then(|d| {
-                d.filter_map(|e| e.ok())
-                    .filter(|e| e.path().is_dir())
-                    .map(|e| e.path())
-                    .next()
-            })
-            .unwrap_or(gcc_base.clone())
-    } else {
-        gcc_base.clone()
-    };
     let mut cmd = std::process::Command::new(clang);
     cmd.arg("-target").arg(target)
-       .arg(obj).arg("-o").arg(exe)
-       .arg("-Wl,--defsym,andika=printf");  // ramani printf ya Swa hadi printf ya libc
+       .arg(obj).arg("-o").arg(exe);
 
     if cfg!(windows) {
-        cmd.arg("-L").arg(&gcc_lib)
-           .arg("-lgcc")                     // kwa __chkstk (mfumo mkubwa wa rafu)
-           .arg("-Wl,--stack,8388608");      // 8MB hifadhi ya rafu kwa BSS kubwa
+        // Tafuta libgcc kwa __chkstk (mfumo mkubwa wa rafu kutoka safu kubwa).
+        let gcc_base = if target.starts_with("aarch64") {
+            std::path::PathBuf::from("/usr/lib/gcc/aarch64-linux-gnu")
+        } else {
+            std::path::PathBuf::from("C:\\ProgramData\\mingw64\\mingw64\\lib\\gcc\\x86_64-w64-mingw32")
+        };
+        let gcc_lib = if gcc_base.exists() {
+            std::fs::read_dir(&gcc_base).ok()
+                .and_then(|d| {
+                    d.filter_map(|e| e.ok())
+                        .filter(|e| e.path().is_dir())
+                        .map(|e| e.path())
+                        .next()
+                })
+                .unwrap_or(gcc_base.clone())
+        } else {
+            gcc_base.clone()
+        };
+        cmd.arg("-Wl,--defsym,andika=printf")  // ramani printf ya Swa hadi printf ya libc
+           .arg("-L").arg(&gcc_lib)
+           .arg("-lgcc")                       // kwa __chkstk (mfumo mkubwa wa rafu)
+           .arg("-Wl,--stack,8388608");        // 8MB hifadhi ya rafu kwa BSS kubwa
     } else {
-        // Linux: ukubwa wa rafu unadhibitiwa na ulimit, hakuna bendera ya wazi inayohitajika.
-        // libgcc inaunganishwa kiotomatiki na clang kwenye Linux.
+        // Linux: --defsym inayorejelea printf ya libc haitatuliwi tena na
+        // binutils mpya (dhamira ya ishara inachanganuliwa kabla ya maktaba
+        // shiriki kufunguliwa). Badala yake unganisha trampoline ya C
+        // inayofafanua andika halisi kupitia vfprintf. -no-pie: LLVM inatoa
+        // rekebisho kamili (R_X86_64_32/64) zisizopatana na PIE.
+        cmd.arg("-no-pie");
+        let tramp_c = obj.with_extension("c");
+        std::fs::write(&tramp_c, TRAMPOLINE_C).ok()?;
+        cmd.arg(&tramp_c);
+        let status = cmd.status().ok();
+        let _ = std::fs::remove_file(&tramp_c);
+        return Some(status?.code().unwrap_or(1));
     }
 
     let status = cmd.status().ok()?;
