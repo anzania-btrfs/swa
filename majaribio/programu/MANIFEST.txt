@@ -47,6 +47,11 @@ KATA	jaribio_mende_aina_kata_endelea_nje (endelea nje ya kitanzi kunazuia mkusan
 0	jaribio_vigezo_na_mwili	majaribio/programu/jaribio_vigezo_na_mwili.swa
 0	jaribio_kama_sivyo	majaribio/programu/jaribio_kama_sivyo.swa
 0	jaribio_wakati	majaribio/programu/jaribio_wakati.swa
+3	jaribio_fanya_hukimbia_mara_moja (fanya = do-while: mwili hukimbia kabla ya sharti — i inafikia 3; stage1 pekee: mbegu bado haijui neno la fanya)	majaribio/programu/jaribio_fanya_hukimbia_mara_moja.swa
+1	jaribio_fanya_hali_ya_uwongo (sharti la uwongo tangu mwanzo: mwili wa fanya hukimbia mara moja bado — semantiki ya C; stage1 pekee)	majaribio/programu/jaribio_fanya_hali_ya_uwongo.swa
+2	jaribio_fanya_endelea (endelea ndani ya fanya inaruka hadi SHARTI — semantiki ya C ya do-while; stage1 pekee)	majaribio/programu/jaribio_fanya_endelea.swa
+1	jaribio_fanya_vunja (vunja ndani ya fanya inaondoka mara moja bila kujaribu sharti tena; stage1 pekee)	majaribio/programu/jaribio_fanya_vunja.swa
+KATA	jaribio_fanya_kama_jina_la_kigezo ('fanya' ni neno muhimu — haliwezi kutumika kama jina la kigezo; hati 2.2; stage1 pekee: mbegu ya zamani bado inakubali)	majaribio/programu/jaribio_fanya_kama_jina_la_kigezo.swa	stage1	ni neno muhimu
 0	jaribio_kama_ndani_ya_wakati	majaribio/programu/jaribio_kama_ndani_ya_wakati.swa
 0	jaribio_chagua_rahisi (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_rahisi.swa	stage1
 0	jaribio_chagua_hali_nyingi (stage1 pekee: mbegu haijui neno la chagua)	majaribio/programu/jaribio_chagua_hali_nyingi.swa	stage1

@@ -1,9 +1,9 @@
 // Kazi tupu (W0 isiyo na kazi yoyote) — inapaswa kukusanyika na kuendesha.
 // (Mwili wenye {} tupu pekee unaleta SEGV kwenye uzalishaji wa stage1 —
 // rudisha tupu ndilo toleo salama la "tupu".)
-W0 fanya() { rudisha; }
+W0 kazi_tupu() { rudisha; }
 
 N32 main() {
-    fanya();
+    kazi_tupu();
     rudisha 0;
 }
