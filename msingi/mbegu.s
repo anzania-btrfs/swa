@@ -71,6 +71,7 @@
 %define AST_KAMA           12
 %define AST_WAKATI         13
 %define AST_KWA            14
+%define AST_FANYA          48          ; fanya..wakati — kitanzi cha mwili-kwanza
 %define AST_VUNJA          15
 %define AST_ENEKEZA        16
 %define AST_LINGA          17
@@ -244,6 +245,7 @@ kw_rudisha:     db "rudisha", 0
 kw_kama:        db "kama", 0
 kw_sivyo:       db "sivyo", 0
 kw_wakati:      db "wakati", 0
+kw_fanya:       db "fanya", 0
 kw_kwa:         db "kwa", 0
 kw_vunja:       db "vunja", 0
 kw_husisha:     db "husisha", 0
@@ -556,9 +558,9 @@ linganisha_neno_muhimu:
 
 ; -------------------------------------------------------
 ; ni_neno_muhimu: je, tokeni ya sasa ni neno muhimu (hati 2.2)?
-;   Orodha kamili ya maneno 12 ya mnyororo wa .swa: muundo,
-;   rudisha, kama, sivyo, wakati, kwa, vunja, endelea, chagua,
-;   hali, husisha, achilia.
+;   Orodha kamili ya maneno 13 ya mnyororo wa .swa: muundo,
+;   rudisha, kama, sivyo, wakati, fanya, kwa, vunja, endelea,
+;   chagua, hali, husisha, achilia.
 ;   rax = 1 ikiwa ni neno muhimu, 0 vinginevyo.
 ;   Huharibu rax, rcx, rdx, rsi, rdi; huhifadhi r12-r15.
 ; -------------------------------------------------------
@@ -589,6 +591,10 @@ ni_neno_muhimu:
         cmp     eax, 0
         je      .nnm_ndiyo
         lea     rdx, [kw_wakati]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        je      .nnm_ndiyo
+        lea     rdx, [kw_fanya]
         call    linganisha_neno_muhimu
         cmp     eax, 0
         je      .nnm_ndiyo
@@ -3338,6 +3344,67 @@ changanua_taarifa:
         jmp     .done
 
 .not_for:
+        ; Angalia ikiwa ni "fanya" (fanya { mwili } wakati (sharti); —
+        ; mwili hutekelezwa mara moja kabla ya sharti kujaribiwa)
+        lea     rdx, [kw_fanya]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        jne     .not_fanya
+
+        inc     qword [token_pos]       ; tumia "fanya"
+
+        ; Mwili wa fanya: { ... } — mabano ya mwili ni ya lazima.
+        ; Angalia tu (bila kula) — changanua_block ndicho hula {
+        mov     rdi, [token_pos]
+        cmp     dword [token_ty + rdi*4], TOK_FUNGO
+        jne     .fanya_kosa
+
+        inc     qword [loop_depth]      ; kitanzi kimefunguka (8.13)
+        call    changanua_block
+        dec     qword [loop_depth]
+        mov     r13d, eax               ; r13 = mwili (AST_BLOCK)
+
+        ; Sharti la fanya: neno "wakati" (hali baada ya mwili)
+        mov     rdi, [token_pos]
+        cmp     dword [token_ty + rdi*4], TOK_NENO
+        jne     .fanya_kosa
+        mov     rsi, [token_text + rdi*8]
+        movzx   ecx, word [token_len + rdi*2]
+        lea     rdx, [kw_wakati]
+        call    linganisha_neno_muhimu
+        cmp     eax, 0
+        jne     .fanya_kosa
+        inc     qword [token_pos]       ; tumia "wakati"
+
+        mov     edi, TOK_MABANO_FUNGO
+        call    tarajia_ishara
+        cmp     eax, 1
+        jne     .fanya_kosa
+        call    changanua_usemi
+        mov     r14d, eax               ; r14 = sharti (usemi)
+        mov     edi, TOK_MABANO_FUNGA
+        call    tarajia_ishara
+        cmp     eax, 1
+        jne     .fanya_kosa
+
+        ; AST_FANYA: kushoto=hali, kulia=mwili (sawa na AST_WAKATI);
+        ; tiga haitumiki
+        mov     r8d, AST_FANYA
+        mov     r9d, r14d
+        mov     r10d, r13d
+        mov     r11d, -1
+        call    ast_nodi_mpya
+        jmp     .expect_semicolon
+
+.fanya_kosa:
+        ; Fanya yenye muundo mbovu (mwili umeshamezwa) — kosa la
+        ; sauti, si kurudi nyuma
+        lea     rdi, [msg_parseerr]
+        call    andika_mfuatano
+        mov     edi, 1
+        call    sys_exit
+
+.not_fanya:
         ; Angalia ikiwa ni "vunja"
         lea     rdx, [kw_vunja]
         call    linganisha_neno_muhimu
@@ -11493,6 +11560,155 @@ uzalishaji_wakati:
         ret
 
 ; -------------------------------------------------------
+; uzalishaji_fanya: zalisha msimbo kwa kitanzi cha fanya..wakati
+;   r12d = faharisi ya nodi (kushoto=hali, kulia=mwili)
+;   Mpangilio: mwili huzalishwa KWANZA, kisha hali, kisha jz
+;   ya kutoka; jmp ya mwisho inarudi mwanzo wa mwili. endelea
+;   inaruka hadi hali (semantiki ya C ya fanya..wakati); vunja
+;   inaruka hadi mwisho wa kitanzi. Hufuata muundo wa
+;   uzalishaji_wakati: mipaka ya fixups iko kwenye rafu.
+; -------------------------------------------------------
+uzalishaji_fanya:
+        push    r12
+        push    r13
+        push    r14
+        push    r15
+
+        mov     r13d, [ast_kushoto + r12*4]  ; hali ya kitanzi
+        mov     r14d, [ast_kulia + r12*4]    ; mwili wa kitanzi
+
+        ; Hifadhi hali ya vunja ya awali (kwa vitanzi vilivyo ndani)
+        mov     rax, [break_fixup_count]
+        push    rax
+        ; Hifadhi hali ya endelea ya awali
+        mov     rax, [continue_fixup_count]
+        push    rax
+
+        ; Rekodi mwanzo wa mwili — lengo la jmp ya kurudi nyuma
+        mov     r15d, [text_buf_pos]          ; mwili_pos
+
+        ; Zalisha mwili — mwili hutekelezwa mara moja kabla ya hali
+        push    qword [local_count]     ; upeo wa kizuizi: hifadhi hesabu ya vigezo vya ndani
+        push    r12
+        push    r15
+        mov     r12d, r14d
+        call    uzalishaji_ast
+        pop     r15
+        pop     r12
+        pop     qword [local_count]     ; rejesha upeo wa nje
+
+        ; Lengo la endelea ni hali: endelea inaruka hadi tathmini
+        ; ya sharti, si mwisho wa mwili (semantiki ya C)
+        mov     rax, [text_buf_pos]           ; hali_pos
+        mov     [cl_lengo], rax
+
+        ; Zalisha hali — faharisi yake imeharibiwa iwapo na mwili;
+        ; isome upya kutoka AST
+        push    r12
+        push    r13
+        push    r15
+        mov     r12d, [ast_kushoto + r12*4]
+        call    uzalishaji_ast
+        pop     r15
+        pop     r13
+        pop     r12
+
+        ; test eax, eax
+        mov     al, 0x85
+        call    gen_baiti
+        mov     al, 0xc0
+        call    gen_baiti
+
+        ; jz rel32 yenye kishikilia (hali ni sifuri — toka kitanzi)
+        mov     al, 0x0f
+        call    gen_baiti
+        mov     al, 0x84
+        call    gen_baiti
+        mov     r8d, [text_buf_pos]           ; nafasi ya fixup ya jz
+        xor     edi, edi
+        call    gen_neno4                      ; kishikilia cha baiti 4
+
+        ; jmp rel32 kurudi mwanzo wa mwili
+        mov     al, 0xe9
+        call    gen_baiti
+        mov     r9d, [text_buf_pos]           ; nafasi ya fixup ya jmp
+        xor     edi, edi
+        call    gen_neno4                      ; kishikilia cha baiti 4
+
+        ; Kokotoa ofseti ya kuruka nyuma: mwili_pos - fixup_pos - 4
+        mov     edi, r15d                     ; mwili_pos
+        sub     edi, r9d                      ; mwili_pos - fixup_pos
+        sub     edi, 4                        ; mwili_pos - fixup_pos - 4
+        mov     r10d, [text_buf_pos]
+        mov     [text_buf_pos], r9d
+        call    gen_neno4                      ; andika ofseti sahihi ya jmp
+        mov     [text_buf_pos], r10d
+
+        ; Rekebisha jz: elekeza mwisho wa kitanzi
+        mov     edi, [text_buf_pos]           ; mwisho wa kitanzi
+        sub     edi, r8d                      ; umbali kutoka fixup
+        sub     edi, 4                        ; toa ukubwa wa kishikilia
+        mov     r10d, [text_buf_pos]
+        mov     [text_buf_pos], r8d
+        call    gen_neno4                      ; andika ofseti sahihi ya jz
+        mov     [text_buf_pos], r10d
+
+        ; Toa mipaka ya awali kutoka rafu
+        pop     r14                        ; base ya endelea
+        pop     r13                        ; base ya vunja
+
+        ; Rekebisha vunja zote: zielekeze mwisho wa kitanzi
+        ; Anza kutoka base, si 0, ili kuhifadhi fixups za vitanzi vya nje
+        mov     r9d, [text_buf_pos]           ; lengo = mwisho wa kitanzi
+        mov     ecx, r13d
+.fanya_fix_breaks:
+        cmp     ecx, [break_fixup_count]
+        jae     .fanya_fix_breaks_done
+        mov     edi, [break_fixup_pos + rcx*4] ; nafasi ya fixup ya vunja hii
+        push    rcx
+        mov     r10d, r9d
+        sub     r10d, edi                      ; target - fixup_pos
+        sub     r10d, 4                        ; target - fixup_pos - 4
+        mov     r11d, [text_buf_pos]
+        mov     [text_buf_pos], edi
+        mov     edi, r10d
+        call    gen_neno4                       ; andika ofseti sahihi ya jmp
+        mov     [text_buf_pos], r11d
+        pop     rcx
+        inc     ecx
+        jmp     .fanya_fix_breaks
+.fanya_fix_breaks_done:
+        mov     [break_fixup_count], r13       ; tupa fixups za ndani: rejesha base
+
+        ; Rekebisha endelea zote: zielekeze hali ya kitanzi
+        mov     ecx, r14d
+.fanya_fix_continues:
+        cmp     ecx, [continue_fixup_count]
+        jae     .fanya_fix_continues_done
+        mov     edi, [continue_fixup_pos + rcx*4] ; nafasi ya fixup ya endelea hii
+        push    rcx
+        mov     r10d, [cl_lengo]                ; lengo = hali ya kitanzi
+        sub     r10d, edi                        ; target - fixup_pos
+        sub     r10d, 4                          ; target - fixup_pos - 4
+        mov     r11d, [text_buf_pos]
+        mov     [text_buf_pos], edi
+        mov     edi, r10d
+        call    gen_neno4                         ; andika ofseti sahihi ya jmp
+        mov     [text_buf_pos], r11d
+        pop     rcx
+        inc     ecx
+        jmp     .fanya_fix_continues
+.fanya_fix_continues_done:
+        mov     [continue_fixup_count], r14     ; tupa fixups za ndani: rejesha base
+
+        xor     eax, eax                       ; fanya haitoi thamani
+        pop     r15
+        pop     r14
+        pop     r13
+        pop     r12
+        ret
+
+; -------------------------------------------------------
 ; uzalishaji_block: zalisha msimbo kwa block
 ;   r12d = faharisi ya nodi
 ; -------------------------------------------------------
@@ -12258,6 +12474,8 @@ uzalishaji_ast:
         je      .call_nyota_ya
         cmp     ebx, AST_WAKATI
         je      .call_wakati
+        cmp     ebx, AST_FANYA
+        je      .call_fanya
         cmp     ebx, AST_VUNJA
         je      .call_vunja
 
@@ -12333,6 +12551,10 @@ uzalishaji_ast:
         jmp     .done
 .call_wakati:
         call    uzalishaji_wakati
+        xor     eax, eax
+        jmp     .done
+.call_fanya:
+        call    uzalishaji_fanya
         xor     eax, eax
         jmp     .done
 .call_vunja:
