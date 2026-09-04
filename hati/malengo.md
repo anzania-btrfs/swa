@@ -57,8 +57,11 @@ Andika baiti za mkono (opcodes za x86-64) zinazounda mkusanyaji wa kwanza.
 3. **Hakuna assembly/GNU as.** Machine code moja kwa moja.
 4. **Kiswahili pekee.** Maoni yote, majina ya faili, maneno muhimu.
 5. **Hakuna bloat.** Kila neno linafanya jambo moja.
-6. **Maneno muhimu 12.** Seti ndogo isiyobadilika; aina za nambari
+6. **Maneno muhimu 13.** Seti ndogo isiyobadilika; aina za nambari
    hutambuliwa kisintaksia (herufi kubwa), si kama maneno muhimu.
+   (fanya iliongezwa 2026-09: kitanzi cha do-wakati. Maneno:
+   muundo, rudisha, kama, sivyo, wakati, kwa, fanya, vunja,
+   endelea, chagua, hali, husisha, achilia.)
 7. **Hakuna emoji.**
 8. **Bootstrap ya mwisho kwa baiti za mkono.**
 
@@ -95,6 +98,14 @@ Hali ya Agosti 2026 (kuelekea 1.0):
    wa MAJARIBIO; mnyororo wa uzalishaji ni mbegu/exe pekee (mipaka.md 6).
 5. **ABI ya wito wa kazi za D64** — IMEFANYIKA kwenye minyororo
    yote miwili (mbegu inatumia uhamisho wa GP; kilichopimwa
-   2026-08-27 — mipaka.md 4c imerekebishwa). Kilichobaki: mpaka wa
-   D64 na nambari kamili (jibu baya) na D32 (poromoko) —
-   hati/uthibitisho-wa-lugha.md.
+   2026-08-27 — mipaka.md 4c imerekebishwa). Mpaka wa D64 na
+   nambari kamili umefunga (T2c), na D32 sasa inafanya kazi
+   kikamilifu kwenye uzalishaji (T4/T8) — hakuwezi kuorodheshwa
+   kama kilichobaki tena.
+6. **Mfumo wa moduli** — IMEFANYIKA (2026-09) — husisha ni kiungo
+   halisi ndani ya mkusanyaji; msingi/maktaba/ na msingi/mkusanyaji/
+   ndizo rafu mbili za maktaba moja.
+7. **Uzingatiaji uliopimwa** — rekodi kamili (hati/
+   uthibitisho-wa-lugha.md) inahesabu kila kipengele kilichojaribiwa;
+   majibu mabaya ya kimya ya uzalishaji yamepungua kutoka 96 hadi
+   wachache walioorodheshwa na kirejeshi chao.
