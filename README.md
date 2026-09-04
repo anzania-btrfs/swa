@@ -2,10 +2,10 @@
 
 **Swa** ni lugha ya kupanga yenye sintaksia kamili ya Kiswahili. Hakuna neno
 la Kiingereza linatumika katika sintaksia yake. Inakusanya moja kwa moja hadi
-msimbo wa mashine — kwa njia asilia (`uzalishaji.swa`) inayotoa ELF binary
-moja kwa moja bila LLVM wala mkusanyaji msaidizi (x86-64 Linux). Njia ya
-LLVM (dereva wa Rust) ni ya majaribio pekee; mnyororo wa uzalishaji ni
-asilia (angalia `hati/mipaka.md` 6).
+msimbo wa mashine — `uzalishaji.swa` inatoa ELF binary moja kwa moja bila
+LLVM, bila Rust, bila assembler, na bila kiunganishi cha nje (x86-64 Linux).
+Dereva wa zamani wa Rust/LLVM (njia ya majaribio) umehamishwa hadi hazina
+ya kumbukumbu: [lugha-swa/swa-dereva](https://github.com/lugha-swa/swa-dereva).
 
 Makao rasmi: **[lugha-swa](https://github.com/lugha-swa)**
 
@@ -135,27 +135,28 @@ N32 kitanzi(N32 n) {
 
 ## Vipengele
 
-- **Maneno muhimu 12** ya Kiswahili -- hakuna Kiingereza katika sintaksia.
+- **Maneno muhimu 13** ya Kiswahili -- hakuna Kiingereza katika sintaksia.
   Aina za nambari hutambuliwa kisintaksia kwa herufi kubwa (familia za
   N/A/D/B/W), si kama maneno muhimu.
 - **Kujitegemea (100%)** -- mnyororo wa kujikusanya umefungwa kabisa:
   baiti za mkono → mbegu → stage1-exe → stage2-exe == stage3-exe
   (mnyororo wa uzalishaji; uthabiti wa makosa ni mhimili tofauti —
   angalia hati/mipaka.md)
-- **Vizalishe viwili**: asilia (x86-64 ELF moja kwa moja — mnyororo wa uzalishaji) + LLVM (ya majaribio pekee)
+- **Kizalishaji kimoja**: asilia (x86-64 ELF moja kwa moja — mnyororo wa
+  uzalishaji). LLVM ilikuwa ya majaribio pekee na sasa iko kwenye hazina
+  ya kumbukumbu (lugha-swa/swa-dereva).
 - **Familia 5 za nambari** — N, A, D, B, W (upana halisi 8/16/32/64;
   upana mwingine haujaungwa mkono — angalia hati/uthibitisho-wa-lugha.md)
 - **Kumbukumbu ya moja kwa moja** -- tenga, achilia, hakuna ukusanyaji taka
-- **Majaribio**: 227 yanapita (146 maktaba + 80 ujumuishaji + 1 nyaraka). K6 bootstrap inafanya kazi.
-  Uthibitisho kamili wa lugha (2026-08-27, kesi ~487 kwenye minyororo
-  yote miwili): **hati/uthibitisho-wa-lugha.md** — jedwali za
-  uzingatiaji, jibu baya zote kwa kipimo chake, na poromoko zote.
+- **Majaribio**: 304/304 kwenye mnyororo wa Swa pekee (mbegu na stage1),
+  fixpoint stage2 == stage3 sawa kwa baiti, na msuluhishi wa husisha 17/17.
+  Uthibitisho kamili wa lugha: **hati/uthibitisho-wa-lugha.md** — jedwali
+  za uzingatiaji, jibu baya zote kwa kipimo chake, na poromoko zote.
 
 ## Muundo wa Mradi
 
 | Njia | Maelezo |
 |---|---|
-| `src/` | Mkusanyaji wa Rust (msomaji, mchanganuzi, IR, LLVM backend) |
 | `msingi/maktaba/` | Maktaba ya msingi ya kujitegemea kwa Swa |
 | `msingi/maktaba/kumbukumbu.swa` | Shughuli za kumbukumbu |
 | `msingi/maktaba/mfuatano.swa` | Shughuli za mifuatano |
@@ -171,28 +172,24 @@ N32 kitanzi(N32 n) {
 
 ## Kujenga
 
-**Mahitaji:**
-- LLVM 18+ (C API) -- kwa njia ya majaribio pekee; imejaribiwa kwenye LLVM 22.1 (Arch Linux)
-- Rust (toleo jipya zaidi)
-- Clang (kwa majaribio ya ujumuishaji ya wakati wa utekelezaji)
-- Hakuna kiunganishi kinachohitajika kwa mnyororo wa kujikusanya (0%
-  bootstrap gap): mbegu (`--exe`) inatoa ET_EXEC tuli moja kwa moja —
-  hakuna gcc/ld/clang/libc popote, kuanzia stage1-exe hadi stage3-exe
-  (stage2-exe == stage3-exe, sawa kwa baiti)
+**Mahitaji:** hakuna. Mnyororo wa kujikusanya una pengo la bootstrap la
+0%: baiti za mkono (`msingi/kwanza.bin`, 393) → mbegu → stage1-exe →
+stage2-exe == stage3-exe (sawa kwa baiti). Hakuna gcc, hakuna ld,
+hakuna clang, hakuna libc popote kwenye mnyororo wa uzalishaji.
 
 ```sh
-cargo build --release
-cargo test          # Majaribio 227: 146 ya maktaba + 80 ya ujumuishaji + 1 wa nyaraka
+bash gharama/jenga-kwanza.sh      # hujenga mbegu kutoka baiti za mkono
+bash gharama/jaribu-mnyororo.sh   # mnyororo mzima + majaribio 304
 ```
 
 ## Matumizi
 
 ```sh
-# Kusanya faili ya Swa
-cargo run -- programu.swa
+# Kusanya faili ya Swa (binary moja kwa moja)
+./mbegu --exe programu.swa
 
-# Kutumia stage1 ya kujitegemea
-./stage1 msingi/mkusanyaji/msomaji.swa
+# Au kwa stage1 ya kujitegemea
+./stage1 --exe programu.swa
 ```
 
 ## Hatua ya Bootstrap
@@ -209,17 +206,16 @@ za mkono hadi mkusanyaji kamili wa Swa, bila lugha nyingine popote.
 
 | Kipimo | Thamani |
 |--------|---------|
-| **Majaribio** | 227/227 [PASS] (dereva wa Rust); uthibitisho kamili wa lugha 2026-08-27: hati/uthibitisho-wa-lugha.md |
-| **Kujikusanya (K6)** | Inapita [PASS] |
+| **Majaribio** | 304/304 [PASS] mnyororo wa Swa; uthibitisho kamili wa lugha: hati/uthibitisho-wa-lugha.md |
+| **Kujikusanya** | Inapita [PASS] — fixpoint sawa kwa baiti |
 | **Mchanganuzi wa Swa** | Kamili [DONE] |
-| **Mkaguzi wa Swa** | Aina [DONE]; lakini makosa ya aina ni ONYO — mkusanyaji anaendelea na kutoa binary (jibu baya la mfumo, kilichopimwa 2026-08-27) |
+| **Mkaguzi wa Swa** | Kamili [DONE] — aina, hoja, ugawaji, W0 zinakataliwa kwa sauti |
 | **Kiteremshi cha Swa** | Kamili [DONE] |
 | **Kizalishe asilia cha x86-64** | Kamili [DONE] |
 | **Usambazaji wa aina** | Familia 5 (N/A/D/B/W); upana halisi 8/16/32/64 pekee |
-| **Urejeshaji wa makosa** | Sehemu: mbegu inakataa kimya katika kesi kadhaa; uzalishaji huanguka kwa `sivyo` bila `kama` (kilichopimwa 2026-08-27) |
-| **Alloca-in-loop** | Imerekebishwa [DONE] |
+| **Vielekezi vya kazi** | Kamili [DONE] — `&jina`, wito kupitia kigezo |
+| **Mfumo wa moduli** | Kamili [DONE] — husisha ni kiungo halisi ndani ya mkusanyaji |
 | **Sret (struct return)** | Imetekelezwa [DONE] |
-| **`--opt` (LLVM passes)** | Inafanya kazi [DONE] |
 | **Uhuru wa jumla** | **100% (0% bootstrap gap)** |
 
 ## Ramani

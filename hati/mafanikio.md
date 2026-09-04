@@ -2,6 +2,10 @@
 
 Hati hii inafupisha juhudi za kuleta lugha ya programu ya Kiswahili (Swa) kwenye kujikusanya: kukusanya mchanganuzi wake na msomaji wake kutoka kwa chanzo cha Swa hadi kwenye binary inayofanya kazi kupitia mkusanyaji wa bootstrap unaotegemea Rust (`kande`).
 
+KUMBUKA (2026-09-05): dereva wa Rust/LLVM umehamishiwa hazina ya
+kumbukumbu lugha-swa/swa-dereva. Hati hii ni rekodi ya kihistoria ya
+kazi hiyo.
+
 ---
 
 ## 1. Tulichokusudia Kufanya

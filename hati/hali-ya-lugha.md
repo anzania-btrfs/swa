@@ -30,9 +30,9 @@ kikomo kimeandikwa na kikomo chake.
 
 | Kikomo | Ukali | Hali |
 |---|---|---|
-| Dereva wa Rust/LLVM: MAJARIBIO; O0 inakataa kwa kosa lauti kazi >40 ya vizuizi; majaribio yote kwa O1 (ISel kamili) | CHINI (njia ya kupita ipo; mnyororo wa uzalishaji ni mbegu/exe) | hati/mipaka.md #6 |
+| Dereva wa Rust/LLVM: haipo tena kwenye hazina hii — imehamishiwa lugha-swa/swa-dereva (iliyohifadhiwa 2026-09-05); mnyororo wa uzalishaji ni mbegu/exe pekee | HAKUNA | hati/mipaka.md #6 |
 | Upeo wa tokeni 262,144 — inalia kwa sauti | CHINI | hati/mipaka.md #3 |
-| Maneno halisi kwenye mbegu na dereva wa Rust ni 32-bit signed (2147483648 hutoa -2147483648); mnyororo wa .swa umerekebishwa hadi N64 2026-08-25 — kwa [2^31, 2^63) pekee: halisi >= 2^63 zinakatwa kimya kwa minyororo yote miwili, na halisi kubwa kama hoja ya wito zinavunjika (uthibitisho 2026-08-27) | CHINI | hati/mipaka.md #5 |
+| Maneno halisi kwenye mbegu ni 32-bit signed (2147483648 hutoa -2147483648); mnyororo wa .swa umerekebishwa hadi N64 2026-08-25 — halisi >= 2^63 zinakatwa kimya, na halisi kubwa kama hoja ya wito zinavunjika (uthibitisho 2026-08-27) | CHINI | hati/mipaka.md #5 |
 | Mpaka wa D64 na nambari kamili (kurudisha, ugawaji, operesheni mchanganyiko, ulinganisho mchanganyiko, upakiaji wa ulimwengu wa D64) — jibu baya kwa minyororo yote miwili; D32 imevunjika (poromoko) | JUU | hati/uthibitisho-wa-lugha.md (J1, J2, J7, J9) |
 | Upana usio wa 8/16/32/64 (N128, D80, A128, n.k.) — unakubaliwa kimya kwa semantiki za uongo kwenye uzalishaji; mkusanyaji wa mbegu unaanguka | CHINI | hati/uthibitisho-wa-lugha.md (J16, J12) |
 
@@ -48,11 +48,12 @@ kikomo kimeandikwa na kikomo chake.
 Kinachokamilika kwa 1.0 (2026-08): maktaba ya kawaida (kwa kiasi
 kilichoorodheshwa hapo juu), vipimo rasmi vya lugha, na uamuzi wa
 mwisho wa LLVM (MAJARIBIO — mnyororo wa uzalishaji ni mbegu/exe
-pekee).
+pekee). Dereva wa Rust/LLVM umehamishiwa hazina ya kumbukumbu
+lugha-swa/swa-dereva (2026-09-05).
 
 ## Uthibitisho wa jumla
 
-Majaribio 227/227 (146 maktaba + 80 ujumuishaji + 1 nyaraka).
+Majaribio 304/304 kwenye mnyororo wa Swa pekee (mbegu na stage1).
 Fixpoint: stage2-exe == stage3-exe sawa kwa baiti baada ya kila
 mchanganyiko. Alama za nje za exe: SIFURI.
 
