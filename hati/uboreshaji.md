@@ -1,5 +1,9 @@
 # Hati za Uboreshaji wa Swa
 
+KUMBUKA (2026-09-05): uboreshaji wa LLVM ulikuwa wa dereva wa
+Rust/LLVM, ambao sasa uko kwenye hazina ya kumbukumbu
+lugha-swa/swa-dereva. Mnyororo wa uzalishaji ni mbegu/exe pekee.
+
 ## Viwango vya Uboreshaji
 
 Swa inasaidia viwango vitatu vya uboreshaji vinavyodhibitiwa na bendera za mstari

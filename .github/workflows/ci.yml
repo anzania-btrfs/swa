@@ -26,27 +26,3 @@ jobs:
 
       - name: Mnyororo kamili wa majaribio
         run: bash gharama/jaribu-mnyororo.sh
-
-  # Dereva wa Rust/LLVM — wa majaribio, si njia ya uzalishaji.
-  dereva:
-    name: Dereva wa Rust
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Pakua msimbo
-        uses: actions/checkout@v4
-
-      - name: Weka Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Weka Clang na LLVM
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang llvm-18-dev
-          echo "LLVM_CONFIG=llvm-config-18" >> $GITHUB_ENV
-
-      - name: Jenga
-        run: cargo build --release
-
-      - name: Jaribu
-        run: cargo test

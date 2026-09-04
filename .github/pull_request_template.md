@@ -11,8 +11,8 @@
 
 ## Orodha ya Kukagua
 <!-- Thibitisha haya yote kabla ya kutuma -->
-- [ ] `cargo build --release` inapita
-- [ ] `cargo test` inapita (majaribio yote)
+- [ ] `bash gharama/jaribu-mnyororo.sh` inapita (304/304)
+- [ ] Fixpoint: stage2 == stage3 sawa kwa baiti
 - [ ] Nimeongeza majaribio kwa mabadiliko yangu
 - [ ] Maoni na nyaraka ziko kwa Kiswahili
 - [ ] Hakuna emoji

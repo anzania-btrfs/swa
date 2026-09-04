@@ -4,6 +4,10 @@ Rekodi rasmi ya uzingatiaji wa vipimo — kila matokeo hapa yalipimwa
 kwa kukusanya na kuendesha programu halisi kwenye minyororo yote
 miwili ya mkusanyaji. Hakuna kitu kilichokisiwa.
 
+KUMBUKA (2026-09-05): dereva wa Rust/LLVM (kande) umehamishiwa
+hazina ya kumbukumbu lugha-swa/swa-dereva. Vipimo vilivyoandikwa
+hapa kuhusu dereva (k.m. 10.5) ni rekodi ya kihistoria.
+
 Tarehe ya kipimo: 2026-09-01.
 
 Hali ya hazina wakati wa kipimo: tawi `kipengele/uthibitisho-kamili`,

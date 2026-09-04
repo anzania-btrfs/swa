@@ -5,8 +5,9 @@
 - **Keywords:** 13 za Kiswahili (aina za nambari hutambuliwa kisintaksia kwa herufi kubwa)
 - **Aina:** familia 5 za nambari (N, A, D, B, W — upana halisi
   8/16/32/64; upana mwingine haujaungwa mkono, uthibitisho 2026-08-27)
-- **Majaribio:** 265/265 mnyororo wa Swa + 232/232 Rust (146 za maktaba + 85 za ujumuishaji + 1 ya nyaraka)
-- **Backend:** uzalishaji.swa (asilia x86-64, inajikusanya) ndiyo njia ya uzalishaji; LLVM ni ya MAJARIBIO kwenye dereva wa Rust pekee (mipaka.md 6)
+- **Majaribio:** 304/304 mnyororo wa Swa (dereva wa Rust umehamia
+  hazina ya kumbukumbu lugha-swa/swa-dereva, 2026-09-05)
+- **Backend:** uzalishaji.swa (asilia x86-64, inajikusanya) ndiyo njia PEKEE; LLVM ilikuwa ya MAJARIBIO kwenye dereva wa Rust na sasa iko kwenye hazina ya kumbukumbu (mipaka.md 6)
 - **Bootstrap:** kwanza (baiti za mkono) → mbegu → stage1-exe → stage2-exe == stage3-exe — sawa kwa baiti
 
 ## Hatua ya 0: Mkusanyaji wa Bootstrap wa Rust [PASS] IMEFANIKIWA
@@ -91,6 +92,7 @@ asilia (mbegu/exe) — uzalishaji unakataa kwa sauti, mbegu kimya.
 - [x] Uthibitisho: stage2-exe == stage3-exe sawa kwa baiti
 - [!] Rust `kande` inabaki kama chombo cha vipimo na ukuzaji (CI) tu —
       si sehemu ya mnyororo wa uzalishaji
+      (2026-09-05: imehamishiwa lugha-swa/swa-dereva)
 
 ## Hatua ya 4: Kuondoa Utegemezi wa LLVM [PASS kwa mnyororo] IMEFANIKIWA
 
@@ -98,6 +100,7 @@ asilia (mbegu/exe) — uzalishaji unakataa kwa sauti, mbegu kimya.
 - [x] Mnyororo wa kujikusanya haugusi LLVM kabisa
 - [x] Uthibitisho: Swa inajikusanya kupitia mnyororo kamili wa Swa -> Swa -> binary
 - [!] LLVM inabaki ndani ya dereva wa Rust wa vipimo pekee
+      (2026-09-05: imehamishiwa lugha-swa/swa-dereva)
 
 ## Hatua ya 5: Kuziba Pengo la Mwisho la Bootstrap [IMEFANYIKA]
 
