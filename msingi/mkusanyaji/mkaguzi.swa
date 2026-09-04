@@ -436,6 +436,18 @@ W0 mkaguzi_kagua_kazi(N32 kazi_node) {
     wakati (p != -1) {
         N8* pjina = ast_pool + ast_jina_off[p];
         N32 penc = ast_thamani[p];
+        // W0 (familia 5, upana 0) ni aina ya kazi pekee — kurudi bila
+        // thamani. Kigezo cha W0 hakina thamani wala ukubwa; zamani
+        // kilikubaliwa kimya (rekodi 8.3, hati 3: "W0 ni kwa kazi tu").
+        // Kataa kwa sauti, kama W0 katika usemi inavyokataliwa.
+        N32 pfam = (penc / 256) % 256;
+        N32 pupana = penc - (pfam * 256);
+        kama (pfam == 5) {
+            kama (pupana == 0) {
+                andika_stderr("kosa [%s]: kigezo '%s' cha W0 — W0 ni kwa kazi tu\n", mkaguzi_kazi_sasa, pjina);
+                mkaguzi_makosa = mkaguzi_makosa + 1;
+            }
+        }
         kama (penc == 0) { penc = ast_thamani[p]; }
         wigo_ongeza(pjina, penc);
         p = ast_kulia[p];
@@ -825,6 +837,28 @@ N32 mkaguzi_kagua_usemi(N32 node) {
                         // desimali (1 + 2.5 ni D64, si N32).
                         kama (ni_desimali_enc(lhs_enc)) { enc_ya_op = lhs_enc; }
                         sivyo { kama (ni_desimali_enc(rhs_enc)) { enc_ya_op = rhs_enc; } }
+                    }
+                }
+            }
+        }
+        // Hesabu ya anwani ya kielekezi (C-semantiki): p + n na p - n
+        // pekee ndizo halali. p + p, p - p (delta ghafi ya baiti —
+        // haijaelezwa kwenye hati) na n - p hazina maana; zamani
+        // zilihesabu baiti kimya (rekodi 8.9). Kataa kwa sauti.
+        kama (aina == 6 || aina == 7) {
+            N32 lk = mkaguzi_ni_kielekezi(lhs_enc);
+            N32 rk = mkaguzi_ni_kielekezi(rhs_enc);
+            kama (lk == 1) {
+                kama (rk == 1) {
+                    andika_stderr("kosa [%s]: kielekezi kwa kielekezi kwenye hesabu (l=%d, r=%d)\n", mkaguzi_kazi_sasa, lhs_enc, rhs_enc);
+                    mkaguzi_makosa = mkaguzi_makosa + 1;
+                }
+            }
+            kama (aina == 7) {
+                kama (lk == 0) {
+                    kama (rk == 1) {
+                        andika_stderr("kosa [%s]: namba toa kielekezi haina maana (l=%d, r=%d)\n", mkaguzi_kazi_sasa, lhs_enc, rhs_enc);
+                        mkaguzi_makosa = mkaguzi_makosa + 1;
                     }
                 }
             }

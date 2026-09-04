@@ -76,7 +76,13 @@ N32 vigezo_kwanza_global = -1;
 N32 vigezo_prev_global = -1;
 
 N8 ast_pool[4194304];
-N32 ast_pool_wapi = 0;
+// Nafasi 0 inahifadhiwa kama sentinel ya jina tupu: dimbwi huanza
+// kwenye 1 (mfano wa kazi_jina_pool_wapi na var_pool_wapi). Zamani
+// jina la kwanza liliishi kwenye 0 na aina ya kielekezi cha muundo
+// wake ikawa -2(0+1)+1 = -1 — alama ileile ya "haijulikani" —
+// hivyo hesabu ya kielekezi cha muundo wa kwanza ilibaki baiti
+// (mdudu wa 2026-09-04: (p + 1)->y ilirudisha 0).
+N32 ast_pool_wapi = 1;
 N32 ast_jina_off[65536];
 
 // -------------------------------------------------------

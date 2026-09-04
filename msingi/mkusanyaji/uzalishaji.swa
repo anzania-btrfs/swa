@@ -3242,6 +3242,75 @@ W0 uzalishaji_kitambulisho(N32 node, N32 kazi_node) {
     wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
 }
 
+// -------------------------------------------------------
+// Hesabu ya anwani — kielekezi ± namba (C-semantiki, rekodi 8.9)
+// -------------------------------------------------------
+// Ukubwa wa kipengele cha kielekezi chenye enc isiyo sawa (biti za
+// mshale ziko kwenye biti 0-1: 1 = mshale mmoja, 3 = mshale mbili).
+// Mshale MMOJA huondolewa kwanza — sawa na mkaguzi anavyofanya kwa
+// faharisi a[i] — kisha ukubwa wa aina iliyobaki hupimwa. N8* → 1,
+// N32* → 4, N64* → 8, N32** → 8, muundo* → ukubwa wa muundo.
+N32 ukubwa_wa_kipengele_cha_kielekezi(N32 enc) {
+    N32 enc_k = enc;
+    kama (enc > 0) {
+        N32 familia = (enc / 256) % 256;
+        N32 ua = enc - (familia * 256);
+        N32 mb = ua - ((ua / 4) * 4);
+        kama (mb == 3) { enc_k = enc - 2; }
+        sivyo { enc_k = enc - 1; }
+    } sivyo {
+        // Hasi: muundo* ni -2k+1 (mshale wa kwanza huondolewa kwa
+        // kutoa 1: -2k+1 → -2k, yaani muundo lenyewe).
+        enc_k = enc - 1;
+    }
+    N32 saizi = ukubwa_kutoka_enc(enc_k);
+    kama (saizi == 0) { saizi = 4; }
+    rudisha saizi;
+}
+
+// Zidisha rax kwa ukubwa wa kipengele cha kielekezi (p + n).
+// N8/N16/N32 zinazoingia zimepanuliwa kwa sifuri hadi rax na mov —
+// panua ishara kwanza (cdqe). N64 na desimali (zilizobadilishwa
+// hadi rax na mpaka wa desimali) tayari ziko upana kamili.
+W0 andika_ongea_kielekezi_kipengele(N32 enc_kielekezi, N32 enc_namba) {
+    N32 saizi = ukubwa_wa_kipengele_cha_kielekezi(enc_kielekezi);
+    kama (saizi == 1) { rudisha; }  // N8*: tayari ni baiti
+    N32 ni_64 = 0;
+    kama (ni_desimali_enc(enc_namba)) { ni_64 = 1; }
+    kama (ukubwa_kutoka_enc(enc_namba) >= 8) { ni_64 = 1; }
+    kama (ni_64 == 0) { andika_cdqe(); }
+    kama (saizi == 2) {
+        andika_baiti(72); andika_baiti(193); andika_baiti(224); andika_baiti(1);  // shl rax, 1
+        rudisha;
+    }
+    kama (saizi == 4) {
+        andika_baiti(72); andika_baiti(193); andika_baiti(224); andika_baiti(2);  // shl rax, 2
+        rudisha;
+    }
+    kama (saizi == 8) {
+        andika_baiti(72); andika_baiti(193); andika_baiti(224); andika_baiti(3);  // shl rax, 3
+        rudisha;
+    }
+    andika_baiti(72); andika_baiti(105); andika_baiti(192);  // imul rax, rax, imm32
+    andika_neno4(saizi);  // ukubwa mwingine (miundo ya 12, 20, 24, ...)
+}
+
+// Usemi ni kielekezi halisi? Matokeo ya ulinganishi (aina 20-25) na
+// halisi (aina 4 na 45) SI kielekezi: enc yao inaweza kuwa isiyo
+// sawa (1025 = B1 kwa ulinganishi) lakini thamani yake ni namba.
+N32 usemi_ni_kielekezi(N32 node) {
+    kama (node == -1) { rudisha 0; }
+    N32 a = ast_aina[node];
+    kama (a >= 20) { kama (a <= 25) { rudisha 0; } }
+    kama (a == 4) { rudisha 0; }
+    kama (a == 45) { rudisha 0; }
+    N32 enc = aina_ya_usemi(node);
+    kama (enc == 0) { rudisha 0; }
+    kama (enc == -1) { rudisha 0; }
+    kama ((enc / 2) * 2 != enc) { rudisha 1; }
+    rudisha 0;
+}
+
 // AST_JUMLISHA (6) -- ongeza
 W0 uzalishaji_jumlisha(N32 node, N32 kazi_node) {
     N32 lhs = ast_kushoto[node];
@@ -3251,6 +3320,16 @@ W0 uzalishaji_jumlisha(N32 node, N32 kazi_node) {
     // hubadilishwa na mkaguzi kuwa kiungo cha mnyororo.
     N32 saizi = ukubwa_kutoka_enc(enc);
     N32 ni_d = ni_desimali_enc(enc);
+
+    // Hesabu ya anwani (C-semantiki): p + n inahamisha kwa vipengele
+    // vya n, si baiti (t75: *(p + 1) ilisoma ofseti 1 ya baiti badala
+    // ya kipengele cha 1). Matokeo ni kielekezi — enc isiyo sawa.
+    kama (ni_d == 0) {
+        kama ((enc / 2) * 2 != enc) {
+            uzalishaji_jumlisha_kielekezi(node, kazi_node, enc);
+            rudisha;
+        }
+    }
 
     uzalishaji_usemi(rhs, kazi_node);
     badili_mpaka_wa_desimali(rhs, enc);
@@ -3266,6 +3345,38 @@ W0 uzalishaji_jumlisha(N32 node, N32 kazi_node) {
         kama (saizi >= 8) { andika_add_rax_rcx(); }
         sivyo { andika_add_eax_ecx(); }
     }
+}
+
+// p + n au n + p: n inazidishwa kwa ukubwa wa kipengele kabla ya
+// kujumlishwa. p + p haina maana — mkaguzi anakataa kwa sauti;
+// kinga ya pili hapa inalinda njia zisizopitia ukaguzi.
+W0 uzalishaji_jumlisha_kielekezi(N32 node, N32 kazi_node, N32 enc) {
+    N32 lhs = ast_kushoto[node];
+    N32 rhs = ast_kulia[node];
+    N32 lhs_k = usemi_ni_kielekezi(lhs);
+    N32 rhs_k = usemi_ni_kielekezi(rhs);
+    kama (lhs_k) {
+        kama (rhs_k) {
+            andika_stderr("Hitilafu: kielekezi kwa kielekezi kwenye jumlisha\n");
+            wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+        }
+    }
+
+    // Tathmini RHS → rax; zidisha kama ndiyo namba; kisha sukuma
+    uzalishaji_usemi(rhs, kazi_node);
+    badili_mpaka_wa_desimali(rhs, enc);
+    kama (lhs_k) {
+        kama (rhs_k == 0) { andika_ongea_kielekezi_kipengele(enc, aina_ya_usemi(rhs)); }
+    }
+    sukuma_thamani(enc);
+    // Tathmini LHS → rax; zidisha kama ndiyo namba (n + p); jumlisha
+    uzalishaji_usemi(lhs, kazi_node);
+    badili_mpaka_wa_desimali(lhs, enc);
+    kama (rhs_k) {
+        kama (lhs_k == 0) { andika_ongea_kielekezi_kipengele(enc, aina_ya_usemi(lhs)); }
+    }
+    vuta_thamani_rcx(enc);
+    andika_add_rax_rcx();
 }
 
 // AST_TOFAUTI (7) -- toa
@@ -3303,6 +3414,39 @@ W0 uzalishaji_tofauti(N32 node, N32 kazi_node) {
         }
     } sivyo {
         N32 rhs = ast_kulia[node];
+        // Hesabu ya anwani (C-semantiki): p - n inahamisha kwa vipengele
+        // vya n, si baiti (rekodi 8.9). p - p na n - p hazina maana —
+        // mkaguzi anakataa kwa sauti; kinga ya pili hapa inalinda njia
+        // zisizopitia ukaguzi.
+        kama (ni_d == 0) {
+            kama ((enc / 2) * 2 != enc) {
+                N32 lhs_k = usemi_ni_kielekezi(lhs);
+                N32 rhs_k = usemi_ni_kielekezi(rhs);
+                kama (lhs_k) {
+                    kama (rhs_k == 0) {
+                        // p - n: tathmini RHS, zidisha kwa ukubwa wa
+                        // kipengele, kisha toa kutoka kwa LHS
+                        uzalishaji_usemi(rhs, kazi_node);
+                        badili_mpaka_wa_desimali(rhs, enc);
+                        andika_ongea_kielekezi_kipengele(enc, aina_ya_usemi(rhs));
+                        sukuma_thamani(enc);
+                        uzalishaji_usemi(lhs, kazi_node);
+                        badili_mpaka_wa_desimali(lhs, enc);
+                        vuta_thamani_rcx(enc);
+                        andika_sub_rax_rcx();
+                        rudisha;
+                    }
+                    andika_stderr("Hitilafu: kielekezi kwa kielekezi kwenye toa\n");
+                    wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+                }
+                kama (rhs_k) {
+                    andika_stderr("Hitilafu: namba toa kielekezi haina maana\n");
+                    wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+                }
+                // Ama matokeo ya ulinganishi (B1) — hesabu ya kawaida
+                // hapa chini, sawa na zamani.
+            }
+        }
         uzalishaji_usemi(rhs, kazi_node);
         badili_mpaka_wa_desimali(rhs, enc);
         sukuma_thamani(enc);
