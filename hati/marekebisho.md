@@ -2,6 +2,10 @@
 
 Wakati wa juhudi za kufanya mkusanyaji wa Rust wa kande uweze kujikusanya (kujikusanya yenyewe), hitilafu tisa za usahihi ziligunduliwa na kurekebishwa. Hati hii inaelezea kila hitilafu kwa usahihi -- ilipoishi, nini kiliharibika, jinsi ilivyojitokeza, na jinsi ilivyorekebishwa.
 
+KUMBUKA (2026-09-05): dereva wa Rust/LLVM umehamishiwa hazina ya
+kumbukumbu lugha-swa/swa-dereva. Hati hii ni rekodi ya kihistoria ya
+kazi hiyo.
+
 ---
 
 ## 1. Matamko ya Mbele Yalitengeneza Vijisabuni Vitupu

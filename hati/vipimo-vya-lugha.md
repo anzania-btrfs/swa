@@ -8,6 +8,9 @@ linapima MBEGU ILIYOGANDISHWA ya 2026-09-04 (na stage1 iliyojengwa
 kutoka kwake); kila dai la awali linabaki kwenye tarehe yake.
 Toleo hili linalenga Swa 1.0.
 
+KUMBUKA (2026-09-05): madai ya 2026-09-04 kuhusu dereva wa Rust ni
+rekodi ya kihistoria — dereva umehamishiwa lugha-swa/swa-dereva.
+
 Uthibitisho kamili wa 2026-08-27 (kesi ~487 zilizokusanywa na
 kuendeshwa kwenye minyororo yote miwili) umeandikwa kwenye
 `hati/uthibitisho-wa-lugha.md` — ambapo kipimo kinapinga kanuni ya

@@ -39,19 +39,21 @@ zamani kwamba "mnyororo wa .swa unaunga viungo vya ndani" haishikiki
 BSS kubwa kuliko ~47KB inaanguka kwenye uanzishaji — maalum kwa Windows.
 Linux ELF ni safi. Haijatatuliwa.
 
-### 5. Mwisho wa LLVM ni wa majaribio
+### 5. Mwisho wa LLVM ni wa majaribio [IMEFUNGWA — kuhamishiwa kumbukumbu 2026-09-05]
 
 O0 (FastISel) inakataa kazi yenye vizuizi zaidi ya 40; majaribio hutumia
-O1. Mnyororo wa uzalishaji ni mbegu/exe pekee. Angalia `hati/mipaka.md` 6.
+O1. Mnyororo wa uzalishaji ni mbegu/exe pekee. Dereva wa Rust/LLVM
+umehamishiwa hazina ya kumbukumbu lugha-swa/swa-dereva. Angalia
+`hati/mipaka.md` 6.
 
 ## Ramani ya Kazi
 
 | Kipaumbele | Kazi | Ukubwa | Hali |
 |-----------|------|--------|------|
 | 1 | ABI ya wito wa D64 kwenye mbegu | kubwa | IMEFUNGWA (uthibitisho 2026-08-27) |
-| 2 | Maneno halisi 64-bit (mbegu na dereva wa Rust; mnyororo wa .swa umeshafanyika kwa [2^31, 2^63); halisi >= 2^63 na hoja za wito bado wazi) | wastani | wazi |
+| 2 | Maneno halisi 64-bit kwenye mbegu (mnyororo wa .swa umeshafanyika kwa [2^31, 2^63); halisi >= 2^63 na hoja za wito bado wazi) | wastani | wazi |
 | 3 | Viungo vya ndani (`husisha`) — minyororo yote miwili | wastani | wazi |
-| 4 | Mwisho wa LLVM kuwa wa kuaminika (si majaribio) | kubwa | wazi |
+| 4 | Mwisho wa LLVM kuwa wa kuaminika (si majaribio) | kubwa | IMEFUNGWA — dereva kuhamishiwa lugha-swa/swa-dereva (2026-09-05) |
 | 5 | Malengo zaidi (ARM64, RISC-V) | kubwa | wazi |
 
 ## Kilichorekebishwa (Agosti 2026)
