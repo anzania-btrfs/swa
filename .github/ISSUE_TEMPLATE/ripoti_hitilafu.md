@@ -11,7 +11,7 @@ assignees: []
 
 ## Hatua za Kuzalisha
 <!-- Orodhesha hatua za kuzalisha hitilafu -->
-1. Endesha `kande` na hoja...
+1. Endesha `./stage1 --exe programu.swa` (au mbegu) na hoja...
 2. ...
 
 ## Matokeo Halisi
@@ -22,9 +22,9 @@ assignees: []
 
 ## Mazingira
 - Mfumo wa uendeshaji: 
-- Toleo la LLVM: 
-- Toleo la Rust: 
-- Toleo la mkusanyaji (`kande --version`): 
+- Mnyororo uliotumika: mbegu au stage1
+- Ukubwa wa mbegu.bin (baiti): 
+- Fixpoint (stage2 == stage3): ndiyo / hapana
 
 ## Maelezo ya Ziada
 <!-- Ongeza maelezo yoyote ya ziada, mfano wa msimbo, au viungo -->
