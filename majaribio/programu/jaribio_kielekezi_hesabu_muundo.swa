@@ -1,0 +1,25 @@
+// jaribio_kielekezi_hesabu_muundo.swa — p + n kwa kielekezi cha
+// muundo kinahamisha kwa ukubwa MZIMA wa muundo (hapa baiti 12),
+// si baiti (rekodi 8.9). Muundo ni kitambulisho cha KWANZA cha
+// faili: zamani jina lake liliishi kwenye nafasi 0 ya dimbwi na
+// aina ya kielekezi chake ikawa -1 (alama ya "haijulikani") —
+// hivyo hesabu ilibaki baiti (mdudu wa 2026-09-04). Pia p - n na
+// kigezo cha muda. stage1 pekee: mbegu bado inahesabu baiti —
+// rejesha baada ya kugandishwa kwa mbegu mpya.
+muundo Kubwa { N32 a; N32 b; N32 c; }
+N32 main() {
+    Kubwa s[3];
+    s[0].a = 1; s[0].b = 2; s[0].c = 3;
+    s[1].a = 4; s[1].b = 5; s[1].c = 6;
+    s[2].a = 7; s[2].b = 8; s[2].c = 9;
+    Kubwa* p = s;
+    kama ((p + 1)->c != 6) rudisha 1;
+    kama ((p + 1)->a != 4) rudisha 2;
+    kama ((p + 2)->a != 7) rudisha 3;
+    kama (p[1].c != 6) rudisha 4;
+    Kubwa* q = p + 2;
+    kama (q->b != 8) rudisha 5;
+    kama ((q - 1)->c != 6) rudisha 6;
+    kama ((q - 2)->a != 1) rudisha 7;
+    rudisha 0;
+}
