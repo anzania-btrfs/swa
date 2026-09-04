@@ -1,0 +1,9 @@
+// jaribio_mende_ukubwa_hoja_2_kata.swa — ukubwa wa hoja 2
+// unakataliwa kwa sauti: builtin huchukua jina la aina moja
+// pekee; mdudu wa 2026-09-04: hoja ya 2 ilimezwa kimya.
+// stage1 pekee: mbegu bado inakubali — rejesha baada ya
+// kugandishwa kwa mbegu mpya.
+N32 main() {
+    N32 s = ukubwa(N32, N64);
+    rudisha s;
+}
