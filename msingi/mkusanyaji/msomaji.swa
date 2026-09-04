@@ -183,6 +183,17 @@ N32 ni_neno_muhimu(N8* neno, N64 urefu) {
         }
     }
     kama (urefu == 5) {
+        kama (neno[0] == 102) {
+            kama (neno[1] == 97) {
+                kama (neno[2] == 110) {
+                    kama (neno[3] == 121) {
+                        kama (neno[4] == 97) {
+                            rudisha 1;  // fanya
+                        }
+                    }
+                }
+            }
+        }
         kama (neno[0] == 115) {
             kama (neno[1] == 105) {
                 kama (neno[2] == 118) {
