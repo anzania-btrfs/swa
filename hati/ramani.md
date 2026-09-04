@@ -5,7 +5,7 @@
 - **Keywords:** 13 za Kiswahili (aina za nambari hutambuliwa kisintaksia kwa herufi kubwa)
 - **Aina:** familia 5 za nambari (N, A, D, B, W — upana halisi
   8/16/32/64; upana mwingine haujaungwa mkono, uthibitisho 2026-08-27)
-- **Majaribio:** 227/227 (146 za maktaba + 80 za ujumuishaji + 1 ya nyaraka)
+- **Majaribio:** 265/265 mnyororo wa Swa + 232/232 Rust (146 za maktaba + 85 za ujumuishaji + 1 ya nyaraka)
 - **Backend:** uzalishaji.swa (asilia x86-64, inajikusanya) ndiyo njia ya uzalishaji; LLVM ni ya MAJARIBIO kwenye dereva wa Rust pekee (mipaka.md 6)
 - **Bootstrap:** kwanza (baiti za mkono) → mbegu → stage1-exe → stage2-exe == stage3-exe — sawa kwa baiti
 
@@ -15,7 +15,7 @@
 - [x] IR lowering (AST -> Swa IR)
 - [x] LLVM codegen (x86-64 native binaries)
 - [x] ABI classification (sret, struct returns)
-- [x] Majaribio 227/227 (146 za maktaba + 80 za ujumuishaji + 1 ya nyaraka)
+- [x] Majaribio 265/265 mnyororo wa Swa + 232/232 Rust
 
 ## Hatua ya 1: Kujikusanya kwa Msingi [PASS] IMEFANIKIWA
 
@@ -57,7 +57,7 @@ kwenye njia ya Rust → LLVM.
       wa D64 na nambari kamili (jibu baya) na D32 (poromoko)
 - [x] **AST_BADILI (48)** — IMEFANYIKA: kishikizi kipo katika mkaguzi
       (mkaguzi.swa) na katika uzalishaji (badili kumbukumbu → realloc)
-- [ ] **Uthibitishaji wa aina za hali za `chagua`** dhidi ya usemi unaojaribiwa
+- [x] **Uthibitishaji wa aina za hali za `chagua`** — IMEFANYIKA: lebo za usemi au kigezo zinakataliwa kwa sauti; hasi na N64 zinalingana (T5)
 - [ ] **mteremko.swa** — towe lake ni msimbo mfu; uamuzi: kuifuta au kuikamilisha
       kwa hatua za uboreshaji wa baadaye
 - [x] **JIT kamili** — IMEFANYIKA: relocations za wito wa nje ndani ya

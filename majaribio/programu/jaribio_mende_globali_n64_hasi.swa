@@ -1,0 +1,26 @@
+// jaribio_mende_globali_n64_hasi.swa — vianzio hasi vya ulimwengu
+// vya ukubwa mkubwa. Mdudu wa 2026-09-04: toa-unari wa halisi ya
+// biti 32+ ulikokotolewa kwa N32 (ofseti ya dimbwi ikihesabiwa
+// kama thamani) — N64 g = -2147483648 ilihifadhi -30. Thamani
+// kamili kwa N64 na N32, chanya na hasi, ndogo na kubwa.
+// stage1 pekee: mbegu bado inakosea N32 g32 = -2147483648 —
+// rejesha baada ya kugandishwa kwa mbegu mpya.
+N64 g8 = -2147483648;
+N64 g9 = -2147483649;
+N64 g4g = -4294967296;
+N64 g90 = -90;
+N32 g32 = -2147483648;
+N64 gchanya = 2147483648;
+N64 gndogo = 7;
+N64 gsawa = -2147483648;
+N32 main() {
+    kama (g8 != -2147483648) rudisha 1;
+    kama (g9 != -2147483649) rudisha 2;
+    kama (g4g != -4294967296) rudisha 3;
+    kama (g90 != -90) rudisha 4;
+    kama (g32 != -2147483648) rudisha 5;
+    kama (gchanya != 2147483648) rudisha 6;
+    kama (gndogo != 7) rudisha 7;
+    kama (gsawa != g8) rudisha 8;
+    rudisha 0;
+}
