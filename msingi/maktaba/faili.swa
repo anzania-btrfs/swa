@@ -7,8 +7,8 @@ husisha { maktaba/kumbukumbu.swa }
 // sys_andika, sys_funga kutoka kumbukumbu.swa) — HAKUNA libc.
 // Awali moduli hii ilizungushia stdio ya C (fopen/fread/...); kwa
 // kuwa maktaba haihitaji libc tena, kazi hizi zimeandikwa upya kwa
-// syscalls. Hivyo moduli inakusanyika na kuendesha kwenye minyororo
-// YOTE MIWILI (mbegu na stage1) — si ya mnyororo wa Rust pekee.
+// syscalls. Moduli inakusanyika na kuendesha kwenye minyororo
+// YOTE MIWILI (mbegu na stage1).
 //
 // Kishikio kinachorudishwa na faili_fungua ni N8* lenye thamani ya
 // deskripta ya faili (fd) — si kielekezi halisi kinachoweza kusomwa.

@@ -2,7 +2,7 @@
 
 Karibu! Swa ni lugha ya programu ya Kiswahili inayojikusanya. Tunafurahi unapotaka kuchangia.
 
-**Lugha:** Michango yote (commits, PR, nyaraka, majadiliano) lazima iwe **kwa Kiswahili**. Hii ni sehemu ya dhamira ya mradi. Isipokuwa: majina ya vigeu vya Rust yanaweza kuwa Kiingereza.
+**Lugha:** Michango yote (commits, PR, nyaraka, majadiliano) lazima iwe **kwa Kiswahili**. Hii ni sehemu ya dhamira ya mradi.
 
 ---
 
@@ -15,14 +15,14 @@ Tafuta lebo `good-first-issue` kwenye [ukurasa wa masuala](https://github.com/lu
 - Kuongeza maoni ya Kiswahili kwenye msimbo
 - Kutafsiri nyaraka
 - Kuandika majaribio rahisi
-- Kurekebisha maonyo ya mkusanyaji
+- Kurekebisha makosa ya mkusanyaji
 
 ### 2. Kuripoti Hitilafu
 
 Tumia kiolezo cha **Ripoti ya Hitilafu**. Hakikisha umejumuisha:
 - Hatua za kuzalisha hitilafu
 - Matokeo halisi na yanayotarajiwa
-- Mazingira yako (OS, LLVM, Rust)
+- Mazingira yako (OS, mnyororo uliotumika — mbegu au stage1, ukubwa wa mbegu.bin, hali ya fixpoint)
 
 ### 3. Kupendekeza Vipengele
 
@@ -35,7 +35,7 @@ Tumia kiolezo cha **Ombi la Kipengele**. Kumbuka:
 
 1. **Fork** repo na unda tawi lako
 2. Andika msimbo wako kwa Kiswahili
-3. Hakikisha majaribio yote yanapita: `cargo test`
+3. Hakikisha mnyororo mzima unapita: `bash gharama/jaribu-mnyororo.sh`
 4. Tumia ujumbe wa commit kwa Kiswahili
 5. Eleza **kwa nini** unafanya mabadiliko, si **nini** tu
 
@@ -44,24 +44,22 @@ Tumia kiolezo cha **Ombi la Kipengele**. Kumbuka:
 ## Mazingira ya Ujenzi
 
 ### Mahitaji
-- LLVM 18+ (inapendekezwa 22) — kwa njia ya majaribio pekee; mnyororo wa uzalishaji (mbegu/exe) hauhitaji LLVM
-- Rust (latest stable)
-- clang (kwa kuunganisha)
-- Optional: Nix (`nix-shell`)
+- x86-64 Linux
+- bash na zana za kawaida za mfumo (cat, cmp, chmod, mktemp, timeout, grep, md5sum)
+- Hakuna kingine: mnyororo wa uzalishaji hauhitaji gcc, ld, clang, libc, Rust, wala LLVM
 
 ### Kujenga
 ```sh
 git clone https://github.com/lugha-swa/swa.git
 cd swa
-cargo build --release
-cargo test  # Majaribio 227 yanapaswa kupita (146 maktaba + 80 ujumuishaji + 1 nyaraka)
+bash gharama/jenga-kwanza.sh      # hujenga mbegu kutoka baiti za mkono
+bash gharama/jaribu-mnyororo.sh   # mnyororo mzima + majaribio 304
 ```
 
 ### Kujaribu Mkusanyaji
 ```sh
-cargo run --release -- --check mfano.swa
-cargo run --release -- --llvm mfano.swa
-cargo run --release -- mfano.swa -o mfano.o
+./msingi/mbegu.bin --exe mfano.swa > mfano.bin
+chmod +x mfano.bin && ./mfano.bin
 ```
 
 ---
@@ -70,11 +68,15 @@ cargo run --release -- mfano.swa -o mfano.o
 
 | Saraka | Maelezo |
 |--------|---------|
-| `src/` | Mkusanyaji wa bootstrap wa Rust (lexer, parser, sema, ir, codegen, driver) |
+| `msingi/` | Mzizi wa uaminifu: kwanza (baiti za mkono), mbegu, bootstrap |
 | `msingi/maktaba/` | Maktaba ya kawaida ya Swa (kumbukumbu, mfuatano, orodha, ramani, hesabu, faili) |
 | `msingi/mkusanyaji/` | Mkusanyaji wa kujikusanya wa Swa (msomaji, msambazaji, mteremko, mkaguzi, uzalishaji, stage1) |
-| `majaribio/` | Majaribio ya Rust na Swa |
+| `majaribio/` | Programu za majaribio za Swa (MANIFEST.txt) |
+| `gharama/` | Zana za ujenzi na majaribio |
 | `hati/` | Nyaraka za mradi |
+
+Dereva wa zamani wa Rust/LLVM uko kwenye hazina ya kumbukumbu
+[lugha-swa/swa-dereva](https://github.com/lugha-swa/swa-dereva).
 
 ---
 
@@ -92,7 +94,7 @@ iliyovunjika inaweza bado kutoa fixpoint imara LAKINI mbaya
 kimya kimya. Mfano halisi: uhariri mdogo wa njia ya fixup uliwahi
 kufanya kila mkusanyiko kushindwa — ulipatikana tu kwa sababu jaribio
 la wito 1,000 lilikimbizwa kabla ya kugandisha. Jaribio hilo sasa ni
-`jaribio_mbegu_mkazo_wito` (majaribio/integration.rs) — la kudumu.
+mkazo wa RELA ndani ya `gharama/jaribu-mnyororo.sh` — la kudumu.
 
 Mpangilio wa lazima:
 1. Badilisha `msingi/mbegu.s`.
@@ -101,7 +103,8 @@ Mpangilio wa lazima:
 3. Jaribio la mkazo la wito wa mbele (angalau 1,000) — njia za RELA
    na nje zinazopigwa mara nyingi.
 4. Baada ya hapo tu: gandisha (`mbegu.bin` + `mbegu.hex`), thibitisha
-   kwa `bash gharama/jenga-kwanza.sh`, na endesha `cargo test` nzima.
+   kwa `bash gharama/jenga-kwanza.sh`, na endesha
+   `bash gharama/jaribu-mnyororo.sh` nzima.
 5. Tazama `hati/mipaka.md` kwa mipaka inayojulikana ya mbegu.
 
 ---
@@ -111,7 +114,7 @@ Mpangilio wa lazima:
 1. **Kiswahili kwanza.** Vigeu, kazi, na maoni yote kwa Kiswahili.
 2. **Rahisi.** Swa haihitaji kuwa na kila kipengele. Inalenga kuwa mbadala wa C, si C++ au Rust.
 3. **Imara.** Hakuna paniki, hakuna tabia isiyotabirika. Kila hitilafu lazima ishughulikiwe.
-4. **Inayojikusanya.** Lengo kuu ni kuondoa utegemezi wa Rust kabisa.
+4. **Inayojikusanya.** Utegemezi wa Rust na LLVM umeondolewa kabisa — mnyororo wa uzalishaji ni Swa pekee.
 
 ---
 

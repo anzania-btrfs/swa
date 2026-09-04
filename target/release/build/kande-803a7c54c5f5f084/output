@@ -1,3 +1,0 @@
-cargo:rustc-link-search=native=/usr/lib
-cargo:rustc-link-lib=LLVM-22
-cargo:rerun-if-env-changed=LLVM_CONFIG
