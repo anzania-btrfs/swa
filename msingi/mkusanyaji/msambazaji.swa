@@ -229,9 +229,10 @@ N32 neno_ni(Tokeni * t, N8* neno) {
 
 // -------------------------------------------------------
 // Neno muhimu? Hati 2.2: maneno muhimu hayawezi kutumika kama
-// majina ya vitambulisho. Orodha kamili ya maneno 12: muundo,
-// rudisha, kama, sivyo, wakati, kwa, vunja, endelea, chagua,
-// hali, husisha, achilia. Rudisha 1 ikiwa tokeni ni neno muhimu.
+// majina ya vitambulisho. Orodha kamili ya maneno 13: muundo,
+// rudisha, kama, sivyo, wakati, kwa, fanya, vunja, endelea,
+// chagua, hali, husisha, achilia. Rudisha 1 ikiwa tokeni ni
+// neno muhimu.
 // -------------------------------------------------------
 N32 tokeni_ni_muhimu(Tokeni* t) {
     kama (t->urefu < 3) { rudisha 0; }  // maneno muhimu yote yana angalau herufi 3
@@ -241,6 +242,7 @@ N32 tokeni_ni_muhimu(Tokeni* t) {
     kama (neno_ni(t, "sivyo")) { rudisha 1; }
     kama (neno_ni(t, "wakati")) { rudisha 1; }
     kama (neno_ni(t, "kwa")) { rudisha 1; }
+    kama (neno_ni(t, "fanya")) { rudisha 1; }
     kama (neno_ni(t, "vunja")) { rudisha 1; }
     kama (neno_ni(t, "endelea")) { rudisha 1; }
     kama (neno_ni(t, "chagua")) { rudisha 1; }
@@ -457,6 +459,7 @@ N32 changanua_usemi(Msambazaji* p);
 N32 changanua_taarifa(Msambazaji* p);
 N32 changanua_taarifa_kama(Msambazaji* p);
 N32 changanua_taarifa_wakati(Msambazaji* p);
+N32 changanua_taarifa_fanya(Msambazaji* p);
 N32 changanua_taarifa_chagua(Msambazaji* p);
 N32 changanua_taarifa_kwa(Msambazaji* p);
 N32 changanua_taarifa_tangazo(Msambazaji* p);
@@ -553,6 +556,70 @@ N32 changanua_taarifa_wakati(Msambazaji* p) {
             }
 
             rudisha node_mpya(AST_WAKATI, 0, cond, body);
+        }
+    }
+    rudisha -1;
+}
+
+N32 changanua_taarifa_fanya(Msambazaji* p) {
+    // ---- fanya { mwili } wakati ( sharti ) ; ----
+    // Kitanzi cha fanya (do-while): mwili hukimbia mara moja kabla
+    // ya sharti kujaribiwa. Nodi yake ni AST_WAKATI yenye alama
+    // -777778 kwenye ast_thamani (0 = wakati, -777777 = kwa yenye
+    // hatua) — uzalishaji ndiye anayesoma alama hiyo, na mkaguzi
+    // anachunguza fanya sawa na wakati (kitanzi: vunja na endelea
+    // ni halali ndani yake; endelea inaruka hadi sharti).
+    // Muundo ni MKALI — mabano ya mwili, ya sharti, na nukta-mkato
+    // ni ya lazima (sawa na mbegu).
+    kama (p->sasa.urefu >= 2 && p->sasa.mwanzo[0] >= 97) {
+        kama (neno_ni(&p->sasa, "fanya")) {
+            sogeza(p);
+            // Mwili: mabano ya wima { } ni ya lazima
+            kama (p->sasa.mwanzo[0] == 123) {
+                N32 body = changanua_bloku(p);
+                // Kifungio tupu { } kinarudisha -1 kama mwili halali
+                // usio na taarifa — p->kosa ndiyo ishara ya kosa.
+                kama (p->kosa) { rudisha -1; }
+                // Kifungu cha sharti: wakati ( sharti )
+                kama (neno_ni(&p->sasa, "wakati")) {
+                    sogeza(p);
+                } sivyo {
+                    andika_stderr("kosa: 'fanya' inahitaji 'wakati ( sharti ) ;' baada ya mwili\n");
+                    p->kosa = 1;
+                    rudisha -1;
+                }
+                kama (neno_ni(&p->sasa, "(")) {
+                    sogeza(p);
+                } sivyo {
+                    andika_stderr("kosa: mabano ya sharti ya 'fanya' hayapo: wakati ( sharti )\n");
+                    p->kosa = 1;
+                    rudisha -1;
+                }
+                N32 cond = changanua_usemi(p);
+                kama (cond == -1) {
+                    p->kosa = 1;
+                    rudisha -1;
+                }
+                kama (neno_ni(&p->sasa, ")")) {
+                    sogeza(p);
+                } sivyo {
+                    andika_stderr("kosa: mabano ya sharti ya 'fanya' hayajafungwa: wakati ( sharti )\n");
+                    p->kosa = 1;
+                    rudisha -1;
+                }
+                // Nukta-mkato ya mwisho ni ya lazima (semantiki ya C)
+                kama (neno_ni(&p->sasa, ";")) {
+                    sogeza(p);
+                } sivyo {
+                    andika_stderr("kosa: 'fanya' inahitaji nukta-mkato ';' baada ya 'wakati ( sharti )'\n");
+                    p->kosa = 1;
+                    rudisha -1;
+                }
+                rudisha node_mpya(AST_WAKATI, -777778, cond, body);
+            }
+            andika_stderr("kosa: mwili wa 'fanya' lazima uwe kwenye mabano ya wima { }\n");
+            p->kosa = 1;
+            rudisha -1;
         }
     }
     rudisha -1;
@@ -1824,6 +1891,9 @@ N32 changanua_taarifa(Msambazaji* p) {
     // wakati kupitia kisaidizi
     N32 r_wakati = changanua_taarifa_wakati(p);
     kama (r_wakati != -1) { rudisha r_wakati; }
+    // fanya (do-while) kupitia kisaidizi
+    N32 r_fanya = changanua_taarifa_fanya(p);
+    kama (r_fanya != -1) { rudisha r_fanya; }
     // chagua kupitia kisaidizi
     N32 r_chagua = changanua_taarifa_chagua(p);
     kama (r_chagua != -1) { rudisha r_chagua; }

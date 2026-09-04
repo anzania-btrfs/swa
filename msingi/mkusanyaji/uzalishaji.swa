@@ -2303,6 +2303,7 @@ W0 uzalishaji_wakati(N32 node, N32 kazi_node) {
     N32 lebo_body = lebo_buf_mpya();
     N32 lebo_cond = lebo_buf_mpya();
     N32 lebo_exit = lebo_buf_mpya();
+    N32 ni_fanya = 0;  // -777778 = kitanzi cha fanya (mwili-kwanza)
 
     kama (mzunguko_undani >= 16) {
         andika_stderr("; KOSA: upeo wa kupandikiza kitanzi (16)\n");
@@ -2313,7 +2314,13 @@ W0 uzalishaji_wakati(N32 node, N32 kazi_node) {
         // ast_thamani ya wakati ina maana hatua ipo (imewekwa na
         // msambazaji). Lebo ya hatua imetengwa MAPEMA — kifungio cha
         // hatua kitaweka weka_lebo hapo wakati kinakusanywa.
+        // Alama ya -777778 = kitanzi cha FANYA (do-while): mwili
+        // hukimbia mara moja kabla ya sharti — hakuna kuruka kwa
+        // awali hadi sharti (kuweka-lebo kwa mwili ni kuingilia).
+        // endelea ndani ya fanya inaruka hadi SHARTI (semantiki ya
+        // C ya do-while) — lebo_cond hapa chini.
         N32 ina_hatua = (ast_thamani[node] == -777777);
+        ni_fanya = (ast_thamani[node] == -777778);
         mzunguko_lebo_hatua[mzunguko_undani] = lebo_buf_mpya();
         kama (ina_hatua) {
             mzunguko_lebo_endelea[mzunguko_undani] = mzunguko_lebo_hatua[mzunguko_undani];
@@ -2324,7 +2331,11 @@ W0 uzalishaji_wakati(N32 node, N32 kazi_node) {
         mzunguko_undani = mzunguko_undani + 1;
     }
 
-    toa_jmp_lebo(lebo_cond);
+    // wakati (na kwa) huanza kwa kuruka hadi sharti; fanya huanza
+    // na mwili wake mara moja (mwili hukimbia angalau mara moja).
+    kama (ni_fanya == 0) {
+        toa_jmp_lebo(lebo_cond);
+    }
 
     weka_lebo(lebo_body);
     uzalishaji_taarifa(body, kazi_node);
