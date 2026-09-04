@@ -230,7 +230,10 @@ ni `jaribio_mbegu_mzunguko_mfupi`.
 
 ### 4.2 Hesabu ya kielekezi
 
-- `&x` — anwani ya kigezo au sehemu ya muundo.
+- `&x` — anwani ya kigezo, sehemu ya muundo, au kazi (`&jina_la_kazi`
+  hutoa anwani ya msimbo wa kazi — kielekezi cha kazi, 4.3). Jina la
+  kazi PEKEE (bila `&`) halitumiki kama usemi — linakataliwa kwa
+  sauti ("jina la kazi halitumiki kama usemi").
 - `*p` — nyoosha: thamani iliyoko kwenye anwani p.
 - `p->sehemu` — sehemu ya muundo kupitia kielekezi.
 - `a[i]` — safu au kielekezi: `*(a + i * ukubwa_wa_kipengele)`.
@@ -243,6 +246,73 @@ minyororo yote miwili, na `*(p + n)` haikuzwi kwa ukubwa wa
 kipengele (ni hesabu ya BAITI) — `*(p + 3)` kwenye N32* inasoma
 baiti 3 baada ya p, si kipengele cha 3. `*(safu + 1)` (kuoza kwa
 safu) inatoa 0 kwenye uzalishaji na inaanguka kwenye mbegu.
+
+### 4.3 Anwani ya kazi na wito kupitia kielekezi cha kazi
+
+Lugha haina saini za kazi kama aina — kielekezi cha kazi ni thamani
+ya baiti 8 inayoshikilia anwani ya msimbo, kama kielekezi kingine
+chochote. Imepimwa (2026-09-04) kwenye mnyororo wa uzalishaji
+(stage1); mbegu (bamba la kwanza) haijui vipengele hivi bado —
+majaribio ni ya stage1 pekee hadi mbegu igandishwe tena.
+
+Kuchukua anwani:
+
+```
+N8* kazi = &nyongeza;   // kielekezi chochote (T*) au N64 hushika anwani
+N64 k2 = &jumlisha3;
+```
+
+- `&jina_la_kazi` hutoa anwani ya mwanzo wa kazi. Inafanya kazi kwa
+  wito wa mbele (kazi iliyotangazwa baadaye) — disp32 inarekebishwa
+  mwishoni mwa kukusanya.
+- Thamani inaweza kuhifadhiwa kwenye kigezo/paramu/kigeu cha
+  ulimwengu cha aina ya KIELEKEZI (T* — `N8*` ni aina ya jumla) au
+  namba ya upana 64 (`N64`, `A64`). `&f` kama HOJA ya paramu ya
+  N64/A64 inakubaliwa — anwani ya kazi ni thamani ya baiti 8 kama
+  paramu yenyewe (mkaguzi anatoa ubaguzi wa usemi wa anwani ya kazi
+  dhidi ya paramu ya namba ya upana 64, 5); vigeu VINGINE vya
+  kielekezi kwa paramu ya namba bado vinakataliwa. Kigezo cha
+  ulimwengu kinaweza kupewa kianzio cha anwani ya kazi:
+  `N64 kazi_kuu = &nyongeza;` (hali ya --exe pekee; aina ya baiti 8
+  — kielekezi au N64/A64; si safu; si D64) — anwani kamili ya .text
+  huandikwa mwishoni mwa kukusanya, kwa hiyo .o na JIT hazikubali
+  kianzio hicho (gawa ndani ya main badala yake).
+
+Wito kupitia kielekezi — `kigezo(hoja...)` — jina ambalo SI kazi
+linalinganishwa na kigeu/paramu/kigeu cha ulimwengu:
+
+- ABI ni ile ya wito wa kawaida: hoja 1-6 kwa rejesta (rdi..r9 kwa
+  namba/kielekezi, xmm0..xmm7 kwa D64/D32), hoja 7+ kwenye rafu,
+  matokeo kwenye rax/eax (na xmm0 kwa desimali). Kielekezi hupakiwa
+  kwenye r11 na wito hutolewa kwa `call r11`.
+- Aina za hoja huamuliwa na USEMI wa hoja kwenye wito (saini ya kazi
+  haijulikani wakati wa kukusanya): `k(2.5)` hupita xmm0, `k(2)`
+  hupita rdi. Hivyo mlangaji lazima alinganishe aina mwenyewe —
+  hoja ya D64 kwa kazi inayotarajia namba (au kinyume) ni jibu baya
+  lisilogunduliwa.
+- Matokeo ya wito hayajulikani wakati wa kukusanya: hutumiwa kwa
+  usalama kama namba au kielekezi (hifadhi kwenye kigezo chenye aina
+  kabla ya hesabu za upana usiojulikana). MATOKEO YA D64
+  HAYAKUBALIKI — mkaguzi anakataa kwa sauti matumizi ya wito
+  kupitia kigezo katika muktadha wa D64 (kianzio, ugawaji, rudisha,
+  hoja ya paramu ya D64): matokeo yanakuja kwenye eax/rax, si xmm0.
+- Kazi za W0 zinaitwa sawa (`k(40);` bila matumizi ya matokeo).
+- Uhalali: kigezo kinachoitwa lazima kiwe kielekezi (T*) au namba ya
+  upana 64 — la sivyo kosa la aina. Kikomo cha hoja ni 16, kama wito
+  wa kawaida. Kazi zinazorejesha muundo (sret) hazisaidiwi kupitia
+  kielekezi (mpangaji wa sret anajulikana kwa wito wa kawaida pekee).
+
+Mfano (jaribio_kazi_kielekezi_kama_hoja):
+
+```
+N32 nyongeza(N32 x) { rudisha x + 1; }
+N32 endesha(N8* kazi, N32 thamani) {
+    rudisha kazi(thamani) + kazi(thamani);   // 21 + 21
+}
+N32 main() {
+    rudisha endesha(&nyongeza, 20) - 42;     // 0
+}
+```
 
 ## 5. Tangazo la Kazi
 
@@ -445,10 +515,12 @@ muundo Nukta {
   ya Linux moja kwa moja. ABI: rax=namba, rdi, rsi, rdx, r10, r8, r9.
   INAFANYA KAZI (kilichopimwa 2026-08-27).
 - `tekeleza(N8* kazi, N32 argc, N8** argv, N32 ofseti)` na
-  `anwani_ya_kazi(N8* jina)` — kilichopimwa (2026-08-27): HAZIPO
-  kwenye minyororo yote miwili kama kazi za lugha; wito wake
-  unakataliwa ("kazi haijafafanuliwa"). Ahadi hii imeondolewa kwenye
-  vipimo hadi itakapotekelezwa.
+  `anwani_ya_kazi(N8* jina)` — visaidizi vya NDANI vya daraja la JIT
+  la mkusanyaji wa kujikusanya (`--jit`): havipo kwenye minyororo
+  yote miwili kama kazi za lugha; wito wake kutoka kwa programu ya
+  mtumiaji unakataliwa ("kazi haijafafanuliwa"). Lugha ya programu
+  hutumia `&jina_la_kazi` na wito kupitia kielekezi (4.3) — hakuna
+  builtin ya pekee inayohitajika.
 
 ## 10. Maktaba ya Kawaida (msingi/maktaba/)
 
