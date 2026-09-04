@@ -40,17 +40,44 @@ Kiswahili kwa mkongwe.
 
 ### 2.2 Maneno Muhimu
 
-`muundo`, `rudisha`, `kama`, `sivyo`, `wakati`, `kwa`, `vunja`,
-`endelea`, `chagua`, `hali`, `husisha`, `achilia`.
+`muundo`, `rudisha`, `kama`, `sivyo`, `wakati`, `kwa`, `fanya`,
+`vunja`, `endelea`, `chagua`, `hali`, `husisha`, `achilia`.
 
 Maneno muhimu hayawezi kutumika kama majina ya vitambulisho.
 `tenga` si neno muhimu — ni kazi ya kawaida ya maktaba (sehemu 10):
 `tenga(ukubwa(N32))` huweka kipande cha baiti `ukubwa(N32)`.
 Aina za nambari haziko kwenye orodha hii — hutambuliwa kisintaksia
 kwa herufi kubwa: `[N|A|D|B|W]` ikifuatiwa na tarakimu (mf. `N32`,
-`D64`, `W0`). Dereva wa Rust (majaribio) una maneno muhimu ya ziada
-(`fanya`, `muungano`, `kutoka`, `badili`, `nakili`, `ukubwa`, `nenda`)
-ambayo hayako kwenye mkusanyaji wa uzalishaji.
+`D64`, `W0`).
+
+Kilichopimwa (2026-09-04): madai ya zamani kwamba dereva wa Rust
+(majaribio) una "maneno muhimu ya ziada" (`fanya`, `muungano`,
+`kutoka`, `badili`, `nakili`, `ukubwa`, `nenda`) yalichanganya
+leksia na sarufi — dereva wa Rust huchambua maneno ya taarifa
+yale yale kama mkusanyaji wa uzalishaji. Kila neno la orodha hiyo
+ya zamani ni jambo jingine:
+- `fanya` ni neno muhimu kamili — kitanzi cha mwili-kwanza
+  (sehemu 6.8). Kitanzi chenyewe bado hakijatekelezwa na sarufi
+  ya mwisho wa Rust (kilichopimwa 2026-09-04) — leksia pekee
+  haitengenezi neno muhimu.
+- `kutoka` si neno la taarifa — kwenye mchanganuzi wa Rust wa
+  majaribio linaonekana tu kama kifungu cha hiari cha saraka
+  ndani ya `husisha`: `husisha { njia } kutoka { saraka }`
+  (sehemu 8).
+- `ukubwa` si neno muhimu — ni KAZI ya ndani ya upimaji (sizeof):
+  `ukubwa(N32)` inakokotwa wakati wa kukusanya na kurudisha
+  ukubwa wa aina (N8=1, N16=2, N32=4, N64=8, D32=4, D64=8;
+  muundo = ukubwa wake) — si wito wa kazi wakati wa kukimbia.
+  Maktaba hubeba kazi ya jina hilo (`N64 ukubwa(N32 aina)`,
+  kumbukumbu.swa) kwa minyororo isiyo na ndani hiyo ya upimaji.
+  Kwa kuwa si neno muhimu, `ukubwa` linaweza kuendelea kuwa jina
+  la kigezo (kilichopimwa 2026-09-04).
+- `badili` na `nakili` ni KAZI za maktaba
+  (msingi/maktaba/kumbukumbu.swa) — si maneno muhimu; saini zao
+  kamili ziko sehemu 10.
+- `muungano` na `nenda` si sehemu ya lugha — hakuna mnyororo
+  (uzalishaji wala majaribio) wenye sintaksia au semantiki kwao
+  (kilichopimwa 2026-09-04).
 
 ### 2.3 Halisi
 
@@ -342,8 +369,39 @@ jaribio_mende_kata_vunja_ndani_ya_chagua_nje.
 
 ### 6.7 Vunja na endelea
 
-- `vunja;` — toka nje ya mzunguko wa ndani (wakati au kwa).
-- `endelea;` — ruka hadi mwisho wa mwili na uendelee.
+- `vunja;` — toka nje ya mzunguko wa ndani (wakati, kwa, au
+  fanya — 6.8).
+- `endelea;` — ruka hadi mwisho wa mwili na uendelee; kwa
+  `fanya`, "mwisho wa mwili" ni sharti (6.8).
+
+### 6.8 Fanya (do-while)
+
+```
+fanya { mwili } wakati (sharti);
+```
+
+Kitanzi cha fanya hutekeleza mwili MARA MOJA kabla ya sharti
+kujaribiwa, kisha kurudia mwili mradi sharti ni kweli (semantiki
+ya C ya do-while). Mwili hukimbia angalau mara moja — hata sharti
+la uwongo tangu mwanzo haliuzuii mwendo wa kwanza. Muundo ni
+mkali: mabano ya wima ya mwili, mabano ya sharti, na nukta-mkato
+wa mwisho ni ya lazima (sawa na mbegu).
+
+`endelea` ndani ya fanya inaruka hadi SHARTI: taarifa zilizobaki
+za mwili zinarukwa kwenye mwendo huo, na sharti linajaribiwa upya
+(semantiki ya C ya do-while — tofauti na `kwa`, ambapo endelea
+inaruka hadi HATUA, 6.5). `vunja` inaondoka kwenye kitanzi mara
+moja bila kujaribu sharti tena. vunja na endelea ndani ya fanya
+zinahesabiwa kama zilivyo ndani ya wakati kwa ukaguzi wa
+"vunja/endelea nje ya kitanzi" (6.7).
+
+Majaribio: jaribio_fanya_hukimbia_mara_moja,
+jaribio_fanya_hali_ya_uwongo, jaribio_fanya_endelea,
+jaribio_fanya_vunja, na jaribio_fanya_kama_jina_la_kigezo (KATA —
+neno muhimu kama jina linakataliwa, 2.2). Kilichopimwa
+(2026-09-04): fanya inafanya kazi kwenye mnyororo wa uzalishaji
+(mkusanyaji wa .swa); mbegu bado haijui neno hilo — majaribio ni
+ya stage1 pekee hadi mbegu igandishwe.
 
 ## 7. Miundo
 
@@ -396,12 +454,22 @@ muundo Nukta {
 
 | Faili | Kazi muhimu |
 |---|---|
-| `kumbukumbu.swa` | nakili, weka_sifuri, linganisha_kumbukumbu, tenga/achilia (arena), sys_soma/sys_andika/sys_fungua/sys_funga, andika, soma_mstari |
+| `kumbukumbu.swa` | nakili, weka_sifuri, linganisha_kumbukumbu, tenga/badili/achilia_arena (arena ya mmap), sys_soma/sys_andika/sys_fungua/sys_funga, andika, soma_mstari |
 | `mfuatano.swa` | urefu_wa_mfuatano, linganisha_mfuatano, nakili_mfuatano, unganisha_mfuatano, tafuta_herufi, tafuta_mfuatano, kata_nafasi, nambari_kwa_mfuatano, mfuatano_hadi_n32/n64 |
 | `hesabu.swa` | hesabu_kamili/kubwa, hesabu_ndogo/dogo, neneo_n32/n64, gcd_hesabu, pow_kamili, isqrt_hesabu, fibonacci_hesabu |
 | `orodha.swa` | Orodha (inafanya kazi kwa uwezo uliotengwa mapema; UKUAJI haufanyi kazi — kilichopimwa 2026-08-27: orodha_ongeza zaidi ya uwezo inaanguka SEGV kwa minyororo yote miwili, mzizi ni faharisi hasi katika badili): orodha_mpya, orodha_ongeza, orodha_pata, orodha_futa_mwisho, orodha_urefu, orodha_huru |
 | `mpangilio.swa` | pangilia_n32, pangilia_n32_kushuka, pangilia_n64, pangilia_n64_kushuka |
 | `ramani.swa` | Ramani ya jina hadi thamani (inafanya kazi kwenye uzalishaji; kwenye mbegu weka ni no-op — jibu baya, kilichopimwa 2026-08-27) |
+
+Saini za `nakili` na `badili` (kumbukumbu.swa) — kazi za kawaida
+za maktaba, si maneno muhimu (2.2):
+- `W0 nakili(N8* lengwa, N8* chanzo, N64 n)` — inanakili baiti
+  `n` kutoka `chanzo` hadi `lengwa` (kama memcpy ya C).
+- `N8* badili(N8* p, N64 ukubwa)` — inarudisha kipande kipya cha
+  baiti `ukubwa` kutoka kwa arena, kikiwa kimenakili kipande cha
+  zamani cha `p` (kama realloc ya C juu ya arena ya mmap):
+  `p == 0` inafanya kama `tenga`; `ukubwa == 0` inarudisha `p`;
+  arena haifungui vipande — kipande cha zamani kinabaki.
 
 Kila kazi imejitosheleza; maktaba inaweza kuunganishwa kwa mkono
 (`cat`) kwa matumizi na mbegu.
