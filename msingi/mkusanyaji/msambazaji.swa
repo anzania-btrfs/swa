@@ -62,20 +62,41 @@ N32 AST_KINYUME = 47;  // ~ (kanusha biti)
 
 // -------------------------------------------------------
 // Safu bapa za AST
-// 65536 nodi: kujikusanya kulipimwa kuhitaji karibu 31k,
-// na 16384 zilifurika kabla ya nusu ya mchanganuo.
+// MUHIMU: 65536 (na kabla yake 16384) ziliwekwa kulingana na
+// mahitaji ya KUJIKUSANYA MWENYEWE (~31k nodi) TU — si mradi wowote
+// halisi wa mtumiaji. Mradi mkubwa wa kweli (mfano Dominion,
+// mchezo.swa inayohusisha nguzo nzima ya moduli za mchezo katika
+// faili moja) inaweza kuzidi 65536 kwa urahisi, ikisababisha
+// node_mpya kurudisha -1 kimya (kabla ya rekebisho hili, jina la
+// aina lilikatishwa kwa uwongo na hitilafu za mnyororo zisizoelezeka
+// zilitokea). 1,048,576 inatoa nafasi kubwa zaidi ya mara 16 kuliko
+// mahitaji ya kujikusanya, ikitarajiwa kutosha kwa miradi mikubwa
+// zaidi ya Dominion pia. kvn_visited[] (uzalishaji.swa) na ir_*[]
+// (mteremko.swa) zinahitaji ukubwa HUU HUU kwa sababu zinafahirishwa
+// na node ID zilezile (angalia maoni humo).
 // -------------------------------------------------------
-N32 ast_aina[65536];
-N32 ast_thamani[65536];
-N32 ast_kushoto[65536];
-N32 ast_kulia[65536];
-N32 ast_tiga[65536];
-N32 ast_nne[65536];
+N32 ast_aina[1048576];
+N32 ast_thamani[1048576];
+N32 ast_kushoto[1048576];
+N32 ast_kulia[1048576];
+N32 ast_tiga[1048576];
+N32 ast_nne[1048576];
 N32 ast_idadi = 0;
 N32 vigezo_kwanza_global = -1;
 N32 vigezo_prev_global = -1;
 
-N8 ast_pool[4194304];
+// MUHIMU: dimbwi hili (4MB awali) huhifadhi BAITI ZA MAANDISHI ya
+// kila jina la kigezo/kazi/muundo/aina linaloonekana kwenye chanzo
+// kilichotatuliwa -- mradi halisi mkubwa (mfano Dominion, mchezo.swa
+// inayohusisha moduli 40+) linaweza kufikia kiwango hiki kwa
+// urahisi. HAKUNA ukaguzi wa mipaka kwenye maandishi ya ast_pool[]
+// (angalia changanua_aina_tokeni na kadhalika) -- kufurika hapo
+// awali hakukuandika hitilafu safi, badala yake kuliandika KIMYA
+// nje ya mpaka wa safu, kikiharibu kumbukumbu iliyofuata na
+// kusababisha "aina isiyojulikana" ya UWONGO kwa aina zilizokuwa
+// tayari zimefafanuliwa sahihi. 16,777,216 (16MB) inatoa nafasi ya
+// mara 4 zaidi.
+N8 ast_pool[16777216];
 // Nafasi 0 inahifadhiwa kama sentinel ya jina tupu: dimbwi huanza
 // kwenye 1 (mfano wa kazi_jina_pool_wapi na var_pool_wapi). Zamani
 // jina la kwanza liliishi kwenye 0 na aina ya kielekezi cha muundo
@@ -83,7 +104,7 @@ N8 ast_pool[4194304];
 // hivyo hesabu ya kielekezi cha muundo wa kwanza ilibaki baiti
 // (mdudu wa 2026-09-04: (p + 1)->y ilirudisha 0).
 N32 ast_pool_wapi = 1;
-N32 ast_jina_off[65536];
+N32 ast_jina_off[1048576];
 
 // -------------------------------------------------------
 // Muundo wa hali ya mchanganuzi
@@ -99,7 +120,7 @@ muundo Msambazaji {
 // Kitenzi-njia cha nodi ya AST -- hakuna ukaguzi wa mipaka (tabia iliyopo)
 // -------------------------------------------------------
 N32 node_mpya(N32 aina, N32 thamani, N32 kushoto, N32 kulia) {
-    kama (ast_idadi >= 65536) {
+    kama (ast_idadi >= 1048576) {
         andika_stderr("; DEB: HITILAFU node_mpya imefurika! idadi=%d aina=%d\n", ast_idadi, aina);
         rudisha -1;
     }
@@ -445,6 +466,10 @@ N32 changanua_aina_tokeni(Msambazaji* p) {
         N32 off = tafuta_jina_dimbeni(txt, n);
         kama (off == -1) {
             off = ast_pool_wapi;
+            kama (off + n + 1 >= 16777216) {
+                andika_stderr("; DEB: HITILAFU ast_pool imefurika (jina la muundo)! wapi=%d\n", off);
+                rudisha 0;
+            }
             N32 i = 0;
             wakati (i < n) {
                 ast_pool[off + i] = txt[i];

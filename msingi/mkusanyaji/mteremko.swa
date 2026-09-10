@@ -89,19 +89,29 @@ N32 IR_TERNARY = 60;  // IR ya ternary
 // -------------------------------------------------------
 // Kila nodi ya IR ina: aina, aina_data (type encoding),
 // thamani (int literal), kushoto, kulia, tiga (extra child).
+//
+// MUHIMU: ukubwa umeongezwa kutoka 65536 hadi 1,048,576 pamoja na
+// ast_aina[]/ast_idadi (msambazaji.swa) kwa sababu idadi ya nodi za
+// IR huongezeka sanjari na idadi ya nodi za AST (kila kazi
+// inayoteremshwa huzalisha angalau nodi moja ya IR kwa kila nodi ya
+// AST) — mradi halisi unaovuka kikomo cha AST cha zamani ungevuka
+// hiki pia. `ir_node_mpya` haikuwa na ukaguzi wa mipaka KABISA
+// (tofauti na `node_mpya` ya AST) — imeongezwa hapa chini, kwa
+// sababu bila hiyo kufurika kungeandika nje ya mipaka kimya kimya
+// (uharibifu wa kumbukumbu), si hata hitilafu safi kama AST.
 // -------------------------------------------------------
-N32 ir_aina[65536];
-N32 ir_aina_data[65536];  // type encoding kwa kila nodi
-N32 ir_thamani[65536];  // nambari halisi / offset
-N32 ir_kushoto[65536];
-N32 ir_kulia[65536];
-N32 ir_tiga[65536];
-N32 ir_nne[65536];  // mnyororo wa taarifa
+N32 ir_aina[1048576];
+N32 ir_aina_data[1048576];  // type encoding kwa kila nodi
+N32 ir_thamani[1048576];  // nambari halisi / offset
+N32 ir_kushoto[1048576];
+N32 ir_kulia[1048576];
+N32 ir_tiga[1048576];
+N32 ir_nne[1048576];  // mnyororo wa taarifa
 N32 ir_idadi = 0;
 
 N8 ir_pool[524288];  // dimbwi la majina/mifuatano
 N32 ir_pool_wapi = 0;
-N32 ir_jina_off[65536];
+N32 ir_jina_off[1048576];
 
 // -------------------------------------------------------
 // Mazingira ya kuteremsha
@@ -120,6 +130,10 @@ muundo Mteremshi {
 // Kitenzi-njia cha nodi ya IR
 // -------------------------------------------------------
 N32 ir_node_mpya(N32 aina, N32 aina_data, N32 thamani, N32 kushoto, N32 kulia) {
+    kama (ir_idadi >= 1048576) {
+        andika_stderr("; DEB: HITILAFU ir_node_mpya imefurika! idadi=%d aina=%d\n", ir_idadi, aina);
+        rudisha -1;
+    }
     N32 idx = ir_idadi;
     ir_aina[idx] = aina;
     ir_aina_data[idx] = aina_data;
