@@ -4563,6 +4563,35 @@ N32 pata_ofseti_ya_sehemu(N8* jina_la_muundo, N8* jina_la_sehemu) {
 
 // Sehemu ya muundo kwa nukta: struct.field  (AST_SEHEMU_DOT = 33)
 // Ofseti ya baiti imehifadhiwa na mkaguzi katika ast_tiga[node]
+// Kama andika_pakia_anwani_kwa_enc, LAKINI kwa muktadha wa UFIKIAJI
+// WA FIELD YA MUUNDO (SEHEMU_DOT `.`/SEHEMU_MSHALE `->`) TU.
+// MUHIMU (lugha-swa/swa#182, udhihirisho wa pili): enc hasi hutumika
+// kwa MAANA MBILI tofauti kwenye mkusanyaji huu -- (a) "safu ya
+// miundo iliyopachikwa" (P s[3], mshale-bit iliyobaki kutoka
+// uchanganuzi wa safu) NA (b) "TYPE* field halisi ya kielekezi"
+// (mshale=1/3 ya kweli). Zote mbili ni enc hasi ISIYO SAWA. HAKUNA
+// njia ya kuzitofautisha kutoka kwa enc peke yake -- lakini muktadha
+// huu (field ya `muundo { ... }`) unaziondoa: fields za safu (arrays)
+// HAZIWEZI kufafanuliwa ndani ya muundo (huwa hitilafu ya kukusanya
+// kabisa), kwa hiyo enc hasi isiyo sawa INAYOONEKANA HAPA NI TYPE*
+// HALISI KILA WAKATI. Bila pakia hili la ziada, msimbo unaofuata
+// (mfano safu[idx]=thamani kupitia field ya TYPE*) hutumia ANWANI YA
+// FIELD YENYEWE badala ya THAMANI ya kielekezi kilichohifadhiwa ndani
+// yake -- kikiandika nje ya eneo lililotengwa kimya kimya.
+//
+// Andika_pakia_anwani_kwa_enc YENYEWE (kazi ya jumla, inayotumika pia
+// na uzalishaji_nyoosha kwa ufikiaji wa vipengele vya safu/kielekezi,
+// pale enc hasi isiyo sawa KWA HAKIKA inamaanisha "safu ya miundo")
+// haijabadilishwa -- kubadilisha hiyo moja kwa moja kunavunja
+// majaribio ya safu za miundo zilizopachikwa (jaribio_mende_safu_*).
+W0 andika_pakia_anwani_kwa_enc_field(N32 enc) {
+    kama (enc < 0 && (enc / 2) * 2 != enc) {
+        andika_mov_rax_anwani_eax();
+    } sivyo {
+        andika_pakia_anwani_kwa_enc(enc);
+    }
+}
+
 W0 uzalishaji_sehemu_dot(N32 node, N32 kazi_node) {
     N32 struct_node = ast_kushoto[node];
     N32 offset = ast_nne[node];
@@ -4579,7 +4608,7 @@ W0 uzalishaji_sehemu_dot(N32 node, N32 kazi_node) {
                     andika_lea_rax_rbp_off(var_rbp_off[i]);
                 }
                 kama (offset != -1) { andika_add_rax_imm32(offset); }
-                andika_pakia_anwani_kwa_enc(ast_thamani[node]);
+                andika_pakia_anwani_kwa_enc_field(ast_thamani[node]);
                 rudisha;
             }
             i = i + 1;
@@ -4592,7 +4621,7 @@ W0 uzalishaji_sehemu_dot(N32 node, N32 kazi_node) {
             kama (jina_linganisha(gjina, jina)) {
                 andika_lea_rax_rip_rel(gi);
                 kama (offset != -1) { andika_add_rax_imm32(offset); }
-                andika_pakia_anwani_kwa_enc(ast_thamani[node]);
+                andika_pakia_anwani_kwa_enc_field(ast_thamani[node]);
                 rudisha;
             }
             gi = gi + 1;
@@ -4601,7 +4630,7 @@ W0 uzalishaji_sehemu_dot(N32 node, N32 kazi_node) {
     // Vinginevyo, tumia thamani ya usemi kama anwani
     uzalishaji_usemi(struct_node, kazi_node);
     kama (offset != -1) { andika_add_rax_imm32(offset); }
-    andika_pakia_anwani_kwa_enc(ast_thamani[node]);
+    andika_pakia_anwani_kwa_enc_field(ast_thamani[node]);
 }
 
 // Sehemu ya muundo kwa mshale: ptr->field  (AST_SEHEMU_MSHALE = 34)
@@ -4623,7 +4652,7 @@ W0 uzalishaji_sehemu_mshale(N32 node, N32 kazi_node) {
                     andika_lea_rax_rbp_off(var_rbp_off[i]);
                 }
                 kama (offset != -1) { andika_add_rax_imm32(offset); }
-                andika_pakia_anwani_kwa_enc(ast_thamani[node]);
+                andika_pakia_anwani_kwa_enc_field(ast_thamani[node]);
                 rudisha;
             }
             i = i + 1;
@@ -4633,7 +4662,7 @@ W0 uzalishaji_sehemu_mshale(N32 node, N32 kazi_node) {
     kama (offset != -1) {
         andika_add_rax_imm32(offset);  // ongeza ofseti kwenye kielekezi
     }
-    andika_pakia_anwani_kwa_enc(ast_thamani[node]);
+    andika_pakia_anwani_kwa_enc_field(ast_thamani[node]);
 }
 
 // Vishikizi vya aina 33-44: sehemu, asimilia, bit, ternary
