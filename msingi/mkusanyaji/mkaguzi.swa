@@ -199,8 +199,20 @@ N32 mkaguzi_angalia(N32 mzizi) {
 }
 
 // Fuatilia ni majina gani ya kazi yaliyopo kwa ukaguzi wa idadi ya hoja.
+//
+// MUHIMU: kazi_jina_pool ni DIMBWI LA BAITI za majina HALISI ya kazi
+// (si jedwali la idadi kama muundo_nodes/desimali_off) — ukubwa wake
+// LAZIMA uzidi jumla ya urefu wa majina YOTE ya kazi zilizofafanuliwa
+// kwenye graph nzima ya husisha iliyotatuliwa. Ukubwa wa awali
+// (16384 baiti) ulikuwa mdogo sana: mradi halisi wenye moduli nyingi
+// (mfano Dominion's mchezo.swa, ambayo huhusisha moduli 28+ zenye
+// majina marefu ya Kiswahili kama "utawala_serikali_pata_rushwa_jumla")
+// hufikia kikomo hiki kwa urahisi mara graph inapokuwa kubwa vya
+// kutosha. Kuna ulinzi wa kufurika uliopo tayari (haiandiki nje ya
+// mipaka, hutoa ujumbe wa hitilafu), lakini ujumbe huo wenyewe
+// ulikuwa ukitokea mara kwa mara badala ya kufanya kazi ipasavyo.
 N32 kazi_idadi = 0;
-N8 kazi_jina_pool[16384];
+N8 kazi_jina_pool[131072];
 N32 kazi_jina_pool_wapi = 1;
 N32 kazi_jina_off[1024];
 N32 kazi_param_count[1024];
@@ -237,10 +249,22 @@ W0 mkaguzi_sajili_kazi(N32 kazi_node) {
     // Ulinzi wa dimbwi: kufurika kulikuwa kimeandika juu ya
     // kazi_jina_off (jedwali la ofseti) na kusababisha segfault
     // kwenye jina_linganisha wakati wa kujikusanya.
+    //
+    // MUHIMU: namba hii (131072) LAZIMA ilingane na ukubwa wa
+    // tangazo la kazi_jina_pool[] juu ya faili hili — Swa haina
+    // njia ya kupata ukubwa wa safu kutoka kwa jina lake (hakuna
+    // sizeof/lengthof), kwa hiyo namba hii ni HARDCODED kwa
+    // makusudi, ikilingana na muundo uliopo tayari wa faili hili
+    // (mfano muundo_count/muundo_nodes hapo juu). Kosa halisi
+    // lililopatikana wakati wa kikao hiki: ukubwa wa tangazo la safu
+    // ULIBADILISHWA (16384->131072) BILA kubadilisha namba hii
+    // hapa, ikiacha ulinzi wa kufurika ukiendelea kukataa kwa
+    // ukubwa wa ZAMANI — angalia lugha-swa/swa (issue itakayofuata
+    // baada ya #196) kwa maelezo kamili.
     N32 off = kazi_jina_pool_wapi;
     N32 i = 0;
     wakati (jina[i] != 0) {
-        kama (off + i + 1 >= 16384) {
+        kama (off + i + 1 >= 131072) {
             andika_stderr("; KOSA: dimbwi la majina ya mkaguzi limejaa\n");
             mkaguzi_makosa = mkaguzi_makosa + 1;
             rudisha;
