@@ -2141,9 +2141,36 @@ N32 changanua_muundo(Msambazaji* p) {
         // Kokotoa ukubwa wa baiti kutoka kwa encoding ya aina.
         // Tumia hesabu ya / na % (mbegu ina hitilafu katika & na >>).
         kama (field_aina < 0) {
-            // Sehemu ya aina ya muundo: tafuta ukubwa wa muundo huo
-            N32 name_off2 = ((-field_aina) / 2) - 1;
-            running_offset = running_offset + ukubwa_wa_muundo_msambazaji(ast_pool + name_off2);
+            // Sehemu yenye aina ya muundo (encoding hasi). Encoding
+            // halisi (angalia changanua_aina_tokeni juu, karibu na
+            // "rudisha (-((off + 1) * 2)) + mshale;") ni
+            // field_aina = -((off+1)*2) + mshale, ambapo mshale ni
+            // 0 (imepachikwa/embedded), 1 (kielekezi kimoja *),
+            // au 3 (kielekezi mara mbili **). MDUDU ULIOKUWEPO: hesabu
+            // ya awali ilijaribu kupata `off` kwa `((-field_aina)/2)-1`
+            // BILA kuondoa `mshale` kwanza -- kwa mashamba ya
+            // KIELEKEZI (mshale != 0) hii ilitoa `off` isiyo sahihi
+            // (jina halipatikani kwenye dimbwi, ukubwa_wa_muundo_
+            // msambazaji hurudi 4 ya chaguo-msingi badala ya baiti 8
+            // za kielekezi halisi) -- ikisababisha kila shamba
+            // linalofuata kwenye muundo kupata ofseti isiyo sahihi.
+            // lugha-swa/swa#182 (udhihirisho wa pili/tatu).
+            //
+            // Suluhisho: `(-field_aina) % 2 != 0` inatambua kwa
+            // uhakika kuwa shamba ni KIELEKEZI (mshale ni 1 au 3,
+            // vyote viwili visivyo sawa) -- kielekezi DAIMA ni baiti
+            // 8 kwenye x86-64, HAIHITAJI kutafuta ukubwa wa muundo
+            // unaoelekezwa kabisa. Ni shamba lililopachikwa KWELI KWELI
+            // (mshale == 0, `(-field_aina) % 2 == 0`) ndilo linalohitaji
+            // kutafuta ukubwa halisi wa muundo huo.
+            N32 neg = 0 - field_aina;
+            N32 ni_kielekezi_cha_muundo = neg % 2;
+            kama (ni_kielekezi_cha_muundo != 0) {
+                running_offset = running_offset + 8;
+            } sivyo {
+                N32 name_off2 = (neg / 2) - 1;
+                running_offset = running_offset + ukubwa_wa_muundo_msambazaji(ast_pool + name_off2);
+            }
         } sivyo { kama (field_aina != 0) {
                 N32 mshale_f = field_aina % 2;
                 kama (mshale_f == 1) { running_offset = running_offset + 8; }
