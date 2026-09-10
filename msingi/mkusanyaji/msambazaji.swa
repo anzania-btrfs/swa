@@ -2073,9 +2073,17 @@ N32 changanua_kazi(Msambazaji* p) {
 // ==========================================================
 // MCHANUZI WA MUUNDO
 // ==========================================================
-// Akiba ya ukubwa wa miundo iliyokamilika (inajazwa na changanua_muundo)
-N8* muundo_ukubwa_jina[64];
-N32 muundo_ukubwa_val[64];
+// Akiba ya ukubwa wa miundo iliyokamilika (inajazwa na changanua_muundo).
+// Ukubwa huu LAZIMA uendane na muundo_nodes[] kwenye mkaguzi.swa —
+// zote mbili ni akiba za "miundo yote iliyofafanuliwa kwenye graph"
+// na zote mbili zilizuiliwa mradi kwenye lugha-swa/swa#189 (hii
+// ilikuwa na kikomo cha 64, mkaguzi.swa ilikuwa na kikomo cha 32,
+// vyote viwili vidogo sana kwa mradi halisi). Muundo usiopatikana
+// kwenye akiba hii hutambuliwa VIBAYA kama SI jina la aina (angalia
+// ni_jina_la_aina chini) na ukubwa wake hurudi 4 (chaguo-msingi
+// kimya) badala ya ukubwa wake halisi.
+N8* muundo_ukubwa_jina[1024];
+N32 muundo_ukubwa_val[1024];
 N32 muundo_ukubwa_idadi = 0;
 
 // Tafuta ukubwa wa muundo uliotangazwa tayari (kutoka akiba)
@@ -2178,7 +2186,7 @@ N32 changanua_muundo(Msambazaji* p) {
     N32 mnode = node_mpya(AST_MUUNDO, 0, name, kwanza_sehemu);
     // Hifadhi ukubwa wa muundo huu (running_offset ya mwisho)
     ast_thamani[mnode] = running_offset;
-    kama (muundo_ukubwa_idadi < 64) {
+    kama (muundo_ukubwa_idadi < 1024) {
         muundo_ukubwa_jina[muundo_ukubwa_idadi] = ast_pool + ast_jina_off[name];
         muundo_ukubwa_val[muundo_ukubwa_idadi] = running_offset;
         muundo_ukubwa_idadi = muundo_ukubwa_idadi + 1;
