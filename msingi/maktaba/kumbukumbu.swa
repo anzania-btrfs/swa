@@ -274,22 +274,59 @@ N64 ukubwa(N32 aina) {
 
 // ==========================================================
 // Arena ya kumbukumbu — badala ya malloc/realloc/free
+//
+// MUHIMU (lugha-swa/swa#190): arena hii ZAMANI ilikuwa mmap MOJA ya
+// baiti 1,048,576 (1MB) ya KUDUMU kwa maisha yote ya programu —
+// tenga() ilirudisha 0 kwa usahihi ikiwa arena ilijaa (haikuharibu
+// kumbukumbu), lakini programu yoyote inayozidisha 1MB ya utengaji
+// wa jumla (hata kwa muda mrefu wa maisha, si mzigo mmoja mkubwa)
+// ingeanguka kwa null-deref mara tu tenga() ilipoanza kurudisha 0
+// bila kukaguliwa (kama karibu msimbo wote uliopo hauukagui).
+//
+// Suluhisho: arena ni sasa MNYORORO wa vipande vya mmap — kipande
+// kimoja kinapojaa, kipande KIPYA kinatengwa (kwa ukubwa angalau
+// ARENA_UKUBWA_MSINGI, au kikubwa zaidi ikiwa utengaji mmoja
+// unahitaji zaidi ya hapo) na utengaji unaendelea kutoka humo.
+// Vipande vya zamani havitolewi (kama ilivyokuwa tabia ya awali —
+// achilia_arena() imekuwa no-op ya kudumu kwa MAKUSUDI tangu
+// 2026-09-01, angalia maelezo yake chini; hakuna msimbo unaotegemea
+// ikirudisha kumbukumbu kwa kweli) lakini KIKOMO CHA JUMLA
+// hakipo tena — kila kipande kipya kinapoisha, kingine kinatengwa.
 // ==========================================================
 N8* arena_anwani = 0;
 N64 arena_nafasi = 0;
+N64 arena_ukubwa = 0;   // ukubwa wa KIPANDE CHA SASA (si jumla)
+
+N64 ARENA_UKUBWA_MSINGI = 1048576;
 
 N8* tenga(N64 ukubwa) {
-    kama (arena_anwani == 0) {
+    kama (ukubwa == 0) { ukubwa = 8; }
+    ukubwa = ukubwa + 8;  // nafasi ya ukubwa wa kipande (kwa badili)
+
+    kama (arena_anwani == 0 || arena_nafasi + ukubwa > arena_ukubwa) {
+        // Hakuna kipande bado, AU kipande cha sasa hakina nafasi ya
+        // kutosha — tenga kipande KIPYA. Ukubwa wa kipande kipya ni
+        // angalau ARENA_UKUBWA_MSINGI, lakini mkubwa zaidi ikiwa
+        // utengaji huu mmoja unahitaji zaidi ya hapo (mfano: utengaji
+        // mmoja wa MB kadhaa) — hii inaepuka kupoteza kipande kizima
+        // cha msingi kwa ombi moja kubwa, na inahakikisha ombi kubwa
+        // LOLOTE linakubaliwa, si tu maombi madogo yanayozidi kwa
+        // wingi.
+        N64 kipya_ukubwa = ARENA_UKUBWA_MSINGI;
+        kama (ukubwa > kipya_ukubwa) { kipya_ukubwa = ukubwa; }
+
         // Anwani sifuri = "popote" (kama mmap(NULL, ...) ya C).
         // Halisi 0 kwa kigezo cha kielekezi inakataliwa na ukaguzi
         // wa 2026-09-01 — tumia kielekezi cha sifuri wazi.
         N8* anwani_sifuri = 0;
-        arena_anwani = sys_mmap(anwani_sifuri, 1048576, 3, 34, 0 - 1);
-        kama (arena_anwani == 0 - 1) { rudisha 0; }
+        N8* kipande_kipya = sys_mmap(anwani_sifuri, kipya_ukubwa, 3, 34, 0 - 1);
+        kama (kipande_kipya == 0 - 1) { rudisha 0; }
+
+        arena_anwani = kipande_kipya;
+        arena_nafasi = 0;
+        arena_ukubwa = kipya_ukubwa;
     }
-    kama (ukubwa == 0) { ukubwa = 8; }
-    ukubwa = ukubwa + 8;  // nafasi ya ukubwa wa kipande (kwa badili)
-    kama (arena_nafasi + ukubwa > 1048576) { rudisha 0; }
+
     N8* r = arena_anwani + arena_nafasi;
     // hifadhi ukubwa mbele ya kipande (baiti 8)
     N8* h = &ukubwa;
@@ -307,6 +344,17 @@ W0 achilia_arena(N8* p) {
     // Jina lilibadilishwa kutoka "achilia" (2026-09-01): achilia ni
     // neno muhimu (taarifa ya kufungua kumbukumbu) — hati 2.2
     // inakataa maneno muhimu kama majina ya kazi.
+    //
+    // Hii inabaki no-op KWA MAKUSUDI hata baada ya #190 — hakuna
+    // mahali kwenye mkusanyaji huu au maktaba zake (orodha.swa,
+    // ramani.swa) panapotegemea ikirudisha kumbukumbu kwa kweli;
+    // zote zinaita achilia_arena() kama "tumemaliza na hii" bila
+    // kutegemea matokeo yoyote. Sasa kwamba arena inaweza kuwa
+    // vipande vingi (si kimoja), munmap ya kweli ingehitaji
+    // kufuatilia kila kipande na si salama kufungua kipande
+    // kinachoshirikiwa na vitu vingine vilivyo hai bado — muundo wa
+    // "achilia yote mara moja mwishoni" haufai kwa achilia_arena(p)
+    // ya kipande kimoja. Hii ni uamuzi wa makusudi, si upungufu.
 }
 
 N8* badili(N8* p, N64 ukubwa) {
