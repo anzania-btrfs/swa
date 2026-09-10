@@ -132,8 +132,21 @@ N32 mkaguzi_mpaka_wa_desimali(N32 a, N32 b) {
     rudisha 0;
 }
 
-// Akiba ndogo ya nodi za miundo kwa utendaji
-N32 muundo_nodes[32];
+// Akiba ya nodi za miundo kwa utendaji (kutafuta aina ya sehemu ya
+// muundo, angalia mkaguzi_kagua_usemi kesi SEHEMU_DOT/SEHEMU_MSHALE
+// chini). MUHIMU: ukubwa huu LAZIMA uwe mkubwa kuliko idadi ya
+// `muundo` yoyote itakayofafanuliwa kwenye graph nzima ya husisha
+// iliyotatuliwa ya programu YOYOTE inayotumia mkusanyaji huu —
+// ukubwa wa awali (32) ulikuwa mdogo sana: mradi wowote halisi
+// ulioukwepa (structs 33+) ulipata (a) hitilafu za AINA za uwongo
+// (muundo usiopatikana kwenye akiba hurudi (1<<8)|32, "i32
+// chaguo-msingi", badala ya aina yake halisi) NA (b) uharibifu wa
+// wakati wa kukimbia (ast_nne[node], ofseti ya sehemu, kamwe
+// haiandikwi kwa muundo usiopatikana kwenye akiba, kwa hiyo codegen
+// hutumia thamani ya zamani/isiyoanzishwa) — angalia
+// lugha-swa/swa#189. 1024 inaendana na jedwali dada kwenye faili
+// hili (kazi_jina_off[1024], global_jina_off[1024], na kadhalika).
+N32 muundo_nodes[1024];
 N32 muundo_count = 0;
 
 // Jedwali la vigezo vya ulimwengu (jina + aina) kwa utatuzi wa majina
@@ -167,7 +180,7 @@ N32 mkaguzi_angalia(N32 mzizi) {
     N32 node = ast_kushoto[mzizi];
     wakati (node != -1) {
         kama (ast_aina[node] == 12) {  // AST_MUUNDO
-            kama (muundo_count < 32) {
+            kama (muundo_count < 1024) {
                 muundo_nodes[muundo_count] = node;
                 muundo_count = muundo_count + 1;
             }
