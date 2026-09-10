@@ -2005,9 +2005,26 @@ N32 str_buf_wapi = 1;
 N32 str_idadi = 0;
 N32 str_lebo_id[1024];
 
-// Constants za desimali halisi (D64) — ofseti ya dimbwi (baiti 8) kwa kila moja
-N32 desimali_off[1024];
-N32 desimali_lebo_id[1024];
+// Constants za desimali halisi (D64) — ofseti ya dimbwi (baiti 8) kwa kila moja.
+// MUHIMU (lugha-swa/swa#192): kikomo hiki NI CHA KILA TOKEO (occurrence),
+// SI cha thamani za KIPEKEE (distinct values) -- hakuna deduplication
+// kabisa: kila mara herufi ya D64 (mfano 0.5) inapotokea popote kwenye
+// chanzo, hifadhi mpya huundwa, hata kama thamani ile ile tayari
+// ipo. Mradi halisi wenye faili nyingi za husisha na hesabu nyingi za
+// D64 (mfano moduli za utawala/uchumi za Dominion) hufikia kikomo cha
+// 1024 kwa URAHISI. Kikomo kikifikiwa, desimali_halisi_hifadhi
+// hurudisha -1 KIMYA (bila ujumbe wa hitilafu, tofauti na jedwali
+// dada kwenye faili hili) -- -1 hupitishwa kama lebo_id kwenye
+// weka_fixup, ikiandika kiingilio cha fixup kisichoweza KUFAFANULIWA
+// kamwe (hakuna lebo halisi ni -1), kwa hiyo displacement ya
+// rip-relative ya `movsd xmm0,[rip+disp32]` YA HERUFI HIYO HUBAKI 0
+// (thamani ya muda) MILELE -- ikisoma baiti za maagizo yanayofuata
+// kama nambari, kimya kimya, bila hitilafu ya kukusanya wala
+// kuanguka. Hii ilisababisha uharibifu wa "kimya" wa thamani
+// zilizosomwa kutoka kwa usemi kama `g->utulivu == 0.6` kwenye
+// mradi halisi (angalia jaribio dogo kamili kwenye issue #192).
+N32 desimali_off[65536];
+N32 desimali_lebo_id[65536];
 N32 desimali_idadi = 0;
 
 // Sehemu za tungo za builtin ya andika — zinaandikwa mwishoni mwa .text
@@ -5085,12 +5102,13 @@ W0 andika_herufi_halisi() {
 // zinaandikwa mwishoni mwa .text kama tungo.
 // -------------------------------------------------------
 N32 desimali_halisi_hifadhi(N32 off) {
-    kama (desimali_idadi < 1024) {
+    kama (desimali_idadi < 65536) {
         desimali_lebo_id[desimali_idadi] = lebo_buf_mpya();
         desimali_off[desimali_idadi] = off;
         desimali_idadi = desimali_idadi + 1;
         rudisha desimali_lebo_id[desimali_idadi - 1];
     }
+    andika_stderr("KOSA: desimali (D64) constants zimejaa\n");
     rudisha -1;
 }
 
