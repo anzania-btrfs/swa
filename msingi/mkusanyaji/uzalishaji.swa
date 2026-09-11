@@ -1165,6 +1165,8 @@ W0 andika_rela_ulimwengu(N32 urekebishaji_idx) {
         rela_nje_id[rela_idadi] = -1;  // alama: sio nje
         rela_ulimwengu_idx[rela_idadi] = urekebishaji_idx;
         rela_idadi = rela_idadi + 1;
+    } sivyo {
+        andika_stderr("KOSA: jedwali la urekebishaji (rela_*) limejaa (kikomo 65536) — anwani hii haitarekebishwa sahihi\n");
     }
 }
 
@@ -1738,6 +1740,8 @@ W0 lebo_hifadhi(N8* jina, N32 ret_enc) {
         lebo_nafasi[lebo_idadi] = bafa_text_wapi;
         lebo_ret_enc[lebo_idadi] = ret_enc;
         lebo_idadi = lebo_idadi + 1;
+    } sivyo {
+        andika_stderr("KOSA: jedwali la lebo za kazi (lebo_*) limejaa (kikomo 2048) kwenye kazi '%s' — mradi una kazi nyingi mno\n", jina);
     }
 }
 
@@ -2243,6 +2247,7 @@ N32 pata_au_unda_nje(N8* jina) {
         nje_idadi = nje_idadi + 1;
         rudisha nje_idadi - 1;
     }
+    andika_stderr("KOSA: jedwali la alama za nje (nje_*) limejaa (kikomo 2048) kwa alama '%s'\n", jina);
     rudisha -1;
 }
 
@@ -2284,6 +2289,9 @@ N32 kusanya_herufi(N8* raw) {
     }
 
     // Ongeza mpya — badilisha utorokaji wakati wa kunakili
+    kama (str_idadi >= 1024 || str_buf_wapi + len + 1 >= 16384) {
+        andika_stderr("KOSA: jedwali la mfuatano halisi (str_*) limejaa (kikomo cha idadi 1024, au bafa ya baiti 16384) — mfuatano huu hautahifadhiwa sahihi\n");
+    }
     kama (str_idadi < 1024 && str_buf_wapi + len + 1 < 16384) {
         N32 o = str_buf_wapi;
         N32 j = 0;  // faharisi ya chanzo
@@ -2735,6 +2743,12 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
             kama (ast_aina[a] == 45) { hoja_enc[hoja_idadi] = ast_nne[a]; }  // HALISI_D: enc iko ast_nne
             kama (ast_aina[a] == 4) { hoja_enc[hoja_idadi] = ast_nne[a]; }  // AST_NAMBARI: enc iko ast_nne (thamani iko ast_thamani)
             hoja_idadi = hoja_idadi + 1;
+        } sivyo {
+            // Ulinzi wa ziada: mkaguzi.swa tayari inakataa wito wenye
+            // hoja zaidi ya 16 kabla ya kufika hapa (kikomo hiki cha 32
+            // hakipaswi kufikiwa kwa kawaida) -- kama ujumbe huu
+            // umeonekana, njia ya ukaguzi imepitwa mahali fulani.
+            andika_stderr("KOSA: bafa ya hoja za wito (hoja_nodes/hoja_enc) imejaa (kikomo 32) — hii haipaswi kutokea, mkaguzi anapaswa kuwa amekataa wito huu tayari\n");
         }
         a = ast_tiga[a];  // hoja inayofuata kupitia ast_tiga
     }
@@ -2977,6 +2991,8 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
                         rela_text_off[rela_idadi] = bafa_text_wapi;
                         rela_nje_id[rela_idadi] = nje_id;
                         rela_idadi = rela_idadi + 1;
+                    } sivyo {
+                        andika_stderr("KOSA: jedwali la urekebishaji (rela_*) limejaa (kikomo 65536) — wito wa '%s' hautarekebishwa sahihi\n", callee);
                     }
                     andika_neno4(0);
                 }
@@ -3570,6 +3586,8 @@ W0 uzalishaji_achilia(N32 node, N32 kazi_node) {
         rela_text_off[rela_idadi] = bafa_text_wapi;
         rela_nje_id[rela_idadi] = nje_id;
         rela_idadi = rela_idadi + 1;
+    } sivyo {
+        andika_stderr("KOSA: jedwali la urekebishaji (rela_*) limejaa (kikomo 65536) — wito wa 'free' hautarekebishwa sahihi\n");
     }
     andika_neno4(0);
 }
@@ -3591,6 +3609,8 @@ W0 uzalishaji_badili(N32 node, N32 kazi_node) {
         rela_text_off[rela_idadi] = bafa_text_wapi;
         rela_nje_id[rela_idadi] = nje_id;
         rela_idadi = rela_idadi + 1;
+    } sivyo {
+        andika_stderr("KOSA: jedwali la urekebishaji (rela_*) limejaa (kikomo 65536) — wito wa 'realloc' hautarekebishwa sahihi\n");
     }
     andika_neno4(0);
 }
@@ -4399,6 +4419,10 @@ W0 uzalishaji_anwani_ya(N32 node, N32 kazi_node) {
             andika_neno4(0);
             rudisha;
         }
+        // MUHIMU: bila ujumbe huu, `&jina_la_kazi` ingekuwa 0 (null)
+        // KIMYA badala ya anwani halisi — tofauti na kuruka usajili tu
+        // (kama majedwali mengine), hapa msimbo WA UONGO unazalishwa.
+        andika_stderr("KOSA: jedwali la anwani za kazi (anwani_kazi_*) limejaa (kikomo 512) kwa '&%s' — anwani itakuwa 0 (null) kimakosa\n", jina);
         andika_xor_eax_eax();
         rudisha;
     }
@@ -5462,6 +5486,9 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
     // 0b. Kusanya vigezo vya ulimwengu (pre-scan)
     N32 gn = ast_kushoto[mzizi];
     wakati (gn != -1) {
+        kama (ast_aina[gn] == 35 && data_ulimwengu_idadi >= 1024) {  // AST_TANGAZO_ULIMWENGU
+            andika_stderr("KOSA: jedwali la data la ulimwengu (data_ulimwengu_*) limejaa (kikomo 1024) — kigezo hiki cha ulimwengu hakitatolewa sahihi\n");
+        }
         kama (ast_aina[gn] == 35 && data_ulimwengu_idadi < 1024) {  // AST_TANGAZO_ULIMWENGU
             N32 name_n = ast_kushoto[gn];
             N32 enc = ast_thamani[gn];  // usimbaji wa aina (sasa umejaa!)
@@ -5593,6 +5620,8 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
                         anwani_data_pos[anwani_data_idadi] = bafa_data_wapi;
                         anwani_data_jina[anwani_data_idadi] = ast_pool + ast_jina_off[val];
                         anwani_data_idadi = anwani_data_idadi + 1;
+                    } sivyo {
+                        andika_stderr("KOSA: jedwali la anwani za data (anwani_data_*) limejaa (kikomo 512)\n");
                     }
                     N32 k = 0;
                     wakati (k < 8) {
