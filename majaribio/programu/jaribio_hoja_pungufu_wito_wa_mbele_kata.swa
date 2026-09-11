@@ -1,0 +1,18 @@
+// lugha-swa/swa#180 -- wito wa kazi iliyofafanuliwa BAADAYE kwenye
+// faili lile lile na idadi ndogo ya hoja lazima ukataliwe wakati wa
+// kukusanya, si kuruhusiwa kimya na kutoa tabia isiyofafanuliwa
+// wakati wa kukimbia. Zamani mkaguzi_kagua_kazi alisajili kila kazi
+// mwanzoni mwa kuikagua yenyewe (pitio moja), hivyo kazi zilizoitwa
+// kabla ya kufafanuliwa hazikuwa zimesajiliwa bado wakati wa
+// kukagua wito wake.
+N32 mwito(N32 x) {
+    rudisha baadaye(x);
+}
+
+N32 baadaye(N32 a, N32 b, N32 c) {
+    rudisha a + b + c;
+}
+
+N32 main() {
+    rudisha mwito(5);
+}
