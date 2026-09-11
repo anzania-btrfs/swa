@@ -25,6 +25,13 @@ N32 data_ulimwengu_jina_off[1024];
 N32 data_ulimwengu_enc[1024];  // usimbaji wa aina kwa upakiaji sahihi
 N32 data_ulimwengu_ni_safu[1024];  // 1 = safu (upakiaji unatumia LEA ya anwani)
 N32 data_ulimwengu_bss[1024];  // 1 = hakuna kianzio, kigezo kinaenda .bss
+// Idadi ya vipengele vilivyotangazwa vya safu (mfano N8 x[131072] -> 131072).
+// Inatumika na urefu(x) (angalia uzalishaji_wito) -- lugha-swa/swa#197
+// ilitokea kwa sababu ukubwa wa safu na namba ya ukaguzi wa kufurika
+// zilikuwa namba mbili zilizowekwa kwa mkono zinazopaswa kuendana;
+// urefu(x) inaruhusu namba ya pili kutokana moja kwa moja kutoka
+// tangazo la safu badala ya kunakiliwa kwa mkono.
+N32 data_ulimwengu_idadi_ya_kipengele[1024];
 N32 data_ulimwengu_idadi = 0;
 N32 bss_wapi = 0;
 
@@ -2582,6 +2589,42 @@ W0 uzalishaji_wito(N32 node, N32 kazi_node) {
             andika_mov_eax(sz);
             rudisha;
         }
+    }
+
+    // Wito maalum wa urefu(safu) — idadi ya vipengele vilivyotangazwa
+    // vya safu ya ULIMWENGU (global) yenye ukubwa maalum, kokotoa
+    // wakati wa kukusanya (lengthof). Hoja ni jina la kigezo cha safu
+    // (SI aina, SI kigezo cha ndani/paramu -- toleo la kwanza
+    // linashughulikia safu za ulimwengu pekee, angalia maelezo ya
+    // data_ulimwengu_idadi_ya_kipengele juu ya faili hili). Kigezo
+    // kisicho safu ya ulimwengu ni hitilafu WAZI ya kukusanya, si
+    // tabia ya kimya isiyo sahihi -- lugha-swa/swa#197 ilitokana na
+    // namba mbili zilizowekwa kwa mkono zisizoendana; kipengele hiki
+    // kipya lazima kisianzishe aina mpya ya uharibifu wa kimya.
+    kama (jina_linganisha(callee, "urefu")) {
+        N32 a0 = ast_kulia[node];
+        kama (a0 != -1 && ast_aina[a0] == 5) {  // KITAMBULISHO
+            N8* jina_a = ast_pool + ast_jina_off[a0];
+            N32 gi = 0;
+            N32 imepatikana = 0;
+            wakati (gi < data_ulimwengu_idadi) {
+                N8* gjina = ast_pool + data_ulimwengu_jina_off[gi];
+                kama (jina_linganisha(gjina, jina_a) && data_ulimwengu_ni_safu[gi] == 1) {
+                    andika_mov_eax(data_ulimwengu_idadi_ya_kipengele[gi]);
+                    imepatikana = 1;
+                    gi = data_ulimwengu_idadi;  // toka kwenye kitanzi
+                } sivyo {
+                    gi = gi + 1;
+                }
+            }
+            kama (imepatikana == 0) {
+                andika_stderr("Hitilafu: urefu(%s) -- '%s' si safu ya ulimwengu (global) yenye ukubwa maalum. urefu() ya toleo hili inashughulikia tu safu za ulimwengu zilizotangazwa moja kwa moja (mfano N8 x[1024];), si vigezo vya ndani wala paramu.\n", jina_a, jina_a);
+                wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+            }
+            rudisha;
+        }
+        andika_stderr("Hitilafu: urefu(...) inahitaji hoja moja ya kitambulisho cha safu ya ulimwengu.\n");
+        wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
     }
 
     // Wito wa mfumo (syscall) — builtin: hoja (namba, a1..a5) zinapangwa
@@ -5476,8 +5519,10 @@ W0 uzalishaji_kuu(N32 mzizi, N32 hali_exe) {
                 kama (count > 0) { sz = sz_elem * count; }
                 enc = enc + 1;
                 data_ulimwengu_ni_safu[data_ulimwengu_idadi] = 1;
+                data_ulimwengu_idadi_ya_kipengele[data_ulimwengu_idadi] = count;
             } sivyo {
                 data_ulimwengu_ni_safu[data_ulimwengu_idadi] = 0;
+                data_ulimwengu_idadi_ya_kipengele[data_ulimwengu_idadi] = 0;
             }
             data_ulimwengu_enc[data_ulimwengu_idadi] = enc;
             data_ulimwengu_size[data_ulimwengu_idadi] = sz;
