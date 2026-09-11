@@ -1335,9 +1335,18 @@ W0 andika_mov_ax_rip_rel(N32 enc, N32 urekebishaji_idx) {
 
 
 // === Visaidizi vya usambazaji wa aina ===
-// Rudisha 1 ikiwa encoding ni ya desimali (familia D=3)
+// Rudisha 1 ikiwa encoding ni ya desimali (familia D=3).
+// MUHIMU (lugha-swa/swa#181): kielekezi kwenda D64/D32 (mfano
+// D64*, mshale=1, enc isiyo sawa/ODD) LINA familia==3 ile ile ya
+// D64 yenyewe -- lakini KIELEKEZI (anwani, GP register) SI thamani
+// ya desimali (xmm) kamwe, hata kama kinaelekeza D64. Bila ukaguzi
+// huu, kila operesheni inayotumia ni_desimali_enc kuamua "je,
+// tumie xmm0 au eax/rax?" ilishughulikia D64*/D32* kama D64/D32
+// halisi -- kufanya D64* kutofanya kazi KABISA (dereference,
+// fahirisi, hesabu ya kielekezi, ugawaji wa awali, yote).
 N32 ni_desimali_enc(N32 enc) {
     kama (enc == 0) { rudisha 0; }
+    kama ((enc / 2) * 2 != enc) { rudisha 0; }  // kielekezi -- anwani, si desimali
     N32 familia = (enc / 256) % 256;
     kama (familia == 3) { rudisha 1; }
     rudisha 0;
