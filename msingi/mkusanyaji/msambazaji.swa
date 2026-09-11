@@ -121,7 +121,14 @@ muundo Msambazaji {
 // -------------------------------------------------------
 N32 node_mpya(N32 aina, N32 thamani, N32 kushoto, N32 kulia) {
     kama (ast_idadi >= 1048576) {
-        andika_stderr("; DEB: HITILAFU node_mpya imefurika! idadi=%d aina=%d\n", ast_idadi, aina);
+        // MUHIMU: kama muundo_nodes[1024] (#189) na kazi_jina_pool[131072]
+        // (#197), dimbwi hili ni jedwali linaloendana na UKUBWA WA MRADI —
+        // faili kubwa la kweli (mfano Dominion) huweza kulifikia. Wito
+        // huu unarudisha -1 KWA MAKUSUDI (badala ya kuandika nje ya
+        // mipaka), LAKINI waitaji wengi wa node_mpya() bado hawaangalii
+        // matokeo haya kabla ya kuyatumia kama faharisi ya AST -- angalia
+        // lugha-swa/swa#199 kwa maelezo kamili ya hatari hii.
+        andika_stderr("KOSA: akiba ya nodi za AST (ast_aina/ast_thamani/...) imejaa (idadi=%d, aina ya nodi iliyoshindwa=%d) — chanzo (baada ya kutatua husisha zote) ni kikubwa mno kwa kikomo cha 1048576\n", ast_idadi, aina);
         rudisha -1;
     }
     N32 idx = ast_idadi;
@@ -2242,6 +2249,8 @@ N32 changanua_muundo(Msambazaji* p) {
         muundo_ukubwa_jina[muundo_ukubwa_idadi] = ast_pool + ast_jina_off[name];
         muundo_ukubwa_val[muundo_ukubwa_idadi] = running_offset;
         muundo_ukubwa_idadi = muundo_ukubwa_idadi + 1;
+    } sivyo {
+        andika_stderr("KOSA: akiba ya ukubwa wa miundo (muundo_ukubwa_jina/val) imejaa (kikomo 1024) — muundo '%s' na zinazofuata hazitapata ukubwa sahihi\n", ast_pool + ast_jina_off[name]);
     }
     rudisha mnode;
 }

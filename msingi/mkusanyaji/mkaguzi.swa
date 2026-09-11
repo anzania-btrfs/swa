@@ -35,6 +35,9 @@ W0 wigo_sukuma() {
     kama (wigo_vidokezo_idadi < 256) {
         wigo_vidokezo[wigo_vidokezo_idadi] = wigo_idadi;
         wigo_vidokezo_idadi = wigo_vidokezo_idadi + 1;
+    } sivyo {
+        andika_stderr("KOSA: kina cha kitanzi/tawi (wigo_vidokezo) kimejaa (kikomo 256) — kazi ina viwango vingi mno vya kutagusana vya {}\n");
+        mkaguzi_makosa = mkaguzi_makosa + 1;
     }
 }
 
@@ -57,6 +60,9 @@ W0 wigo_ongeza(N8* jina, N32 enc) {
         ast_pool[ast_pool_wapi + i] = 0;
         ast_pool_wapi = ast_pool_wapi + i + 1;
         wigo_idadi = wigo_idadi + 1;
+    } sivyo {
+        andika_stderr("KOSA: jedwali la vigezo vya wigo (wigo_idadi) limejaa (kikomo 256) kwenye kigezo '%s' — kazi ina vigezo/vitambulisho vingi mno vinavyoonekana kwa wakati mmoja\n", jina);
+        mkaguzi_makosa = mkaguzi_makosa + 1;
     }
 }
 
@@ -165,13 +171,18 @@ N32 mkaguzi_angalia(N32 mzizi) {
     global_idadi = 0;
     N32 gn = ast_kushoto[mzizi];
     wakati (gn != -1) {
-        kama (ast_aina[gn] == 35 && global_idadi < 1024) {
-            global_jina_off[global_idadi] = ast_jina_off[ast_kushoto[gn]];
-            N32 genc = ast_thamani[gn];
-            // Safu: usemi unapaswa kuiona kama kielekezi (anwani ya msingi)
-            kama (ast_tiga[gn] != -1) { genc = genc + 1; }
-            global_aina[global_idadi] = genc;
-            global_idadi = global_idadi + 1;
+        kama (ast_aina[gn] == 35) {
+            kama (global_idadi < 1024) {
+                global_jina_off[global_idadi] = ast_jina_off[ast_kushoto[gn]];
+                N32 genc = ast_thamani[gn];
+                // Safu: usemi unapaswa kuiona kama kielekezi (anwani ya msingi)
+                kama (ast_tiga[gn] != -1) { genc = genc + 1; }
+                global_aina[global_idadi] = genc;
+                global_idadi = global_idadi + 1;
+            } sivyo {
+                andika_stderr("KOSA: jedwali la vigezo vya ulimwengu (global_idadi) limejaa (kikomo 1024) — mradi una vigezo vya ulimwengu vingi mno\n");
+                mkaguzi_makosa = mkaguzi_makosa + 1;
+            }
         }
         gn = ast_nne[gn];
     }
@@ -183,6 +194,9 @@ N32 mkaguzi_angalia(N32 mzizi) {
             kama (muundo_count < 1024) {
                 muundo_nodes[muundo_count] = node;
                 muundo_count = muundo_count + 1;
+            } sivyo {
+                andika_stderr("KOSA: akiba ya nodi za miundo (muundo_nodes) imejaa (kikomo 1024) — graph ya husisha ina aina za muundo nyingi mno\n");
+                mkaguzi_makosa = mkaguzi_makosa + 1;
             }
         }
         node = ast_nne[node];
@@ -242,6 +256,9 @@ W0 mkaguzi_sajili_kazi(N32 kazi_node) {
         kama (kazi_param_enc_wapi < 4096) {
             kazi_param_enc[kazi_param_enc_wapi] = ast_thamani[p];
             kazi_param_enc_wapi = kazi_param_enc_wapi + 1;
+        } sivyo {
+            andika_stderr("kosa [%s]: jedwali la aina za hoja bapa (kazi_param_enc) limejaa (kikomo 4096) — mradi una hoja nyingi mno kwa jumla, kwenye kazi zote\n", jina);
+            mkaguzi_makosa = mkaguzi_makosa + 1;
         }
         pc = pc + 1;
         p = ast_kulia[p];
@@ -283,6 +300,9 @@ W0 mkaguzi_sajili_kazi(N32 kazi_node) {
         kazi_ret_jina_off[kazi_ret_idadi] = off;
         kazi_ret_aina[kazi_ret_idadi] = ast_thamani[kazi_node];
         kazi_ret_idadi = kazi_ret_idadi + 1;
+    } sivyo {
+        andika_stderr("kosa [%s]: jedwali la aina za kurudi za kazi (kazi_ret_idadi) limejaa (kikomo 1024) — mradi una kazi nyingi mno\n", jina);
+        mkaguzi_makosa = mkaguzi_makosa + 1;
     }
 }
 
