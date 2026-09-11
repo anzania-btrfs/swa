@@ -201,7 +201,22 @@ N32 mkaguzi_angalia(N32 mzizi) {
         }
         node = ast_nne[node];
     }
-    // Pitia ya pili: kagua kazi zote
+    // Pitia ya pili: sajili SAINI za kazi zote KABLA ya kukagua mwili
+    // wowote (lugha-swa/swa#180) — kazi A inayoita kazi B iliyofafanuliwa
+    // BAADAYE kwenye faili lile lile lazima ipate B tayari imesajiliwa
+    // wakati mwito wake unakaguliwa, si baada ya kukagua mwili wa A.
+    // Zamani usajili ulifanyika ndani ya mkaguzi_kagua_kazi yenyewe
+    // (pitio moja lililochanganya usajili na ukaguzi), hivyo kazi
+    // yoyote iliyoitwa kabla ya kufafanuliwa bado haikuwa imesajiliwa.
+    node = ast_kushoto[mzizi];
+    wakati (node != -1) {
+        kama (ast_aina[node] == 2) {
+            mkaguzi_sajili_kazi(node);
+        }
+        node = ast_nne[node];
+    }
+    // Pitia ya tatu: kagua miili ya kazi zote (saini zote tayari
+    // zimesajiliwa kutoka pitio ya pili hapo juu).
     node = ast_kushoto[mzizi];
     wakati (node != -1) {
         kama (ast_aina[node] == 2) {
@@ -676,8 +691,10 @@ N32 mkaguzi_kagua_wito(N32 node) {
 }
 
 W0 mkaguzi_kagua_kazi(N32 kazi_node) {
-    // Sajili kazi hii kwa ukaguzi wa idadi ya hoja.
-    mkaguzi_sajili_kazi(kazi_node);
+    // MUHIMU: usajili wa saini (mkaguzi_sajili_kazi) HAUFANYIKI hapa
+    // tena — unafanyika mapema, kwenye pitio la pekee la usajili
+    // ndani ya mkaguzi_angalia (angalia lugha-swa/swa#180), ili kazi
+    // ZOTE zijulikane KABLA ya kukagua mwili wa kazi YOYOTE.
     // Fuatilia jina la kazi kwa ujumbe wa makosa
     mkaguzi_kazi_sasa = ast_pool + ast_jina_off[ast_kushoto[kazi_node]];
     // Fuatilia aina ya kurudi kwa ukaguzi wa rudisha.
