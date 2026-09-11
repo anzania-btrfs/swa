@@ -200,3 +200,6 @@ KATA	jaribio_mende_tekeleza_hoja_5_kata (tekeleza wa hoja 5 unakataliwa kwa saut
 KATA	jaribio_mende_ukubwa_hoja_2_kata (ukubwa wa hoja 2 unakataliwa kwa sauti — huchukua jina la aina moja pekee; mdudu wa 2026-09-04: hoja ya 2 ilimezwa kimya; stage1 pekee)	majaribio/programu/jaribio_mende_ukubwa_hoja_2_kata.swa	stage1	kwa 'ukubwa'
 KATA	jaribio_mende_anwani_kazi_hoja_2_kata (anwani_ya_kazi wa hoja 2 unakataliwa kwa sauti — huchukua jina la kazi moja pekee; mdudu wa 2026-09-04: hoja ya 2 ilimezwa kimya; stage1 pekee)	majaribio/programu/jaribio_mende_anwani_kazi_hoja_2_kata.swa	stage1	kwa 'anwani_ya_kazi'
 0	jaribio_hesabu_trig	majaribio/programu/jaribio_hesabu_trig.swa
+1	jaribio_d64_kielekezi_dereference (lugha-swa/swa#181 -- D64* dereference (*arr) ilikataliwa kabisa, hata tangazo peke yake; stage1 pekee: mbegu haijaribiwa hivyo)	majaribio/programu/jaribio_d64_kielekezi_dereference.swa	stage1
+3	jaribio_d64_kielekezi_fahirisi (lugha-swa/swa#181 -- fahirisi ya D64* (arr[i]); stage1 pekee)	majaribio/programu/jaribio_d64_kielekezi_fahirisi.swa	stage1
+2	jaribio_d64_kielekezi_hesabu (lugha-swa/swa#181 -- hesabu ya kielekezi cha D64* (arr + n) inasongeza kwa vipengele vya baiti 8; stage1 pekee)	majaribio/programu/jaribio_d64_kielekezi_hesabu.swa	stage1
