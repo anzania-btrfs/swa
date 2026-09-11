@@ -276,8 +276,20 @@ W0 mkaguzi_sajili_kazi(N32 kazi_node) {
     // lililopatikana wakati wa kikao hiki: ukubwa wa tangazo la safu
     // ULIBADILISHWA (16384->131072) BILA kubadilisha namba hii
     // hapa, ikiacha ulinzi wa kufurika ukiendelea kukataa kwa
-    // ukubwa wa ZAMANI — angalia lugha-swa/swa (issue itakayofuata
-    // baada ya #196) kwa maelezo kamili.
+    // ukubwa wa ZAMANI — angalia lugha-swa/swa#197 kwa maelezo
+    // kamili. SASA kipengele kipya cha lugha, urefu(x) (angalia
+    // uzalishaji.swa), kingeweza kutatua hili moja kwa moja — LAKINI
+    // kimejaribiwa hapa na KUONDOLEWA KWA MAKUSUDI: mkaguzi.swa ni
+    // sehemu ya CHANZO CHA MKUSANYAJI MWENYEWE, na mbegu.bin (mbegu
+    // ya awali iliyogandishwa, isiyobadilika) haitambui urefu() kama
+    // hoja iliyosajiliwa — ikijaribu kukusanya stage1.swa (ambayo
+    // sasa ingehitaji urefu()) mbegu.bin ingekataa kwa "kazi
+    // haijafafanuliwa: urefu", ikivunja mnyororo wa kujitegemea
+    // (bootstrap) kabisa. urefu() inafaa kutumika kwenye MIRADI
+    // INAYOTUMIA mkusanyaji (kama Dominion), SI ndani ya chanzo cha
+    // mkusanyaji wenyewe, hadi mbegu.bin yenyewe ijengwe upya
+    // ikiwa na msaada wa urefu() (swali tofauti kabisa la
+    // kujitegemea, nje ya wigo wa kazi hii).
     N32 off = kazi_jina_pool_wapi;
     N32 i = 0;
     wakati (jina[i] != 0) {
@@ -419,7 +431,8 @@ W0 mkaguzi_kagua_kiwango_cha_huduma(N8* jina, N32 hoja_idadi) {
     kama (jina_linganisha(jina, "wito_wa_mfumo")) { kiwango_hoja = 7; }
     sivyo { kama (jina_linganisha(jina, "tekeleza")) { kiwango_hoja = 4; }
         sivyo { kama (jina_linganisha(jina, "ukubwa")) { kiwango_hoja = 1; }
-            sivyo { kama (jina_linganisha(jina, "anwani_ya_kazi")) { kiwango_hoja = 1; } } } }
+            sivyo { kama (jina_linganisha(jina, "anwani_ya_kazi")) { kiwango_hoja = 1; }
+                sivyo { kama (jina_linganisha(jina, "urefu")) { kiwango_hoja = 1; } } } } }
     kama (kiwango_hoja > 0) {
         kama (hoja_idadi > kiwango_hoja) {
             andika_stderr("kosa [%s]: idadi ya hoja kwa '%s' si sahihi (kikomo ni %d, imepokea %d)\n", mkaguzi_kazi_sasa, jina, kiwango_hoja, hoja_idadi);
