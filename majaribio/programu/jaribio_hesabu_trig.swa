@@ -1,0 +1,192 @@
+// Jaribio la kudumu la hesabu za D64 transcendental (hesabu.swa,
+// lugha-swa/swa#183) — sin/cos/atan2/mzizi/kielelezi/logasili/kuinua.
+// Kinafuata mtindo wa jaribio_k10f_hesabu.swa: nakala ya moja kwa
+// moja ya kazi (si husisha), matokeo yanaonyeshwa kwa msimbo wa
+// kutoka (exit code), si andika.
+
+D64 pi_hesabu() {
+    rudisha 3.1415926536;
+}
+
+D64 mzizi_hesabu(D64 x) {
+    kama (x <= 0.0) { rudisha 0.0; }
+    D64 kisio = x;
+    kama (kisio < 1.0) { kisio = 1.0; }
+    N32 n = 0;
+    wakati (n < 25) {
+        kisio = 0.5 * (kisio + x / kisio);
+        n = n + 1;
+    }
+    rudisha kisio;
+}
+
+D64 kielelezi_hesabu(D64 x) {
+    D64 jumla = 1.0;
+    D64 neno = 1.0;
+    N32 n = 1;
+    wakati (n <= 30) {
+        D64 n_d = n;
+        neno = neno * x / n_d;
+        jumla = jumla + neno;
+        n = n + 1;
+    }
+    rudisha jumla;
+}
+
+D64 logasili_hesabu(D64 x) {
+    kama (x <= 0.0) { rudisha 0.0; }
+    D64 LN2 = 0.6931471805;
+    N32 k = 0;
+    D64 xr = x;
+    wakati (xr > 2.0) { xr = xr / 2.0; k = k + 1; }
+    wakati (xr < 0.5) { xr = xr * 2.0; k = k - 1; }
+    D64 z = (xr - 1.0) / (xr + 1.0);
+    D64 z2 = z * z;
+    D64 jumla = 0.0;
+    D64 neno = z;
+    N32 i = 1;
+    wakati (i <= 40) {
+        D64 i_d = i;
+        jumla = jumla + neno / i_d;
+        neno = neno * z2;
+        i = i + 2;
+    }
+    D64 k_d = k;
+    rudisha 2.0 * jumla + k_d * LN2;
+}
+
+D64 kuinua_hesabu(D64 x, D64 y) {
+    kama (x <= 0.0) { rudisha 0.0; }
+    rudisha kielelezi_hesabu(y * logasili_hesabu(x));
+}
+
+D64 sin_hesabu(D64 x) {
+    D64 pi = pi_hesabu();
+    D64 pi2 = pi + pi;
+    wakati (x > pi) { x = x - pi2; }
+    wakati (x <= (0.0 - pi)) { x = x + pi2; }
+    D64 x2 = x * x;
+    D64 jumla = x;
+    D64 neno = x;
+    N32 n = 1;
+    wakati (n <= 20) {
+        D64 n_d = n;
+        D64 chini1 = 2.0 * n_d;
+        D64 chini2 = chini1 + 1.0;
+        neno = neno * (0.0 - x2) / (chini1 * chini2);
+        jumla = jumla + neno;
+        n = n + 1;
+    }
+    rudisha jumla;
+}
+
+D64 cos_hesabu(D64 x) {
+    D64 pi = pi_hesabu();
+    D64 pi2 = pi + pi;
+    wakati (x > pi) { x = x - pi2; }
+    wakati (x <= (0.0 - pi)) { x = x + pi2; }
+    D64 x2 = x * x;
+    D64 jumla = 1.0;
+    D64 neno = 1.0;
+    N32 n = 1;
+    wakati (n <= 20) {
+        D64 n_d = n;
+        D64 chini1 = 2.0 * n_d - 1.0;
+        D64 chini2 = 2.0 * n_d;
+        neno = neno * (0.0 - x2) / (chini1 * chini2);
+        jumla = jumla + neno;
+        n = n + 1;
+    }
+    rudisha jumla;
+}
+
+D64 atan_ndogo_hesabu(D64 t) {
+    D64 u1 = t / (1.0 + mzizi_hesabu(1.0 + t * t));
+    D64 u2 = u1 / (1.0 + mzizi_hesabu(1.0 + u1 * u1));
+    D64 u3 = u2 / (1.0 + mzizi_hesabu(1.0 + u2 * u2));
+    D64 u2sq = u3 * u3;
+    D64 jumla = u3;
+    D64 neno = u3;
+    N32 n = 1;
+    wakati (n <= 20) {
+        D64 n_d = n;
+        D64 juu = 2.0 * n_d - 1.0;
+        D64 chini = 2.0 * n_d + 1.0;
+        neno = neno * (0.0 - u2sq) * juu / chini;
+        jumla = jumla + neno;
+        n = n + 1;
+    }
+    rudisha jumla * 8.0;
+}
+
+D64 atan_hesabu(D64 t) {
+    N32 hasi = 0;
+    D64 tt = t;
+    kama (tt < 0.0) { hasi = 1; tt = 0.0 - tt; }
+    D64 matokeo = atan_ndogo_hesabu(tt);
+    kama (tt > 1.0) {
+        matokeo = (pi_hesabu() / 2.0) - atan_ndogo_hesabu(1.0 / tt);
+    }
+    kama (hasi == 1) { matokeo = 0.0 - matokeo; }
+    rudisha matokeo;
+}
+
+D64 atan2_hesabu(D64 y, D64 x) {
+    kama (x > 0.0) { rudisha atan_hesabu(y / x); }
+    kama (x < 0.0) {
+        kama (y >= 0.0) { rudisha atan_hesabu(y / x) + pi_hesabu(); }
+        rudisha atan_hesabu(y / x) - pi_hesabu();
+    }
+    kama (y > 0.0) { rudisha pi_hesabu() / 2.0; }
+    kama (y < 0.0) { rudisha 0.0 - (pi_hesabu() / 2.0); }
+    rudisha 0.0;
+}
+
+N32 karibu(D64 a, D64 b, D64 tofauti_kubwa) {
+    D64 d = a - b;
+    kama (d < 0.0) { d = 0.0 - d; }
+    kama (d > tofauti_kubwa) { rudisha 0; }
+    rudisha 1;
+}
+
+N32 main() {
+    D64 pi = pi_hesabu();
+
+    kama (karibu(sin_hesabu(0.0), 0.0, 0.00001) == 0) { rudisha 1; }
+    kama (karibu(cos_hesabu(0.0), 1.0, 0.00001) == 0) { rudisha 2; }
+    kama (karibu(sin_hesabu(pi/6.0), 0.5, 0.0001) == 0) { rudisha 3; }
+    kama (karibu(cos_hesabu(pi/3.0), 0.5, 0.0001) == 0) { rudisha 4; }
+    kama (karibu(sin_hesabu(pi/2.0), 1.0, 0.0001) == 0) { rudisha 5; }
+    kama (karibu(cos_hesabu(pi/2.0), 0.0, 0.0001) == 0) { rudisha 6; }
+    kama (karibu(sin_hesabu(pi), 0.0, 0.0001) == 0) { rudisha 7; }
+    kama (karibu(cos_hesabu(pi), 0.0 - 1.0, 0.0001) == 0) { rudisha 8; }
+    D64 x_kubwa = pi * 2.0 + pi / 6.0;
+    kama (karibu(sin_hesabu(x_kubwa), 0.5, 0.0001) == 0) { rudisha 9; }
+    D64 x_hasi_kubwa = 0.0 - (pi * 3.0 + pi / 3.0);
+    kama (karibu(cos_hesabu(x_hasi_kubwa), 0.0 - 0.5, 0.0001) == 0) { rudisha 10; }
+
+    kama (karibu(mzizi_hesabu(4.0), 2.0, 0.00001) == 0) { rudisha 11; }
+    kama (karibu(mzizi_hesabu(2.0), 1.41421356, 0.00001) == 0) { rudisha 12; }
+    kama (mzizi_hesabu(0.0 - 5.0) != 0.0) { rudisha 13; }
+
+    kama (karibu(kielelezi_hesabu(0.0), 1.0, 0.00001) == 0) { rudisha 14; }
+    kama (karibu(kielelezi_hesabu(1.0), 2.71828183, 0.0001) == 0) { rudisha 15; }
+    kama (karibu(kielelezi_hesabu(2.0), 7.38905610, 0.001) == 0) { rudisha 16; }
+
+    kama (karibu(logasili_hesabu(1.0), 0.0, 0.00001) == 0) { rudisha 17; }
+    kama (karibu(logasili_hesabu(2.71828183), 1.0, 0.0001) == 0) { rudisha 18; }
+    kama (karibu(logasili_hesabu(10.0), 2.302585, 0.0001) == 0) { rudisha 19; }
+
+    kama (karibu(kuinua_hesabu(2.0, 10.0), 1024.0, 0.01) == 0) { rudisha 20; }
+    kama (karibu(kuinua_hesabu(3.0, 2.0), 9.0, 0.001) == 0) { rudisha 21; }
+
+    kama (karibu(atan_hesabu(1.0), pi/4.0, 0.0001) == 0) { rudisha 22; }
+    kama (karibu(atan2_hesabu(1.0, 1.0), pi/4.0, 0.0001) == 0) { rudisha 23; }
+    kama (karibu(atan2_hesabu(1.0, 0.0 - 1.0), pi * 3.0/4.0, 0.0001) == 0) { rudisha 24; }
+    kama (karibu(atan2_hesabu(0.0 - 1.0, 0.0 - 1.0), 0.0 - (pi * 3.0/4.0), 0.0001) == 0) { rudisha 25; }
+    kama (karibu(atan2_hesabu(0.0 - 1.0, 1.0), 0.0 - (pi/4.0), 0.0001) == 0) { rudisha 26; }
+    kama (karibu(atan2_hesabu(1.0, 0.0), pi/2.0, 0.0001) == 0) { rudisha 27; }
+    kama (karibu(atan2_hesabu(0.0 - 1.0, 0.0), 0.0 - (pi/2.0), 0.0001) == 0) { rudisha 28; }
+
+    rudisha 0;
+}

@@ -135,3 +135,205 @@ N32 pow_mod_hesabu(N32 msingi, N32 kipeo, N32 mod) {
     }
     rudisha r;
 }
+
+// ==========================================================
+// Hesabu za D64 transcendental (lugha-swa/swa#183)
+//
+// Kabla ya hii, hesabu.swa haikuwa na sin/cos/atan2/mzizi/kielelezi/
+// logasili/kuinua kwa D64 kabisa -- kila mradi uliohitaji alilazimika
+// kuandika upya kutoka mwanzo (mfano mradi wa Dominion, ambako
+// vialgorithm hivi vilianzia na kujaribiwa kwa nambari halisi kabla
+// ya kuhamishwa hapa). Hakuna libc/math.h -- kila kazi ni algorithm
+// safi ya Swa (mfululizo wa Taylor/Gregory, upunguzaji wa masafa,
+// njia ya Newton).
+// ==========================================================
+
+// kielelezi_hesabu: e^x (badala ya expf/exp ya libc) kwa mfululizo
+// wa Taylor (maneno 30). Sahihi vya kutosha kwa x kati ya -3 na 1
+// (imethibitishwa hapa chini); si sahihi kwa x kubwa sana chanya
+// (mfululizo hausambamki haraka kwa hoja kubwa).
+D64 kielelezi_hesabu(D64 x) {
+    D64 jumla = 1.0;
+    D64 neno = 1.0;
+    N32 n = 1;
+    wakati (n <= 30) {
+        D64 n_d = n;
+        neno = neno * x / n_d;
+        jumla = jumla + neno;
+        n = n + 1;
+    }
+    rudisha jumla;
+}
+
+// mzizi_hesabu: mzizi wa mraba (badala ya sqrt ya libc) kwa mbinu ya
+// Newton (marudio 25). x hasi hurudisha 0.0 (hakuna mzizi halisi).
+D64 mzizi_hesabu(D64 x) {
+    kama (x <= 0.0) { rudisha 0.0; }
+    D64 kisio = x;
+    kama (kisio < 1.0) { kisio = 1.0; }
+    N32 n = 0;
+    wakati (n < 25) {
+        kisio = 0.5 * (kisio + x / kisio);
+        n = n + 1;
+    }
+    rudisha kisio;
+}
+
+// logasili_hesabu: logarithm ya asili (ln, badala ya log() ya libc).
+// kielelezi_hesabu (exp) kwa Taylor haisambamki vizuri kwa x kubwa,
+// kwa hiyo hapa: upunguzaji wa masafa (x inagawanywa/kuzidishwa mara
+// kwa mara kwa 2 hadi iwe kati ya 0.5 na 2.0, idadi ya hatua = k),
+// kisha mfululizo wa atanh (unaosambamka haraka kwa hoja ndogo):
+// ln(x_iliyopunguzwa) = 2*atanh((x-1)/(x+1)). Hatimaye
+// ln(x_asili) = ln(x_iliyopunguzwa) + k * ln(2). x<=0.0 hurudisha 0.0.
+D64 logasili_hesabu(D64 x) {
+    kama (x <= 0.0) { rudisha 0.0; }
+
+    // MUHIMU: maneno ya D64 yenye tarakimu nyingi (>~10 baada ya
+    // nukta) huchanganuliwa vibaya KIMYA KIMYA (lugha-swa/swa#188) --
+    // 0.6931471805 (tarakimu 10) ni ndani ya kikomo salama.
+    D64 LN2 = 0.6931471805;
+    N32 k = 0;
+    D64 xr = x;
+    wakati (xr > 2.0) {
+        xr = xr / 2.0;
+        k = k + 1;
+    }
+    wakati (xr < 0.5) {
+        xr = xr * 2.0;
+        k = k - 1;
+    }
+
+    D64 z = (xr - 1.0) / (xr + 1.0);
+    D64 z2 = z * z;
+    D64 jumla = 0.0;
+    D64 neno = z;
+    N32 i = 1;
+    wakati (i <= 40) {
+        D64 i_d = i;
+        jumla = jumla + neno / i_d;
+        neno = neno * z2;
+        i = i + 2;
+    }
+
+    D64 k_d = k;
+    rudisha 2.0 * jumla + k_d * LN2;
+}
+
+// kuinua_hesabu: x kwa nguvu ya y (badala ya pow() ya libc), kwa
+// x > 0 pekee. x^y = exp(y * ln(x)). x <= 0.0 hurudisha 0.0.
+D64 kuinua_hesabu(D64 x, D64 y) {
+    kama (x <= 0.0) { rudisha 0.0; }
+    rudisha kielelezi_hesabu(y * logasili_hesabu(x));
+}
+
+// pi_hesabu: thamani ya pi (kazi, si kigezo cha ulimwengu -- kigezo
+// cha ulimwengu cha D64 hakijawahi kujaribiwa kwenye mradi huu, kwa
+// hiyo tunaepuka hatari isiyojulikana). 3.1415926536 ni herufi 12
+// jumla, ndani ya kikomo salama cha #188.
+D64 pi_hesabu() {
+    rudisha 3.1415926536;
+}
+
+// sin_hesabu/cos_hesabu: hupunguza masafa (range reduction) kwenda
+// (-pi,pi] kwa kutoa/kuongeza 2*pi mara kwa mara, kisha mfululizo wa
+// Taylor wa moja kwa moja (maneno 20) -- imethibitishwa kusambamka
+// vizuri ndani ya (-pi,pi] bila upunguzaji zaidi kwenda robo-mzunguko.
+D64 sin_hesabu(D64 x) {
+    D64 pi = pi_hesabu();
+    D64 pi2 = pi + pi;
+    wakati (x > pi) { x = x - pi2; }
+    wakati (x <= (0.0 - pi)) { x = x + pi2; }
+
+    D64 x2 = x * x;
+    D64 jumla = x;
+    D64 neno = x;
+    N32 n = 1;
+    wakati (n <= 20) {
+        D64 n_d = n;
+        D64 chini1 = 2.0 * n_d;
+        D64 chini2 = chini1 + 1.0;
+        neno = neno * (0.0 - x2) / (chini1 * chini2);
+        jumla = jumla + neno;
+        n = n + 1;
+    }
+    rudisha jumla;
+}
+
+D64 cos_hesabu(D64 x) {
+    D64 pi = pi_hesabu();
+    D64 pi2 = pi + pi;
+    wakati (x > pi) { x = x - pi2; }
+    wakati (x <= (0.0 - pi)) { x = x + pi2; }
+
+    D64 x2 = x * x;
+    D64 jumla = 1.0;
+    D64 neno = 1.0;
+    N32 n = 1;
+    wakati (n <= 20) {
+        D64 n_d = n;
+        D64 chini1 = 2.0 * n_d - 1.0;
+        D64 chini2 = 2.0 * n_d;
+        neno = neno * (0.0 - x2) / (chini1 * chini2);
+        jumla = jumla + neno;
+        n = n + 1;
+    }
+    rudisha jumla;
+}
+
+// atan_ndogo_hesabu: kazi ya ndani (msaidizi) -- atan(t) kwa t ndani
+// ya [0.0, 1.0] pekee. Mfululizo wa Gregory unasambamka POLEPOLE SANA
+// karibu na t=1.0, kwa hiyo t inapunguzwa mara tatu kwa kigezo cha
+// "nusu-pembe" (atan(t) = 2*atan(t/(1+sqrt(1+t^2)))) KABLA ya
+// mfululizo. Tumia atan_hesabu/atan2_hesabu badala yake -- hii ni
+// msaidizi wa ndani.
+D64 atan_ndogo_hesabu(D64 t) {
+    D64 u1 = t / (1.0 + mzizi_hesabu(1.0 + t * t));
+    D64 u2 = u1 / (1.0 + mzizi_hesabu(1.0 + u1 * u1));
+    D64 u3 = u2 / (1.0 + mzizi_hesabu(1.0 + u2 * u2));
+
+    D64 u2sq = u3 * u3;
+    D64 jumla = u3;
+    D64 neno = u3;
+    N32 n = 1;
+    wakati (n <= 20) {
+        D64 n_d = n;
+        D64 juu = 2.0 * n_d - 1.0;
+        D64 chini = 2.0 * n_d + 1.0;
+        neno = neno * (0.0 - u2sq) * juu / chini;
+        jumla = jumla + neno;
+        n = n + 1;
+    }
+    rudisha jumla * 8.0;
+}
+
+// atan_hesabu: atan(t) kwa t YOYOTE halisi. t hasi hushughulikiwa kwa
+// ulinganifu (atan ni kazi isiyo ya kawaida); |t| > 1.0 hushughulikiwa
+// kwa kitambulisho atan(t) = pi/2 - atan(1/t).
+D64 atan_hesabu(D64 t) {
+    N32 hasi = 0;
+    D64 tt = t;
+    kama (tt < 0.0) { hasi = 1; tt = 0.0 - tt; }
+
+    D64 matokeo = atan_ndogo_hesabu(tt);
+    kama (tt > 1.0) {
+        matokeo = (pi_hesabu() / 2.0) - atan_ndogo_hesabu(1.0 / tt);
+    }
+
+    kama (hasi == 1) { matokeo = 0.0 - matokeo; }
+    rudisha matokeo;
+}
+
+// atan2_hesabu: pembe kamili (mzunguko mzima, -pi hadi pi) ya (y, x),
+// kwa mantiki ya robo (quadrant) ya kawaida ya atan2. x==0.0 na
+// y==0.0 (isiyofafanuliwa kihisabati) hurudisha 0.0.
+D64 atan2_hesabu(D64 y, D64 x) {
+    kama (x > 0.0) { rudisha atan_hesabu(y / x); }
+    kama (x < 0.0) {
+        kama (y >= 0.0) { rudisha atan_hesabu(y / x) + pi_hesabu(); }
+        rudisha atan_hesabu(y / x) - pi_hesabu();
+    }
+    kama (y > 0.0) { rudisha pi_hesabu() / 2.0; }
+    kama (y < 0.0) { rudisha 0.0 - (pi_hesabu() / 2.0); }
+    rudisha 0.0;
+}
