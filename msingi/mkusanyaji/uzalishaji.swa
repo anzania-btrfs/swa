@@ -4764,14 +4764,23 @@ N32 kazi_ret_enc_kwa_jina(N8* jina) {
 // Kumbukumbu iliyotembelewa — inazuia mzunguko usio na mwisho
 // kwa sababu ast_tiga inabadilishwa na mkaguzi kuwa na
 // thamani zisizo nodi (ukubwa wa aina, ofseti za sehemu n.k.)
-N32 kvn_visited[65536];
+//
+// MUHIMU: ukubwa huu LAZIMA uwiane na ast_aina[]/ast_idadi
+// (msambazaji.swa) — kvn_visited inafahirishwa na node ID ZILEZILE
+// za AST, si idadi yake ya kujitegemea. Ilikuwa 65536 (sawa na AST
+// ya zamani), ikaongezwa hadi 1,048,576 pamoja na AST wakati mradi
+// halisi (Dominion, mchezo.swa) ulipovuka 65536 nodi — bila
+// kuiongeza pamoja na AST, node za juu zingerukwa KIMYA hapa
+// (kinga ya ziada ikirudi mapema), zikisababisha vigezo vya ndani
+// visivyokusanywa kikamilifu kwa kazi kubwa.
+N32 kvn_visited[1048576];
 N32 kvn_gen = 1;
 N32 kvn_idadi = 0;
 W0 kusanya_vigeu_vya_ndani(N32 node) {
     kvn_idadi = kvn_idadi + 1;
     kama (kvn_idadi > 50000) { rudisha; }
     kama (node < 0) { rudisha; }  // -1 na alama (mf. -777777) si nodi
-    kama (node >= 65536) { rudisha; }  // kinga ya ziada
+    kama (node >= 1048576) { rudisha; }  // kinga ya ziada
     kama (kvn_visited[node] == kvn_gen) { rudisha; }
     kvn_visited[node] = kvn_gen;
     N32 aina = ast_aina[node];
