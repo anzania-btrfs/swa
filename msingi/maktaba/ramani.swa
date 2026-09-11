@@ -25,7 +25,15 @@ W0 ramani_weka(Ramani* r, N32 funguo, N32 thamani) {
     kama (r->idadi >= r->uwezo) {
         rudisha;
     }
+    // lugha-swa/swa#187: `%` hufuata alama ya funguo (kama C) -- funguo
+    // hasi (kawaida kutoka heshi_mfuatano, ambayo inaweza kufurika hadi
+    // N32 hasi) hutoa idx hasi, ikisababisha ufikiaji WA NJE YA MIPAKA
+    // ya r->funguo[idx]/r->thamani[idx] -- uharibifu wa kimya wa rundo
+    // unaojitokeza baadaye kwenye wito usiohusiana. Hesabu sahihi ya
+    // "modulo isiyo hasi": idx + uwezo, si 0 - idx (mfano: funguo=-5,
+    // uwezo=16 -> idx=-5 -> idx+16=11, ndani ya mipaka [0,16)).
     N32 idx = funguo % r->uwezo;
+    kama (idx < 0) { idx = idx + r->uwezo; }
     N32 kaburi = -1;
     N32 hatua = 0;
     wakati (hatua < r->uwezo) {
@@ -56,7 +64,9 @@ W0 ramani_weka(Ramani* r, N32 funguo, N32 thamani) {
 }
 
 N32 ramani_pata(Ramani* r, N32 funguo) {
+    // lugha-swa/swa#187 -- angalia maelezo kamili kwenye ramani_weka.
     N32 idx = funguo % r->uwezo;
+    kama (idx < 0) { idx = idx + r->uwezo; }
     N32 hatua = 0;
     wakati (hatua < r->uwezo) {
         kama (r->funguo[idx] == funguo) {
@@ -72,7 +82,11 @@ N32 ramani_pata(Ramani* r, N32 funguo) {
 }
 
 N32 ramani_ina(Ramani* r, N32 funguo) {
+    // lugha-swa/swa#187 -- angalia maelezo kamili kwenye ramani_weka.
+    // (Site hii haikutajwa kwenye ripoti ya awali ya #187, lakini ina
+    // kasoro ile ile hasa.)
     N32 idx = funguo % r->uwezo;
+    kama (idx < 0) { idx = idx + r->uwezo; }
     N32 hatua = 0;
     wakati (hatua < r->uwezo) {
         kama (r->funguo[idx] == funguo) {
@@ -88,7 +102,10 @@ N32 ramani_ina(Ramani* r, N32 funguo) {
 }
 
 W0 ramani_futa(Ramani* r, N32 funguo) {
+    // lugha-swa/swa#187 -- angalia maelezo kamili kwenye ramani_weka.
+    // (Site hii pia haikutajwa kwenye ripoti ya awali ya #187.)
     N32 idx = funguo % r->uwezo;
+    kama (idx < 0) { idx = idx + r->uwezo; }
     N32 hatua = 0;
     wakati (hatua < r->uwezo) {
         kama (r->funguo[idx] == funguo) {
