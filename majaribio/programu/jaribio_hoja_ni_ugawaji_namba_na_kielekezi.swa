@@ -1,0 +1,39 @@
+// Kupitisha hoja ni KUGAWA kwa paramu: namba <-> kielekezi ina maana ile
+// ile kama kwenye tangazo na ugawaji (Nodi* p = 5; n64 v = p;) --
+// kielekezi hupokea thamani ya namba ikipanuliwa kwa ishara ya aina
+// yake (n32 -1 -> anwani ya biti zote), namba hupokea biti za chini
+// za anwani. Zamani hoja pekee ilikataa f(5), f(0), f(kigeu).
+//
+// Kila nafasi (rejesta: hoja 1; rafu: hoja 8) hujazwa kwanza kwa -1
+// au 0 kinyume na thamani inayotarajiwa, ili uandishi wa biti 32 tu
+// au upanuzi usio sahihi uonekane.
+n64 kama_n64(n8* p) { n64 v = p; rudisha v; }
+n64 ya_nane(n64 a, n64 b, n64 c, n64 d, n64 e, n64 f, n64 g, n8* h) { n64 v = h; rudisha v; }
+n32 kama_n32(n32 x) { rudisha x; }
+n32 jaza(n64 a) { rudisha 0; }
+n32 jaza8(n64 a, n64 b, n64 c, n64 d, n64 e, n64 f, n64 g, n64 h) { rudisha 0; }
+
+n32 main() {
+    n32 makosa = 0;
+    n64 yote = 0 - 1;
+    n32 hasi = -1;
+    n64 kubwa = 4294967298;
+
+    jaza(yote);
+    kama (kama_n64(5) != 5) { makosa = makosa + 1; }
+    jaza(yote);
+    kama (kama_n64(0) != 0) { makosa = makosa + 1; }
+    jaza(yote);
+    kama (kama_n64(hasi) != -1) { makosa = makosa + 1; }
+    jaza(0);
+    kama (kama_n64(kubwa) != 4294967298) { makosa = makosa + 1; }
+
+    jaza8(yote, yote, yote, yote, yote, yote, yote, yote);
+    kama (ya_nane(1, 2, 3, 4, 5, 6, 7, 5) != 5) { makosa = makosa + 1; }
+    jaza8(0, 0, 0, 0, 0, 0, 0, 0);
+    kama (ya_nane(1, 2, 3, 4, 5, 6, 7, hasi) != -1) { makosa = makosa + 1; }
+
+    n8* q = kubwa;
+    kama (kama_n32(q) != 2) { makosa = makosa + 1; }
+    rudisha makosa;
+}
