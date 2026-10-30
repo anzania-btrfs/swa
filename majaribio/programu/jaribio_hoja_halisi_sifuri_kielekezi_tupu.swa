@@ -1,0 +1,41 @@
+// Halisi 0 kama hoja ya kielekezi ni kielekezi tupu -- sawa kabisa na
+// "Nodi* p = 0;", "p = 0;", "p == 0" na "rudisha 0;" ambazo zote
+// zilikubaliwa tayari. Hoja pekee ndiyo iliyokuwa ikiikataa: maana
+// ilikuwepo kwenye lugha lakini utendaji haukuwa sawa nayo.
+//
+// Muhimu wakati wa kukimbia: halisi ni n32, kielekezi ni baiti 8.
+// Thamani inayofika lazima iwe 0 KAMILI ya biti 64 -- kwenye rejesta
+// (hoja ya 1) na kwenye rafu (hoja ya 8). Kwanza tunajaza nafasi hizo
+// kwa takataka (wito uliotangulia wenye thamani kubwa), kisha
+// tunapitisha 0 na kuthibitisha kielekezi ni tupu kweli. Takataka ni
+// -1 (biti zote 64 zimewashwa) kupitia kazi zenye umbo lile lile lakini
+// paramu za n64 -- anwani halisi ya mfuatano haitoshi, biti zake 32 za
+// juu tayari ni sifuri, na uandishi wa biti 32 tu ungepita bila kuonekana.
+muundo Nodi {
+    n32 v;
+};
+
+n32 ni_tupu(Nodi* n) {
+    kama (n == 0) { rudisha 1; }
+    rudisha 0;
+}
+
+n32 ya_nane_ni_tupu(n64 a, n64 b, n64 c, n64 d, n64 e, n64 f, n64 g, n8* h) {
+    kama (h == 0) { rudisha 1; }
+    rudisha 0;
+}
+
+n32 jaza_moja(n64 a) { rudisha 0; }
+n32 jaza_nane(n64 a, n64 b, n64 c, n64 d, n64 e, n64 f, n64 g, n64 h) { rudisha 0; }
+
+n32 main() {
+    n32 makosa = 0;
+    n64 yote = 0 - 1;
+
+    jaza_moja(yote);
+    kama (ni_tupu(0) != 1) { makosa = makosa + 1; }
+
+    jaza_nane(yote, yote, yote, yote, yote, yote, yote, yote);
+    kama (ya_nane_ni_tupu(yote, yote, yote, yote, yote, yote, yote, 0) != 1) { makosa = makosa + 2; }
+    rudisha makosa;
+}

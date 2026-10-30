@@ -695,12 +695,21 @@ n32 mkaguzi_kagua_wito(n32 node) {
                             // kielekezi kwa paramu ya namba bado
                             // vinakataliwa (5). Mwili wa kama ni tupu —
                             // usiweke kigezo hapa (ukomo wa 64).
+                            //
+                            // Halisi 0 kwa paramu ya kielekezi ni kielekezi
+                            // tupu -- kama ilivyo tayari kwenye tangazo
+                            // (Nodi* p = 0;), ugawaji, ulinganishi na
+                            // rudisha. HALISI 0 PEKEE: f(5) na kigeu cha
+                            // namba bado vinakataliwa (mdudu wa 2026-09-01).
+                            n32 ni_tupu_halisi = 0;
+                            kama (param_mshale == 1 && ast_aina[a] == 4 && ast_thamani[a] == 0) { ni_tupu_halisi = 1; }
                             kama (arg_mshale == 1 && param_mshale == 0 && mkaguzi_ni_anwani_ya_kazi_kwa_param(a, param_enc)) {
+                            } sivyo { kama (ni_tupu_halisi) {
                             } sivyo {
                                 andika_stderr("kosa [%s]: aina ya hoja #%d kwa '%s' hailingani (kielekezi dhidi ya namba: arg=%d, param=%d)\n",
                                 mkaguzi_kazi_sasa, hoja_idadi + 1, jina, arg_enc_halisi, param_enc);
                                 mkaguzi_makosa = mkaguzi_makosa + 1;
-                            }
+                            } }
                         }
                     }
                 }
