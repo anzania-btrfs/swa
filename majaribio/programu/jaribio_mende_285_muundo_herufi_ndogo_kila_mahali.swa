@@ -1,0 +1,63 @@
+// lugha-swa/swa#285 -- jaribio la kudumu: jina la muundo la herufi
+// ndogo halikutambuliwa kama aina popote (kigeu cha ndani, hoja, aina
+// ya kurudi, shamba, kigezo cha ulimwengu). ni_aina_tokeni ilikubali
+// tu herufi KUBWA ya kwanza au muundo wa aina ya msingi (n32, d64...).
+//
+// Rekebisho: msambazaji hukusanya majina yote ya "muundo <jina>"
+// KABLA ya uchanganuzi, hivyo jina la herufi ndogo linatambuliwa hata
+// likitumika kabla ya ufafanuzi wake -- kama herufi kubwa daima.
+// Jaribio hili linatumia kazi KABLA ya muundo wake, muundo
+// unaojirejelea (orodha iliyounganishwa), na mashamba ya upana
+// mchanganyiko ili kuthibitisha ofseti ni sahihi.
+husisha { msingi/maktaba/kumbukumbu.swa }
+
+// Matumizi kabla ya ufafanuzi wa muundo (wito wa mbele).
+nodi* nodi_unda(n32 thamani, nodi* ijayo) {
+    nodi* n = tenga(ukubwa(nodi));
+    n->thamani = thamani;
+    n->ijayo = ijayo;
+    rudisha n;
+}
+
+muundo nodi {
+    n32 thamani;
+    nodi* ijayo;
+};
+
+muundo rekodi {
+    n8 alama;
+    n64 kubwa;
+    n16 kati;
+    nodi* kichwa;
+};
+
+rekodi* rekodi_kuu = 0;
+
+n32 jumla(nodi* n) {
+    n32 s = 0;
+    wakati (n != 0) {
+        s = s + n->thamani;
+        n = n->ijayo;
+    }
+    rudisha s;
+}
+
+n32 main() {
+    n32 makosa = 0;
+    nodi* tupu = 0;
+    nodi* orodha = nodi_unda(1, nodi_unda(2, nodi_unda(3, tupu)));
+    kama (jumla(orodha) != 6) { makosa = makosa + 1; }
+
+    rekodi* r = tenga(ukubwa(rekodi));
+    r->alama = 7;
+    r->kubwa = 4294967296;
+    r->kati = 300;
+    r->kichwa = orodha;
+    rekodi_kuu = r;
+    kama (rekodi_kuu->alama != 7) { makosa = makosa + 1; }
+    kama (rekodi_kuu->kubwa != 4294967296) { makosa = makosa + 1; }
+    kama (rekodi_kuu->kati != 300) { makosa = makosa + 1; }
+    kama (jumla(rekodi_kuu->kichwa) != 6) { makosa = makosa + 1; }
+
+    rudisha makosa;
+}
