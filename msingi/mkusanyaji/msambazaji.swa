@@ -443,6 +443,9 @@ n32 ni_aina_tokeni(Tokeni * t) {
     // kunavunja kujikusanya kwa hazina hii YENYEWE. Angalia maelezo
     // kamili kwenye ni_aina_msingi_pia_ndogo.
     kama (ni_aina_msingi_pia_ndogo(t->mwanzo, t->urefu)) { rudisha 1; }
+    // Jina la muundo la herufi ndogo (#285) -- tangazo lake lolote
+    // kwenye chanzo, hata kama liko BAADA ya hapa.
+    kama (ni_jina_la_muundo_awali(t)) { rudisha 1; }
     rudisha 0;
 }
 
@@ -513,6 +516,7 @@ n32 ukubwa_hoja = 0;
 // (statement dispatch), si kila mahali kitambulisho kinapoonekana.
 n32 ni_jina_la_aina(Tokeni* t) {
     kama (ni_aina_msingi_pia_ndogo(t->mwanzo, t->urefu)) { rudisha 1; }
+    kama (ni_jina_la_muundo_awali(t)) { rudisha 1; }
     n32 mi = 0;
     wakati (mi < muundo_ukubwa_idadi) {
         n8* mj = muundo_ukubwa_jina[mi];
@@ -2277,6 +2281,69 @@ n8* muundo_ukubwa_jina[1024];
 n32 muundo_ukubwa_val[1024];
 n32 muundo_ukubwa_idadi = 0;
 
+// Majina YOTE ya miundo kwenye chanzo, yaliyokusanywa KABLA ya
+// uchanganuzi (kusanya_majina_ya_miundo). Akiba ya ukubwa hapo juu
+// hujazwa tu muundo unapokamilika -- haitoshi kwa jina la herufi
+// ndogo linalotumika kabla ya ufafanuzi wake (wito wa mbele, au
+// "nodi* ijayo;" ndani ya muundo nodi wenyewe). Jina la herufi
+// kubwa halihitaji hii: ni_aina_tokeni hulikubali kwa herufi yake
+// ya kwanza tu (#285). Vielekezi ni ndani ya chanzo chenyewe.
+n8* muundo_jina_awali_mwanzo[1024];
+n32 muundo_jina_awali_urefu[1024];
+n32 muundo_jina_awali_idadi = 0;
+
+n32 ni_jina_la_muundo_awali(Tokeni* t) {
+    n32 mi = 0;
+    wakati (mi < muundo_jina_awali_idadi) {
+        kama (muundo_jina_awali_urefu[mi] == t->urefu) {
+            n8* mj = muundo_jina_awali_mwanzo[mi];
+            n32 j = 0;
+            wakati (j < t->urefu && mj[j] == t->mwanzo[j]) { j = j + 1; }
+            kama (j == t->urefu) { rudisha 1; }
+        }
+        mi = mi + 1;
+    }
+    rudisha 0;
+}
+
+// Pita chanzo chote mara moja kwa msomaji (hauna athari za pembeni)
+// ukisajili kila "muundo <jina>", kisha rejesha hali ya msambazaji.
+// Neno muhimu baada ya "muundo" (mf. "muundo sivyo") HALISAJILIWI --
+// changanua_muundo hulikataa kwa sauti baadaye; likisajiliwa lingekuwa
+// "aina" kila mahali na kuvuruga uchanganuzi wa taarifa.
+w0 kusanya_majina_ya_miundo(Msambazaji* p) {
+    n64 nafasi_iliyohifadhiwa = p->msomaji.nafasi;
+    n32 mstari_uliohifadhiwa = p->msomaji.mstari;
+    n32 safu_iliyohifadhiwa = p->msomaji.safu;
+    Tokeni sasa_iliyohifadhiwa;
+    sasa_iliyohifadhiwa.aina = p->sasa.aina;
+    sasa_iliyohifadhiwa.mwanzo = p->sasa.mwanzo;
+    sasa_iliyohifadhiwa.urefu = p->sasa.urefu;
+    sasa_iliyohifadhiwa.mstari = p->sasa.mstari;
+    sasa_iliyohifadhiwa.safu = p->sasa.safu;
+    Tokeni ifuatayo_iliyohifadhiwa;
+    ifuatayo_iliyohifadhiwa.aina = p->inayofuata.aina;
+    ifuatayo_iliyohifadhiwa.mwanzo = p->inayofuata.mwanzo;
+    ifuatayo_iliyohifadhiwa.urefu = p->inayofuata.urefu;
+    ifuatayo_iliyohifadhiwa.mstari = p->inayofuata.mstari;
+    ifuatayo_iliyohifadhiwa.safu = p->inayofuata.safu;
+    wakati (p->sasa.urefu != 0) {
+        kama (neno_ni(&p->sasa, "muundo") && p->inayofuata.aina == TOKENI_KITAMBULISHO) {
+            kama (tokeni_ni_muhimu(&p->inayofuata) == 0 && muundo_jina_awali_idadi < 1024) {
+                muundo_jina_awali_mwanzo[muundo_jina_awali_idadi] = p->inayofuata.mwanzo;
+                muundo_jina_awali_urefu[muundo_jina_awali_idadi] = p->inayofuata.urefu;
+                muundo_jina_awali_idadi = muundo_jina_awali_idadi + 1;
+            }
+        }
+        sogeza(p);
+    }
+    p->msomaji.nafasi = nafasi_iliyohifadhiwa;
+    p->msomaji.mstari = mstari_uliohifadhiwa;
+    p->msomaji.safu = safu_iliyohifadhiwa;
+    p->sasa = sasa_iliyohifadhiwa;
+    p->inayofuata = ifuatayo_iliyohifadhiwa;
+}
+
 // Tafuta ukubwa wa muundo uliotangazwa tayari (kutoka akiba)
 n32 ukubwa_wa_muundo_msambazaji(n8* jina) {
     n32 mi = 0;
@@ -2425,6 +2492,7 @@ n32 changanua_muundo(Msambazaji* p) {
 n32 changanua(Msambazaji* p) {
     n32 kwanza = -1;
     n32 prev = -1;
+    kusanya_majina_ya_miundo(p);
 
     wakati (p->sasa.urefu != 0) {
         n32 node = -1;
