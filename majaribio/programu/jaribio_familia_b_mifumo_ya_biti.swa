@@ -1,0 +1,73 @@
+// Familia b ni MIFUMO YA BITI (bendera, maski) -- si nambari wala
+// boolean. Jaribio hili linathibitisha:
+//   - & | ^ ~ << >> == != zinafanya kazi; << >> zinakubali idadi ya
+//     n32 upande wa kulia;
+//   - thamani inayoingia huhifadhi biti za chini za upana wake
+//     (b8 = 300 -> 44);
+//   - b1 ni biti MOJA kwa kila njia ya kuhifadhi: tangazo, ugawaji,
+//     hoja (rejesta na rafu), rudisha, ulimwengu, sehemu ya muundo,
+//     kipengele cha safu, ~ na <<.
+// Hesabu na mpangilio kwenye b vinakataliwa -- angalia majaribio ya
+// jaribio_familia_b_*_kata.
+husisha { msingi/maktaba/kumbukumbu.swa }
+
+muundo Bendera {
+    b1 hai;
+    b8 maski;
+    b1 imefungwa;
+};
+
+b1 ulimwengu_moja = 5;
+b1 ulimwengu_sifuri = 6;
+
+n32 soma_hoja(b1 x) { kama (x == 1) { rudisha 1; } rudisha 0; }
+n32 soma_ya_nane(n64 a, n64 b, n64 c, n64 d, n64 e, n64 f, n64 g, b1 h) { kama (h == 1) { rudisha 1; } rudisha 0; }
+b1 rudisha_tatu() { rudisha 3; }
+
+n32 main() {
+    n32 makosa = 0;
+    b8 a = 12;
+    b8 b = 10;
+    kama ((a & b) != 8) { makosa = makosa + 1; }
+    kama ((a | b) != 14) { makosa = makosa + 1; }
+    kama ((a ^ b) != 6) { makosa = makosa + 1; }
+    b8 k = ~a;
+    kama (k != 243) { makosa = makosa + 1; }
+    n32 hatua = 2;
+    b8 s = a << hatua;
+    kama (s != 48) { makosa = makosa + 1; }
+    b8 r = a >> hatua;
+    kama (r != 3) { makosa = makosa + 1; }
+    b8 juu = 300;
+    kama (juu != 44) { makosa = makosa + 1; }
+
+    b1 x = 5;
+    kama (x != 1) { makosa = makosa + 1; }
+    x = 2;
+    kama (x != 0) { makosa = makosa + 1; }
+    b1 y = 1;
+    b1 kinyume = ~y;
+    kama (kinyume != 0) { makosa = makosa + 1; }
+    kama (~y) { makosa = makosa + 1; }
+    b1 hamisha = y << 1;
+    kama (hamisha != 0) { makosa = makosa + 1; }
+
+    kama (soma_hoja(7) != 1) { makosa = makosa + 1; }
+    kama (soma_hoja(4) != 0) { makosa = makosa + 1; }
+    kama (soma_ya_nane(1, 2, 3, 4, 5, 6, 7, 9) != 1) { makosa = makosa + 1; }
+    b1 kurudi = rudisha_tatu();
+    kama (kurudi != 1) { makosa = makosa + 1; }
+    kama (ulimwengu_moja != 1) { makosa = makosa + 1; }
+    kama (ulimwengu_sifuri != 0) { makosa = makosa + 1; }
+    Bendera* f = tenga(ukubwa(Bendera));
+    f->hai = 5;
+    f->maski = 300;
+    f->imefungwa = 2;
+    kama (f->hai != 1) { makosa = makosa + 1; }
+    kama (f->maski != 44) { makosa = makosa + 1; }
+    kama (f->imefungwa != 0) { makosa = makosa + 1; }
+    b1 safu[4];
+    safu[2] = 3;
+    kama (safu[2] != 1) { makosa = makosa + 1; }
+    rudisha makosa;
+}

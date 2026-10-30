@@ -1257,7 +1257,7 @@ n32 aina_ya_usemi(n32 node) {
     n32 a = ast_aina[node];
     kama (a == 4) { rudisha ast_nne[node]; }  // halisi kamili: enc iko ast_nne
     kama (a == 45) { rudisha ast_nne[node]; }  // desimali halisi: d64 (832)
-    kama (a >= 20) { kama (a <= 25) { rudisha 1025; } }  // ulinganishi: matokeo ni B1 kwenye eax
+    kama (a >= 20) { kama (a <= 25) { rudisha ENC_ULINGANISHI; } }  // ulinganishi: 0/1 kwenye eax
     kama (a == 8) {
         // Wito: aina ya kurudi ya kazi iliyosajiliwa na mkaguzi
         n8* jina = ast_pool + ast_jina_off[ast_kushoto[node]];
@@ -1325,8 +1325,8 @@ w0 badili_mpaka_wa_desimali(n32 node, n32 enc_lengwa) {
             }
             rudisha;
         }
-        kama (enc == 1025) {
-            // B1 (boole): matokeo ya ulinganishi yako eax (0 au 1)
+        kama (enc == ENC_ULINGANISHI) {
+            // matokeo ya ulinganishi yako eax (0 au 1)
             kama (ukubwa_kutoka_enc(enc_lengwa) >= 8) { andika_cvtsi2sd_xmm0_eax(); }
             sivyo { andika_cvtsi2ss_xmm0_eax(); }
             rudisha;
@@ -1589,6 +1589,12 @@ n32 ni_aina_ya_64bit(n32 enc) {
 
 // Rudisha 1 ikiwa encoding ni bila ishara (familia A=2, B=4, W=5)
 // Aina hizi hutumia div (si idiv), shr (si sar), setb/seta (si setl/setg)
+// Alama ya ndani ya matokeo ya ulinganishi (== != < > <= >=): 0 au 1
+// kwenye eax. SI aina ya lugha, na SI familia b -- familia b ni mifumo
+// ya biti (angalia B1_ENC kwenye mkaguzi.swa). Thamani 1025 ni isiyo
+// sawa kimakusudi: usemi_ni_kielekezi huitofautisha kwa aina ya nodi.
+n32 ENC_ULINGANISHI = 1025;
+
 n32 ni_bila_ishara_enc(n32 enc) {
     kama (enc == 0) { rudisha 0; }
     n32 familia = (enc / 256) % 256;
@@ -4484,7 +4490,7 @@ w0 uzalishaji_wito(n32 node, n32 kazi_node) {
             // mkaguzi_kagua_usemi() kwenye mkaguzi.swa -- ulinganishi
             // hupita kupitia mantiki ile ile ya kupandisha aina
             // inayotumika na hesabu), SI aina ya MATOKEO ya
-            // ulinganishi (ambayo NI DAIMA B1/boolean, 1025 -- angalia
+            // ulinganishi (ambayo NI DAIMA 0/1, ENC_ULINGANISHI -- angalia
             // aina_ya_usemi() juu ya faili hili, ambayo tayari ina
             // ubaguzi huu kwa matumizi mengine). Bila ubaguzi huu
             // hapa pia, hoja ya ulinganishi (k.m.
@@ -4496,7 +4502,7 @@ w0 uzalishaji_wito(n32 node, n32 kazi_node) {
             // zilizofuata (hoja ya mfuatano ikaishia kwenye rejesta
             // isiyo sahihi, ikisoma thamani ya zamani isiyohusiana --
             // "anwani za string literal zinazochanganyikiwa" ya #295).
-            kama (ast_aina[a] >= 20 && ast_aina[a] <= 25) { hoja_enc[hoja_idadi] = 1025; }
+            kama (ast_aina[a] >= 20 && ast_aina[a] <= 25) { hoja_enc[hoja_idadi] = ENC_ULINGANISHI; }
             hoja_idadi = hoja_idadi + 1;
         } sivyo {
             // Ulinzi wa ziada: mkaguzi.swa tayari inakataa wito wenye
@@ -5323,7 +5329,7 @@ w0 andika_ongea_kielekezi_kipengele(n32 enc_kielekezi, n32 enc_namba) {
 
 // Usemi ni kielekezi halisi? Matokeo ya ulinganishi (aina 20-25) na
 // halisi (aina 4 na 45) SI kielekezi: enc yao inaweza kuwa isiyo
-// sawa (1025 = B1 kwa ulinganishi) lakini thamani yake ni namba.
+// sawa (ENC_ULINGANISHI) lakini thamani yake ni namba.
 n32 usemi_ni_kielekezi(n32 node) {
     kama (node == -1) { rudisha 0; }
     n32 a = ast_aina[node];
@@ -9800,7 +9806,10 @@ w0 uzalishaji_kuu(n32 mzizi, n32 hali_exe) {
                     // Andika baiti za thamani (andika_thamani_ya_data
                     // hutoa sz za kwanza — n32 ya zamani iliandika nusu
                     // ya juu kwa ishara; sasa thamani yenyewe ni n64).
-                    andika_thamani_ya_data(thamani_isiyobadilika(init_node), sz);
+                    n64 thamani_data = thamani_isiyobadilika(init_node);
+                    // b1 ni biti moja: biti ya chini pekee (kama mkaguzi_funga_b1)
+                    kama (enc == B1_ENC) { thamani_data = ((thamani_data % 2) + 2) % 2; }
+                    andika_thamani_ya_data(thamani_data, sz);
                 }
                 }
                 }

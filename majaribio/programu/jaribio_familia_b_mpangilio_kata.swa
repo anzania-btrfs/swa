@@ -1,0 +1,8 @@
+// Mpangilio (< > <= >=) hauna maana kwa mifumo ya biti -- unakataliwa.
+// Biti hulinganishwa kwa == na != pekee.
+n32 main() {
+    b8 a = 5;
+    b8 b = 6;
+    kama (a < b) { rudisha 1; }
+    rudisha 0;
+}

@@ -199,15 +199,16 @@ jaribio_mende_kata_operanda_iliyopotea.
 | `N64` | Nambari kamili yenye ishara, baiti 8 |
 | `W0` | Bila thamani (void) — kwa kazi tu. Kilichopimwa 2026-09-04: PARAMU ya W0 (`N32 f(W0 x)`) inakataliwa kwa sauti kwenye minyororo yote miwili ("parameta ya W0 haikubaliki — W0 ni kwa kazi tu" kwenye mbegu; "kigezo 'x' cha W0" kwenye mkaguzi). Kigeu cha NDANI cha W0 chenye kianzio cha thamani (`W0 x = 5;`) kinakataliwa kwa sauti kwenye mnyororo wa uzalishaji ("kigeu 'x' cha W0 chenye kianzio — W0 ni kwa kazi tu"); mbegu bado inakubali kimya — inarekebishwa (mgandisho ujao wa mbegu). Tangazo tupu `W0 x;`, ugawaji wa baadaye `x = 5;`, na W0 ya ulimwengu bado wanakubaliwa kimya kwenye minyororo yote miwili. W0 katika usemi (mf. `y = x + 1`): uzalishaji unakataa kwa sauti; mbegu inakubali kimya na kuihesabu kama namba. Matokeo ya kazi ya W0 kama thamani: uzalishaji unakataa kwa sauti; mbegu inakubali kimya |
 | `D64` | Desimali, baiti 8 — mpaka wake na nambari kamili umefungwa; mabaki yaliyopimwa, angalia 2.3 |
-| `B1` | Boolean — ya ndani; matokeo ya ulinganisho na mantiki |
+| `b1` … `b64` | Mifumo ya biti (bendera, maski) — si nambari. Oparesheni: `& \| ^ ~ << >> == !=` pekee; `+ - * / %`, `< > <= >=` na `-x` zinakataliwa kwa sauti. Thamani inayoingia huhifadhi biti za chini za upana wake (`b8 x = 300` ni 44; `b1` ni biti moja: `b1 x = 5` ni 1). Upande wa kulia wa `<<`/`>>` ni idadi, namba kamili yoyote. |
 | `T*` | Kielekezi kwa aina T |
 | `T[n]` | Safu ya vitu n vya aina T |
 | `muundo` | Muundo uliotangazwa na mtumiaji |
 
 Familia za nambari ni N (kamili yenye ishara), A (asili/bila ishara),
-D (desimali), B (boolean/biti), na W (upana wa mashine; W0 = void).
+D (desimali), B (mifumo ya biti — angalia jedwali), na W (upana wa mashine; W0 = void).
+Matokeo ya ulinganisho (`==`, `<`, ...) na `&&`/`||` ni **n32** yenye thamani 0 au 1 — si aina ya familia b.
 Upana unaosaidiwa na kufanya kazi kwa usahihi ni 8, 16, 32 na 64
-pekee (D32/D64 kwa desimali). Kilichopimwa (2026-09-04): upana
+pekee (D32/D64 kwa desimali; pia b1 -- biti moja). Kilichopimwa (2026-09-04): upana
 mwingine wowote (N128, A128, D80, A3, N7, n.k.) unakataliwa kwa
 SAUTI kwenye minyororo yote miwili ("aina isiyojulikana") —
 ukubali wa kimya wa zamani na poromoko la mbegu havipo tena.
