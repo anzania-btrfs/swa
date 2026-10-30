@@ -121,7 +121,9 @@ try:
             # baiti kimakosa ikiwa hatuchujii kwa mstari sahihi).
             baiti = []
             for ln in out.splitlines():
-                if not re.match(r"^[0-9a-f]{8}:", ln.strip()):
+                # QEMU mpya huandika anwani kwa tarakimu 8 ("000b8000:"),
+                # za zamani (mfano kwenye CI) kwa 16 ("00000000000b8000:").
+                if not re.match(r"^[0-9a-f]{8,16}:", ln.strip()):
                     continue
                 baiti.extend(int(x, 16) for x in re.findall(r"0x([0-9a-f]{2})", ln))
             if len(baiti) < n:
