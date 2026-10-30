@@ -1324,6 +1324,13 @@ n32 mkaguzi_kagua_usemi(n32 node) {
         // Modulo ya kielekezi inakataliwa kwa sauti (rekodi 8.9)
         mkaguzi_kataa_modulo_ya_kielekezi(aina, lhs_enc, rhs_enc);
         ast_thamani[node] = enc_ya_op;
+        // Ulinganishi (20-25: == != < > <= >=): ast_thamani hubaki aina
+        // ya OPERANDI -- mzalishaji huisoma kuchagua upana wa cmp
+        // (cmp ya 64 kwa n64/kielekezi, ucomisd kwa d64). Lakini aina
+        // ya MATOKEO ni n32 (0 au 1) daima. Zamani enc ya operandi
+        // ilirudishwa kwa mpigaji: f(k != 0) ambapo k ni muundo*
+        // ilikataliwa kama "kielekezi dhidi ya namba" (#296).
+        kama (aina >= 20 && aina <= 25) { rudisha 288; }
         rudisha enc_ya_op;
     }
 
