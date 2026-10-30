@@ -124,10 +124,10 @@ Mfano huu hukusanywa na kuendeshwa kwenye CI kila PR (`gharama/jaribu-mifano.sh`
 
 | Kipimo | Hali |
 |---|---|
-| Mnyororo wa majaribio (mbegu + stage1, fixpoint) | 458 / 458 |
-| Mkimbiaji wa majaribio wa Swa asili (bila bash) | 441 / 441 |
-| WebAssembly | 36 / 36 |
-| `--kernel` (ring 0) | 15 / 15 |
+| Mnyororo wa majaribio (mbegu + stage1, fixpoint) | [yote yanapita](https://github.com/lugha-swa/swa/actions/workflows/ci.yml) |
+| Mkimbiaji wa majaribio wa Swa asili (bila bash) | [yote yanapita](https://github.com/lugha-swa/swa/actions/workflows/ci.yml) |
+| WebAssembly | [yote yanapita](https://github.com/lugha-swa/swa/actions/workflows/ci.yml) |
+| `--kernel` (ring 0) | [yote yanapita](https://github.com/lugha-swa/swa/actions/workflows/ci.yml) |
 | Kujikusanya | `stage2 == stage3`, sawa kwa baiti |
 | Mbegu (mzizi wa uaminifu) | hujengwa na kujaribiwa kabla ya kila kugandishwa |
 
