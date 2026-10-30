@@ -1,0 +1,43 @@
+// ukubwa(jina) kwa kila familia, kila upana, na kwa vigeu. Zamani
+// ukubwa ilijua n8..n64 na d32/d64 pekee; jina lingine lolote
+// lilirudisha 4 KIMYA -- ukubwa(a64) = 4 (tenga ingetenga nusu ya
+// nafasi), ukubwa(n32 s[4]) = 4, ukubwa(n64 x) = 4.
+muundo M {
+    n64 a;
+    n8 b;
+};
+
+n64 ulimwengu_safu[5];
+
+n32 paramu(n64 p, n16 q) {
+    n32 k = 0;
+    kama (ukubwa(p) != 8) { k = k + 1; }
+    kama (ukubwa(q) != 2) { k = k + 1; }
+    rudisha k;
+}
+
+n32 main() {
+    n32 makosa = 0;
+    kama (ukubwa(n8) != 1) { makosa = makosa + 1; }
+    kama (ukubwa(n64) != 8) { makosa = makosa + 1; }
+    kama (ukubwa(a16) != 2) { makosa = makosa + 1; }
+    kama (ukubwa(a64) != 8) { makosa = makosa + 1; }
+    kama (ukubwa(d32) != 4) { makosa = makosa + 1; }
+    kama (ukubwa(d64) != 8) { makosa = makosa + 1; }
+    kama (ukubwa(b1) != 1) { makosa = makosa + 1; }
+    kama (ukubwa(b8) != 1) { makosa = makosa + 1; }
+    kama (ukubwa(b64) != 8) { makosa = makosa + 1; }
+    kama (ukubwa(M) != 9) { makosa = makosa + 1; }
+
+    n32 s[4];
+    n64 x = 1;
+    n8* p = 0;
+    M ms[2];
+    kama (ukubwa(s) != 16) { makosa = makosa + 1; }
+    kama (ukubwa(x) != 8) { makosa = makosa + 1; }
+    kama (ukubwa(p) != 8) { makosa = makosa + 1; }
+    kama (ukubwa(ms) != 18) { makosa = makosa + 1; }
+    kama (ukubwa(ulimwengu_safu) != 40) { makosa = makosa + 1; }
+    makosa = makosa + paramu(1, 2);
+    rudisha makosa;
+}
