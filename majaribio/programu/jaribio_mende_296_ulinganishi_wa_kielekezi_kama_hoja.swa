@@ -1,0 +1,55 @@
+// lugha-swa/swa#296 -- jaribio la kudumu: ulinganishi wenye operandi
+// ya kielekezi (muundo*, n8*) uliopitishwa MOJA KWA MOJA kama hoja ya
+// n32 ulikataliwa ("kielekezi dhidi ya namba"). mkaguzi_kagua_usemi
+// ilirudisha aina ya OPERANDI ya ulinganishi kwa mpigaji, si aina ya
+// MATOKEO (n32, 0 au 1).
+//
+// Rekebisho linarudisha n32 kwa mpigaji LAKINI linaacha ast_thamani
+// ya nodi ikiwa aina ya operandi -- mzalishaji huitumia kuchagua
+// upana wa cmp. Kwa hiyo jaribio hili pia linathibitisha kwamba
+// ulinganishi wa n64 bado unaangalia biti zote 64, na wa d64 bado ni
+// wa desimali (si kukatwa hadi n32).
+husisha { msingi/maktaba/kumbukumbu.swa }
+
+muundo Kitu {
+    n32 x;
+};
+
+n32 makosa = 0;
+
+w0 thibitisha(n32 sharti, n32 tarajiwa) {
+    kama (sharti != tarajiwa) { makosa = makosa + 1; }
+}
+
+n32 kitu_kipo(Kitu* k) {
+    rudisha k != 0;
+}
+
+n32 main() {
+    Kitu* k = tenga(ukubwa(Kitu));
+    Kitu* tupu = 0;
+    thibitisha(k != 0, 1);
+    thibitisha(k == 0, 0);
+    thibitisha(tupu == 0, 1);
+    thibitisha(kitu_kipo(k), 1);
+    thibitisha(kitu_kipo(tupu), 0);
+
+    n32 r = k != 0;
+    thibitisha(r, 1);
+
+    n8* s = "abc";
+    thibitisha(s != 0, 1);
+
+    // Biti za juu pekee ndizo zinatofautiana: cmp ya 32 ingesema sawa.
+    n64 a = 4294967301;
+    n64 b = 5;
+    thibitisha(a == b, 0);
+    thibitisha(a > b, 1);
+
+    d64 x = 0.5;
+    d64 y = 0.25;
+    thibitisha(x > y, 1);
+    thibitisha(x == y, 0);
+
+    rudisha makosa;
+}
