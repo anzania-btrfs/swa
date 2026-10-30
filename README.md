@@ -115,7 +115,8 @@ Mfano huu hukusanywa na kuendeshwa kwenye CI kila PR (`gharama/jaribu-mifano.sh`
 | Kipengele | Maelezo |
 |---|---|
 | **Maneno muhimu 13** | `muundo` `rudisha` `kama` `sivyo` `wakati` `kwa` `fanya` `vunja` `endelea` `chagua` `hali` `husisha` `achilia` — mengine yote ni maktaba |
-| **Aina** | familia tano: `n` (nambari), `a` (bila ishara), `d` (desimali), `b` (boolean), `w` (tupu) — upana 8/16/32/64, mf. `n32`, `d64`, `w0` |
+| **Aina** | familia tano: `n` (nambari), `a` (bila ishara), `d` (desimali), `b` (mifumo ya biti), `w` (tupu) — upana 8/16/32/64, mf. `n32`, `d64`, `b8`, `w0`; pia `b1` (biti moja) |
+| **Biti** | familia `b` ni bendera na maski: `& \| ^ ~ << >> == !=` pekee — hesabu na mpangilio (`+ - * / %`, `< >`) hazina maana kwa biti na zinakataliwa kwa sauti |
 | **Kumbukumbu** | `tenga` / `achilia` / `badili` — moja kwa moja, bila ukusanyaji taka |
 | **Moduli** | `husisha { njia/ya/faili.swa }` — hutatuliwa na mkusanyaji; mzunguko hukataliwa kwa sauti |
 | **Kanuni** | programu hukusanywa sahihi **au** hukataliwa kwa sauti. Jibu baya la kimya ni mdudu |
