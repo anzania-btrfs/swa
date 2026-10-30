@@ -1,0 +1,5 @@
+// ukubwa(w0) -- w0 haina thamani, kwa hiyo haina ukubwa. Zamani
+// ilirudisha 4 kimya.
+n32 main() {
+    rudisha ukubwa(w0);
+}

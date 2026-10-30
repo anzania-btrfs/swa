@@ -1,0 +1,4 @@
+// ukubwa(jina lisilojulikana) -- kosa la tahajia lilirudisha 4 kimya.
+n32 main() {
+    rudisha ukubwa(hakuna_kitu);
+}
