@@ -98,6 +98,54 @@ n32 wigo_ipo(n8* jina) {
 // mshale (isiyo sawa), au enc hasi isiyo sawa (kielekezi cha
 // muundo). Thamani: enc chanya iliyo sawa, au enc hasi iliyo
 // sawa (muundo kwa thamani).
+// Familia b ni MIFUMO YA BITI (bendera, maski) -- si nambari wala
+// boolean. Inaruhusu & | ^ ~ << >> == != pekee. b1 ni biti moja.
+//
+// Usimbaji wa b1 hutumia alama ya upana 12, si 1: encode_aina huweka
+// mshale kwenye biti 0-1, kwa hiyo upana 1 ungekuwa sawa kabisa na
+// "kielekezi kwenda b0" (1025). 12 haitumiwi na aina nyingine yoyote,
+// na ukubwa_kutoka_enc hupata 12/8 = baiti 1.
+n32 B1_ENC = 1036;
+
+n32 mkaguzi_ni_biti(n32 enc) {
+    kama (enc <= 0) { rudisha 0; }
+    kama (enc % 4 != 0) { rudisha 0; }  // kielekezi
+    kama ((enc / 256) % 256 == 4) { rudisha 1; }
+    rudisha 0;
+}
+
+// Funga usemi kwa "& 1" mahali pake (nodi ileile inakuwa AST_BIT_NA
+// yenye nakala ya usemi kushoto), ili thamani yoyote inayoingia kwenye
+// b1 ibaki biti moja -- kwa KILA njia ya kuhifadhi (rafu, ulimwengu,
+// sehemu, safu, rejesta) bila kugusa mzalishaji. Usemi lazima uwe
+// umeshakaguliwa. ni_kiungo: 1 ikiwa ast_tiga ya nodi ni kiungo cha
+// mnyororo wa hoja (kinabaki kwenye nodi); 0 ikiwa ni data ya nodi.
+// Hesabu ya % badala ya &: mbegu ina hitilafu katika & na |.
+w0 mkaguzi_funga_b1(n32 node, n32 ni_kiungo) {
+    kama (node < 0) { rudisha; }
+    kama (ast_aina[node] == 4) {  // halisi: kunja wakati wa kukusanya
+        ast_thamani[node] = ((ast_thamani[node] % 2) + 2) % 2;
+        rudisha;
+    }
+    n32 nakala = node_mpya(ast_aina[node], ast_thamani[node], ast_kushoto[node], ast_kulia[node]);
+    ast_nne[nakala] = ast_nne[node];
+    ast_jina_off[nakala] = ast_jina_off[node];
+    kama (ni_kiungo) {
+        ast_tiga[nakala] = -1;
+    } sivyo {
+        ast_tiga[nakala] = ast_tiga[node];
+        ast_tiga[node] = -1;
+    }
+    n32 moja = node_mpya(4, 1, -1, -1);
+    ast_nne[moja] = 288;
+    ast_aina[node] = 43;  // AST_BIT_NA
+    ast_kushoto[node] = nakala;
+    ast_kulia[node] = moja;
+    ast_nne[node] = -1;
+    ast_jina_off[node] = 0;
+    ast_thamani[node] = B1_ENC;
+}
+
 n32 mkaguzi_ni_kielekezi(n32 enc) {
     kama (enc == 0 || enc == -1) { rudisha -1; }
     kama ((enc / 2) * 2 != enc) { rudisha 1; }
@@ -357,7 +405,7 @@ n32 mkaguzi_angalia(n32 mzizi) {
 // (angalia uzalishaji.swa, uzalishaji_wito -- ukusanyaji wa hoja
 // ulikuwa ukisoma ast_thamani ghafi badala ya aina_ya_usemi(),
 // ukichukua aina ya OPERANDI kwa hoja ya ulinganishi (== != < > <=
-// >=) badala ya B1/boolean -- rekebisho kamili la #295). Suluhisho
+// >=) badala ya matokeo yake 0/1 -- rekebisho kamili la #295). Suluhisho
 // hapa: (1) ongeza ukubwa (mara 64), (2) ukaguzi wa kufurika sasa
 // unasimamisha ukusanyaji (exit 1) badala ya kuendelea kimya.
 n32 kazi_idadi = 0;
@@ -720,6 +768,7 @@ n32 mkaguzi_kagua_wito(n32 node) {
             // Wito kupitia kielekezi kama hoja ya parameta ya d64:
             // matokeo yake hayapo kwenye xmm0 — kataa kwa sauti.
             mkaguzi_kataa_d64_kutoka_wito_wa_kigezo(a, param_enc);
+            kama (param_enc == B1_ENC) { mkaguzi_funga_b1(a, 1); }
             hoja_idadi = hoja_idadi + 1;
             a = ijayo;
         }
@@ -1026,6 +1075,7 @@ w0 mkaguzi_kagua_taarifa(n32 node) {
                     }
                 }
             }
+            kama (var_enc == B1_ENC) { mkaguzi_funga_b1(init_node, 0); }
         }
         mkaguzi_kagua_taarifa(ast_nne[node]);
         rudisha;
@@ -1075,6 +1125,7 @@ w0 mkaguzi_kagua_taarifa(n32 node) {
         }
         // Wito kupitia kielekezi kama thamani ya d64 — kataa (hati 4.3)
         mkaguzi_kataa_d64_kutoka_wito_wa_kigezo(rhs_node, lhs_enc);
+        kama (lhs_enc == B1_ENC) { mkaguzi_funga_b1(rhs_node, 0); }
         mkaguzi_kagua_taarifa(ast_nne[node]);
         rudisha;
     }
@@ -1102,6 +1153,7 @@ w0 mkaguzi_kagua_taarifa(n32 node) {
                     }
                 }
             }
+            kama (kazi_ret_enc == B1_ENC) { mkaguzi_funga_b1(expr_node, 0); }
         }
         mkaguzi_kagua_taarifa(ast_nne[node]);
         rudisha;
@@ -1230,6 +1282,10 @@ n32 mkaguzi_kagua_usemi(n32 node) {
             // iko ast_nne. Iihifadhi ili kukanusha kwa upana sahihi
             // (-10000000000 inahitaji ukanushaji wa 64-bit; -90 wa 32).
             kama (ast_aina[ast_kulia[node]] == 4) { op = ast_nne[ast_kulia[node]]; }
+            kama (mkaguzi_ni_biti(op)) {
+                andika_stderr("kosa [%s]: kukanusha (-x) hakufai kwa mifumo ya biti (familia b) -- tumia ~x\n", mkaguzi_kazi_sasa);
+                mkaguzi_makosa = mkaguzi_makosa + 1;
+            }
             ast_thamani[node] = op;
             rudisha op;
         }
@@ -1250,8 +1306,18 @@ n32 mkaguzi_kagua_usemi(n32 node) {
         kama (lhs != 0 && lhs != -1) {
             kama (rhs != 0 && rhs != -1) {
                 // Angalia upatanifu wa aina za operesheni; mpaka wa
-                // kamili/desimali ni halali (C-semantiki ya pandisha)
-                kama (mkaguzi_aina_zifanane(lhs, rhs) == 0) {
+                // kamili/desimali ni halali (C-semantiki ya pandisha).
+                // << na >>: operandi ya kulia ni IDADI ya biti za
+                // kuhamisha, si thamani ya aina ya kushoto -- namba
+                // kamili yoyote (n, a, b) inafaa (b8 << n32).
+                n32 ni_idadi_ya_kuhamisha = 0;
+                kama (aina == 39 || aina == 41) {
+                    kama (rhs > 0 && rhs % 4 == 0) {
+                        n32 fam_r = (rhs / 256) % 256;
+                        kama (fam_r == 1 || fam_r == 2 || fam_r == 4) { ni_idadi_ya_kuhamisha = 1; }
+                    }
+                }
+                kama (mkaguzi_aina_zifanane(lhs, rhs) == 0 && ni_idadi_ya_kuhamisha == 0) {
                     kama (mkaguzi_mpaka_wa_desimali(lhs, rhs) == 0) {
                         andika_stderr("kosa [%s]: aina haziendani kwenye operesheni (l=%d, r=%d)\n", mkaguzi_kazi_sasa, lhs, rhs);
                         mkaguzi_makosa = mkaguzi_makosa + 1;
@@ -1323,7 +1389,17 @@ n32 mkaguzi_kagua_usemi(n32 node) {
         }
         // Modulo ya kielekezi inakataliwa kwa sauti (rekodi 8.9)
         mkaguzi_kataa_modulo_ya_kielekezi(aina, lhs_enc, rhs_enc);
+        // Familia b ni mifumo ya biti: hesabu (+ - * / %) na mpangilio
+        // (< > <= >=) hazina maana kwa biti -- kataa kwa sauti.
+        kama (aina == 6 || aina == 7 || aina == 31 || aina == 32 || aina == 49 || (aina >= 22 && aina <= 25)) {
+            kama (mkaguzi_ni_biti(lhs_enc) || mkaguzi_ni_biti(rhs_enc)) {
+                andika_stderr("kosa [%s]: oparesheni hii haifai kwa mifumo ya biti (familia b) -- tumia & | ^ ~ << >> == !=\n", mkaguzi_kazi_sasa);
+                mkaguzi_makosa = mkaguzi_makosa + 1;
+            }
+        }
         ast_thamani[node] = enc_ya_op;
+        // b1 << n inaweza kuweka biti juu ya biti 0 -- ibaki biti moja.
+        kama (aina == 39 && enc_ya_op == B1_ENC) { mkaguzi_funga_b1(node, 1); }
         // Ulinganishi (20-25: == != < > <= >=): ast_thamani hubaki aina
         // ya OPERANDI -- mzalishaji huisoma kuchagua upana wa cmp
         // (cmp ya 64 kwa n64/kielekezi, ucomisd kwa d64). Lakini aina
@@ -1389,8 +1465,10 @@ n32 mkaguzi_kagua_usemi(n32 node) {
             andika_stderr("kosa [%s]: kiambishi ~ hakikubaliki kwa desimali\n", mkaguzi_kazi_sasa);
             mkaguzi_makosa = mkaguzi_makosa + 1;
         }
-        // Matokeo yana upana uleule wa operesheni (si B1).
+        // Matokeo yana upana uleule wa operesheni. ~ ya b1 ingegeuza
+        // biti zote za baiti -- ibaki biti moja.
         ast_thamani[node] = op;
+        kama (op == B1_ENC) { mkaguzi_funga_b1(node, 1); }
         rudisha op;
     }
 

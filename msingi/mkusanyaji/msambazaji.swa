@@ -570,7 +570,7 @@ n32 changanua_aina_tokeni(Msambazaji* p) {
             kama (upana != 16) {
                 kama (upana != 32) {
                     kama (upana != 64) {
-                        kama (upana != 0 || familia != 5) {
+                        kama ((upana != 0 || familia != 5) && (upana != 1 || familia != 4)) {
                             n8 bafa_jina[64];
                             n32 bi = 0;
                             wakati (bi < n && bi < 63) {
@@ -587,6 +587,9 @@ n32 changanua_aina_tokeni(Msambazaji* p) {
             }
         }
     }
+    // b1 (biti moja) husimbwa kwa alama ya upana 12 -- angalia B1_ENC kwenye
+    // mkaguzi.swa: upana 1 ungegongana na biti ya mshale.
+    kama (familia == 4 && upana == 1) { upana = 12; }
     sogeza(p);
     // '*' kama kiendeshi cha herufi-moja kinaweza kukosa aina ISHARA kutoka kwa mchanganuaji.
     // Tumia utambuzi wa njia-mbili kushughulikia kesi zote kwa uhakika.
