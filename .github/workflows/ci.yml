@@ -26,3 +26,6 @@ jobs:
 
       - name: Mnyororo kamili wa majaribio
         run: bash gharama/jaribu-mnyororo.sh
+
+      - name: Mifano ya README (msimbo wa ukurasa wa mbele lazima ufanye kazi)
+        run: bash gharama/jaribu-mifano.sh

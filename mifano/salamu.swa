@@ -1,0 +1,30 @@
+husisha { msingi/maktaba/kumbukumbu.swa }
+
+muundo Nukta {
+    n32 x;
+    n32 y;
+};
+
+n32 umbali_mraba(Nukta* a, Nukta* b) {
+    n32 dx = a->x - b->x;
+    n32 dy = a->y - b->y;
+    rudisha dx * dx + dy * dy;
+}
+
+n32 main() {
+    Nukta* a = tenga(ukubwa(Nukta));
+    Nukta* b = tenga(ukubwa(Nukta));
+    a->x = 1;  a->y = 2;
+    b->x = 4;  b->y = 6;
+
+    andika("Habari, %s!\n", "Dunia");
+    andika("umbali^2 = %d\n", umbali_mraba(a, b));
+
+    n32 i = 0;
+    wakati (i < 3) {
+        kama (i % 2 == 0) { andika("%d ni shufwa\n", i); }
+        sivyo             { andika("%d ni witiri\n", i); }
+        i = i + 1;
+    }
+    rudisha 0;
+}
