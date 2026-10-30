@@ -598,36 +598,6 @@ w0 mkaguzi_kagua_kiwango_cha_huduma(n8* jina, n32 hoja_idadi) {
     }
 }
 
-// Usemi wa anwani ya kazi (&jina_la_kazi) kwa paramu ya namba ya
-// upana 64 (n64/A64)? Rudisha 1 kwa KUMBUKA (&) juu ya kitambulisho
-// ambacho SI kigeu cha ndani/paramu (wigo) wala cha ulimwengu —
-// yaani jina la kazi (lililosajiliwa au la: wito wa mbele bado
-// halijasajiliwa, na jina lisilojulikana kabisa linalia kwa sauti
-// mwishoni mwa kukusanya) — kinapoanishwa na paramu ya familia
-// N/A ya upana ≥ 64: anwani ya kazi ni thamani ya baiti 8, kama
-// paramu yenyewe (ubaguzi wa hati 4.3 dhidi ya sheria ya 5).
-n32 mkaguzi_ni_anwani_ya_kazi_kwa_param(n32 node, n32 param_enc) {
-    kama (node < 0) { rudisha 0; }
-    kama (ast_aina[node] != 30) { rudisha 0; }  // AST_KUMBUKA (&)
-    n32 op = ast_kushoto[node];
-    kama (op < 0) { rudisha 0; }
-    kama (ast_aina[op] != 5) { rudisha 0; }  // AST_KITAMBULISHO
-    n8* jina = ast_pool + ast_jina_off[op];
-    kama (wigo_tafuta(jina) >= 0) { rudisha 0; }  // kigeu/paramu
-    n32 g = 0;
-    wakati (g < global_idadi) {
-        kama (jina_linganisha(global_jina_pool + global_jina_off[g], jina)) { rudisha 0; }
-        g = g + 1;
-    }
-    kama (param_enc <= 0) { rudisha 0; }
-    n32 fam_p = (param_enc / 256) % 256;
-    n32 upana_p = param_enc - (fam_p * 256);
-    kama (upana_p < 64) { rudisha 0; }
-    kama (fam_p == 1) { rudisha 1; }
-    kama (fam_p == 2) { rudisha 1; }
-    rudisha 0;
-}
-
 // Kagua wito wa kazi (AST_WITO, 8): thibitisha aina za hoja dhidi ya
 // vigezo na idadi ya hoja dhidi ya tangazo. Huitwa kutoka kwa wito
 // wa nafasi ya taarifa NA wa nafasi ya usemi — mwito wa nafasi ya
@@ -662,49 +632,14 @@ n32 mkaguzi_kagua_wito(n32 node) {
             kama (ast_aina[a] == 4) { arg_enc_halisi = ast_nne[a]; }
             // Angalia aina ya hoja dhidi ya aina ya parameta
             n32 param_enc = mkaguzi_tafuta_param_enc(jina, hoja_idadi);
-            // Ukaguzi mkali: kielekezi dhidi ya namba haikubaliki.
-            // Kupitisha kielekezi kwa kigezo cha n32 — au kinyume —
-            // kunakusanyika na kuanguka kwa SEGV wakati wa kukimbia
-            // (mdudu wa 2026-09-01). andika na andika_stderr ni za
-            // kutofautiana: mkia wao (hoja 2+) hukubali aina yoyote
-            // (mkia hupitishwa kwa rejesta za n64 kwa ABI).
-            // andika_ndani ni utekelezaji wao wa ndani — mkia wake
-            // (a1..a6, hoja 3+) ni mkia huo huo uliofutwa aina.
-            // Halisi (arg_enc == 0) zinajumuishwa kupitia arg_enc_halisi.
-            kama (param_enc != 0 && param_enc != -1 && arg_enc_halisi != 0 && arg_enc_halisi != -1) {
-                n32 ni_mkia_ya_kutofautiana = 0;
-                kama (hoja_idadi > 0) {
-                    kama (jina_linganisha(jina, "andika") || jina_linganisha(jina, "andika_stderr")) {
-                        ni_mkia_ya_kutofautiana = 1;
-                    }
-                }
-                kama (ni_mkia_ya_kutofautiana == 0 && hoja_idadi > 1) {
-                    kama (jina_linganisha(jina, "andika_ndani")) {
-                        ni_mkia_ya_kutofautiana = 1;
-                    }
-                }
-                kama (ni_mkia_ya_kutofautiana == 0) {
-                    n32 arg_mshale = mkaguzi_ni_kielekezi(arg_enc_halisi);
-                    n32 param_mshale = mkaguzi_ni_kielekezi(param_enc);
-                    kama (arg_mshale != -1 && param_mshale != -1) {
-                        kama (arg_mshale != param_mshale) {
-                            // Ubaguzi wa hati 4.3: usemi wa anwani ya
-                            // kazi (&jina_la_kazi) kwa paramu ya namba ya
-                            // upana 64 (n64/A64) ni halali — anwani ni
-                            // thamani ya baiti 8. Vigeu vingine vya
-                            // kielekezi kwa paramu ya namba bado
-                            // vinakataliwa (5). Mwili wa kama ni tupu —
-                            // usiweke kigezo hapa (ukomo wa 64).
-                            kama (arg_mshale == 1 && param_mshale == 0 && mkaguzi_ni_anwani_ya_kazi_kwa_param(a, param_enc)) {
-                            } sivyo {
-                                andika_stderr("kosa [%s]: aina ya hoja #%d kwa '%s' hailingani (kielekezi dhidi ya namba: arg=%d, param=%d)\n",
-                                mkaguzi_kazi_sasa, hoja_idadi + 1, jina, arg_enc_halisi, param_enc);
-                                mkaguzi_makosa = mkaguzi_makosa + 1;
-                            }
-                        }
-                    }
-                }
-            }
+            // Kupitisha hoja ni KUGAWA kwa paramu -- maana moja kila
+            // mahali. Namba <-> kielekezi inakubaliwa hapa kama ilivyo
+            // kwenye tangazo na ugawaji (Nodi* p = 5; n64 v = p;):
+            // kielekezi hupokea thamani ya namba (ikipanuliwa kwa ishara
+            // ya aina yake), namba hupokea biti za chini za anwani.
+            // Zamani hoja pekee ndiyo iliyokataa (f(5), f(0), f(p) kwa
+            // n64) -- ufafanuzi mmoja, utendaji miwili. Mpanga programu
+            // ana uhuru kamili; lugha haimkatazi kitu chenye maana.
             // Ukaguzi wa familia/upana: aina za mtumiaji (muundo)
             // zinaweza kuwa hasi; halisi kamili (arg_enc == 0)
             // inakubaliana na aina yoyote ya namba (C-semantiki).

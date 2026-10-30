@@ -45,7 +45,7 @@ VGA_TARAJIWA = sys.argv[3] if len(sys.argv) > 3 else None
 SOCK = "/tmp/swa-jaribu-kernel-%d.sock" % (int(time.time() * 1000) % 1000000)
 
 qemu = subprocess.Popen([
-    "qemu-system-x86_64", "-accel", "kvm", "-kernel", BIN, "-m", "64",
+    "qemu-system-x86_64", "-accel", "kvm", "-accel", "tcg", "-kernel", BIN, "-m", "64",
     "-display", "none", "-serial", "none",
     "-monitor", "unix:%s,server,nowait" % SOCK,
     "-no-reboot", "-no-shutdown",
@@ -82,7 +82,13 @@ try:
         time.sleep(0.4)
         return s.recv(65536).decode(errors="replace")
 
+    # Subiri mpaka CPU ifike HLT badala ya kukisia muda: bila KVM (kwa
+    # mfano kwenye CI) QEMU hutumia tcg, ambayo ni polepole zaidi.
     regs = cmd("info registers")
+    mwanzo = time.time()
+    while re.search(r"HLT=1", regs) is None and time.time() - mwanzo < 15:
+        time.sleep(0.2)
+        regs = cmd("info registers")
 
     m = re.search(r"RDI=([0-9a-fA-F]+)", regs)
     if not m:
@@ -115,7 +121,9 @@ try:
             # baiti kimakosa ikiwa hatuchujii kwa mstari sahihi).
             baiti = []
             for ln in out.splitlines():
-                if not re.match(r"^[0-9a-f]{8}:", ln.strip()):
+                # QEMU mpya huandika anwani kwa tarakimu 8 ("000b8000:"),
+                # za zamani (mfano kwenye CI) kwa 16 ("00000000000b8000:").
+                if not re.match(r"^[0-9a-f]{8,16}:", ln.strip()):
                     continue
                 baiti.extend(int(x, 16) for x in re.findall(r"0x([0-9a-f]{2})", ln))
             if len(baiti) < n:
