@@ -124,8 +124,8 @@ Mfano huu hukusanywa na kuendeshwa kwenye CI kila PR (`gharama/jaribu-mifano.sh`
 
 | Kipimo | Hali |
 |---|---|
-| Mnyororo wa majaribio (mbegu + stage1, fixpoint) | 456 / 456 |
-| Mkimbiaji wa majaribio wa Swa asili (bila bash) | 439 / 439 |
+| Mnyororo wa majaribio (mbegu + stage1, fixpoint) | 457 / 457 |
+| Mkimbiaji wa majaribio wa Swa asili (bila bash) | 440 / 440 |
 | WebAssembly | 36 / 36 |
 | `--kernel` (ring 0) | 15 / 15 |
 | Kujikusanya | `stage2 == stage3`, sawa kwa baiti |
