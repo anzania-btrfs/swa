@@ -1,0 +1,7 @@
+// Hesabu (+ - * / %) haina maana kwa mifumo ya biti -- inakataliwa.
+n32 main() {
+    b8 a = 5;
+    b8 b = 6;
+    b8 c = a + b;
+    rudisha 0;
+}

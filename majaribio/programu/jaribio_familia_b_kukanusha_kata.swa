@@ -1,0 +1,6 @@
+// Kukanusha kwa hesabu (-x) hakufai kwa mifumo ya biti -- tumia ~x.
+n32 main() {
+    b8 a = 5;
+    b8 c = -a;
+    rudisha 0;
+}

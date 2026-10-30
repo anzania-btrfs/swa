@@ -6,7 +6,7 @@
 // "kupandisha aina" (type promotion) inayotumika na HESABU (+ - * /)
 // kwenye mkaguzi_kagua_usemi() (mkaguzi.swa) -- ast_thamani ya nodi
 // ya ulinganishi inaishia kuwa aina ya OPERANDI zilizolinganishwa
-// (k.m. d64 ikiwa operandi zote mbili ni d64), SI B1/boolean (1025)
+// (k.m. d64 ikiwa operandi zote mbili ni d64), SI matokeo yake 0/1 (ENC_ULINGANISHI)
 // kama inavyopaswa kuwa (matokeo ya ulinganishi NI DAIMA 0/1,
 // haijalishi aina za operandi). uzalishaji.swa's aina_ya_usemi()
 // tayari inajua hili (ina ubaguzi: 20<=aina<=25 -> rudisha 1025) --
@@ -24,7 +24,7 @@
 // ilipovuka 1024 -- hii ndiyo hasa iliyotokea kwenye Dominion's
 // mchezo.swa, ikifichua hitilafu hii YA PILI).
 //
-// Matokeo ya mdudu: hoja ya BOOLEAN (matokeo ya ulinganishi la d64)
+// Matokeo ya mdudu: hoja ya 0/1 (matokeo ya ulinganishi la d64)
 // ilichukuliwa kimakosa kama hoja ya d64, ikibadilishwa (cvtsi2sd)
 // kutoka eax kwenda xmm0 kabla ya wito -- ikiacha nafasi ya
 // kwanza ya rejesta za integer (RDI) bila kujazwa ipasavyo, ikisukuma

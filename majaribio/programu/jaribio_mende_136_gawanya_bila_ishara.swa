@@ -2,7 +2,8 @@
 // SIGFPE (msimbo wa toka 136) — cdq/cqo ilipanua ishara kabla ya div.
 // Sasa edx inafutwa kwa xor edx,edx (upanuzi wa sifuri) kwa A/B/W,
 // na idiv yenye ishara haijarejea nyuma (kukata hadi sifuri).
-// Stage1 pekee: mbegu inakataa familia A/B/W kabisa.
+// Familia b haimo tena: ni mifumo ya biti, / na % hazina maana kwake
+// (zinakataliwa kwa sauti). Stage1 pekee: mbegu inakataa familia A/B/W.
 n32 main() {
     a32 a = 3000000000;
     a32 b = a / 2;
@@ -16,11 +17,6 @@ n32 main() {
     a32 f = 4294967295;
     a32 g = f / 1;
     kama (g != 4294967295) { rudisha 5; }
-    b32 h = 3000000000;
-    b32 i = h / 2;
-    kama (i != 1500000000) { rudisha 6; }
-    b32 j = h % 2;
-    kama (j != 0) { rudisha 7; }
     w32 k = 3000000000;
     w32 l = k / 2;
     kama (l != 1500000000) { rudisha 8; }
