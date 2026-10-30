@@ -2242,6 +2242,7 @@ n32 var_jina_off[64];
 n32 var_rbp_off[64];  // umbali chanya kutoka rbp (k.m. 4, 8, 12)
 n32 var_enc[64];  // usimbaji wa aina kwa upakiaji sahihi wa upana
 n32 var_ni_safu[64];  // 1 = safu ya ndani (rejeleo la jina ni LEA, si upakiaji)
+n32 var_ukubwa[64];  // baiti zote za kigeu (safu: kipengele x idadi) -- kwa ukubwa(jina)
 n32 var_idadi = 0;
 n32 var_stack_idadi = 0;  // jumla ya baiti za vigeu kwenye rafu
 n32 frame_imeshinda = 0;  // 1 kama rafu ilianzishwa
@@ -2963,6 +2964,7 @@ n32 pata_au_unda_kigeu_ukubwa(n8* jina, n32 saizi, n32 enc) {
         var_rbp_off[var_idadi] = var_stack_idadi + saizi;  // umbali kutoka rbp
         var_enc[var_idadi] = enc;  // hifadhi usimbaji kwa upakiaji wa upana
         var_ni_safu[var_idadi] = 0;
+        var_ukubwa[var_idadi] = saizi;
         var_stack_idadi = var_stack_idadi + saizi;
         var_idadi = var_idadi + 1;
         rudisha var_idadi - 1;
@@ -4259,23 +4261,8 @@ w0 uzalishaji_wito(n32 node, n32 kazi_node) {
     // (sizeof). Hoja ni jina la aina; hatutoi wito wa kweli.
     kama (jina_linganisha(callee, "ukubwa")) {
         n32 a0 = ast_kulia[node];
-        kama (a0 != -1 && ast_aina[a0] == 5) {  // KITAMBULISHO — jina la aina
-            n8* jina_a = ast_pool + ast_jina_off[a0];
-            n32 sz = 0;
-            // MUHIMU: herufi ndogo (n8/n16/n32/n64/d32/d64) zinakubalika
-            // hapa PIA -- jina moja, ukubwa mmoja, sawa na herufi kubwa.
-            kama (jina_linganisha(jina_a, "N8") || jina_linganisha(jina_a, "n8")) { sz = 1; }
-            sivyo { kama (jina_linganisha(jina_a, "N16") || jina_linganisha(jina_a, "n16")) { sz = 2; }
-                sivyo { kama (jina_linganisha(jina_a, "N32") || jina_linganisha(jina_a, "n32")) { sz = 4; }
-                    sivyo { kama (jina_linganisha(jina_a, "N64") || jina_linganisha(jina_a, "n64")) { sz = 8; }
-                        sivyo { kama (jina_linganisha(jina_a, "D32") || jina_linganisha(jina_a, "d32")) { sz = 4; }
-                            sivyo { kama (jina_linganisha(jina_a, "D64") || jina_linganisha(jina_a, "d64")) { sz = 8; }
-                                sivyo {
-                                    // Muundo au kielekezi
-                                    sz = ukubwa_wa_muundo_kwa_jina(jina_a);
-                                    kama (sz == 0) { sz = 8; }
-                                } } } } } }
-            andika_mov_eax(sz);
+        kama (a0 != -1 && ast_aina[a0] == 5) {  // KITAMBULISHO — jina la aina au kigeu
+            andika_mov_eax(ukubwa_wa_jina(ast_pool + ast_jina_off[a0]));
             rudisha;
         }
     }
@@ -8880,6 +8867,52 @@ n32 enc_hasi_ni_mshale_wa_pili(n32 enc) {
     n8* jina_1 = ast_pool + name_off_1;
     kama (muundo_jina_ipo(jina_1)) { rudisha 0; }
     rudisha 1;
+}
+
+// ukubwa(jina) -- baiti za aina au kigeu, kwa kila familia na kila
+// upana. Zamani ukubwa ilijua n8..n64 na d32/d64 pekee; jina lingine
+// lolote (a64, b8, kigeu, safu, au kosa la tahajia) lilianguka kwenye
+// utafutaji wa muundo na kurudisha 4 KIMYA -- tenga(ukubwa(a64))
+// ilitenga baiti 4 kwa thamani ya baiti 8. Mpangilio:
+//   1. aina ya msingi [n|a|d|b|w]+tarakimu: upana kwa baiti, juu (b1 = 1);
+//      w0 haina thamani, kwa hiyo haina ukubwa -- kosa la sauti
+//   2. muundo uliotangazwa
+//   3. kigeu cha ndani au paramu (safu: baiti zote)
+//   4. kigeu cha ulimwengu
+//   5. vinginevyo -- kosa la sauti
+n32 ukubwa_wa_jina(n8* jina) {
+    n32 urefu_jina = 0;
+    wakati (jina[urefu_jina] != 0) { urefu_jina = urefu_jina + 1; }
+    kama (ni_aina_msingi_pia_ndogo(jina, urefu_jina)) {
+        n32 upana = 0;
+        n32 j = 1;
+        wakati (j < urefu_jina) { upana = upana * 10 + jina[j] - 48; j = j + 1; }
+        kama (upana == 0) {
+            andika_stderr("Hitilafu: ukubwa(%s) -- %s haina thamani, kwa hiyo haina ukubwa\n", jina, jina);
+            wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+        }
+        rudisha (upana + 7) / 8;
+    }
+    n32 si = 0;
+    wakati (si < ast_idadi) {
+        kama (ast_aina[si] == 12 && ast_kushoto[si] != -1) {  // AST_MUUNDO
+            kama (jina_linganisha(ast_pool + ast_jina_off[ast_kushoto[si]], jina)) { rudisha ast_thamani[si]; }
+        }
+        si = si + 1;
+    }
+    n32 vi = 0;
+    wakati (vi < var_idadi) {
+        kama (jina_linganisha(var_pool + var_jina_off[vi], jina)) { rudisha var_ukubwa[vi]; }
+        vi = vi + 1;
+    }
+    n32 gi = 0;
+    wakati (gi < data_ulimwengu_idadi) {
+        kama (jina_linganisha(ast_pool + data_ulimwengu_jina_off[gi], jina)) { rudisha data_ulimwengu_size[gi]; }
+        gi = gi + 1;
+    }
+    andika_stderr("Hitilafu: ukubwa(%s) -- '%s' si aina, muundo, wala kigeu kinachojulikana\n", jina, jina);
+    wito_wa_mfumo(60, 1, 0, 0, 0, 0, 0);
+    rudisha 0;
 }
 
 n32 ukubwa_wa_muundo_kwa_jina(n8* jina) {
