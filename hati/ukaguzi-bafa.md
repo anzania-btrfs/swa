@@ -33,7 +33,6 @@ mpaka unaolia, au sababu ya uthibitisho iliyoandikwa.**
 | rela_* | 65,536 | maeneo yote → sauti | SALAMA KWA SAUTI |
 | global_* | 4,096 | .vuta_shindwa_ulimwengu → sauti | SALAMA KWA SAUTI |
 | local_* | 1,024 | ukaguzi mpya → sauti (haukuwepo) | SALAMA KWA SAUTI (ilirekebishwa) |
-| lebo_vunja_mzunguko[16] | 16 | haijatumika kamwe (mabaki) | SALAMA KWA UTHIBITISHO (haijaandikwa) |
 | mahali_rekebisho_vunja | 65,536 | ulikuwa 256 kimya → sasa sauti | SALAMA KWA SAUTI (ilirekebishwa) |
 | mahali_rekebisho_endelea | 65,536 | kama hapo juu | SALAMA KWA SAUTI (ilirekebishwa) |
 | muundo_* | 64 | ilikuwa .shindwa kimya → sasa sauti | SALAMA KWA SAUTI (ilirekebishwa) |

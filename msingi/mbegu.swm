@@ -31,7 +31,7 @@ fafanua UPEO_HAMISHO = 65536   ; upeo wa marekebisho
 fafanua UPEO_ULIMWENGU = 4096   ; upeo wa vigezo vya ulimwengu
 fafanua UKUBWA_DIMBWI_MFUATANO = 1048576   ; bwawa la herufi (1 MB kwa faili kubwa)
 fafanua UPEO_NDANI = 1024   ; upeo wa vigezo vya ndani kwa kazi
-fafanua UKUBWA_DIMBWI_HALISI64 = 65536   ; bwawa la halisi za N64 (baiti 8 kila moja)
+fafanua UKUBWA_DIMBWI_HALISI64 = 65536   ; bwawa la halisi za n64 (baiti 8 kila moja)
 
 ; Aina za tokeni
 fafanua TOKENI_NENO = 1   ; jina au neno muhimu
@@ -58,46 +58,27 @@ fafanua TOKENI_SWALI = 20   ; ?
 ; Aina za nodi za AST (zinazolingana na msambazaji.swa)
 fafanua MTI_KAZI = 2
 fafanua MTI_NAMBA = 3
-fafanua MTI_KITAMBU = 4
 fafanua MTI_JINA = 5
 fafanua MTI_RUDISHA = 6
 fafanua MTI_KUNDI = 7
 fafanua MTI_TANGAZO = 8
 fafanua MTI_WAMBILE = 9
-fafanua MTI_KAZI_JINA = 10
 fafanua MTI_KIGEZO = 11
 fafanua MTI_KAMA = 12
 fafanua MTI_WAKATI = 13
-fafanua MTI_KWA = 14
 fafanua MTI_FANYA = 48   ; fanya..wakati — kitanzi cha mwili-kwanza
 fafanua MTI_VUNJA = 15
-fafanua MTI_ENEKEZA = 16
-fafanua MTI_LINGA = 17
-fafanua MTI_ELEKEZA = 18
-fafanua MTI_ENEKEZA_JINA = 19
-fafanua MTI_LINGA_JINA = 20
-fafanua MTI_NYOTA_JINA = 21
-fafanua MTI_FUNGO_ELEKEZA = 22
 fafanua MTI_ALAMA_ELEKEZA = 23
 fafanua MTI_KIELELEZO = 24
 fafanua MTI_NYOTA_KIELELEZO = 25
 fafanua MTI_NYOTA_ELEKEZA = 26
-fafanua MTI_NYOTA_FUNGO_ELEKEZA = 27
 fafanua MTI_ELEKEZA_JINA = 28
 fafanua MTI_ENEKEZA_FUNGO = 29
-fafanua MTI_ELEKEZA_FUNGO = 30
 fafanua MTI_MFUATANO = 31
-fafanua MTI_HUSISHA = 32
 fafanua MTI_TANGAZO_ULIM = 35
-fafanua MTI_MUUNDO = 36
-fafanua MTI_MUUNDO_KIELELEZO = 37
-fafanua MTI_NYOTA = 38
-fafanua MTI_ELEKEZA_KIGEZO = 39
-fafanua MTI_MUUNDO_TANGAZO = 40
-fafanua MTI_ELEKEZA_MFANO = 41
 fafanua MTI_KAULI = 42
 fafanua MTI_MAKOSA = 43
-fafanua MTI_HALISI_D = 46   ; desimali halisi (D64)
+fafanua MTI_HALISI_D = 46   ; desimali halisi (d64)
 fafanua MTI_ENDELEA = 44
 fafanua MTI_HASILI = 45
 fafanua MTI_MAKOSA_BITI = 47   ; ~ (kukanusha biti, unari)
@@ -134,14 +115,11 @@ fafanua TENDO_MAKOSA_BITI = 21   ; ~ (kukanusha biti, unari)
 
 ; ---------- Ujumbe wa makosa ----------
 
-n8 ujumbe_matamshi = "Matumizi: mbegu <chanzo.swa>", 10, 0
-n8 ujumbe_elferr = "Hitilafu: kushindwa kuandika ELF", 10, 0
 n8 ujumbe_kosa_changanua = "Hitilafu: ulichanganuzi", 10, 0
 n8 ujumbe_kosa_msomaji = "Hitilafu: ulisomaji", 10, 0
-n8 ujumbe_kumbukumbu_imeisha = "Hitilafu: hakuna kumbukumbu", 10, 0
 n8 ujumbe_kosa_weka = "Hitilafu: uwekaji usiotumika", 10, 0
 n8 ujumbe_bafa_data = "Hitilafu: data_buf imejaa (sret)", 10, 0
-n8 ujumbe_halisi64_jaa = "Hitilafu: bwawa la halisi za N64 limejaa", 10, 0
+n8 ujumbe_halisi64_jaa = "Hitilafu: bwawa la halisi za n64 limejaa", 10, 0
 n8 ujumbe_hoja9 = "Hitilafu: wito wenye hoja zaidi ya 9", 10, 0
 n8 ujumbe_hoja16 = "Hitilafu: wito wenye hoja zaidi ya 16", 10, 0
 n8 ujumbe_main_kukosa = "Hitilafu: main haipo", 10, 0
@@ -182,9 +160,9 @@ n8 ujumbe_jina_aina_mbili_1 = "Hitilafu: jina '", 0
 n8 ujumbe_jina_aina_mbili_2 = "' limeshafafanuliwa kama aina nyingine ya ngazi ya juu", 10, 0
 n8 ujumbe_aina_isiyojulikana_1 = "Hitilafu: aina isiyojulikana '", 0
 n8 ujumbe_aina_isiyojulikana_2 = "'", 10, 0
-n8 ujumbe_kielekezi_d64 = "Hitilafu: matokeo ya wito kupitia kielekezi si D64", 10, 0
-n8 ujumbe_kianzio_kazi = "Hitilafu: kianzio cha anwani ya kazi (kigezo cha ulimwengu) kinahitaji aina ya kielekezi au N64 na hali ya --exe — gawa ndani ya main", 10, 0
-n8 ujumbe_d64_wito = "Hitilafu: hoja za D64 zilizochanganywa na hoja 7-9 hazisaidiwi bado na mbegu — tumia mkusanyaji wa .swa", 10, 0
+n8 ujumbe_kielekezi_d64 = "Hitilafu: matokeo ya wito kupitia kielekezi si d64", 10, 0
+n8 ujumbe_kianzio_kazi = "Hitilafu: kianzio cha anwani ya kazi (kigezo cha ulimwengu) kinahitaji aina ya kielekezi au n64 na hali ya --exe — gawa ndani ya main", 10, 0
+n8 ujumbe_d64_wito = "Hitilafu: hoja za d64 zilizochanganywa na hoja 7-9 hazisaidiwi bado na mbegu — tumia mkusanyaji wa .swa", 10, 0
 n8 ujumbe_mstari_mpya = 10, 0
 n8 ujumbe_rekebisho_jaa = "Hitilafu: jedwali la fixup limejaa", 10, 0
 n8 ujumbe_ulimwengu_jaa = "Hitilafu: jedwali la ulimwengu limejaa", 10, 0
@@ -216,7 +194,7 @@ n8 ujumbe_muhimu_2 = "' ni neno muhimu — haliwezi kutumika kama jina", 10, 0
 n8 ujumbe_vunja_nje = "Hitilafu: vunja nje ya kitanzi", 10, 0
 n8 ujumbe_endelea_nje = "Hitilafu: endelea nje ya kitanzi", 10, 0
 n8 ujumbe_aina_kama_usemi = "Hitilafu: jina la aina halitumiki kama usemi", 10, 0
-n8 ujumbe_w0_kigezo = "Hitilafu: parameta ya W0 haikubaliki — W0 ni kwa kazi tu", 10, 0
+n8 ujumbe_w0_kigezo = "Hitilafu: parameta ya w0 haikubaliki — w0 ni kwa kazi tu", 10, 0
 n8 ujumbe_idadi_hoja_1 = "Hitilafu: idadi ya hoja kwa '", 0
 n8 ujumbe_idadi_hoja_2 = "' si sahihi (", 0
 n8 ujumbe_idadi_hoja_3 = " badala ya ", 0
@@ -225,7 +203,7 @@ n8 ujumbe_kiambishi_jina = "Hitilafu: nukta '.' na mshale '->' zinahitaji jina l
 n8 ujumbe_kazi_usemi_1 = "Hitilafu: jina la kazi halitumiki kama usemi: ", 0
 n8 ujumbe_kielekezi_namba_1 = "Hitilafu: aina ya hoja kwa '", 0
 n8 ujumbe_kielekezi_namba_2 = "' hailingani (kielekezi dhidi ya namba)", 10, 0
-n8 ujumbe_ulimwengu_d64 = "Hitilafu: kianzio cha ulimwengu wa D64 lazima kiwe halisi ya desimali", 10, 0
+n8 ujumbe_ulimwengu_d64 = "Hitilafu: kianzio cha ulimwengu wa d64 lazima kiwe halisi ya desimali", 10, 0
 n8 ujumbe_umbo_1 = "Hitilafu: kipengele cha umbo ", 0
 n8 ujumbe_umbo_2 = " hakitumiki (viungwa: asilimia, d, s, c)", 10, 0
 
@@ -243,7 +221,6 @@ n8 jina_andika_ndani = "andika_ndani", 0
 
 ; Jedwali la maneno muhimu na aina zao za AST
 ; Kila ingizo: (neno, aina)
-n8 kw_tengeneza = "tengeneza", 0
 n8 kw_muundo = "muundo", 0
 n8 kw_rudisha = "rudisha", 0
 n8 kw_kama = "kama", 0
@@ -254,32 +231,23 @@ n8 kw_kwa = "kwa", 0
 n8 kw_vunja = "vunja", 0
 n8 kw_husisha = "husisha", 0
 n8 kw_endelea = "endelea", 0
-n8 kw_ukubwa = "ukubwa", 0
-n8 kw_kama_sivyo = "kamasivyo", 0
 n8 kw_chagua = "chagua", 0
 n8 kw_hali = "hali", 0
 n8 kw_achilia = "achilia", 0
 
 ; ---------- Majina ya aina ----------
 
-n8 tn_n8 = "N8", 0
-n8 tn_n16 = "N16", 0
-n8 tn_n32 = "N32", 0
-n8 tn_n64 = "N64", 0
-n8 tn_w0 = "W0", 0
-n8 tn_d64 = "D64", 0
 
 ; Herufi ndogo (sawa na lugha-swa/swa#225 kwenye mkusanyaji uliojijenga)
 ; -- alama HASA za walio juu, si aina mpya. Angalia changanua_aina na
 ; ukubwa(...) chini kwa jinsi zinavyotumika.
-n8 tn_n8_ndogo = "n8", 0
-n8 tn_n16_ndogo = "n16", 0
-n8 tn_n32_ndogo = "n32", 0
-n8 tn_n64_ndogo = "n64", 0
-n8 tn_w0_ndogo = "w0", 0
-n8 tn_d64_ndogo = "d64", 0
+n8 jina_aina_n8 = "n8", 0
+n8 jina_aina_n16 = "n16", 0
+n8 jina_aina_n32 = "n32", 0
+n8 jina_aina_n64 = "n64", 0
+n8 jina_aina_w0 = "w0", 0
+n8 jina_aina_d64 = "d64", 0
 
-n8 tn_muundo = "muundo", 0
 
 ; ---------- Herufi halisi ya .shstrtab ----------
 
@@ -298,8 +266,6 @@ fafanua UKUBWA_SHSTRTAB = 55
 ; ---------- Kiolezo cha kichwa cha ELF ----------
 
 ; Kichwa cha ELF (baiti 64) — tunatumia kiolezo na kujaza maeneo yanayobadilika
-n8 mwisho_data_shstrtab =
-n8 kiolezo_ehdr = 0x7f, 0x45, 0x4c, 0x46   ; e_ident[0:4] — ELF magic
 n8 = 2   ; EI_CLASS = 64-bit
 n8 = 1   ; EI_DATA = little-endian
 n8 = 1   ; EI_VERSION
@@ -333,9 +299,8 @@ n64 urefu_chanzo
 ; Kila tokeni: baiti 20 (aina:4, thamani:8, mstari:4, safu:2, urefu:2)
 n32 aina_tokeni[UPEO_TOKENI]
 n64 thamani_tokeni[UPEO_TOKENI]
-n8 tokeni_desimali[UPEO_TOKENI]   ; 1 = tokeni ni desimali (D64)
+n8 tokeni_desimali[UPEO_TOKENI]   ; 1 = tokeni ni desimali (d64)
 n32 mstari_tokeni[UPEO_TOKENI]
-n16 nguzo_tokeni[UPEO_TOKENI]
 n16 urefu_tokeni[UPEO_TOKENI]
 n64 tokeni_idadi
 n64 mahali_tokeni   ; nafasi ya sasa ya usomaji wa tokeni
@@ -344,7 +309,7 @@ n64 mstari_sasa   ; mstari wa sasa (1-msingi) kwa mchanganyaji
 ; ---------- Bafa la chanzo kwa mchanganuzi ----------
 ; Hifadhi anwani ya mwanzo ya kila tokeni ya neno/jina kwenye chanzo
 n64 maandishi_tokeni[UPEO_TOKENI]
-n8 dimbwi_halisi64[UKUBWA_DIMBWI_HALISI64]   ; baiti 8 kwa halisi ya N64 (thamani kubwa)
+n8 dimbwi_halisi64[UKUBWA_DIMBWI_HALISI64]   ; baiti 8 kwa halisi ya n64 (thamani kubwa)
 n64 mahali_dimbwi_halisi64   ; nafasi inayofuata kwenye bwawa
 
 ; ---------- AST (safu sambamba) ----------
@@ -390,7 +355,7 @@ n64 jina_ulimwengu[UPEO_ULIMWENGU]
 n32 ofseti_ulimwengu[UPEO_ULIMWENGU]
 n32 ukubwa_ulimwengu[UPEO_ULIMWENGU]
 n32 ulimwengu_ni_bss[UPEO_ULIMWENGU]   ; 1 ikiwa ni .bss, 0 ikiwa ni .data
-n32 aina_msingi_ulimwengu[UPEO_ULIMWENGU]   ; aina msingi: N8=1, N16=2, N32=3, N64=4, W0=5, muundo=6+
+n32 aina_msingi_ulimwengu[UPEO_ULIMWENGU]   ; aina msingi: n8=1, n16=2, n32=3, n64=4, w0=5, muundo=6+
 n32 ulimwengu_nyota_idadi[UPEO_ULIMWENGU]   ; idadi ya nyota: 0=kawaida, 1=nyota moja, 2=nyota mbili, n.k.
 n32 ulimwengu_ni_safu[UPEO_ULIMWENGU]   ; 1 ikiwa ni safu, 0 ikiwa ni kigeu rahisi
 n64 ulimwengu_idadi
@@ -405,14 +370,12 @@ n64 ukubwa_bss   ; ukubwa wa jumla wa .bss
 ; ---------- Vigezo vya ndani (kwa kazi ya sasa) ----------
 n64 jina_ndani[UPEO_NDANI]   ; anwani ya jina
 n32 ofseti_ndani[UPEO_NDANI]   ; ofseti ya rafu (kutoka rbp, hasi)
-n32 ukubwa_ndani[UPEO_NDANI]   ; ukubwa kwa baiti
-n32 aina_msingi_ndani[UPEO_NDANI]   ; aina msingi: N8=1, N16=2, N32=3, N64=4, W0=5, muundo=6+
+n32 aina_msingi_ndani[UPEO_NDANI]   ; aina msingi: n8=1, n16=2, n32=3, n64=4, w0=5, muundo=6+
 n32 ndani_nyota_idadi[UPEO_NDANI]   ; idadi ya nyota: 0=kawaida, 1=nyota moja, 2=nyota mbili, n.k.
 n64 ndani_idadi
 
 ; ---------- Kina cha mzunguko ----------
 n64 kina_mzunguko
-n64 lebo_vunja_mzunguko[16]   ; lebo za vunja (ufungwaji wa mipaka ya rafu)
 n32 mahali_rekebisho_vunja[65536]   ; nafasi za marekebisho ya vunja
 n64 cl_hatua   ; nafasi ya hatua ya kwa (semantiki ya C ya endelea)
 n64 cl_lengo   ; lengo la sasa la endelea
@@ -420,12 +383,11 @@ n64 vunja_rekebisho_idadi   ; idadi ya marekebisho ya vunja
 
 ; ---------- Hali ya mkusanyaji ----------
 n64 hali_mkusanyaji   ; 0=sawa, 1=kosa
-n64 ujumbe_kosa_mkusanyaji   ; ujumbe wa kosa
 n32 muundo_jina   ; ofseti ya jina la muundo (kwa aina za mtumiaji)
 n8 hali_exe   ; 1 = toa ET_EXEC badala ya .o
 n64 idadi_hoja_muda   ; hifadhi ya argc wakati wa kuchanganua hoja
-n32 zalisha_tendo_biti64   ; 1 = operesheni binary ya baiti 8 (N64/kielekezi)
-n32 kianzio_lengo64   ; 1 = kianzilishi cha tangazo la N64 (uhamishaji wa baiti 8)
+n32 zalisha_tendo_biti64   ; 1 = operesheni binary ya baiti 8 (n64/kielekezi)
+n32 kianzio_lengo64   ; 1 = kianzilishi cha tangazo la n64 (uhamishaji wa baiti 8)
 
 ; ---------- Jedwali la miundo ----------
 n64 muundo_idadi   ; idadi ya miundo
@@ -451,7 +413,7 @@ n32 ndani_kwa_rejea[UPEO_NDANI]   ; 1 = paramu ya muundo mkubwa (>8B) kwa rejea
 n32 ukubwa_safu_ndani[UPEO_NDANI]   ; idadi ya elementi za safu ya ndani au 0
 n64 kiunzi_wapi   ; ofseti inayofuata ya fremu ya rafu
 n32 ak_kipengele_ni_muundo   ; alama: kipengele cha safu ni muundo (assign_kielelezo)
-n32 ak_kipengele_ni_d64   ; alama: kipengele cha safu ni D64 (hifadhi xmm0)
+n32 ak_kipengele_ni_d64   ; alama: kipengele cha safu ni d64 (hifadhi xmm0)
 
 ; ---------- Habari ya kurejesha muundo ----------
 n32 kazi_rudisha_aina   ; aina ya kurejesha ya kazi ya sasa (uzalishaji)
@@ -769,70 +731,6 @@ nakili:
         vuta r7
         rudi
 
-; -------------------------------------------------------
-; andika_baiti: andika baiti moja kwa bafa la .text
-;   al = baiti ya kuandika
-;   inatumia na kurekebisha mahali_bafa_msimbo
-; -------------------------------------------------------
-andika_baiti:
-        sukuma r7
-        r7 = n64[mahali_bafa_msimbo]
-        linganisha r7, UKUBWA_BAFA_MSIMBO
-        ruka .furika kama >=a
-        r7 = &[bafa_msimbo + r7]
-        n8[r7] = r0b
-        n64[mahali_bafa_msimbo]++
-        vuta r7
-        rudi
-.furika:
-        r7 = &[ujumbe_bafa_msimbo_jaa]
-        ita andika_mfuatano
-        r7d = 1
-        ita mfumo_toka
-
-; -------------------------------------------------------
-; andika_neno4: andika neno la baiti 4 kwa bafa la .text
-;   edi = thamani ya kuandika
-; -------------------------------------------------------
-andika_neno4:
-        sukuma r7
-        sukuma r1
-        r1 = n64[mahali_bafa_msimbo]
-        linganisha r1, UKUBWA_BAFA_MSIMBO - 4
-        ruka .furika kama >=a
-        r1 = &[bafa_msimbo + r1]
-        n32[r1] = r7d
-        n64[mahali_bafa_msimbo] += 4
-        vuta r1
-        vuta r7
-        rudi
-.furika:
-        r7 = &[ujumbe_bafa_msimbo_jaa]
-        ita andika_mfuatano
-        r7d = 1
-        ita mfumo_toka
-
-; -------------------------------------------------------
-; andika_neno8: andika neno la baiti 8 kwa bafa la .text
-;   rdi = thamani ya kuandika
-; -------------------------------------------------------
-andika_neno8:
-        sukuma r7
-        sukuma r1
-        r1 = n64[mahali_bafa_msimbo]
-        linganisha r1, UKUBWA_BAFA_MSIMBO - 8
-        ruka .furika kama >=a
-        r1 = &[bafa_msimbo + r1]
-        n64[r1] = r7
-        n64[mahali_bafa_msimbo] += 8
-        vuta r1
-        vuta r7
-        rudi
-.furika:
-        r7 = &[ujumbe_bafa_msimbo_jaa]
-        ita andika_mfuatano
-        r7d = 1
-        ita mfumo_toka
 
 ; -------------------------------------------------------
 ; andika_neno8_moja_kwa_moja: andika neno8 moja kwa moja kwa stdout
@@ -1102,23 +1000,6 @@ soma_chanzo_kutoka_faili:
 ; Sehemu ya 4: Msomaji (Lexer)
 ; =============================================================================
 
-; -------------------------------------------------------
-; ni_nafasi: angalia ikiwa herufi ni nafasi
-;   al = herufi
-;   kurudisha: ZF=1 ikiwa ni nafasi
-; -------------------------------------------------------
-ni_nafasi:
-        linganisha r0b, ' '
-        ruka .ndiyo kama ==
-        linganisha r0b, 9   ; tab
-        ruka .ndiyo kama ==
-        linganisha r0b, 10   ; newline
-        ruka .ndiyo kama ==
-        linganisha r0b, 13   ; carriage return
-        ruka .ndiyo kama ==
-        linganisha r0b, 0
-.ndiyo:
-        rudi
 
 ; -------------------------------------------------------
 ; ni_herufi: angalia ikiwa ni herufi au _
@@ -1962,48 +1843,6 @@ changanua_chanzo:
         n64[tokeni_idadi]++
         rudi
 
-; -------------------------------------------------------
-; tokeni_sasa: rudisha aina ya tokeni ya sasa
-;   rax = aina ya tokeni
-; -------------------------------------------------------
-tokeni_sasa:
-        r0 = n64[mahali_tokeni]
-        r0d = n32[aina_tokeni + r0*4]
-        rudi
-
-; -------------------------------------------------------
-; tokeni_songa: sogea mbele kwenye tokeni
-; -------------------------------------------------------
-tokeni_songa:
-        n64[mahali_tokeni]++
-        rudi
-
-; -------------------------------------------------------
-; tokeni_thamani_sasa: rudisha thamani ya tokeni ya sasa
-;   rax = thamani
-; -------------------------------------------------------
-tokeni_thamani_sasa:
-        r0 = n64[mahali_tokeni]
-        r0 = n64[thamani_tokeni + r0*8]
-        rudi
-
-; -------------------------------------------------------
-; tokeni_maandishi_sasa: rudisha anwani ya maandishi ya tokeni ya sasa
-;   rax = anwani
-; -------------------------------------------------------
-tokeni_maandishi_sasa:
-        r0 = n64[mahali_tokeni]
-        r0 = n64[maandishi_tokeni + r0*8]
-        rudi
-
-; -------------------------------------------------------
-; tokeni_urefu_sasa: rudisha urefu wa tokeni ya sasa
-;   rax = urefu
-; -------------------------------------------------------
-tokeni_urefu_sasa:
-        r0 = n64[mahali_tokeni]
-        r0d = a16[urefu_tokeni + r0*2]
-        rudi
 
 ; -------------------------------------------------------
 ; tarajia_ishara: angalia ikiwa tokeni ya sasa ni aina fulani
@@ -2026,26 +1865,6 @@ tarajia_ishara:
         vuta r3
         rudi
 
-; -------------------------------------------------------
-; tarajia_ishara_hesabu: angalia ikiwa tokeni ya sasa ni ishara maalum
-;   edi = msimbo wa ishara inayotarajiwa
-;   rax = 1 ikiwa sawa, 0 ikiwa tofauti
-; -------------------------------------------------------
-tarajia_ishara_hesabu:
-        sukuma r3
-        r3 = n64[mahali_tokeni]
-        linganisha n32[aina_tokeni + r3*4], TOKENI_ISHARA
-        ruka .shindwa kama !=
-        linganisha n64[thamani_tokeni + r3*8], r7
-        ruka .shindwa kama !=
-        n64[mahali_tokeni]++
-        r0d = 1
-        vuta r3
-        rudi
-.shindwa:
-        r0d ^= r0d
-        vuta r3
-        rudi
 
 ; -------------------------------------------------------
 ; tarajia_neno: angalia ikiwa tokeni ya sasa inalingana na neno
@@ -2086,7 +1905,7 @@ tarajia_neno:
 ; mti_nodi_mpya: unda nodi mpya ya AST
 ;   r8d = aina ya nodi
 ;   r9d = kushoto, r10d = kulia, r11d = tiga
-;   rax = faharisi ya nodi mpya (N32)
+;   rax = faharisi ya nodi mpya (n32)
 ; -------------------------------------------------------
 mti_nodi_mpya:
         sukuma r3
@@ -2158,7 +1977,7 @@ hifadhi_jina:
 
 ; -------------------------------------------------------
 ; changanua_aina: changanua jina la aina
-;   rax = nambari ya aina (0=haijulikani, 1=N8, 2=N16, 3=N32, 4=N64, 5=W0)
+;   rax = nambari ya aina (0=haijulikani, 1=n8, 2=n16, 3=n32, 4=n64, 5=w0)
 ;   rbx = nyota_ya_aina (1 ikiwa ni nyota, 0 la sivyo)
 ; -------------------------------------------------------
 changanua_aina:
@@ -2169,39 +1988,39 @@ changanua_aina:
         ; Aina ya msingi -- herufi ndogo PEKEE (herufi kubwa
         ; imeondolewa, uamuzi wa msimamizi baada ya Awamu C
         ; kukamilika -- angalia hati/mipaka.md)
-        r7 = &[tn_w0_ndogo]
+        r7 = &[jina_aina_w0]
         ita tarajia_neno
         linganisha r0d, 1
         ruka .ni_w0 kama ==
 
-        r7 = &[tn_n8_ndogo]
+        r7 = &[jina_aina_n8]
         ita tarajia_neno
         linganisha r0d, 1
         ruka .ni_n8 kama ==
 
-        r7 = &[tn_n16_ndogo]
+        r7 = &[jina_aina_n16]
         ita tarajia_neno
         linganisha r0d, 1
         ruka .ni_n16 kama ==
 
-        r7 = &[tn_n32_ndogo]
+        r7 = &[jina_aina_n32]
         ita tarajia_neno
         linganisha r0d, 1
         ruka .ni_n32 kama ==
 
-        r7 = &[tn_n64_ndogo]
+        r7 = &[jina_aina_n64]
         ita tarajia_neno
         linganisha r0d, 1
         ruka .ni_n64 kama ==
 
-        r7 = &[tn_d64_ndogo]
+        r7 = &[jina_aina_d64]
         ita tarajia_neno
         linganisha r0d, 1
         ruka .ni_d64 kama ==
 
         ; Jaribu aina ya muundo (jina la mtumiaji)
         ; Muundo lazima UTANGAZWE kabla ya matumizi (utangulizi wa C).
-        ; Jina lisilotangazwa (A32, B1, W64, N128, D80 n.k.) si aina
+        ; Jina lisilotangazwa (a32, b1, w64, n128, d80 n.k.) si aina
         ; yoyote — ni kosa la sauti, si kugawanyika kwa mkusanyaji.
         r7 = n64[mahali_tokeni]
         linganisha n32[aina_tokeni + r7*4], TOKENI_NENO
@@ -2249,7 +2068,7 @@ changanua_aina:
         r3d ^= r3d
         ruka .kagua_nyota
 .ni_d64:
-        r0d = 7   ; D64 — desimali (double)
+        r0d = 7   ; d64 — desimali (double)
         r3d ^= r3d
         ruka .kagua_nyota
 
@@ -2299,21 +2118,21 @@ kosa_aina_isiyojulikana:
 
 ; -------------------------------------------------------
 ; ukubwa_kutoka_aina: rudisha ukubwa wa aina kwa baiti
-;   edi = nambari ya aina (1=N8, 2=N16, 3=N32, 4=N64, 5=W0, 6=muundo, 7=D64)
+;   edi = nambari ya aina (1=n8, 2=n16, 3=n32, 4=n64, 5=w0, 6=muundo, 7=d64)
 ;   rax = ukubwa kwa baiti
 ; -------------------------------------------------------
 ukubwa_kutoka_aina:
-        linganisha r7d, 1   ; N8
+        linganisha r7d, 1   ; n8
         ruka .ukubwa1 kama ==
-        linganisha r7d, 2   ; N16
+        linganisha r7d, 2   ; n16
         ruka .ukubwa2 kama ==
-        linganisha r7d, 3   ; N32
+        linganisha r7d, 3   ; n32
         ruka .ukubwa4 kama ==
-        linganisha r7d, 4   ; N64
+        linganisha r7d, 4   ; n64
         ruka .ukubwa8 kama ==
-        linganisha r7d, 5   ; W0
+        linganisha r7d, 5   ; w0
         ruka .ukubwa0 kama ==
-        linganisha r7d, 7   ; D64
+        linganisha r7d, 7   ; d64
         ruka .ukubwa8 kama ==
         ; Muundo au nyota — tumia 8 (ukubwa wa anwani)
         r0d = 8
@@ -2347,7 +2166,7 @@ tafuta_muundo:
         sukuma r7
         sukuma r6
         sukuma r2
-        r7d = r7d   ; sufuri juu ya rdi (ofseti ni N32)
+        r7d = r7d   ; sufuri juu ya rdi (ofseti ni n32)
         r6 = &[dimbwi_mfuatano + r7]   ; jina linalotafutwa
         r2d ^= r2d
         r1 = n64[muundo_idadi]
@@ -2397,9 +2216,9 @@ changanua_kipengele_msingi:
         sukuma r0
         r7 = n64[mahali_tokeni]
         r7 = n64[thamani_tokeni + r7*8]
-        ; Thamani kubwa kuliko N32 (zaidi ya 2147483647) — halisi ya N64:
+        ; Thamani kubwa kuliko n32 (zaidi ya 2147483647) — halisi ya n64:
         ; baiti 8 kwenye bwawa, alama mti_kulia=1 (sawa na mnyororo wa
-        ; .swa, unaotumia mti_kulia kama alama ya N64).
+        ; .swa, unaotumia mti_kulia kama alama ya n64).
         linganisha r7, 2147483647
         ruka .nambari_n64 kama >a
         r1 = n64[mti_idadi]
@@ -2414,7 +2233,7 @@ changanua_kipengele_msingi:
         n64[dimbwi_halisi64 + r0] = r7   ; baiti 8 (little-endian)
         r1 = n64[mti_idadi]
         n32[mti_thamani + r1*4 - 4] = r0d   ; ofseti ya bwawa
-        n32[mti_kulia + r1*4 - 4] = 1   ; alama ya N64
+        n32[mti_kulia + r1*4 - 4] = 1   ; alama ya n64
 .nambari_imehifadhiwa:
         n64[mahali_tokeni]++
         vuta r0
@@ -2427,7 +2246,7 @@ changanua_kipengele_msingi:
         ita mfumo_toka
 
 .nambari_desimali:
-        ; D64: biti 64 hugawanywa — lo32 kwenye mti_thamani, hi32 kwenye mti_tiga
+        ; d64: biti 64 hugawanywa — lo32 kwenye mti_thamani, hi32 kwenye mti_tiga
         ; (mkongwe ule ule wa mnyororo wa .swa kwa MTI_HALISI_D).
         r7 = n64[mahali_tokeni]
         r8d = MTI_HALISI_D
@@ -3492,7 +3311,7 @@ changanua_taarifa:
         ruka .tarajia_semicolon
 
 .sio_endelea:
-        ; Labda ni tangazo la kigezo (N32 jina = ...) au usemi (wito wa kazi, n.k.)
+        ; Labda ni tangazo la kigezo (n32 jina = ...) au usemi (wito wa kazi, n.k.)
         ; Jaribu kuchanganua kama tangazo la aina kwanza
         ; Hifadhi nafasi ya token — ikiwa tangazo litashindwa, rejesha na jaribu usemi
         sukuma n64[mahali_tokeni]
@@ -3504,7 +3323,7 @@ changanua_taarifa:
         r12d = r0d   ; hifadhi aina
         r13d = r3d   ; hifadhi nyota
 
-        ; "N32;" — taarifa ya jina la aina PEKEE. Jina la aina
+        ; "n32;" — taarifa ya jina la aina PEKEE. Jina la aina
         ; halitumiki kama usemi (rekodi 8.19) — kosa la sauti.
         ; Ukataji ni FINYU: ';' mara baada ya aina haufuatiwi na
         ; chochote, kwa hiyo hakuna usemi halali unaoanza hivyo;
@@ -3545,7 +3364,7 @@ changanua_taarifa:
         vuta r12   ; aina
         vuta r13   ; nyota
 
-        ; Angalia ikiwa ni tangazo la safu: N32 jina[N];
+        ; Angalia ikiwa ni tangazo la safu: n32 jina[N];
         r7 = n64[mahali_tokeni]
         linganisha n32[aina_tokeni + r7*4], TOKENI_MABANO_MKOA
         ruka .tangazo_safu kama ==
@@ -3584,7 +3403,7 @@ changanua_taarifa:
         r4 += 8   ; toa mahali_tokeni bila kubadilisha eax
         ruka .tarajia_semicolon
 
-        ; Njia ya safu ya ndani: N32 jina[N]; (miundo pia inaruhusiwa)
+        ; Njia ya safu ya ndani: n32 jina[N]; (miundo pia inaruhusiwa)
 .tangazo_safu:
         n64[mahali_tokeni]++   ; ruka [
         r7 = n64[mahali_tokeni]
@@ -3622,7 +3441,7 @@ changanua_taarifa:
         ruka .tarajia_semicolon
 
 .kosa_taarifa_aina_pekee:
-        ; Taarifa ya jina la aina pekee (8.19): "N32;" haiwezi kuwa
+        ; Taarifa ya jina la aina pekee (8.19): "n32;" haiwezi kuwa
         ; kitu kingine chochote — aina inahitaji jina la kigezo.
         r7 = &[ujumbe_aina_kama_usemi]
         ita andika_mfuatano
@@ -3640,8 +3459,8 @@ changanua_taarifa:
 
 .angalia_aina_taarifa:
         ; Aina haikujulikana. Neno linalofuatiwa na neno lingine ni
-        ; jaribio la tangazo la aina isiyojulikana (A32, B1, W64,
-        ; N128, D80 n.k.) — kosa la sauti, si kurudi kwenye usemi.
+        ; jaribio la tangazo la aina isiyojulikana (a32, b1, w64,
+        ; n128, d80 n.k.) — kosa la sauti, si kurudi kwenye usemi.
         ; (Usemi halali hauanzi kwa maneno mawili mfululizo.)
         r7 = n64[mahali_tokeni]
         linganisha n32[aina_tokeni + r7*4], TOKENI_NENO
@@ -3783,8 +3602,8 @@ changanua_vigezo:
         linganisha r0d, 0
         ruka .angalia_kigezo_aina kama ==
 
-        ; W0 ni aina ya KAZI TU — aina ya kurudi (hati 3: "W0 —
-        ; Bila thamani (void) — kwa kazi tu"). Parameta ya W0
+        ; w0 ni aina ya KAZI TU — aina ya kurudi (hati 3: "w0 —
+        ; Bila thamani (void) — kwa kazi tu"). Parameta ya w0
         ; ilikubaliwa kimyakimya zamani (kama baiti 8) — kosa la
         ; sauti sasa.
         linganisha r0d, 5
@@ -3853,7 +3672,7 @@ changanua_vigezo:
         ruka .kigezo_kagua_koma
 
 .angalia_kigezo_aina:
-        ; Aina ya param haijulikani. Neno (D32, A8 n.k.) ni aina
+        ; Aina ya param haijulikani. Neno (d32, a8 n.k.) ni aina
         ; isiyojulikana — kosa la sauti. Isiyo neno (tarakimu,
         ; ishara): ruka kama zamani.
         r7 = n64[mahali_tokeni]
@@ -4126,7 +3945,7 @@ changanua_muundo:
         r1d = a16[urefu_tokeni + r7*2]
 
         ; Jina la muundo linaweza kuwa na umbo la aina (k.m. "K24",
-        ; "B12") — mnyororo wa .swa unakubali, kwa hiyo mbegu
+        ; "b12") — mnyororo wa .swa unakubali, kwa hiyo mbegu
         ; inakubali pia (ukaguzi wa aina hutafuta muundo kwenye
         ; jedwali lake kwa herufi, si kwa umbo la jina).
 .muundo_jina_sawa:
@@ -4324,7 +4143,7 @@ changanua_muundo:
         r9d = 8
 .nyuga_panga:
         ; MPANGILIO UMEJAA (8.23): ofseti inayoendelea haina kipanga
-        ; kimoja — sawa na mnyororo wa .swa (muundo wa N8+N16+N32 ni
+        ; kimoja — sawa na mnyororo wa .swa (muundo wa n8+n16+n32 ni
         ; baiti 7, si 8). Zamani mbegu ilipanga na kutoa miundo
         ; isiyosomika sawa na uzalishaji.
         ; (hakuna kipanga — r13d inasalia kama ilivyo)
@@ -4544,7 +4363,7 @@ changanua_programu:
         ruka .programu_mzunguko
 
 ; ------------------------------------------------------------
-; Tangazo la kigeu cha ulimwengu: N32 x = 42; au N8 buf[1024];
+; Tangazo la kigeu cha ulimwengu: n32 x = 42; au n8 buf[1024];
 ; ------------------------------------------------------------
 .jaribu_ulimwengu:
         ; Rejesha nafasi ya tokeni iliyookolewa (changanua_kazi ilikula tokeni)
@@ -4557,7 +4376,7 @@ changanua_programu:
         linganisha r0d, 0
         ruka .angalia_aina_ngazi kama ==   ; haikujulikana, haikutumia tokeni
         linganisha r0d, 6
-                ruka .ulimwengu_d64_kosa kama >=a   ; D64 ya ulimwengu haisaidiwi na mbegu
+                ruka .ulimwengu_d64_kosa kama >=a   ; d64 ya ulimwengu haisaidiwi na mbegu
                                         ; (kikomo kilichoandikwa) — kosa la sauti
 
         ; Hifadhi aina na nyota kwenye stack: [rsp] = aina, [rsp+8] = nyota
@@ -4581,7 +4400,7 @@ changanua_programu:
         r7d = n32[r4]   ; aina
         ita ukubwa_kutoka_aina
         linganisha r0d, 0
-        ruka .ukubwa8_ulimwengu kama ==   ; W0 -> baiti 8
+        ruka .ukubwa8_ulimwengu kama ==   ; w0 -> baiti 8
         linganisha n32[r4+8], 0
         ruka .ukubwa8_ulimwengu kama >n   ; nyota -> baiti 8
         r15d = r0d
@@ -4625,7 +4444,7 @@ changanua_programu:
 .anzisha_ulimwengu:
         n64[mahali_tokeni]++   ; ruka =
         ; Kianzio cha ANWANI ya kazi: "= &jina_la_kazi" (4.3). Aina ya
-        ; kigezo lazima iwe kielekezi au N64, na hali ya --exe pekee
+        ; kigezo lazima iwe kielekezi au n64, na hali ya --exe pekee
         ; (kama mnyororo wa uzalishaji); vinginevyo kosa la sauti.
         r7 = n64[mahali_tokeni]
         linganisha n32[aina_tokeni + r7*4], TOKENI_ALAMA
@@ -4640,7 +4459,7 @@ changanua_programu:
         r7 = n64[mahali_tokeni]
         linganisha n32[aina_tokeni + r7*4], TOKENI_NAMBARI
         ruka .ulimwengu_changanua_shindwa kama !=
-        ; Kianzio cha desimali (D64) — kosa la sauti (8.6): halisi
+        ; Kianzio cha desimali (d64) — kosa la sauti (8.6): halisi
         ; ya nambari pekee inakubalika kwenye ulimwengu
         linganisha n8[tokeni_desimali + r7], 0
         ruka .ulimwengu_d64_kosa kama !=
@@ -4651,7 +4470,7 @@ changanua_programu:
 .namba_anzisha_ulimwengu:
         linganisha n32[aina_tokeni + r7*4], TOKENI_NAMBARI
         ruka .ulimwengu_changanua_shindwa kama !=
-        ; Kianzio cha desimali (D64) — kosa la sauti (8.6)
+        ; Kianzio cha desimali (d64) — kosa la sauti (8.6)
         linganisha n8[tokeni_desimali + r7], 0
         ruka .ulimwengu_d64_kosa kama !=
         r9 = n64[thamani_tokeni + r7*8]
@@ -4664,14 +4483,14 @@ changanua_programu:
         ita mfumo_toka
 .ulimwengu_anzisha_anwani:
         ; & jina — kianzio cha anwani ya kazi. Kagua hali na aina:
-        ; kielekezi (nyota) au N64 pekee, si D64/safu/muundo (zile
+        ; kielekezi (nyota) au n64 pekee, si d64/safu/muundo (zile
         ; tayari zimekataliwa na utaratibu wa aina za ulimwengu).
         linganisha n8[hali_exe], 0
         ruka .gia_kosa kama ==
         r0d = n32[r4 + 8]   ; nyota
         linganisha r0d, 0
         ruka .gia_aina_sawa kama >n
-        linganisha n32[r4], 4   ; N64
+        linganisha n32[r4], 4   ; n64
         ruka .gia_aina_sawa kama ==
 .gia_kosa:
         r7 = &[ujumbe_kianzio_kazi]
@@ -4913,13 +4732,11 @@ n64 zalisha_lebo_idadi
 n32 zalisha_rekebisho_ofseti[UPEO_HAMISHO]
 n32 zalisha_rekebisho_lebo[UPEO_HAMISHO]
 n64 zalisha_rekebisho_idadi
-n64 zalisha_rafu_ukubwa
-n64 zalisha_sasa_kazi
 n64 zalisha_rudisha_lebo
 n32 zalisha_lebo_mahali[1024]
 
 ; ---------- Aina za hoja za wito (kwa ABI ya xmm) ----------
-; hoja_d64[i] = 1 ikiwa hoja i (0-basi) ni desimali (D64); hoja_rejista[i]
+; hoja_d64[i] = 1 ikiwa hoja i (0-basi) ni desimali (d64); hoja_rejista[i]
 ; = faharisi ya rejesta (gp 0-5 au xmm 0-7) kwa hoja i. Hujazwa wakati
 ; wa kutathmini hoja na kusomwa wakati wa kuzipanga kwenye rejesta.
 ; Hifadhiwa na kurejeshwa karibu na wito zilizowekwa ndani.
@@ -4989,27 +4806,6 @@ zalisha_neno4:
         r7d = 1
         ita mfumo_toka
 
-; -------------------------------------------------------
-; zalisha_neno8: ongeza baiti 8 kwenye bafa la .text
-;   rdi = thamani
-; -------------------------------------------------------
-zalisha_neno8:
-        sukuma r7
-        sukuma r1
-        r1 = n64[mahali_bafa_msimbo]
-        linganisha r1, UKUBWA_BAFA_MSIMBO - 16
-        ruka .furika kama >=a
-        r1 = &[bafa_msimbo + r1]
-        n64[r1] = r7
-        n64[mahali_bafa_msimbo] += 8
-        vuta r1
-        vuta r7
-        rudi
-.furika:
-        r7 = &[ujumbe_bafa_msimbo_jaa]
-        ita andika_mfuatano
-        r7d = 1
-        ita mfumo_toka
 
 ; -------------------------------------------------------
 ; zalisha_rekebisho_ongeza: ongeza fixup kwa kuruka mbele
@@ -5074,7 +4870,7 @@ uzalishaji_tangazo:
         r8d = n32[kiunzi_wapi]
         n32[ofseti_ndani + r1*4] = r8d
         ; Hifadhi aina msingi na idadi ya nyota
-        r10d = n32[mti_thamani + r12*4]   ; aina msingi (N8=1, n.k.)
+        r10d = n32[mti_thamani + r12*4]   ; aina msingi (n8=1, n.k.)
         n32[aina_msingi_ndani + r1*4] = r10d
         r10d = n32[mti_kulia + r12*4]   ; idadi ya nyota
         n32[ndani_nyota_idadi + r1*4] = r10d
@@ -5133,7 +4929,7 @@ uzalishaji_tangazo:
         ita ukubwa_kutoka_aina   ; haibadilishi rcx/r10/r11
         pima r0d, r0d
         ruka .safu_uk_sawa kama !=
-        r0d = 8   ; W0 → 8
+        r0d = 8   ; w0 → 8
 .safu_uk_sawa:
         ruka .safu_uk_hifadhiwa
 .safu_uk_muundo:
@@ -5251,9 +5047,9 @@ uzalishaji_tangazo:
         ; Thamani ya kianzilishi (ikiwa ipo)
         linganisha r13d, -1
         ruka .hapana_anzisha kama ==
-        ; Kianzilishi cha tangazo la N64: uhamishaji << >> huhesabiwa
+        ; Kianzilishi cha tangazo la n64: uhamishaji << >> huhesabiwa
         ; kwa baiti 8 hata kama operanda zote ni ndogo (8.5):
-        ; "N64 x = 1 << 32" lazima itoe 4294967296, si 1 (1 << (32 & 31)).
+        ; "n64 x = 1 << 32" lazima itoe 4294967296, si 1 (1 << (32 & 31)).
         ; Alama inasomwa na uzalishaji_kauli_ya_mbili (upana wa
         ; uhamishaji) na panua_ishara_ya_kauli (usitoe cdqe kwenye
         ; matokeo ya baiti 8). Inafutwa katika .bmd_kianzio_isha.
@@ -5271,15 +5067,15 @@ uzalishaji_tangazo:
         ita uzalishaji_mti
         vuta r12
         ; Panua ishara ya matokeo ya hesabu ya binary kabla ya
-        ; kuhifadhiwa kwenye kigezo cha baiti 8: "N64 y = 0 - 90;"
-        ; — operesheni ya N32 (sub eax, ecx) huacha biti 32 za juu
+        ; kuhifadhiwa kwenye kigezo cha baiti 8: "n64 y = 0 - 90;"
+        ; — operesheni ya n32 (sub eax, ecx) huacha biti 32 za juu
         ; kuwa sifuri; cdqe (48 98) huzipanua kwa ishara. Sawia na
         ; panua_ishara_ndogo ya mnyororo wa .swa na uwekaji
         ; (.fanya_weka); anwani (kielekezi, jina la safu) hazipanuliwi.
         r7d = r13d
         ita panua_ishara_ya_kauli
-        ; Mpaka wa kamili/desimali kwenye kianzio (8.6): D64 → kamili
-        ; (kukata hadi sifuri) na kamili → D64 (pandisha).
+        ; Mpaka wa kamili/desimali kwenye kianzio (8.6): d64 → kamili
+        ; (kukata hadi sifuri) na kamili → d64 (pandisha).
         r1 = n64[ndani_idadi]
         r1--
         r8d = n32[aina_msingi_ndani + r1*4]
@@ -5319,7 +5115,7 @@ uzalishaji_tangazo:
         ruka .hifadhi_thamani
 .hapana_anzisha:
         r0d ^= r0d   ; hakuna kianzilishi, thamani = 0
-        ; D64 bila kianzilishi: sifuri kwenye xmm0 (pxor xmm0, xmm0
+        ; d64 bila kianzilishi: sifuri kwenye xmm0 (pxor xmm0, xmm0
         ; → 66 0F EF C0), si takataka kutoka kwa eax.
         r1 = n64[ndani_idadi]
         r1--
@@ -5345,11 +5141,11 @@ uzalishaji_tangazo:
         linganisha r10d, 0
         ruka .hifadhi_64 kama >n
         r10d = n32[aina_msingi_ndani + r1*4]
-        linganisha r10d, 4   ; N64
+        linganisha r10d, 4   ; n64
         ruka .hifadhi_64 kama ==
-        linganisha r10d, 5   ; W0
+        linganisha r10d, 5   ; w0
         ruka .hifadhi_64 kama ==
-        linganisha r10d, 7   ; D64
+        linganisha r10d, 7   ; d64
         ruka .hifadhi_d64 kama ==
 
         ; 32-bit store: mov [rbp + disp32], eax  ->  89 85 d32
@@ -5405,7 +5201,7 @@ uzalishaji_nambari:
         sukuma r13
         r12d = r12d   ; hakikisha ni 32-bit
         r7d = n32[mti_thamani + r12*4]
-        ; Alama ya N64 (mti_kulia == 1): mov rax, imm64 — 48 B8 + baiti 8
+        ; Alama ya n64 (mti_kulia == 1): mov rax, imm64 — 48 b8 + baiti 8
         linganisha n32[mti_kulia + r12*4], 1
         ruka .toa_papo64 kama ==
         ; Toa maelekezo: mov eax, imm32
@@ -5417,7 +5213,7 @@ uzalishaji_nambari:
         vuta r12
         rudi
 .toa_papo64:
-        ; mov rax, imm64 -> 48 B8 + baiti 8 (kutoka kwenye bwawa)
+        ; mov rax, imm64 -> 48 b8 + baiti 8 (kutoka kwenye bwawa)
         r0b = 0x48   ; REX.W
         ita zalisha_baiti
         r0b = 0xB8   ; mov rax, imm64
@@ -5437,7 +5233,7 @@ uzalishaji_nambari:
         rudi
 
 ; -------------------------------------------------------
-; uzalishaji_halisi_d: zalisha msimbo kwa halisi ya D64
+; uzalishaji_halisi_d: zalisha msimbo kwa halisi ya d64
 ;   Biti 64 zimegawanywa: mti_thamani = lo32, mti_tiga = hi32.
 ;   Hutoa thabiti ya baiti 8 kwenye .data (iliyopangiliwa kwa 8) na
 ;   inapakia kwenye xmm0: movsd xmm0, [disp32].
@@ -5569,15 +5365,15 @@ uzalishaji_jina:
 
         ; Sio pointer — paki kulingana na aina msingi
         r8d = n32[aina_msingi_ndani + r13*4]
-        linganisha r8d, 1   ; N8
+        linganisha r8d, 1   ; n8
         ruka .pakia_n8 kama ==
-        linganisha r8d, 2   ; N16
+        linganisha r8d, 2   ; n16
         ruka .pakia_n16 kama ==
-        linganisha r8d, 4   ; N64
+        linganisha r8d, 4   ; n64
         ruka .pakia_n64 kama ==
-        linganisha r8d, 7   ; D64
+        linganisha r8d, 7   ; d64
         ruka .pakia_d64 kama ==
-        ; N32 (3) au chaguo-msingi
+        ; n32 (3) au chaguo-msingi
         r0b = 0x8B   ; mov eax, [rbp+disp32]
         ita zalisha_baiti
         r0b = 0x85   ; ModRM: [rbp+disp32], reg=eax
@@ -5587,7 +5383,7 @@ uzalishaji_jina:
 
 .pakia_n8:
         ; movsx eax, byte [rbp+disp32] — upanuzi wa ISHARA (8.20):
-        ; N8 hasi (-1) inapakiwa kama -1, si 255.
+        ; n8 hasi (-1) inapakiwa kama -1, si 255.
         r0b = 0x0F
         ita zalisha_baiti
         r0b = 0xBE
@@ -5610,7 +5406,7 @@ uzalishaji_jina:
 
 .pakia_n64:
 .pakia_kielekezi64:
-        ; Pointer au N64 — paki baiti 8
+        ; Pointer au n64 — paki baiti 8
         r0b = 0x48   ; REX.W
         ita zalisha_baiti
         r0b = 0x8B   ; mov rax, [rbp+disp32]
@@ -5621,7 +5417,7 @@ uzalishaji_jina:
         ruka .pakia_kwisha
 
 .pakia_d64:
-        ; D64 — paki baiti 8 kwenye xmm0: f2 0f 10 85 d32
+        ; d64 — paki baiti 8 kwenye xmm0: f2 0f 10 85 d32
         r0b = 0xF2
         ita zalisha_baiti
         r0b = 0x0F
@@ -5631,7 +5427,7 @@ uzalishaji_jina:
         r0b = 0x85
         ita zalisha_baiti
         ita zalisha_neno4
-        r0d = -1   ; CT haijulikani kwa D64
+        r0d = -1   ; CT haijulikani kwa d64
         vuta r14
         vuta r13
         vuta r12
@@ -5670,15 +5466,15 @@ uzalishaji_jina:
         linganisha r8d, 0
         ruka .pakia_ulimwengu_n64 kama >n
         r8d = n32[aina_msingi_ulimwengu + r13*4]
-        linganisha r8d, 1   ; N8
+        linganisha r8d, 1   ; n8
         ruka .pakia_ulimwengu_n8 kama ==
-        linganisha r8d, 2   ; N16
+        linganisha r8d, 2   ; n16
         ruka .pakia_ulimwengu_n16 kama ==
-        linganisha r8d, 4   ; N64
+        linganisha r8d, 4   ; n64
         ruka .pakia_ulimwengu_n64 kama ==
-        linganisha r8d, 5   ; W0 — pointer, baiti 8
+        linganisha r8d, 5   ; w0 — pointer, baiti 8
         ruka .pakia_ulimwengu_n64 kama ==
-        ; N32 (3) au chaguo-msingi
+        ; n32 (3) au chaguo-msingi
 .pakia_ulimwengu_n32:
         r0b = 0x8B   ; mov eax, [rip+disp32]
         ita zalisha_baiti
@@ -6011,7 +5807,7 @@ uzalishaji_nyota_ya:
         r14d = n32[ndani_nyota_idadi + r13*4]
         linganisha r14d, 0
         ruka .nyota_n32 kama ==   ; sio pointer
-        ; Kielekezi kwa kielekezi (N32** q; *q) — matokeo ni KIELEKEZI:
+        ; Kielekezi kwa kielekezi (n32** q; *q) — matokeo ni KIELEKEZI:
         ; pakia baiti 8 (9.2 — zamani *q ilipakia baiti 4 na SEGV
         ; kwenye **q)
         linganisha r14d, 1
@@ -6019,27 +5815,27 @@ uzalishaji_nyota_ya:
 
         ; Ni pointer — tumia aina msingi kujua ukubwa wa kupakia
         r14d = n32[aina_msingi_ndani + r13*4]
-        linganisha r14d, 1   ; N8
+        linganisha r14d, 1   ; n8
         ruka .nyota_n8 kama ==
-        linganisha r14d, 2   ; N16
+        linganisha r14d, 2   ; n16
         ruka .nyota_n16 kama ==
-        linganisha r14d, 4   ; N64
+        linganisha r14d, 4   ; n64
         ruka .nyota_n64 kama ==
-        linganisha r14d, 5   ; W0 — anwani, pakia baiti 8
+        linganisha r14d, 5   ; w0 — anwani, pakia baiti 8
         ruka .nyota_n64 kama ==
-        ; N32 (3) au chaguo-msingi — anguka hadi .nyota_n32
+        ; n32 (3) au chaguo-msingi — anguka hadi .nyota_n32
 
 .nyota_fumbua:
         ; Usemi changamano (au kigezo cha ulimwengu): pakia kwa upana
-        ; wa KIPENGELE cha kielekezi. Zamani N32 kwa chaguo-msingi —
-        ; jibu baya la kimya kwa kielekezi cha N8/N16/N64 (mfano
-        ; *(p + 1) kwenye N8* kilisoma baiti 4, si 1).
+        ; wa KIPENGELE cha kielekezi. Zamani n32 kwa chaguo-msingi —
+        ; jibu baya la kimya kwa kielekezi cha n8/n16/n64 (mfano
+        ; *(p + 1) kwenye n8* kilisoma baiti 4, si 1).
         sukuma r12
         r12d = r13d
         ita fumbua_aina   ; eax=aina, ebx=nyota, edx=muundo id
         vuta r12
         pima r3d, r3d
-        ruka .nyota_n32 kama <=n   ; si kielekezi — N32 kwa chaguo-msingi
+        ruka .nyota_n32 kama <=n   ; si kielekezi — n32 kwa chaguo-msingi
         r3d--   ; kipengele = nyota - 1
         linganisha r3d, 0
         ruka .nyota_n64 kama >n   ; kipengele chenye nyota — anwani, baiti 8
@@ -6053,7 +5849,7 @@ uzalishaji_nyota_ya:
         ruka .nyota_n64 kama ==
         linganisha r0d, 6
         ruka .nyota_muundo kama ==   ; muundo — anwani ndiyo thamani
-        ; N32 (3) na D64 (7) — N32 kwa chaguo-msingi (D64 ni kikomo)
+        ; n32 (3) na d64 (7) — n32 kwa chaguo-msingi (d64 ni kikomo)
         ruka .nyota_n32
 .nyota_muundo:
         ; Muundo haujapakiwa — anwani yake tayari iko kwenye rax
@@ -6378,14 +6174,14 @@ zalisha_kielelezo:
         ruka .pakia_64 kama ==
         linganisha r8d, 7
         ruka .pakia_d64 kama ==
-        ; N32: mov eax, [rax] -> 8B 00
+        ; n32: mov eax, [rax] -> 8B 00
         r0b = 0x8B
         ita zalisha_baiti
         r0b = 0x00
         ita zalisha_baiti
         ruka .mwisho
 .pakia_d64:
-        ; D64 — movsd xmm0, [rax] -> f2 0f 10 00
+        ; d64 — movsd xmm0, [rax] -> f2 0f 10 00
         r0b = 0xF2
         ita zalisha_baiti
         r0b = 0x0F
@@ -6397,9 +6193,9 @@ zalisha_kielelezo:
         ruka .mwisho
 .pakia_8:
         ; movsx eax, byte [rax] -> 0F BE 00 — upanuzi wa ISHARA (8.20):
-        ; vipengele vya safu ya N8 hupakiwa kwa ishara kama vigeu
-        ; (zamani movzx: N8 hasi kwenye safu ilisomwa 255 badala ya
-        ; -1). Kumbuka: mnyororo wa .swa unasoma kwa A8 kwa baiti
+        ; vipengele vya safu ya n8 hupakiwa kwa ishara kama vigeu
+        ; (zamani movzx: n8 hasi kwenye safu ilisomwa 255 badala ya
+        ; -1). Kumbuka: mnyororo wa .swa unasoma kwa a8 kwa baiti
         ; ghafi zisizo na ishara (ast_pool, chanzo) — mbegu haina
         ; familia ya A, kwa hiyo upakiaji wa vipengele ni wenye
         ; ishara sawa na wa vigeu.
@@ -6534,7 +6330,7 @@ fumbua_aina:
         linganisha r13d, MTI_WAMBILE
         ruka .fa_wambile kama ==
         ; Unari: -x, !x, ~x — aina ya matokeo ni aina ya operanda
-        ; (8.4/8.6: -10000000000 ni N64; -2.5 ni D64; operesheni
+        ; (8.4/8.6: -10000000000 ni n64; -2.5 ni d64; operesheni
         ; mchanganyiko na hasili lazima ijue upana).
         linganisha r13d, MTI_HASILI
         ruka .fa_unari kama ==
@@ -6545,7 +6341,7 @@ fumbua_aina:
         ruka .fa_sio
 
 .fa_halisi_d:
-        r0d = 7   ; D64
+        r0d = 7   ; d64
         r3d ^= r3d
         r2d = -1
         ruka .fa_mwisho
@@ -6746,15 +6542,15 @@ fumbua_aina:
         ruka .fa_mwisho
 
 .fa_namba:
-        ; Halisi ya N64 (alama mti_kulia == 1) ina aina N64 — inafanya
+        ; Halisi ya n64 (alama mti_kulia == 1) ina aina n64 — inafanya
         ; oparesheni zake ziwe za baiti 8 (sawa na mnyororo wa .swa,
-        ; ambapo enc ya halisi ya N64 ni N64).
+        ; ambapo enc ya halisi ya n64 ni n64).
         linganisha n32[mti_kulia + r12*4], 1
         ruka .fa_namba_32 kama !=
-        r0d = 4   ; N64
+        r0d = 4   ; n64
         ruka .fa_namba_mwisho
 .fa_namba_32:
-        r0d = 3   ; N32
+        r0d = 3   ; n32
 .fa_namba_mwisho:
         r3d ^= r3d
         r2d = -1
@@ -6762,9 +6558,9 @@ fumbua_aina:
 
 .fa_kauli:
         ; Ulinganisho (== != < > <= >=) unarudisha 0/1 kwenye eax —
-        ; aina yake ni N32 hata kama operanda ni D64 (8.6/8.21:
+        ; aina yake ni n32 hata kama operanda ni d64 (8.6/8.21:
         ; "d > 1.99 && d < 2.01" ni halali — && ya matokeo ya
-        ; ulinganisho wa D64 haikataliwi). TAHADHARI: mfuatano wa
+        ; ulinganisho wa d64 haikataliwi). TAHADHARI: mfuatano wa
         ; herufi ni KAULI yenye kushoto=-1 na thamani=urefu wake —
         ; usiuchukulie kama ulinganisho (urefu unaweza kuwa sawa na
         ; msimbo wa ishara).
@@ -6785,12 +6581,12 @@ fumbua_aina:
         linganisha r15d, TENDO_KUBWA_SAWA
         ruka .fa_kauli_linganisho kama ==
         ; ?: — aina ya matokeo ni ya tawi la kweli (pandisha C:
-        ; tawi la uwongo la D64 linafanya matokeo yawe D64).
+        ; tawi la uwongo la d64 linafanya matokeo yawe d64).
         linganisha r15d, TENDO_HUU
         ruka .fa_kauli_mbili kama !=
         ruka .fa_kauli_huu
 .fa_kauli_linganisho:
-        r0d = 3   ; N32 (matokeo ya 0/1 kwenye eax)
+        r0d = 3   ; n32 (matokeo ya 0/1 kwenye eax)
         r3d ^= r3d
         r2d = -1
         ruka .fa_mwisho
@@ -6812,16 +6608,16 @@ fumbua_aina:
         ruka .fa_kauli_d64 kama ==
         ruka .fa_kauli_mbili
 .fa_kauli_d64:
-        r0d = 7   ; D64
+        r0d = 7   ; d64
         r3d ^= r3d
         r2d = -1
         ruka .fa_mwisho
 .fa_kauli_mbili:
-        ; Kauli ya binary: PANDISHA C — D64/N64/kielekezi kwenye
+        ; Kauli ya binary: PANDISHA C — d64/n64/kielekezi kwenye
         ; upande wowote inafanya operesheni nzima iwe ya upana huo.
-        ; (8.4: 0 - 10000000000 ni N64 hata kama kushoto ni N32;
-        ; 8.6: 1 + 2.5 ni D64; minyororo kama (pi * r) * r kubaki
-        ; D64.) Hesabu ya anwani (8.15): safu + ofseti ni KIELEKEZI —
+        ; (8.4: 0 - 10000000000 ni n64 hata kama kushoto ni n32;
+        ; 8.6: 1 + 2.5 ni d64; minyororo kama (pi * r) * r kubaki
+        ; d64.) Hesabu ya anwani (8.15): safu + ofseti ni KIELEKEZI —
         ; jina la safu linaharibika hadi kielekezi (lea), kama
         ; mnyororo wa .swa ("safu ya ndani: usemi wa jina unaharibika
         ; hadi kielekezi (mshale +1)"). Rudi kwenye kichwa cha
@@ -6837,9 +6633,9 @@ fumbua_aina:
         r13d = r0d   ; aina ya kushoto
         r14d = r3d   ; nyota za kushoto
         linganisha r0d, 7
-        ruka .fa_mwisho kama ==   ; D64
+        ruka .fa_mwisho kama ==   ; d64
         linganisha r0d, 4
-        ruka .fa_mwisho kama ==   ; N64
+        ruka .fa_mwisho kama ==   ; n64
         pima r3d, r3d
         ruka .fa_mwisho kama >n   ; kielekezi
         ; Kushoto ni jina la safu — anwani (kielekezi)
@@ -6882,9 +6678,9 @@ fumbua_aina:
         ; Wito wa kazi: aina yake ni aina ya KURUDI ya kazi, si aina
         ; ya hoja. Nodi ya wito ina kushoto=orodha ya hoja, kulia=jina
         ; la kazi. Tafuta aina ya kurudi kwenye jedwali la func_ret_*.
-        ; Wito kupitia kielekezi (mwitaji ni kigezo chenye N64/kielekezi)
-        ; hauna saini: matokeo yake ni N64 kwa wigo (4.3) — isiyojulikana
-        ; hapa (0) inatosha: D64 hairuhusiwi na hukataliwa kwa sauti.
+        ; Wito kupitia kielekezi (mwitaji ni kigezo chenye n64/kielekezi)
+        ; hauna saini: matokeo yake ni n64 kwa wigo (4.3) — isiyojulikana
+        ; hapa (0) inatosha: d64 hairuhusiwi na hukataliwa kwa sauti.
         r15d = n32[mti_kulia + r12*4]   ; nodi ya jina la kazi
         linganisha r15d, -1
         ruka .fa_sio kama ==
@@ -6984,15 +6780,15 @@ ni_jina_la_safu:
 ; -------------------------------------------------------
 ; panua_ishara_ya_kauli: toa cdqe (48 98) ikiwa matokeo ya operesheni
 ; ya binary yanahitaji upanuzi wa ishara kabla ya kuhifadhiwa kwenye
-; lengwa la baiti 8. "N64 y = 0 - 90;" — operesheni ya N32 (sub eax,
+; lengwa la baiti 8. "n64 y = 0 - 90;" — operesheni ya n32 (sub eax,
 ; ecx) huacha biti 32 za juu kuwa sifuri; cdqe huzipanua kwa ishara.
 ; Sawia na panua_ishara_ndogo ya mnyororo wa .swa. Hutoa cdqe ikiwa
-; nodi ni KAULI (si ?:), aina yake ni N8/N16/N32 bila nyota, na
+; nodi ni KAULI (si ?:), aina yake ni n8/n16/n32 bila nyota, na
 ; operanda zake si majina ya safu. Anwani hazipanuliwi: kielekezi
 ; (nyota > 0) na jina la safu (lea) si thamani ya hesabu; ?: (TENDO_HUU)
 ; haijumuishwi kwa sababu fumbua_aina huukadiria kwa aina ya sharti,
-; si ya matokeo; N64 (4), W0 (5), muundo (6) na D64 (7) hazihitaji
-; — D64 inabeba thamani kwenye xmm0, si rax.
+; si ya matokeo; n64 (4), w0 (5), muundo (6) na d64 (7) hazihitaji
+; — d64 inabeba thamani kwenye xmm0, si rax.
 ;   edi = faharisi ya nodi
 ;   Huhifadhi r12-r15; r8-r11, rdi, rsi zinaweza kuharibiwa.
 ; -------------------------------------------------------
@@ -7010,9 +6806,9 @@ panua_ishara_ya_kauli:
         r14d = n32[mti_thamani + r13*4]
         linganisha r14d, TENDO_HUU
         ruka .pik_mwisho kama ==
-        ; Uhamishaji wa kianzilishi cha N64 (8.5) ni wa baiti 8 —
+        ; Uhamishaji wa kianzilishi cha n64 (8.5) ni wa baiti 8 —
         ; matokeo tayari ni ya baiti 8; cdqe ungefuta biti 32 za juu
-        ; (mfano: "N64 x = 1 << 32" -> 4294967296 kwenye rax).
+        ; (mfano: "n64 x = 1 << 32" -> 4294967296 kwenye rax).
         linganisha r14d, TENDO_HAMISHA_KUSHOTO
         ruka .pik_hamisha_lengo64 kama ==
         linganisha r14d, TENDO_HAMISHA_KULIA
@@ -7033,7 +6829,7 @@ panua_ishara_ya_kauli:
         ita ni_jina_la_safu
         pima r0d, r0d
         ruka .pik_mwisho kama !=
-        ; Aina ya matokeo: N8/N16/N32 yenye ishara, bila nyota
+        ; Aina ya matokeo: n8/n16/n32 yenye ishara, bila nyota
         r12d = r13d
         ita fumbua_aina
         pima r0d, r0d
@@ -7055,7 +6851,7 @@ panua_ishara_ya_kauli:
         rudi
 
 ; -------------------------------------------------------
-; ni_wito_kielekezi: je, nodi ni wito kupitia kigezo cha N64/kielekezi?
+; ni_wito_kielekezi: je, nodi ni wito kupitia kigezo cha n64/kielekezi?
 ;   edi = faharisi ya nodi
 ;   eax = 1 ndiyo, 0 la
 ;   Inaharibu rax, rcx, rdx, rdi, rsi na r8-r11; huhifadhi r12-r15.
@@ -7089,7 +6885,7 @@ ni_wito_kielekezi:
         r14++
         ruka .nwk_skan_ndani
 .nwk_ndani_ipo:
-        ; Kigezo cha ndani cha N64 au kielekezi (si safu)
+        ; Kigezo cha ndani cha n64 au kielekezi (si safu)
         linganisha n32[ukubwa_safu_ndani + r14*4], 0
         ruka .nwk_la kama !=
         r0d = n32[ndani_nyota_idadi + r14*4]
@@ -7135,15 +6931,15 @@ ni_wito_kielekezi:
 ; badilisha_mpaka_wa_desimali: badilisha thamani (kwenye eax/rax au
 ; xmm0) hadi aina ya lengwa kwenye mpaka wa kamili/desimali —
 ; C-semantiki ya pandisha (8.6): nambari kamili inabadilishwa hadi
-; D64 (cvtsi2sd); D64 inakatwa hadi sifuri ikiwa lengwa ni kamili
+; d64 (cvtsi2sd); d64 inakatwa hadi sifuri ikiwa lengwa ni kamili
 ; (cvttsd2si). Kielekezi au muundo kwenye desimali ni kosa la sauti.
-; Wito kupitia kielekezi haurudishi D64 (4.3) — kosa la sauti katika
-; mazingira ya kianzio, ugawaji na rudisha (mazingira ya hoja ya D64
+; Wito kupitia kielekezi haurudishi d64 (4.3) — kosa la sauti katika
+; mazingira ya kianzio, ugawaji na rudisha (mazingira ya hoja ya d64
 ; hukaguliwa kwenye uzalishaji_wambile).
 ;   edi = nodi ya usemi
-;   esi = aina ya lengwa (1-4 kamili, 7 D64)
+;   esi = aina ya lengwa (1-4 kamili, 7 d64)
 ;   edx = ukubwa wa lengwa kwa baiti (4 au 8)
-; Matokeo: thamani inabaki eax/rax (kamili) au xmm0 (D64).
+; Matokeo: thamani inabaki eax/rax (kamili) au xmm0 (d64).
 ; Huhifadhi r12-r15; r8-r11, rdi, rsi zinaweza kuharibiwa.
 ; -------------------------------------------------------
 badilisha_mpaka_wa_desimali:
@@ -7154,7 +6950,7 @@ badilisha_mpaka_wa_desimali:
         r13d = r7d   ; nodi
         r14d = r6d   ; aina ya lengwa
         r15d = r2d   ; ukubwa wa lengwa
-        ; Lengwa la D64 lenye wito wa kielekezi — kosa la sauti (4.3)
+        ; Lengwa la d64 lenye wito wa kielekezi — kosa la sauti (4.3)
         linganisha r14d, 7
         ruka .bmd_lengo_sio_d64 kama !=
         r7d = r13d
@@ -7172,15 +6968,15 @@ badilisha_mpaka_wa_desimali:
         ita fumbua_aina   ; eax = aina, ebx = nyota
         linganisha r0d, 0
         ruka .bmd_mwisho kama ==   ; isiyojulikana — hakuna ubadilishaji
-        ; Lengwa ni D64: badilisha kamili hadi xmm0
+        ; Lengwa ni d64: badilisha kamili hadi xmm0
         linganisha r14d, 7
         ruka .bmd_lengwa_kamili kama !=
         linganisha r0d, 7
-        ruka .bmd_mwisho kama ==   ; tayari D64
+        ruka .bmd_mwisho kama ==   ; tayari d64
         linganisha r0d, 4
         ruka .bmd_kuelea_kutoka_kamili_r0 kama ==
         linganisha r0d, 5
-        ruka .bmd_kuelea_kutoka_kamili_r0 kama ==   ; W0 — baiti 8
+        ruka .bmd_kuelea_kutoka_kamili_r0 kama ==   ; w0 — baiti 8
         linganisha r0d, 1
         ruka .bmd_kuelea_kutoka_kamili_r0d kama ==
         linganisha r0d, 2
@@ -7190,9 +6986,9 @@ badilisha_mpaka_wa_desimali:
         ; kielekezi au muundo kwenye desimali — kosa la sauti
         ruka .bmd_kielekezi_kosa
 .bmd_lengwa_kamili:
-        ; Lengwa ni kamili: badilisha D64 hadi eax/rax
+        ; Lengwa ni kamili: badilisha d64 hadi eax/rax
         linganisha r0d, 7
-        ruka .bmd_mwisho kama !=   ; sio D64 — hakuna ubadilishaji
+        ruka .bmd_mwisho kama !=   ; sio d64 — hakuna ubadilishaji
         linganisha r15d, 8
         ruka .bmd_kamili_kutoka_kuelea_r0 kama ==
         ; cvttsd2si eax, xmm0 → F2 0F 2C C0 (kukata hadi sifuri)
@@ -7476,14 +7272,14 @@ uzalishaji_mwanachama:
         ruka .um_pakia_64 kama ==
         linganisha r13d, 7
         ruka .um_pakia_d64 kama ==
-        ; N32: mov eax, [rax] -> 8B 00
+        ; n32: mov eax, [rax] -> 8B 00
         r0b = 0x8B
         ita zalisha_baiti
         r0b = 0x00
         ita zalisha_baiti
         ruka .um_mwisho
 .um_pakia_d64:
-        ; D64 — movsd xmm0, [rax] -> f2 0f 10 00
+        ; d64 — movsd xmm0, [rax] -> f2 0f 10 00
         r0b = 0xF2
         ita zalisha_baiti
         r0b = 0x0F
@@ -7535,8 +7331,8 @@ uzalishaji_rudisha:
         sukuma r12
         sukuma r13
 
-        ; Kazi inayorudisha D64: thamani ya kurudi inabaki kwenye xmm0
-        ; (hesabu ya D64 huweka matokeo hapo) na epilogue ni leave;ret,
+        ; Kazi inayorudisha d64: thamani ya kurudi inabaki kwenye xmm0
+        ; (hesabu ya d64 huweka matokeo hapo) na epilogue ni leave;ret,
         ; hivyo hakuna hatua ya ziada inayohitajika.
 
         r12d = r12d
@@ -7552,11 +7348,11 @@ uzalishaji_rudisha:
         ita uzalishaji_mti
         vuta r13
         vuta r12
-        ; Thamani iko kwenye eax (au xmm0 kwa D64)
+        ; Thamani iko kwenye eax (au xmm0 kwa d64)
 
         ; Mpaka wa kamili/desimali kwenye kurudi (8.6): rudisha 21.5
-        ; kutoka kwa kazi ya N32 inakata hadi 21; rudisha 5 kutoka
-        ; kwa kazi ya D64 inapandisha hadi 5.0.
+        ; kutoka kwa kazi ya n32 inakata hadi 21; rudisha 5 kutoka
+        ; kwa kazi ya d64 inapandisha hadi 5.0.
         linganisha n32[kazi_rudisha_aina], 7
         ruka .rudisha_bmd_d64 kama ==
         linganisha n32[kazi_rudisha_aina], 4
@@ -7564,7 +7360,7 @@ uzalishaji_rudisha:
         linganisha n32[kazi_rudisha_aina], 6
         ruka .rudisha_bmd_isha kama ==   ; sret — hakuna ubadilishaji
         linganisha n32[kazi_rudisha_aina], 5
-        ruka .rudisha_bmd_isha kama ==   ; W0 — hakuna
+        ruka .rudisha_bmd_isha kama ==   ; w0 — hakuna
         ruka .rudisha_bmd_32
 .rudisha_bmd_d64:
         r6d = 7
@@ -7584,7 +7380,7 @@ uzalishaji_rudisha:
         r7d = r13d
         ita badilisha_mpaka_wa_desimali
 .rudisha_bmd_isha:
-        ; Panua ishara ya matokeo ya N32 kwa kazi ya N64 (sawia na
+        ; Panua ishara ya matokeo ya n32 kwa kazi ya n64 (sawia na
         ; panua_ishara_ya_kauli kwenye kianzio na uwekaji).
         sukuma r12
         sukuma r13
@@ -7683,7 +7479,7 @@ uzalishaji_kauli_ya_mbili:
 
         ; Kataa operesheni zisizofanya kazi kwa desimali (8.21):
         ; modulo, uhamishaji, NA/AU za biti na mantiki — ikiwa
-        ; operanda yoyote ni D64. Jibu baya la kimya halikubaliki.
+        ; operanda yoyote ni d64. Jibu baya la kimya halikubaliki.
         linganisha r15d, TENDO_BAKI
         ruka .desi_operesheni_kagua kama ==
         linganisha r15d, TENDO_HAMISHA_KUSHOTO
@@ -7731,14 +7527,14 @@ uzalishaji_kauli_ya_mbili:
         linganisha r15d, TENDO_AU
         ruka .fanya_au_sc kama ==
 
-        ; Hesabu za kuelea (D64): kama operanda yoyote (kushoto AU
+        ; Hesabu za kuelea (d64): kama operanda yoyote (kushoto AU
         ; kulia) ni ya kuelea, chukua njia ya SSE — thamani husafiri
         ; kupitia rafu kama baiti 8 (movq) na oparesheni hutumia
         ; xmm0/xmm1 (8.6: 2.5 < 3 na 3 == 3.0 ni za kuelea).
-        ; Upana: operesheni ni ya baiti 8 (N64 au kielekezi) kwenye
+        ; Upana: operesheni ni ya baiti 8 (n64 au kielekezi) kwenye
         ; PANDE ZOTE MBILI — ili ugawanyo utumie cqo/idiv rcx badala
-        ; ya cdq/idiv ecx (8.4: N32 + N64 = N64, hata kama kushoto
-        ; ni N32).
+        ; ya cdq/idiv ecx (8.4: n32 + n64 = n64, hata kama kushoto
+        ; ni n32).
         n32[zalisha_tendo_biti64] = 0
         sukuma r12
         r12d = r13d
@@ -7761,8 +7557,8 @@ uzalishaji_kauli_ya_mbili:
         n32[zalisha_tendo_biti64] = 1
 .tendo64_mwisho:
 
-        ; Kuelea: kushoto ni D64, au kulia ni D64 (8.6).
-        ; Kielekezi au muundo pamoja na D64 ni kosa la sauti.
+        ; Kuelea: kushoto ni d64, au kulia ni d64 (8.6).
+        ; Kielekezi au muundo pamoja na d64 ni kosa la sauti.
         sukuma r12
         r12d = r13d
         ita fumbua_aina
@@ -7842,7 +7638,7 @@ uzalishaji_kauli_ya_mbili:
         vuta r15
         vuta r12
         ; Operesheni ya baiti 8 yenye operanda ndogo yenye ishara:
-        ; cdqe (48 98) — N8/N16/N32 hasi hupakiwa kwenye eax yenye
+        ; cdqe (48 98) — n8/n16/n32 hasi hupakiwa kwenye eax yenye
         ; ishara (movsx) huku biti za juu za rax zikiwa sifuri; bila
         ; cdqe jumlisho la 64-bit lingeona 0x00000000FFFFFFFF badala
         ; ya -1 (mnyororo wa .swa hupandisha ishara kila mara).
@@ -7863,7 +7659,7 @@ uzalishaji_kauli_ya_mbili:
         linganisha r0d, 1
         ruka .panua_n32_kulia_pika kama <a   ; isiyojulikana — usiguse
         linganisha r0d, 3
-        ruka .panua_n32_kulia_pika kama >a   ; N64/W0/muundo/D64 — baiti 8 tayari
+        ruka .panua_n32_kulia_pika kama >a   ; n64/w0/muundo/d64 — baiti 8 tayari
         pima r3d, r3d
         ruka .panua_n32_kulia_pika kama !=   ; kielekezi — anwani
         r0b = 0x48
@@ -7940,7 +7736,7 @@ uzalishaji_kauli_ya_mbili:
         ; sawa (C-semantiki). (Mbegu ya zamani ilijumlisha kwa baiti —
         ; jibu baya la kimya: *(p + 1) lilisoma baiti 1 tu baada ya p.)
         ; Wakati wa utekelezaji hapa: rax = kushoto, rcx = kulia.
-        ; Desimali hazifikii hapa (D64 huenda kwa .fl_* kabla ya
+        ; Desimali hazifikii hapa (d64 huenda kwa .fl_* kabla ya
         ; kutathminiwa). p + q, p - q na n - p hazibadiliki — hazina
         ; kizidisho hapa (ukataji mkali ni wa mnyororo wa .swa).
         linganisha r15d, TENDO_JUMLISHA
@@ -7971,8 +7767,8 @@ uzalishaji_kauli_ya_mbili:
         r9d--   ; kielekezi: kipengele ni nyota - 1
 .hesa_pn:
         ; ===== p + n (na p - n): kushoto ni kielekezi/safu =====
-        ; Kulia lazima kiwe kamili rahisi: N8..N64 bila nyota, si
-        ; safu. Kila kitu kingine (kielekezi, W0, muundo, D64,
+        ; Kulia lazima kiwe kamili rahisi: n8..n64 bila nyota, si
+        ; safu. Kila kitu kingine (kielekezi, w0, muundo, d64,
         ; isiyojulikana, safu) kinarudi kwenye jumlisho la zamani.
         sukuma r8
         sukuma r9
@@ -7988,15 +7784,15 @@ uzalishaji_kauli_ya_mbili:
         linganisha r0d, 1
         ruka .hesa_pn_sio kama <a   ; isiyojulikana
         linganisha r0d, 4
-        ruka .hesa_pn_sio kama >a   ; W0, muundo au D64
+        ruka .hesa_pn_sio kama >a   ; w0, muundo au d64
         vuta r14
         vuta r9
         vuta r8
         ; Kulia ni kamili — matokeo ni anwani: upana wa baiti 8
         ; (hata kwa kushoto la safu — anwani ya safu ni 64-bit).
         n32[zalisha_tendo_biti64] = 1
-        ; N8/N16/N32 ya kulia: panua ishara — movsxd rcx, ecx
-        ; (48 63 C9). Kigezo cha N32 hasi (-1) kimepakiwa kama
+        ; n8/n16/n32 ya kulia: panua ishara — movsxd rcx, ecx
+        ; (48 63 C9). Kigezo cha n32 hasi (-1) kimepakiwa kama
         ; 0xFFFFFFFF kwenye rejesta ya 64-bit (upanuzi wa sifuri);
         ; bila upanuzi huu kuzidisha na kujumlisha kungepoteza
         ; ishara ya faharisi hasi (p[-1]).
@@ -8110,7 +7906,7 @@ uzalishaji_kauli_ya_mbili:
         r9d = r3d   ; nyota za kipengele
         ; Matokeo ni anwani: upana wa baiti 8
         n32[zalisha_tendo_biti64] = 1
-        ; N8/N16/N32 ya kushoto: panua ishara — cdqe (48 98)
+        ; n8/n16/n32 ya kushoto: panua ishara — cdqe (48 98)
         linganisha r10d, 4
         ruka .hesa_np_upanuzi_iko kama ==
         r0b = 0x48
@@ -8220,7 +8016,7 @@ uzalishaji_kauli_ya_mbili:
         linganisha r8d, 6
         ruka .hesa_ukubwa_muundo kama ==
 .hesa_ukubwa_8:
-        ; N64 (4), W0 (5) na D64 (7) → baiti 8
+        ; n64 (4), w0 (5) na d64 (7) → baiti 8
         r8d = 8
         rudi
 .hesa_ukubwa_muundo:
@@ -8670,7 +8466,7 @@ uzalishaji_kauli_ya_mbili:
         ; wakati wa kukusanya: and eax, ecx
         r0d &= r1d
         sukuma r0   ; hifadhi CT kabla ya kutoa
-        ; NA ya biti kwa N64 ni ya baiti 8 (8.4): and rax, rcx -> 48 21 c8
+        ; NA ya biti kwa n64 ni ya baiti 8 (8.4): and rax, rcx -> 48 21 c8
         linganisha n32[zalisha_tendo_biti64], 0
         ruka .na_toa32 kama ==
         r0b = 0x48
@@ -8693,7 +8489,7 @@ uzalishaji_kauli_ya_mbili:
         ; wakati wa kukusanya: or eax, ecx
         r0d |= r1d
         sukuma r0   ; hifadhi CT kabla ya kutoa
-        ; AU ya biti kwa N64 ni ya baiti 8: or rax, rcx -> 48 09 c8
+        ; AU ya biti kwa n64 ni ya baiti 8: or rax, rcx -> 48 09 c8
         linganisha n32[zalisha_tendo_biti64], 0
         ruka .au_toa32 kama ==
         r0b = 0x48
@@ -8716,7 +8512,7 @@ uzalishaji_kauli_ya_mbili:
         ; wakati wa kukusanya: xor eax, ecx
         r0d ^= r1d
         sukuma r0   ; hifadhi CT kabla ya kutoa
-        ; XOR ya biti kwa N64 ni ya baiti 8: xor rax, rcx -> 48 31 c8
+        ; XOR ya biti kwa n64 ni ya baiti 8: xor rax, rcx -> 48 31 c8
         linganisha n32[zalisha_tendo_biti64], 0
         ruka .au_pekee_toa32 kama ==
         r0b = 0x48
@@ -8739,11 +8535,11 @@ uzalishaji_kauli_ya_mbili:
         ; Hifadhi operesheni kabla ya kutoa (al itaharibiwa na mwito)
         r8d = r0d   ; kushoto (wakati wa kukusanya)
         r9d = r1d   ; kulia (wakati wa kukusanya)
-        ; Uhamishaji wa N64 ni wa baiti 8 (8.5): shl rax, cl -> 48 d3 e0
+        ; Uhamishaji wa n64 ni wa baiti 8 (8.5): shl rax, cl -> 48 d3 e0
         linganisha n32[zalisha_tendo_biti64], 0
         ruka .hamisha_kushoto_toa64 kama !=
-        ; Kianzilishi cha N64: uhamishaji ni wa baiti 8 hata kama
-        ; operanda zote ni N32 (mfano: "N64 x = 1 << 32").
+        ; Kianzilishi cha n64: uhamishaji ni wa baiti 8 hata kama
+        ; operanda zote ni n32 (mfano: "n64 x = 1 << 32").
         linganisha n32[kianzio_lengo64], 0
         ruka .hamisha_kushoto_toa32 kama ==
 .hamisha_kushoto_toa64:
@@ -8784,11 +8580,11 @@ uzalishaji_kauli_ya_mbili:
         ; Hifadhi operesheni kabla ya kutoa (al itaharibiwa na mwito)
         r8d = r0d   ; kushoto (wakati wa kukusanya)
         r9d = r1d   ; kulia (wakati wa kukusanya)
-        ; Uhamishaji wa N64 ni wa baiti 8 (8.5): sar rax, cl -> 48 d3 f8
+        ; Uhamishaji wa n64 ni wa baiti 8 (8.5): sar rax, cl -> 48 d3 f8
         linganisha n32[zalisha_tendo_biti64], 0
         ruka .hamisha_kulia_toa64 kama !=
-        ; Kianzilishi cha N64: uhamishaji ni wa baiti 8 hata kama
-        ; operanda zote ni N32 (mfano: "N64 x = 1 << 32").
+        ; Kianzilishi cha n64: uhamishaji ni wa baiti 8 hata kama
+        ; operanda zote ni n32 (mfano: "n64 x = 1 << 32").
         linganisha n32[kianzio_lengo64], 0
         ruka .hamisha_kulia_toa32 kama ==
 .hamisha_kulia_toa64:
@@ -8830,7 +8626,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .kwisha
 .fanya_huu:
         ; Uchaguzi ?: — r13d = sharti, r14d = mfuatano (kweli, uwongo)
-        ; Aina ya matokeo (8.6): D64 ikiwa tawi lolote ni D64 —
+        ; Aina ya matokeo (8.6): d64 ikiwa tawi lolote ni d64 —
         ; hifadhi alama kwenye rafu kwa matawi yote mawili.
         sukuma r12
         r12d = n32[mti_kushoto + r14*4]
@@ -8847,9 +8643,9 @@ uzalishaji_kauli_ya_mbili:
         r0d ^= r0d   ; 0 = kamili
         ruka .huu_alama_iko
 .huu_alama_d64:
-        r0d = 1   ; 1 = D64
+        r0d = 1   ; 1 = d64
 .huu_alama_iko:
-        sukuma r0   ; [rsp] = alama ya D64
+        sukuma r0   ; [rsp] = alama ya d64
 
         ; Zalisha sharti
         sukuma r12
@@ -8885,7 +8681,7 @@ uzalishaji_kauli_ya_mbili:
         r10d = r0d   ; CT ya kweli
 
         ; Mpaka wa kamili/desimali kwenye tawi la kweli (8.6):
-        ; 1 ? 2.5 : 3 — matokeo D64, tawi la kamili linapandishwa.
+        ; 1 ? 2.5 : 3 — matokeo d64, tawi la kamili linapandishwa.
         sukuma r12
         sukuma r8
         sukuma r9
@@ -8896,7 +8692,7 @@ uzalishaji_kauli_ya_mbili:
         vuta r9
         vuta r8
         vuta r12
-        linganisha n64[r4], 0   ; alama ya D64
+        linganisha n64[r4], 0   ; alama ya d64
         ruka .huu_kweli_kamili kama ==
         linganisha r0d, 7
         ruka .huu_kweli_iko kama ==
@@ -8981,7 +8777,7 @@ uzalishaji_kauli_ya_mbili:
         vuta r10
         vuta r8
         vuta r12
-        linganisha n64[r4], 0   ; alama ya D64
+        linganisha n64[r4], 0   ; alama ya d64
         ruka .huu_uwongo_kamili kama ==
         linganisha r0d, 7
         ruka .huu_uwongo_iko kama ==
@@ -9051,7 +8847,7 @@ uzalishaji_kauli_ya_mbili:
 .huu_tofauti:
         r0d = -1
 .huu_mwisho:
-        r4 += 8   ; toa alama ya D64
+        r4 += 8   ; toa alama ya d64
         ruka .kwisha
 .fanya_weka:
         ; Assignment: tathmini kulia, hifadhi kwa upande wa kushoto
@@ -9075,8 +8871,8 @@ uzalishaji_kauli_ya_mbili:
         ita panua_ishara_ya_kauli
         vuta r8
 
-        ; Mpaka wa kamili/desimali kwenye ugawaji (8.6): D64 → kamili
-        ; na kamili → D64, kulingana na aina ya lengwa (kushoto).
+        ; Mpaka wa kamili/desimali kwenye ugawaji (8.6): d64 → kamili
+        ; na kamili → d64, kulingana na aina ya lengwa (kushoto).
         sukuma r12
         r12d = r13d   ; nodi ya lengwa
         ita fumbua_aina   ; eax = aina, ebx = nyota
@@ -9182,7 +8978,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .as_ndani_hifadhi_muundo kama ==
         linganisha r11d, 7
         ruka .as_ndani_hifadhi_d64 kama ==
-        ; N32 (3) au chaguo-msingi — baiti 4
+        ; n32 (3) au chaguo-msingi — baiti 4
         r0b = 0x89   ; mov [rbp+disp32], eax
         ita zalisha_baiti
         r0b = 0x85
@@ -9190,7 +8986,7 @@ uzalishaji_kauli_ya_mbili:
         ita zalisha_neno4
         ruka .as_ndani_hifadhi_kwisha
 .as_ndani_hifadhi_d64:
-        ; D64 — movsd [rbp+disp32], xmm0 -> f2 0f 11 85 d32
+        ; d64 — movsd [rbp+disp32], xmm0 -> f2 0f 11 85 d32
         r0b = 0xF2
         ita zalisha_baiti
         r0b = 0x0F
@@ -9258,7 +9054,7 @@ uzalishaji_kauli_ya_mbili:
         ita zalisha_baiti
         r0b = 0xC6
         ita zalisha_baiti
-        ; mov ecx, ukubwa wa muundo (B9 d32)
+        ; mov ecx, ukubwa wa muundo (b9 d32)
         r0b = 0xB9
         ita zalisha_baiti
         r11d = n32[ndani_muundo_namba + r10*4]
@@ -9273,7 +9069,7 @@ uzalishaji_kauli_ya_mbili:
 .as_muundo_ukubwa_iko:
         r7d = r11d
         ita zalisha_neno4
-        ; rep movsb (F3 A4)
+        ; rep movsb (F3 a4)
         r0b = 0xF3
         ita zalisha_baiti
         r0b = 0xA4
@@ -9356,7 +9152,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .as_hifadhi_64 kama ==
         linganisha r15d, 7
         ruka .as_hifadhi_d64 kama ==
-        ; N32 (3) au chaguo-msingi
+        ; n32 (3) au chaguo-msingi
         r0b = 0x89   ; mov [rip+disp32], eax
         ita zalisha_baiti
         r0b = 0x05
@@ -9364,7 +9160,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .as_ulimwengu_hamisho
 
 .as_hifadhi_d64:
-        ; D64 — movsd [rip+disp32], xmm0 -> f2 0f 11 05 d32
+        ; d64 — movsd [rip+disp32], xmm0 -> f2 0f 11 05 d32
         r0b = 0xF2
         ita zalisha_baiti
         r0b = 0x0F
@@ -9434,7 +9230,7 @@ uzalishaji_kauli_ya_mbili:
         r14d = n32[mti_kulia + r13*4]   ; nodi ya faharisi
         r12d = n32[mti_kushoto + r13*4]   ; nodi ya msingi (pointer)
 
-        ; Amua ukubwa wa kipengele (r15d) — chaguo-msingi: baiti 4 (N32)
+        ; Amua ukubwa wa kipengele (r15d) — chaguo-msingi: baiti 4 (n32)
         r15d = 4
         n32[ak_kipengele_ni_muundo] = 0
         n32[ak_kipengele_ni_d64] = 0
@@ -9516,7 +9312,7 @@ uzalishaji_kauli_ya_mbili:
         ; Ukubwa wa elementi: safu -> pointer 8 (nyota >= 1) au aina
         ; msingi (nyota == 0); pointer -> aina msingi (nyota == 1) au
         ; 8 (nyota >= 2). Zamani safu tupu (nyota == 0) iliruka hadi
-        ; .ak_ukubwa_kwisha na r15d chakavu (4) — N8/N16/N64 zilivunjika.
+        ; .ak_ukubwa_kwisha na r15d chakavu (4) — n8/n16/n64 zilivunjika.
         r11d = n32[ukubwa_safu_ndani + r10*4]
         pima r11d, r11d
         ruka .ak_ndani_ni_safu kama !=
@@ -9544,12 +9340,12 @@ uzalishaji_kauli_ya_mbili:
         ruka .ak_muundo_ukubwa kama ==
         linganisha r11d, 7
         ruka .ak_d64 kama ==
-        ; N32 (3) au chaguo-msingi
+        ; n32 (3) au chaguo-msingi
         r15d = 4
         ruka .ak_ukubwa_kwisha
 
 .ak_d64:
-        ; Kipengele cha D64: ukubwa wa baiti 8, thamani iko kwenye xmm0
+        ; Kipengele cha d64: ukubwa wa baiti 8, thamani iko kwenye xmm0
         r15d = 8
         n32[ak_kipengele_ni_d64] = 1
         ruka .ak_ukubwa_kwisha
@@ -9633,7 +9429,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .ak_fanya_jumlisha
 
 .ak_hamisha_2:
-        ; shift_2 (kwa N32, ukubwa 4)
+        ; shift_2 (kwa n32, ukubwa 4)
         r0b = 0x48   ; REX.W
         ita zalisha_baiti
         r0b = 0xC1   ; shl r/m64, imm8
@@ -9691,7 +9487,7 @@ uzalishaji_kauli_ya_mbili:
         linganisha r15d, 8
         ruka .ak_hifadhi_64 kama ==
 
-        ; N32: mov [rax], ecx -> 89 08
+        ; n32: mov [rax], ecx -> 89 08
         r0b = 0x89
         ita zalisha_baiti
         r0b = 0x08   ; ModRM: [rax], reg=ecx
@@ -9700,7 +9496,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .kwisha
 
 .ak_hifadhi_d64:
-        ; D64 — movsd [rax], xmm0 -> f2 0f 11 00 (thamani iko xmm0)
+        ; d64 — movsd [rax], xmm0 -> f2 0f 11 00 (thamani iko xmm0)
         r0b = 0xF2
         ita zalisha_baiti
         r0b = 0x0F
@@ -9776,7 +9572,7 @@ uzalishaji_kauli_ya_mbili:
 
         r12d = n32[mti_kushoto + r13*4]   ; nodi ya mtoto (pointer)
 
-        ; Amua ukubwa wa kipengele (r15d) — chaguo-msingi: baiti 4 (N32)
+        ; Amua ukubwa wa kipengele (r15d) — chaguo-msingi: baiti 4 (n32)
         r15d = 4
         n32[ak_kipengele_ni_muundo] = 0
         n32[ak_kipengele_ni_d64] = 0
@@ -9817,7 +9613,7 @@ uzalishaji_kauli_ya_mbili:
         ; Kigezo cha ndani — pointer ikiwa star_count > 0
         r11d = n32[ndani_nyota_idadi + r10*4]
         linganisha r11d, 0
-        ruka .an_ukubwa_kwisha kama ==   ; sio pointer — chaguo-msingi N32
+        ruka .an_ukubwa_kwisha kama ==   ; sio pointer — chaguo-msingi n32
         ; Kielekezi-kiwili (*q = ...): lengwa ni kielekezi — baiti 8
         linganisha r11d, 1
         ruka .an_weka_ukubwa_8 kama >a
@@ -9838,7 +9634,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .an_ukubwa_kwisha
 
 .an_d64:
-        ; D64* — kipengele ni D64: ukubwa wa baiti 8, thamani iko xmm0
+        ; d64* — kipengele ni d64: ukubwa wa baiti 8, thamani iko xmm0
         r15d = 8
         n32[ak_kipengele_ni_d64] = 1
         ruka .an_ukubwa_kwisha
@@ -9922,7 +9718,7 @@ uzalishaji_kauli_ya_mbili:
         linganisha r15d, 8
         ruka .an_hifadhi_64 kama ==
 
-        ; N32: mov [rax], ecx -> 89 08
+        ; n32: mov [rax], ecx -> 89 08
         r0b = 0x89
         ita zalisha_baiti
         r0b = 0x08   ; ModRM: [rax], reg=ecx
@@ -9931,7 +9727,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .kwisha
 
 .an_hifadhi_d64:
-        ; D64 — movsd [rax], xmm0 -> f2 0f 11 00 (thamani iko xmm0)
+        ; d64 — movsd [rax], xmm0 -> f2 0f 11 00 (thamani iko xmm0)
         r0b = 0xF2
         ita zalisha_baiti
         r0b = 0x0F
@@ -10058,7 +9854,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .am_hifadhi_64 kama ==
         linganisha r9d, 5
         ruka .am_hifadhi_64 kama ==
-        ; N32: mov [rax], ecx -> 89 08
+        ; n32: mov [rax], ecx -> 89 08
         r0b = 0x89
         ita zalisha_baiti
         r0b = 0x08
@@ -10436,7 +10232,7 @@ uzalishaji_kauli_ya_mbili:
         ruka .kwisha
 
 ; -----------------------------------------------------------
-; Njia za hesabu za kuelea (D64) — xmm0/xmm1
+; Njia za hesabu za kuelea (d64) — xmm0/xmm1
 ; -----------------------------------------------------------
 .fl_kulia:
         ; Tathmini kulia → xmm0; hifadhi kwenye rafu kama baiti 8.
@@ -10446,7 +10242,7 @@ uzalishaji_kauli_ya_mbili:
         ita uzalishaji_mti
         vuta r15
         vuta r12
-        ; Kamili → D64 (8.6): cvtsi2sd kabla ya movq — operesheni
+        ; Kamili → d64 (8.6): cvtsi2sd kabla ya movq — operesheni
         ; mchanganyiko kama 5.5 * 2 inapandisha 2 hadi 2.0.
         sukuma r12
         r12d = r14d
@@ -10499,7 +10295,7 @@ uzalishaji_kauli_ya_mbili:
         ita uzalishaji_mti
         vuta r15
         vuta r12
-        ; Kamili → D64 kwa kushoto (8.6)
+        ; Kamili → d64 kwa kushoto (8.6)
         sukuma r12
         r12d = r13d
         ita fumbua_aina
@@ -10566,7 +10362,7 @@ uzalishaji_kauli_ya_mbili:
         ita uzalishaji_mti
         vuta r15
         vuta r12
-        ; Kamili → D64 kwa kushoto (8.6)
+        ; Kamili → d64 kwa kushoto (8.6)
         sukuma r12
         r12d = r13d
         ita fumbua_aina
@@ -10829,9 +10625,9 @@ uzalishaji_wambile:
 
         ; --- Wito wa kielekezi? ---
         ; Mwitaji ni KIGEZO (cha ndani au cha ulimwengu) chenye aina ya
-        ; N64 au kielekezi (nyota) — kigezo kama hicho hushikilia ANWANI
+        ; n64 au kielekezi (nyota) — kigezo kama hicho hushikilia ANWANI
         ; ya kazi isiyo na saini (vipimo vya lugha 4.3). Hoja hupangwa
-        ; kwa aina zao wenyewe (D64 → xmm, nyingine → GP), na wito
+        ; kwa aina zao wenyewe (d64 → xmm, nyingine → GP), na wito
         ; wenyewe ni "call r11" (anwani katika r11). Hakuna ukaguzi wa
         ; idadi wala ubadilishaji wa hoja: jina la kigezo litakosa kwenye
         ; func_ret (faharisi -1) na hoja zitapita kama za mkia wa
@@ -10855,14 +10651,14 @@ uzalishaji_wambile:
         r10++
         ruka .wk_skan_ndani
 .wk_ndani_ipo:
-        ; Kigezo cha ndani: N64 au kielekezi (nyota) ndicho kinachoweza
+        ; Kigezo cha ndani: n64 au kielekezi (nyota) ndicho kinachoweza
         ; kuitwa; safu na aina nyingine zinarudi kwenye njia ya zamani
         linganisha n32[ukubwa_safu_ndani + r10*4], 0
         ruka .wito_mwitaji_iko kama !=
         r11d = n32[ndani_nyota_idadi + r10*4]
         linganisha r11d, 0
         ruka .wk_ndani_kazi kama >n
-        linganisha n32[aina_msingi_ndani + r10*4], 4   ; N64
+        linganisha n32[aina_msingi_ndani + r10*4], 4   ; n64
         ruka .wito_mwitaji_iko kama !=
 .wk_ndani_kazi:
         r8d = 1
@@ -10887,7 +10683,7 @@ uzalishaji_wambile:
         r11d = n32[ulimwengu_nyota_idadi + r10*4]
         linganisha r11d, 0
         ruka .wk_ulimwengu_kazi kama >n
-        linganisha n32[aina_msingi_ulimwengu + r10*4], 4   ; N64
+        linganisha n32[aina_msingi_ulimwengu + r10*4], 4   ; n64
         ruka .wito_mwitaji_iko kama !=
 .wk_ulimwengu_kazi:
         r8d = 2
@@ -10916,7 +10712,7 @@ uzalishaji_wambile:
         ; --- Ukaguzi wa idadi ya hoja (8.16) ---
         ; Tafuta kazi kwenye jedwali la func_ret_* (r13 = jina).
         ; Faharisi inahifadhiwa kwenye rafu kwa ukaguzi wa vigezo
-        ; (8.15) na mpaka wa D64 kwenye hoja (8.6); -1 ikiwa kazi
+        ; (8.15) na mpaka wa d64 kwenye hoja (8.6); -1 ikiwa kazi
         ; haijulikani (nje au builtin).
         ; Wito wa KIELEKEZI hauna saini (4.3): ruka utafutaji huu —
         ; faharisi -1 inatosha (hoja zina aina zao wenyewe, hakuna
@@ -11030,12 +10826,12 @@ uzalishaji_wambile:
         r12d = r8d
         ita uzalishaji_mti   ; matokeo kwenye eax/xmm0
 
-        ; Hoja ya D64 inakuja kwenye xmm0 (hesabu ya kuelea), si rax.
+        ; Hoja ya d64 inakuja kwenye xmm0 (hesabu ya kuelea), si rax.
         ; Kumbuka aina yake na faharisi ya rejesta (gp/xmm) kwa ABI.
         r12d = n32[r4+8]   ; nodi ya hoja (r8 iliyohifadhiwa)
         ita fumbua_aina   ; eax = aina msingi
         r10 = n64[r4]   ; faharisi ya hoja (r9 iliyohifadhiwa)
-        ; Panua ishara ya hoja ndogo (N8/N16/N32) — 8.10: andika("%u",
+        ; Panua ishara ya hoja ndogo (n8/n16/n32) — 8.10: andika("%u",
         ; 0 - 1) lazima ichapishe 18446744073709551615, si 4294967295
         ; (cdqe hupanua -1 hadi biti 64 zote).
         linganisha r0d, 3
@@ -11065,7 +10861,7 @@ uzalishaji_wambile:
         vuta r3
         vuta r0
 .hoja_panua_n32_isha:
-        ; --- Ukaguzi wa aina ya hoja (8.15) na mpaka wa D64 (8.6) ---
+        ; --- Ukaguzi wa aina ya hoja (8.15) na mpaka wa d64 (8.6) ---
         ; Rafu: [rsp]=aina hoja, [rsp+8]=nyota hoja, [rsp+16]=r9,
         ; [rsp+24]=r8 (nodi), ... [rsp+64]=faharisi ya kazi (au -1)
         sukuma r3   ; nyota ya hoja
@@ -11094,7 +10890,7 @@ uzalishaji_wambile:
         ruka .hoja_kigezo_acha kama <n
         ; Mkia wa kutofautiana: andika/andika_stderr (hoja 2+),
         ; andika_ndani (hoja 3+) — ruka ukaguzi (ABI hupitisha
-        ; mkia kwa rejesta za N64 bila kukagua aina).
+        ; mkia kwa rejesta za n64 bila kukagua aina).
         r9d = n32[r4 + 16]   ; faharisi ya hoja
         pima r9d, r9d
         ruka .hoja_kigezo_sio_mkia kama ==
@@ -11149,7 +10945,7 @@ uzalishaji_wambile:
         linganisha r9d, r11d
         ruka .hoja_kagua_isha kama ==
         ; Kosa la sauti: kielekezi dhidi ya namba (mdudu wa 2026-09-01:
-        ; N32 kwa kigezo cha kielekezi ilianguka SEGV wakati wa kukimbia)
+        ; n32 kwa kigezo cha kielekezi ilianguka SEGV wakati wa kukimbia)
         r7 = &[ujumbe_kielekezi_namba_1]
         ita andika_mfuatano
         r7 = r13
@@ -11160,9 +10956,9 @@ uzalishaji_wambile:
         ita mfumo_toka
 .hoja_kagua_isha:
         ; --- Mpaka wa kamili/desimali kwenye hoja (8.6) ---
-        linganisha n32[r4], 7   ; param_aina == D64
+        linganisha n32[r4], 7   ; param_aina == d64
         ruka .hoja_bmd_d64 kama ==
-        linganisha n32[r4], 4   ; param_aina == N64
+        linganisha n32[r4], 4   ; param_aina == n64
         ruka .hoja_bmd_kamili64 kama ==
         linganisha n32[r4], 1
         ruka .hoja_bmd_kamili32 kama ==
@@ -11172,9 +10968,9 @@ uzalishaji_wambile:
         ruka .hoja_bmd_kamili32 kama ==
         ruka .hoja_bmd_isha
 .hoja_bmd_d64:
-        ; Hoja ya kamili → D64 (cvtsi2sd) — thamani huenda kwenye xmm0.
-        ; Wito kupitia kielekezi kama hoja ya parameta ya D64 haurudishi
-        ; D64 (4.3) — kosa la sauti. Nodi ya hoja iko kwenye [rsp+40].
+        ; Hoja ya kamili → d64 (cvtsi2sd) — thamani huenda kwenye xmm0.
+        ; Wito kupitia kielekezi kama hoja ya parameta ya d64 haurudishi
+        ; d64 (4.3) — kosa la sauti. Nodi ya hoja iko kwenye [rsp+40].
         sukuma r8
         sukuma r9
         sukuma r10
@@ -11190,11 +10986,11 @@ uzalishaji_wambile:
         r7d = 1
         ita mfumo_toka
 .hoja_bmd_d64_sawa:
-        linganisha n32[r4 + 16], 7   ; tayari D64
+        linganisha n32[r4 + 16], 7   ; tayari d64
         ruka .hoja_bmd_isha kama ==
-        linganisha n32[r4 + 16], 4   ; N64 → cvtsi2sd rax
+        linganisha n32[r4 + 16], 4   ; n64 → cvtsi2sd rax
         ruka .hoja_bmd_d64_r0 kama ==
-        linganisha n32[r4 + 16], 5   ; W0 → cvtsi2sd rax
+        linganisha n32[r4 + 16], 5   ; w0 → cvtsi2sd rax
         ruka .hoja_bmd_d64_r0 kama ==
         ; cvtsi2sd xmm0, eax → F2 0F 2A C0
         r0b = 0xF2
@@ -11219,10 +11015,10 @@ uzalishaji_wambile:
         r0b = 0xC0
         ita zalisha_baiti
 .hoja_bmd_d64_iko:
-        n32[r4 + 16] = 7   ; aina inayofaa: D64
+        n32[r4 + 16] = 7   ; aina inayofaa: d64
         ruka .hoja_bmd_isha
 .hoja_bmd_kamili32:
-        ; Hoja ya D64 → kamili (cvttsd2si eax)
+        ; Hoja ya d64 → kamili (cvttsd2si eax)
         linganisha n32[r4 + 16], 7
         ruka .hoja_bmd_isha kama !=
         r0b = 0xF2
@@ -11233,10 +11029,10 @@ uzalishaji_wambile:
         ita zalisha_baiti
         r0b = 0xC0
         ita zalisha_baiti
-        n32[r4 + 16] = 3   ; aina inayofaa: N32
+        n32[r4 + 16] = 3   ; aina inayofaa: n32
         ruka .hoja_bmd_isha
 .hoja_bmd_kamili64:
-        ; Hoja ya D64 → N64 (cvttsd2si rax)
+        ; Hoja ya d64 → n64 (cvttsd2si rax)
         linganisha n32[r4 + 16], 7
         ruka .hoja_bmd_isha kama !=
         r0b = 0xF2
@@ -11249,7 +11045,7 @@ uzalishaji_wambile:
         ita zalisha_baiti
         r0b = 0xC0
         ita zalisha_baiti
-        n32[r4 + 16] = 4   ; aina inayofaa: N64
+        n32[r4 + 16] = 4   ; aina inayofaa: n64
 .hoja_bmd_isha:
         r4 += 16   ; toa param_aina na param_nyota
 .hoja_kigezo_acha:
@@ -11340,7 +11136,7 @@ uzalishaji_wambile:
         ruka .hm_pakia_16 kama ==
         linganisha r14d, 1
         ruka .hm_pakia_8 kama ==
-        ; N32 au 3-4B: mov eax, [rax] -> 8B 00
+        ; n32 au 3-4B: mov eax, [rax] -> 8B 00
         r0b = 0x8B
         ita zalisha_baiti
         r0b = 0x00
@@ -11356,7 +11152,7 @@ uzalishaji_wambile:
         ita zalisha_baiti
         ruka .hm_sukumwa
 .hm_pakia_16:
-        ; movzx eax, word [rax] -> 0F B7 00
+        ; movzx eax, word [rax] -> 0F b7 00
         r0b = 0x0F
         ita zalisha_baiti
         r0b = 0xB7
@@ -11365,7 +11161,7 @@ uzalishaji_wambile:
         ita zalisha_baiti
         ruka .hm_sukumwa
 .hm_pakia_8:
-        ; movzx eax, byte [rax] -> 0F B6 00
+        ; movzx eax, byte [rax] -> 0F b6 00
         r0b = 0x0F
         ita zalisha_baiti
         r0b = 0xB6
@@ -11422,12 +11218,12 @@ uzalishaji_wambile:
         ita zalisha_baiti
         r0b = 0xC6
         ita zalisha_baiti
-        ; mov ecx, ukubwa (B9 + d32)
+        ; mov ecx, ukubwa (b9 + d32)
         r0b = 0xB9
         ita zalisha_baiti
         r7d = r15d
         ita zalisha_neno4
-        ; rep movsb (F3 A4)
+        ; rep movsb (F3 a4)
         r0b = 0xF3
         ita zalisha_baiti
         r0b = 0xA4
@@ -11490,7 +11286,7 @@ uzalishaji_wambile:
 
         linganisha r15d, 6
         ruka .vuta_rejista kama <=a
-        ; Hoja 7+: ABI ya rafu. D64 iliyochanganywa na hoja 7+
+        ; Hoja 7+: ABI ya rafu. d64 iliyochanganywa na hoja 7+
         ; haisaidiwi (mnyororo wa .swa hauhitaji).
         linganisha n64[hoja_kuelea], 0
         ruka .d64_hoja8_kosa kama !=
@@ -11703,7 +11499,7 @@ uzalishaji_wambile:
         ruka .fanya_wito kama hasi   ; ecx < 0 -> tumemaliza
         linganisha n8[hoja_d64 + r1], 0
         ruka .vuta_jumla kama ==
-        ; D64 -> movsd xmmN, [rsp] (F2 0F 10 /r + SIB) ; add rsp, 8
+        ; d64 -> movsd xmmN, [rsp] (F2 0F 10 /r + SIB) ; add rsp, 8
         r10d = a8[hoja_rejista + r1]
         r0b = 0xF2
         ita zalisha_baiti
@@ -11809,14 +11605,14 @@ uzalishaji_wambile:
         ita zalisha_baiti
 .sio_rudisha:
         ; Builtin ya ukubwa(aina) — kokotoa ukubwa wakati wa kukusanya
-        ; (sawa na uzalishaji.swa). N8=1, N16=2, N32=4, N64=8, D64=8,
+        ; (sawa na uzalishaji.swa). n8=1, n16=2, n32=4, n64=8, d64=8,
         ; muundo = ukubwa wake; jina lisilojulikana = 4.
         r7 = r13
         r6 = &[jina_ukubwa]
         ita linganisha_mfuatano
         linganisha r0d, 0
         ruka .sio_asili_ukubwa kama !=
-        ; Hoja lazima iwe jina la aina (mf. ukubwa(N32)) — vinginevyo
+        ; Hoja lazima iwe jina la aina (mf. ukubwa(n32)) — vinginevyo
         ; ni wito wa kawaida kwa kazi ya mtumiaji (sawa na uzalishaji.swa)
         linganisha r14d, -1
         ruka .sio_asili_ukubwa kama ==
@@ -11850,7 +11646,7 @@ uzalishaji_wambile:
         ruka .ukubwa_toa
 .uk_jaribu_n8_ndogo:
         r7 = r15
-        r6 = &[tn_n8_ndogo]
+        r6 = &[jina_aina_n8]
         ita linganisha_mfuatano
         linganisha r0d, 0
         ruka .uk_jaribu_n16_ndogo kama !=
@@ -11858,7 +11654,7 @@ uzalishaji_wambile:
         ruka .ukubwa_toa
 .uk_jaribu_n16_ndogo:
         r7 = r15
-        r6 = &[tn_n16_ndogo]
+        r6 = &[jina_aina_n16]
         ita linganisha_mfuatano
         linganisha r0d, 0
         ruka .uk_jaribu_n32_ndogo kama !=
@@ -11866,7 +11662,7 @@ uzalishaji_wambile:
         ruka .ukubwa_toa
 .uk_jaribu_n32_ndogo:
         r7 = r15
-        r6 = &[tn_n32_ndogo]
+        r6 = &[jina_aina_n32]
         ita linganisha_mfuatano
         linganisha r0d, 0
         ruka .uk_jaribu_n64_ndogo kama !=
@@ -11874,7 +11670,7 @@ uzalishaji_wambile:
         ruka .ukubwa_toa
 .uk_jaribu_n64_ndogo:
         r7 = r15
-        r6 = &[tn_n64_ndogo]
+        r6 = &[jina_aina_n64]
         ita linganisha_mfuatano
         linganisha r0d, 0
         ruka .uk_jaribu_d64_ndogo kama !=
@@ -11882,7 +11678,7 @@ uzalishaji_wambile:
         ruka .ukubwa_toa
 .uk_jaribu_d64_ndogo:
         r7 = r15
-        r6 = &[tn_d64_ndogo]
+        r6 = &[jina_aina_d64]
         ita linganisha_mfuatano
         linganisha r0d, 0
         ruka .ukubwa_toa_sio_muundo kama !=
@@ -11892,7 +11688,7 @@ uzalishaji_wambile:
         r15d = 4
 .ukubwa_toa:
         ; Hoja tayari imetolewa na .vuta_hoja (pop rdi) — rafu iko sawia.
-        ; mov eax, imm32 — B8 + d32
+        ; mov eax, imm32 — b8 + d32
         r0b = 0xB8
         ita zalisha_baiti
         r7d = r15d
@@ -11942,7 +11738,7 @@ uzalishaji_wambile:
         ita zalisha_baiti
         r0b = 0xF7
         ita zalisha_baiti
-        ; mov rsi, rdx — 48 89 D6 (a2)
+        ; mov rsi, rdx — 48 89 d6 (a2)
         r0b = 0x48
         ita zalisha_baiti
         r0b = 0x89
@@ -11992,7 +11788,7 @@ uzalishaji_wambile:
 .wito_mfumo_rafu_safi:
         ruka .baada_ya_wito
 .sio_asili_wito_mfumo:
-        ; Builtin ya tekeleza — ita bafa ya JIT kama kazi N32(N32, N8**).
+        ; Builtin ya tekeleza — ita bafa ya JIT kama kazi n32(n32, n8**).
         ; Hoja (kazi, argc, argv, ofseti) ziko rdi/rsi/rdx/rcx kwa
         ; mpangilio wa kawaida → r11=kazi, rdi=argc, rsi=argv+ofseti*8,
         ; al=0, call r11. Sawa na builtin ya uzalishaji.swa.
@@ -12018,7 +11814,7 @@ uzalishaji_wambile:
         ita zalisha_baiti
         r0b = 0xF7
         ita zalisha_baiti
-        ; mov rsi, rdx — 48 89 D6
+        ; mov rsi, rdx — 48 89 d6
         r0b = 0x48
         ita zalisha_baiti
         r0b = 0x89
@@ -12041,19 +11837,19 @@ uzalishaji_wambile:
         ita zalisha_baiti
         r0b = 3
         ita zalisha_baiti
-        ; add rsi, rdx — 48 01 D6
+        ; add rsi, rdx — 48 01 d6
         r0b = 0x48
         ita zalisha_baiti
         r0b = 0x01
         ita zalisha_baiti
         r0b = 0xD6
         ita zalisha_baiti
-        ; mov al, 0 — B0 00
+        ; mov al, 0 — b0 00
         r0b = 0xB0
         ita zalisha_baiti
         r0b = 0
         ita zalisha_baiti
-        ; call r11 — 41 FF D3
+        ; call r11 — 41 FF d3
         r0b = 0x41
         ita zalisha_baiti
         r0b = 0xFF
@@ -12136,7 +11932,7 @@ uzalishaji_wambile:
         vuta r12
 
         ; --- Wito wa kielekezi: badala ya "call rel32" ya kazi, pakia
-        ; anwani ya kigezo kwenye r11 na toa "call r11" (41 FF D3) ---
+        ; anwani ya kigezo kwenye r11 na toa "call r11" (41 FF d3) ---
         ; Rafu: [rsp] = faharisi ya kazi, [rsp+8] = alama ya mwitaji.
         linganisha n32[r4 + 8], 0
         ruka .wito_moja_kwa_moja kama ==
@@ -12175,7 +11971,7 @@ uzalishaji_wambile:
         r7d = -r7d
         ita zalisha_neno4
 .wk_toa_wito:
-        ; call r11 — 41 FF D3
+        ; call r11 — 41 FF d3
         r0b = 0x41
         ita zalisha_baiti
         r0b = 0xFF
@@ -12840,7 +12636,7 @@ uzalishaji_kazi:
         n32[kazi_rudisha_muundo_namba] = r0d
         ruka .rudisha_muundo_imewekwa
 .sio_rudisha_muundo:
-        n32[kazi_rudisha_aina] = r13d   ; aina halisi ya kurudi (N32/N64/D64 n.k.)
+        n32[kazi_rudisha_aina] = r13d   ; aina halisi ya kurudi (n32/n64/d64 n.k.)
         n32[kazi_rudisha_muundo_namba] = -1
 .rudisha_muundo_imewekwa:
 
@@ -12997,7 +12793,7 @@ uzalishaji_kazi:
         r11d ^= r11d   ; faharisi ya hoja (0-5)
         ; r13 (imehifadhiwa kwenye rafu hapo juu) ni kikaunzi cha
         ; rejesta ya GP inayofuata: hoja za GP huchukua rdi, rsi, rdx,
-        ; rcx, r8, r9 kwa mpangilio (ABI ya System V), hoja za D64
+        ; rcx, r8, r9 kwa mpangilio (ABI ya System V), hoja za d64
         ; huchukua xmm0-xmm7 kando yake.
         r13d ^= r13d   ; faharisi ya rejesta ya GP inayofuata
 .kigezo_mzunguko:
@@ -13068,7 +12864,7 @@ uzalishaji_kazi:
         n64[ndani_idadi]++
 
         ; Toa maelekezo ya kuhifadhi hoja kwenye rafu
-        ; Amua kama tunahitaji kuhifadhi baiti 8 (nyota/N64/W0) au 4 (N32/chaguo-msingi)
+        ; Amua kama tunahitaji kuhifadhi baiti 8 (nyota/n64/w0) au 4 (n32/chaguo-msingi)
         r8d = -r8d   ; ofseti hasi kwa rbp
 
         ; Hoja ya 7 au zaidi inakaa kwenye rafu ya mwitaji, si kwenye rejista
@@ -13080,19 +12876,19 @@ uzalishaji_kazi:
         linganisha r14d, 0
         ruka .hifadhi_64 kama >n
         r14d = n32[mti_thamani + r10*4]   ; base_type
-        linganisha r14d, 4   ; N64
+        linganisha r14d, 4   ; n64
         ruka .hifadhi_64 kama ==
-        linganisha r14d, 5   ; W0
+        linganisha r14d, 5   ; w0
         ruka .hifadhi_64 kama ==
-        linganisha r14d, 7   ; D64
+        linganisha r14d, 7   ; d64
         ruka .hifadhi_d64 kama ==
-        linganisha r14d, 2   ; N16
+        linganisha r14d, 2   ; n16
         ruka .hifadhi_16 kama ==
-        linganisha r14d, 1   ; N8
+        linganisha r14d, 1   ; n8
         ruka .hifadhi_8 kama ==
         linganisha r14d, 6   ; muundo
         ruka .hifadhi_muundo kama ==
-        ; N32
+        ; n32
         ruka .hifadhi_32
 
 .hifadhi_muundo:
@@ -13101,9 +12897,9 @@ uzalishaji_kazi:
         ruka .hifadhi_64
 
 .hifadhi_d64:
-        ; D64 inafika kwenye rejesta ya XMM inayofuata ya ABI:
-        ; xmmN ambapo N = idadi ya hoja za D64 zilizotangulia.
-        ; Hoja zote za rejesta hapa ni GP au D64, hivyo
+        ; d64 inafika kwenye rejesta ya XMM inayofuata ya ABI:
+        ; xmmN ambapo N = idadi ya hoja za d64 zilizotangulia.
+        ; Hoja zote za rejesta hapa ni GP au d64, hivyo
         ; N = r11d - r13d (zote zilizotangulia toa zile za GP).
         ; movsd [rbp + disp8], xmmN → F2 0F 11 45|4D|55|5D|65|6D|75|7D XX
         r0b = 0xF2
@@ -13213,9 +13009,9 @@ uzalishaji_kazi:
         linganisha r14d, 0
         ruka .rafu_kigezo_64 kama >n
         r14d = n32[mti_thamani + r10*4]
-        linganisha r14d, 4   ; N64
+        linganisha r14d, 4   ; n64
         ruka .rafu_kigezo_64 kama ==
-        linganisha r14d, 5   ; W0
+        linganisha r14d, 5   ; w0
         ruka .rafu_kigezo_64 kama ==
         linganisha r14d, 6   ; muundo — baiti 8 (thamani au kielekezi)
         ruka .rafu_kigezo_64 kama ==
@@ -13338,13 +13134,13 @@ uzalishaji_kazi:
         ruka .kigezo_ifuatayo
 
 .hifadhi_8:
-        ; Kwa N8, tunatumia kusajili kwa 32-bit cmpa mov, kisha kuhifadhi baiti
+        ; Kwa n8, tunatumia kusajili kwa 32-bit cmpa mov, kisha kuhifadhi baiti
         ; Hii ni rahisi zaidi — tunahifadhi kama 32-bit cmpa mov kwa sasa
         ; TODO: hifadhi baiti moja kwa usahihi
         ruka .hifadhi_32
 
 .hifadhi_16:
-        ; Kwa N16, tunahifadhi kama 32-bit kwa sasa
+        ; Kwa n16, tunahifadhi kama 32-bit kwa sasa
         ; TODO: hifadhi neno kwa usahihi
         ruka .hifadhi_32
 .kigezo_ifuatayo:
@@ -13638,7 +13434,7 @@ uzalishaji_mti:
 
 .wito_hasili:
         r12d = n32[mti_kushoto + r12*4]
-        ; Kuelea? (operanda ni D64) — zidisha kwa -1.0
+        ; Kuelea? (operanda ni d64) — zidisha kwa -1.0
         ; (xorpd yenye operanda ya kumbukumbu imeonekana kuvunjika
         ; kwenye VM ya mtumiaji — SI_KERNEL — wakati movsd/mulsd m64
         ; zinafanya kazi; mulsd kwa -1.0 ni sawa na inayobebeka.)
@@ -13699,7 +13495,7 @@ uzalishaji_mti:
 
 .hasili_kamili:
         ita uzalishaji_mti
-        ; N64 au kielekezi: kukanusha kwa baiti 8 — mov rcx, rax;
+        ; n64 au kielekezi: kukanusha kwa baiti 8 — mov rcx, rax;
         ; xor eax, eax; sub rax, rcx (0 - thamani), sawa na mnyororo
         ; wa .swa kwa upana wa baiti 8.
         sukuma r12
@@ -13714,7 +13510,7 @@ uzalishaji_mti:
         ita zalisha_baiti
         r0b = 0xd8
         ita zalisha_baiti
-        ; cdqe → 48 98: panua ishara hadi baiti 8 (N64 x = -30 lazima
+        ; cdqe → 48 98: panua ishara hadi baiti 8 (n64 x = -30 lazima
         ; ihifadhiwe kama -30, si 4294967266 — upanuzi wa sifuri).
         r0b = 0x48
         ita zalisha_baiti
@@ -13750,12 +13546,12 @@ uzalishaji_mti:
         r13d = n32[mti_kushoto + r12*4]   ; operanda
         r12d = r13d
         ita uzalishaji_mti
-        ; ! kwenye D64 haikubaliki (8.8) — thamani iko xmm0, si eax
+        ; ! kwenye d64 haikubaliki (8.8) — thamani iko xmm0, si eax
         r12d = r13d
         ita fumbua_aina
         linganisha r0d, 7
         ruka .makosa_d64_kosa kama ==
-        ; N64 (au kielekezi): test rax, rax → 48 85 c0
+        ; n64 (au kielekezi): test rax, rax → 48 85 c0
         linganisha r0d, 4
         ruka .makosa_pima64 kama ==
         pima r3d, r3d
@@ -13806,12 +13602,12 @@ uzalishaji_mti:
         r13d = n32[mti_kushoto + r12*4]   ; operanda (r13 huhifadhiwa na zote mbili)
         r12d = r13d
         ita uzalishaji_mti
-        ; ~ kwenye D64 haikubaliki (8.8)
+        ; ~ kwenye d64 haikubaliki (8.8)
         r12d = r13d
         ita fumbua_aina
         linganisha r0d, 7
         ruka .makosa_biti_d64_kosa kama ==
-        ; N64 (au kielekezi): not rax → 48 f7 d0
+        ; n64 (au kielekezi): not rax → 48 f7 d0
         linganisha r0d, 4
         ruka .makosa_biti_kanusha64 kama ==
         pima r3d, r3d
@@ -13821,7 +13617,7 @@ uzalishaji_mti:
         ita zalisha_baiti
         r0b = 0xd0
         ita zalisha_baiti
-        ; cdqe → 48 98: N64 d = ~0 lazima iwe -1, si 4294967295
+        ; cdqe → 48 98: n64 d = ~0 lazima iwe -1, si 4294967295
         ; (upanuzi wa ishara baada ya kukanusha kwa biti 32).
         r0b = 0x48
         ita zalisha_baiti
@@ -13859,112 +13655,6 @@ uzalishaji_mti:
 ; Sehemu ya 7: Kitoa ELF (ELF Emitter)
 ; =============================================================================
 
-; -------------------------------------------------------
-; toa_elf: toa ELF .o kamili kwa stdout
-; -------------------------------------------------------
-toa_elf:
-        sukuma r12
-        sukuma r13
-        sukuma r14
-        sukuma r15
-
-        ; Kokotoa ofseti za sehemu
-        r12d = n32[mahali_bafa_msimbo]   ; text_size
-        r13d = n32[mahali_bafa_data]   ; data_size
-
-        ; symtab: 1 (null) + lebo + vigeu vya ulimwengu + nje
-        r14 = n64[lebo_idadi]
-        r14 += n64[ulimwengu_idadi]
-        r14 += n64[nje_idadi]
-        r14++   ; +1 kwa null
-        r14 = r14 * 24   ; baiti 24 kwa ingizo
-        r15d = r14d   ; symtab_size
-
-        ; strtab: hesabu ukubwa kwa kutembea majina yote
-        ita toa_elf_hesabu_strtab
-        r13d = r0d   ; strtab_size
-
-        ; rela: 24 baiti kwa ingizo
-        r14 = n64[rela_idadi]
-        r14 = r14 * 24
-        r2d = r14d   ; rela_size
-
-        ; Ofseti za sehemu
-        ; text_off = 64
-        ; data_off = 64 + text_size
-        ; symtab_off = data_off + data_size
-        ; strtab_off = symtab_off + symtab_size
-        ; rela_off = strtab_off + strtab_size
-        ; shstrtab_off = rela_off + rela_size
-        ; shoff = shstrtab_off + 55
-
-        r8d = 64   ; text_off
-        r9d = r8d
-        r9d += r12d   ; data_off
-        r10d = r9d
-        r10d += n32[mahali_bafa_data]   ; symtab_off
-        r11d = r10d
-        r11d += r15d   ; strtab_off
-        r12d = r11d
-        r12d += r13d   ; rela_off (tunatumia strtab_size kwenye r13)
-        r13d = r12d
-        r13d += r2d   ; shstrtab_off
-        r14d = r13d
-        r14d += UKUBWA_SHSTRTAB   ; shoff
-
-        ; Hifadhi ofseti muhimu kwenye stack
-        sukuma r15   ; symtab_size
-        sukuma r10   ; symtab_off
-        sukuma r12   ; rela_off
-        sukuma r13   ; shstrtab_off
-        sukuma r14   ; shoff
-
-        ; 1. Andika kichwa cha ELF
-        ita toa_elf_kichwa
-
-        ; 2. Andika .text
-        r6 = &[bafa_msimbo]
-        r2d = n32[mahali_bafa_msimbo]
-        linganisha r2d, 0
-        ruka .pita_msimbo kama ==
-        ita mfumo_andika_bafa
-.pita_msimbo:
-
-        ; 3. Andika .data
-        r6 = &[bafa_data]
-        r2d = n32[mahali_bafa_data]
-        linganisha r2d, 0
-        ruka .pita_data kama ==
-        ita mfumo_andika_bafa
-.pita_data:
-
-        ; 4. Andika .symtab
-        ita toa_elf_symtab
-
-        ; 5. Andika .strtab
-        ita toa_elf_strtab
-
-        ; 6. Andika .rela.text
-        ita toa_elf_rela
-
-        ; 7. Andika .shstrtab
-        ita toa_elf_shstrtab
-
-        ; 8. Andika vichwa vya sehemu
-        vuta r14   ; shoff
-        vuta r13   ; shstrtab_off
-        vuta r12   ; rela_off
-        vuta r10   ; symtab_off
-        vuta r15   ; symtab_size
-        ; Tunahitaji strtab_size na strtab_off pia
-        ; Hizo ziko kwenye r11 na r13 (kabla ya kubadilishwa)
-        ita toa_elf_sehemu_vichwa
-
-        vuta r15
-        vuta r14
-        vuta r13
-        vuta r12
-        rudi
 
 ; -------------------------------------------------------
 ; toa_elf_hesabu_strtab: hesabu ukubwa wa .strtab
@@ -14026,303 +13716,6 @@ toa_elf_hesabu_strtab:
         vuta r12
         rudi
 
-; -------------------------------------------------------
-; toa_elf_kichwa: andika kichwa cha ELF kwa stdout
-;   inatumia ofseti zilizo kwenye stack
-; -------------------------------------------------------
-toa_elf_kichwa:
-        ; Hujenga na kuandika kichwa kamili cha ELF (baiti 64)
-        ; Kichwa kina sehemu tatu:
-        ;   1. Baiti  0-39: e_ident, e_type, e_machine, e_version, e_entry, e_phoff
-        ;   2. Baiti 40-47: e_shoff (inakokotolewa wakati wa utekelezaji)
-        ;   3. Baiti 48-63: e_flags, e_ehsize, e_phentsize, e_phnum, e_shentsize, e_shnum, e_shstrndx
-        ;
-        ; Thamani ya e_shoff inapitishwa kupitia stack (r14 kwenye toa_elf)
-
-        ; 1. Andika baiti 0-39 za kiolezo
-        r6 = &[kiolezo_ehdr]
-        r2 = 40
-        ita mfumo_andika_bafa
-
-        ; 2. Andika e_shoff (baiti 40-47) — thamani iliyokokotolewa
-        ; Inasomwa kutoka stack: toa_elf ilisukuma r14 (shoff) kabla ya kuita
-        ; Kwa wakati huu, [rsp] = return address, [rsp+8] = r14 (shoff)
-        sukuma r5
-        r5 = r4
-        r7 = n64[r5+16]   ; shoff kutoka stack ya toa_elf
-        vuta r5
-        ita andika_neno8_moja_kwa_moja
-
-        ; 3. Andika baiti 48-63 za kiolezo (e_flags hadi mwisho)
-        r6 = &[kiolezo_ehdr + 48]
-        r2 = 16
-        ita mfumo_andika_bafa
-
-        rudi
-
-; -------------------------------------------------------
-; toa_elf_symtab: andika .symtab kwa stdout
-; -------------------------------------------------------
-toa_elf_symtab:
-        sukuma r12
-        sukuma r13
-        sukuma r14
-        sukuma r15
-
-        ; Ingizo la null
-        r7d = 0
-        ita andika_neno4_moja_kwa_moja   ; st_name
-        ita andika_neno4_moja_kwa_moja   ; st_info + st_other + st_shndx (zote 0)
-        ita andika_neno8_moja_kwa_moja   ; st_value
-        ita andika_neno8_moja_kwa_moja   ; st_size
-
-        ; Alama ya sehemu: .text (faharisi 1)
-        r7d = 0   ; st_name = 0
-        ita andika_neno4_moja_kwa_moja
-        r7b = 3   ; STB_LOCAL | STT_SECTION
-        ita andika_baiti_moja_kwa_moja
-        r7b = 0
-        ita andika_baiti_moja_kwa_moja
-        r7w = 1   ; st_shndx = .text
-        ita andika_neno2_moja_kwa_moja
-        r7d = 0   ; st_value
-        ita andika_neno8_moja_kwa_moja
-        r7d = 0   ; st_size
-        ita andika_neno8_moja_kwa_moja
-
-        ; Alama ya sehemu: .data (faharisi 2)
-        r7d = 0   ; st_name = 0
-        ita andika_neno4_moja_kwa_moja
-        r7b = 3   ; STB_LOCAL | STT_SECTION
-        ita andika_baiti_moja_kwa_moja
-        r7b = 0
-        ita andika_baiti_moja_kwa_moja
-        r7w = 2   ; st_shndx = .data
-        ita andika_neno2_moja_kwa_moja
-        r7d = 0   ; st_value
-        ita andika_neno8_moja_kwa_moja
-        r7d = 0   ; st_size
-        ita andika_neno8_moja_kwa_moja
-
-        ; Kokotoa ofseti za strtab kwa kila lebo
-        ; Ofseti ya kwanza baada ya \0 ni 1
-        r14d = 1
-
-        ; Ingizo kwa kila lebo (kazi)
-        r12d ^= r12d
-        r13 = n64[lebo_idadi]
-.lebo_mzunguko:
-        linganisha r12, r13
-        ruka .lebo_kwisha kama >=a
-
-        ; st_name = ofseti kwenye strtab
-        r7d = r14d
-        ita andika_neno4_moja_kwa_moja
-
-        ; st_info = 18 (STB_GLOBAL | STT_FUNC)
-        r7b = 18
-        ita andika_baiti_moja_kwa_moja
-        ; st_other = 0
-        r7b = 0
-        ita andika_baiti_moja_kwa_moja
-        ; st_shndx = 1 (.text)
-        r7w = 1
-        ita andika_neno2_moja_kwa_moja
-
-        ; st_value = ofseti kwenye .text
-        r7d = n32[ofseti_lebo + r12*4]
-        ita andika_neno8_moja_kwa_moja
-
-        ; st_size = ukubwa wa kazi
-        r7d = n32[ukubwa_lebo + r12*4]
-        ita andika_neno8_moja_kwa_moja
-
-        ; Sasisha ofseti ya strtab
-        r7 = n64[jina_lebo + r12*8]
-        ita urefu_wa_mfuatano
-        r14d += r0d
-        r14d++   ; +1 kwa '\0'
-
-        r12++
-        ruka .lebo_mzunguko
-.lebo_kwisha:
-
-        ; Ingizo kwa kila nje
-        r12d ^= r12d
-        r13 = n64[nje_idadi]
-.nje_mzunguko:
-        linganisha r12, r13
-        ruka .nje_kwisha kama >=a
-
-        r7d = r14d
-        ita andika_neno4_moja_kwa_moja
-        r7b = 0   ; STB_LOCAL, STT_NOTYPE (UNDEF)
-        ita andika_baiti_moja_kwa_moja
-        r7b = 0
-        ita andika_baiti_moja_kwa_moja
-        r7w = 0   ; st_shndx = 0 (UNDEF)
-        ita andika_neno2_moja_kwa_moja
-        ; st_value = 0
-        ita andika_neno8_moja_kwa_moja
-        ; st_size = 0
-        ita andika_neno8_moja_kwa_moja
-
-        r7 = n64[jina_nje + r12*8]
-        ita urefu_wa_mfuatano
-        r14d += r0d
-        r14d++
-
-        r12++
-        ruka .nje_mzunguko
-.nje_kwisha:
-
-        vuta r15
-        vuta r14
-        vuta r13
-        vuta r12
-        rudi
-
-; -------------------------------------------------------
-; toa_elf_strtab: andika .strtab kwa stdout
-; -------------------------------------------------------
-toa_elf_strtab:
-        sukuma r12
-        sukuma r13
-        sukuma r14
-
-        ; Anza na '\0'
-        r7b = 0
-        ita andika_baiti_moja_kwa_moja
-
-        ; Andika majina ya lebo
-        r12d ^= r12d
-        r13 = n64[lebo_idadi]
-.lebo_mzunguko:
-        linganisha r12, r13
-        ruka .lebo_kwisha kama >=a
-        r7 = n64[jina_lebo + r12*8]
-        ita andika_mfuatano
-        r12++
-        ruka .lebo_mzunguko
-.lebo_kwisha:
-
-        ; Andika majina ya nje
-        r12d ^= r12d
-        r13 = n64[nje_idadi]
-.nje_mzunguko:
-        linganisha r12, r13
-        ruka .nje_kwisha kama >=a
-        r7 = n64[jina_nje + r12*8]
-        ita andika_mfuatano
-        r12++
-        ruka .nje_mzunguko
-.nje_kwisha:
-
-        ; Andika majina ya vigezo vya ulimwengu
-        r12d ^= r12d
-        r13 = n64[ulimwengu_idadi]
-.ulimwengu_mzunguko:
-        linganisha r12, r13
-        ruka .ulimwengu_kwisha kama >=a
-        r7 = n64[jina_ulimwengu + r12*8]
-        ita andika_mfuatano
-        r12++
-        ruka .ulimwengu_mzunguko
-.ulimwengu_kwisha:
-
-        vuta r14
-        vuta r13
-        vuta r12
-        rudi
-
-; -------------------------------------------------------
-; toa_elf_rela: andika .rela.text kwa stdout
-; -------------------------------------------------------
-toa_elf_rela:
-        sukuma r12
-        sukuma r13
-
-        r12d ^= r12d
-        r13 = n64[rela_idadi]
-.mzunguko:
-        linganisha r12, r13
-        ruka .kwisha kama >=a
-
-        ; r_offset
-        r7d = n32[ofseti_rela + r12*4]
-        ita andika_neno8_moja_kwa_moja
-        ; r_info = ELF64_R_INFO(sym, R_X86_64_PC32)
-        ; Aina = 2 (R_X86_64_PC32)
-        r7d = n32[alama_rela + r12*4]
-        ; Angalia ikiwa ni rekebisho la .data (alama_rela == -1)
-        linganisha r7d, -1
-        ruka .nje_hamisho kama !=
-        ; Rekebisho la .data: tumia faharisi ya sehemu 2 (.data)
-        r7d = 2
-        ruka .habari_hamisho
-.nje_hamisho:
-        ; Rekebisho la nje: faharisi = 3 + lebo_idadi + ulimwengu_idadi + extern_idx
-        r7d += 3
-        r7d += n32[lebo_idadi]
-        r7d += n32[ulimwengu_idadi]
-.habari_hamisho:
-        r7 <<= 32
-        r7 |= 2
-        ita andika_neno8_moja_kwa_moja
-        ; r_addend kutoka nyongeza_rela (inaweza kuwa hasi)
-        r7 = n32[nyongeza_rela + r12*4]
-        ita andika_neno8_moja_kwa_moja
-
-        r12++
-        ruka .mzunguko
-.kwisha:
-        vuta r13
-        vuta r12
-        rudi
-
-; -------------------------------------------------------
-; toa_elf_shstrtab: andika .shstrtab kwa stdout
-; -------------------------------------------------------
-toa_elf_shstrtab:
-        r6 = &[data_shstrtab]
-        r2d = UKUBWA_SHSTRTAB
-        ita mfumo_andika_bafa
-        rudi
-
-; -------------------------------------------------------
-; toa_elf_sehemu_vichwa: andika vichwa vya sehemu kwa stdout
-;   r8 = text_off, r9 = data_off, r10 = symtab_off
-;   r11 = strtab_off (imebadilishwa), r12 = rela_off, r13 = shstrtab_off
-;   r14 = shoff, r15 = symtab_size
-;   pia inahitaji strtab_size
-; -------------------------------------------------------
-toa_elf_sehemu_vichwa:
-        sukuma r12
-        sukuma r13
-        sukuma r14
-        sukuma r15
-
-        ; Hali ni ngumu kwa sababu tumepoteza baadhi ya maadili.
-        ; Kwa sasa, tunatoa vichwa vya sehemu vilivyo ngumu.
-        ; Hii ni ya muda — tutakokotoa upya.
-
-        ; NULL sehemu (baiti 64 za sifuri)
-        r1d = 16
-        r7d ^= r7d
-.sifuri_mzunguko:
-        sukuma r1
-        ita andika_neno4_moja_kwa_moja
-        vuta r1
-        zunguka .sifuri_mzunguko
-
-        ; Kwa sasa tunatoa vichwa vilivyo ngumu kwa sehemu zilizobaki
-        ; Hii itarekebishwa wakati uzalishaji kamili utakapofanya kazi
-
-        vuta r15
-        vuta r14
-        vuta r13
-        vuta r12
-        rudi
 
 ; =============================================================================
 ; Sehemu ya 8: Programu Kuu (_start)
@@ -14694,21 +14087,21 @@ toa_exe:
         ita andika_neno8_moja_kwa_moja
 
         ; --- Stub ya _start (baiti 28) ---
-        ; Maneno 7 ya N32 — sawa na uzalishaji.swa (kipande32).
+        ; Maneno 7 ya n32 — sawa na uzalishaji.swa (kipande32).
         ; 48 8B 3C 24 — mov rdi, [rsp] (argc)
         r7d = 607947592
         ita andika_neno4_moja_kwa_moja
         ; 48 8D 74 24 — lea rsi, [rsp+8] (argv), baiti ya mwisho kwenye neno linalofuata
         r7d = 611618120
         ita andika_neno4_moja_kwa_moja
-        ; 08 B0 00 E8 — mwisho wa lea + mov al,0 + call (disp32 inafuata)
+        ; 08 b0 00 E8 — mwisho wa lea + mov al,0 + call (disp32 inafuata)
         r7d = 3892359176
         ita andika_neno4_moja_kwa_moja
         ; disp32 = main_off + 12 (wito uko baiti 11-14, kifuatacho 16)
         r7d = r3d
         r7d += 12
         ita andika_neno4_moja_kwa_moja
-        ; 48 89 C7 B8 — mov rdi, rax + mwanzo wa mov eax, 60
+        ; 48 89 C7 b8 — mov rdi, rax + mwanzo wa mov eax, 60
         r7d = 3100084552
         ita andika_neno4_moja_kwa_moja
         ; 3C 00 00 00 — mwisho wa mov eax, 60
